@@ -1,3 +1,6 @@
+import UserHeader from "@/layout/UserHeader";
+import UserSidebar from "@/layout/UserSidebar";
+
 export default function UserLayout({
   children,
 }: {
@@ -5,10 +8,10 @@ export default function UserLayout({
 }) {
   return (
     <div className="flex min-h-screen">
-      {/* <UserSidebar /> */}
+      <UserSidebar />
 
       <div className="flex-1">
-        {/* <UserHeader /> */}
+        <UserHeader />
 
         <main className="p-6">{children}</main>
       </div>
