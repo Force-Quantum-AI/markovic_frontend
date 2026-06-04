@@ -1,14 +1,14 @@
-export default function AdminLayout({
+export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <div className="flex min-h-screen">
-      {/* <AdminSidebar /> */}
+      {/* <UserSidebar /> */}
 
       <div className="flex-1">
-        {/* <AdminHeader /> */}
+        {/* <UserHeader /> */}
 
         <main className="p-6">{children}</main>
       </div>
