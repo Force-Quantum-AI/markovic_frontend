@@ -22,7 +22,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ["Auth", "User", "CV", "Skills"],
+      invalidatesTags: ["Auth"],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -38,7 +38,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ["Auth", "User", "CV", "Skills"],
+      invalidatesTags: ["Auth"],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -89,7 +89,7 @@ export const authApi = baseApi.injectEndpoints({
         url: "/auth/userLogout",
         method: "GET",
       }),
-      invalidatesTags: ["Auth", "User", "CV", "Skills"],
+      invalidatesTags: ["Auth"],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
