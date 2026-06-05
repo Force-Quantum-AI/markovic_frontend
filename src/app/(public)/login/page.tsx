@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Mail, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
   // Form States
@@ -111,12 +112,12 @@ export default function LoginPage() {
                   />
                   Remember
                 </label>
-                <a
-                  href="#forgot"
+                <Link
+                  href="/forgot-password"
                   className="text-red-500  hover:underline"
                 >
                   Forgot Password?
-                </a>
+                </Link>
               </div>
 
               {/* Submit Button */}
@@ -133,9 +134,9 @@ export default function LoginPage() {
             {/* Registration Prompt */}
             <p className="text-center text-xs text-gray-400 mt-6">
               Don&apos;t have an account?{" "}
-              <a href="#register" className="text-[#135576] font-bold hover:underline">
+              <Link href="/register" className="text-[#135576] font-bold hover:underline">
                 Register
-              </a>
+              </Link>
             </p>
           </div>
 
