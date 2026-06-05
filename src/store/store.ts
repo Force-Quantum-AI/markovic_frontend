@@ -1,0 +1,21 @@
+import { configureStore } from "@reduxjs/toolkit";
+import { baseApi } from "./api/baseApi";
+import authReducer from "./features/auth/authSlice";
+import cvReducer from "./features/cv/cvSlice";
+import skillsReducer from "./features/skills/skillsSlice";
+import uiReducer from "./features/ui/uiSlice";
+
+export const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    cv: cvReducer,
+    skills: skillsReducer,
+    ui: uiReducer,
+    [baseApi.reducerPath]: baseApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(baseApi.middleware),
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
