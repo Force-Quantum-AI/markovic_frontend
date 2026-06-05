@@ -211,7 +211,7 @@ export default function RegisterPage() {
             
             {/* Background Image Setup mimicking Lady Justice theme */}
             <Image
-              src="/lawImg2.jpg" 
+              src="/lawImg4.png" 
               alt="Lady Justice statue banner"
               fill
               priority
