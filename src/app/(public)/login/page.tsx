@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Mail, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
 import Link from "next/link";
+import ForgotPasswordModal from "@/components/modals/ForgotPasswordModal";
 
 export default function LoginPage() {
   // Form States
@@ -11,6 +12,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
   
   // Basic validation state to show the green checkmark from login.png
   const isEmailValid = email.includes("@") && email.includes(".");
@@ -19,14 +22,12 @@ export default function LoginPage() {
     e.preventDefault();
     
     // Dummy dataset / API simulation placeholder
-    const dummyAuthPayload = {
-      email,
-      password,
-      rememberMe,
-    };
+    // const dummyAuthPayload = {
+    //   email,
+    //   password,
+    //   rememberMe,
+    // };
 
-    console.log("Submitting to backend API (Ready for replacement later):", dummyAuthPayload);
-    alert(`Logged in with: ${dummyAuthPayload.email}`);
   };
 
   return (
@@ -112,12 +113,12 @@ export default function LoginPage() {
                   />
                   Remember
                 </label>
-                <Link
-                  href="/forgot-password"
+                <button
+                  onClick={() => setIsForgotPasswordModalOpen(true)}
                   className="text-red-500  hover:underline"
                 >
                   Forgot Password?
-                </Link>
+                </button>
               </div>
 
               {/* Submit Button */}
@@ -185,6 +186,10 @@ export default function LoginPage() {
         </div>
 
       </div>
+      <ForgotPasswordModal
+        isOpen={isForgotPasswordModalOpen}
+        onOpenChange={setIsForgotPasswordModalOpen}
+      />
     </div>
   );
 }

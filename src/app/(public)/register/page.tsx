@@ -5,6 +5,7 @@ import Image from "next/image";
 import { User, Mail, Phone, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import OtpVerificationModal from "@/components/modals/OtpVerificationModal";
 
 export default function RegisterPage() {
   // Form States
@@ -18,6 +19,9 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    // Modal State Management
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+
   // Validation feedback matching the green check icon on the image
   const isEmailValid = email.includes("@") && email.includes(".");
 
@@ -30,15 +34,14 @@ export default function RegisterPage() {
     }
 
     // Dummy backend API payload
-    const dummyRegisterPayload = {
-      fullName,
-      email,
-      phone,
-      password,
-    };
+    // const dummyRegisterPayload = {
+    //   fullName,
+    //   email,
+    //   phone,
+    //   password,
+    // };
 
-    console.log("Submitting registration to API:", dummyRegisterPayload);
-    toast.success(`Account registration initiated for: ${dummyRegisterPayload.fullName}`);
+    setIsOtpModalOpen(true)
   };
 
   return (
@@ -240,6 +243,11 @@ export default function RegisterPage() {
         </div>
 
       </div>
+      <OtpVerificationModal
+        isOpen={isOtpModalOpen}
+        onOpenChange={setIsOtpModalOpen}
+        userEmail={email}
+      />
     </div>
   );
 }

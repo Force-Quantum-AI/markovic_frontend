@@ -282,7 +282,7 @@ export default function OtpVerificationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-[92vw] sm:w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 shadow-2xl border-none">
+      <DialogContent className="max-w-2xl! w-[92vw] sm:w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 shadow-2xl border-none">
         {renderModalContent()}
       </DialogContent>
     </Dialog>
