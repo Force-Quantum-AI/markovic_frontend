@@ -43,9 +43,9 @@ export default function UserLayout({
 
           <div className="flex flex-1 items-center justify-between">
             {/* search  */}
-            <div className="flex items-center gap-5 border">
-              <Search className="h-5 w-5 text-black" />
-              <input className="border outline-none" type="text" placeholder="Search" />
+            <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 border bg-gray-100 rounded-full">
+              <Search className="h-5 w-5 text-black/60" />
+              <input className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs" type="text" placeholder="Search cases, clients, laws, documents..." />
             </div>
 
             <div className="flex items-center gap-5">
