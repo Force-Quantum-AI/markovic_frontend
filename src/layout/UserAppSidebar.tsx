@@ -8,12 +8,12 @@ import {
   Archive,
   Bot,
   Calendar,
-  FileText,
   Gavel,
-  House,
+  Grid2x2Check,
   Scale,
-  Settings,
   Users,
+  ScrollText,
+  SlidersHorizontal
 } from "lucide-react";
 
 import {
@@ -27,12 +27,12 @@ const navItems = [
   {
     title: "Dashboard",
     href: "/dashboard",
-    icon: House,
+    icon: Grid2x2Check,
   },
   {
     title: "My Cases",
     href: "/cases",
-    icon: FileText,
+    icon: Scale,
   },
   {
     title: "My Clients",
@@ -52,7 +52,7 @@ const navItems = [
   {
     title: "Law & Bylaw",
     href: "/laws",
-    icon: Scale,
+    icon: ScrollText,
   },
   {
     title: "Archive Cases",
@@ -67,7 +67,7 @@ const navItems = [
   {
     title: "Settings",
     href: "/settings",
-    icon: Settings,
+    icon: SlidersHorizontal,
   },
 ];
 
@@ -76,21 +76,17 @@ export function UserAppSidebar() {
 
   return (
     <Sidebar
-      className="border-r bg-white"
-      collapsible="icon"
+      className="border-r bg-white p-2"
+      collapsible="offcanvas"
     >
-      <SidebarHeader className="border-b bg-white">
-        <div className="flex items-center gap-3 px-2 py-2">
+      <SidebarHeader className=" bg-white">
+        <div className="flex items-center gap-3 px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <Image
-            src="/logo.png"
+            src="/brandLogo.png"
             alt="logo"
-            width={36}
-            height={36}
+            width={148}
+            height={42}
           />
-
-          <span className="text-lg font-semibold text-black">
-            Actio.me
-          </span>
         </div>
       </SidebarHeader>
 
@@ -104,18 +100,18 @@ export function UserAppSidebar() {
               <Link
                 key={item.title}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 lg:py-3 2xl:py-4 text-sm font-medium transition-all group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0
                   
                   ${
                     active
                       ? "bg-[#135576] text-white"
-                      : "text-black hover:bg-[#135576]/10 hover:text-[#135576]"
+                      : "text-black/70 hover:bg-[#135576]/10 hover:text-[#135576]"
                   }
                 `}
               >
                 <item.icon className="h-4 w-4" />
 
-                <span>{item.title}</span>
+                <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
               </Link>
             );
           })}

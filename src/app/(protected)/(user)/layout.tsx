@@ -29,7 +29,7 @@ export default function UserLayout({
       <UserAppSidebar />
 
       <SidebarInset>
-        <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center border-b bg-white px-4">
+        <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center bg-white px-4">
           {/* Show only on mobile and tablet (below lg) */}
           <div className="flex xl:hidden items-center">
             <SidebarTrigger />
