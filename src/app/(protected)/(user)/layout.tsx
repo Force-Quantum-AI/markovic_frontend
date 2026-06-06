@@ -1,4 +1,4 @@
-import { Bell, Search } from "lucide-react";
+import { Bell, ChevronDown, Search } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { UserAppSidebar } from "@/layout/UserAppSidebar";
+import NotificationDropdown from "@/components/shared/NotificationDropdown";
 
 export default function UserLayout({
   children,
@@ -49,32 +50,28 @@ export default function UserLayout({
 
             <div className="flex items-center gap-5">
               {/* Notification */}
-              <button className="relative">
-                <Bell className="h-5 w-5 text-black" />
-
-                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#135576] text-[10px] text-white">
-                  3
-                </span>
-              </button>
+              <NotificationDropdown/>
 
               {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-3">
+                  <button className="flex items-center gap-3 bg-gray-100 rounded-full p-1">
                     <Avatar>
                       <AvatarImage src="/dummy-user.jpg" />
                       <AvatarFallback>JD</AvatarFallback>
                     </Avatar>
 
-                    <div className="hidden text-left lg:block">
+                    <div className=" text-left">
                       <p className="text-sm font-medium text-black">
-                        John Doe
+                        Ahshanul Haquc
                       </p>
 
                       <p className="text-xs text-muted-foreground">
-                        john@gmail.com
+                       ahshanulhaquc@gmail.com
                       </p>
                     </div>
+
+                    <ChevronDown className="h-4 w-4 mr-1 bg-black rounded-full text-white cursor-pointer" />
                   </button>
                 </DropdownMenuTrigger>
 
