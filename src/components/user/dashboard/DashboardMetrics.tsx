@@ -53,7 +53,7 @@ export default function DashboardMetrics() {
       label: "Total Cases",
       value: 86,
       icon: <Scale className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#f8faf4]", // Soft Lime-Green hue
+      bgColor: "bg-[#DAE6C9]", // Soft Lime-Green hue
       iconBgColor: "bg-[#edf4e4]"
     },
     {
@@ -61,7 +61,7 @@ export default function DashboardMetrics() {
       label: "Active Cases",
       value: 72,
       icon: <Files className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#f4fbf7]", // Soft Mint hue
+      bgColor: "bg-[#C8F0DB]", // Soft Mint hue
       iconBgColor: "bg-[#e2f6ec]"
     },
     {
@@ -69,7 +69,7 @@ export default function DashboardMetrics() {
       label: "Todays Hearing",
       value: 5,
       icon: <Gavel className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#f6f6fe]", // Soft Purple hue
+      bgColor: "bg-[#D4D4F2]", // Soft Purple hue
       iconBgColor: "bg-[#ebebfe]"
     },
     {
@@ -77,7 +77,7 @@ export default function DashboardMetrics() {
       label: "Upcoming Deadlines",
       value: 3,
       icon: <CalendarDays className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#f4faff]", // Soft Ice Blue hue
+      bgColor: "bg-[#D6E7ED]", // Soft Ice Blue hue
       iconBgColor: "bg-[#e3f3ff]"
     },
     {
@@ -85,7 +85,7 @@ export default function DashboardMetrics() {
       label: "Total Clients",
       value: 7,
       icon: <Users2 className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#fef5fc]", // Soft Pink hue
+      bgColor: "bg-[#E6D1E3]", // Soft Pink hue
       iconBgColor: "bg-[#fbe6f7]"
     },
     {
@@ -93,7 +93,7 @@ export default function DashboardMetrics() {
       label: "Case Completed",
       value: 14,
       icon: <FileCheck2 className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#fffaf2]", // Soft Cream/Orange hue
+      bgColor: "bg-[#F2E6D8]", // Soft Cream/Orange hue
       iconBgColor: "bg-[#fff2de]"
     },
   ];
@@ -103,9 +103,9 @@ export default function DashboardMetrics() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 lg:p-6">
+    <div className="w-full max-w-7xl mx-auto">
       {/* Container Layout Matrix */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-3">
         
         {/* Left Aspect: Feature AI Court Practice Hero Card */}
         <div className="xl:col-span-2 relative rounded-3xl p-6 bg-gradient-to-b from-gray-900 to-black border-[3px] border-[#135576] shadow-md flex flex-col justify-between min-h-[290px] md:min-h-[300px] overflow-hidden group">
@@ -151,7 +151,7 @@ export default function DashboardMetrics() {
         </div>
 
         {/* Right Aspect: Fully Responsive Metrics Grid */}
-        <div className="xl:col-span-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="xl:col-span-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 bg-white p-2 rounded-2xl">
           {statsData.map((stat) => (
             <MetricCard
               key={stat.id}

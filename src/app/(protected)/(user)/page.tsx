@@ -1,5 +1,6 @@
 import MainButton from "@/components/shared/MainButton";
-import DashboardMetrics from "@/components/user/DashboardMetrics";
+import DashboardMetrics from "@/components/user/dashboard/DashboardMetrics";
+import UpcomingHearings from "@/components/user/dashboard/UpcomingHearings";
 import { Plus } from "lucide-react";
 
 export default function page() {
@@ -12,12 +13,12 @@ export default function page() {
             <p className="text-gray-500 text-xs md:text-base">Tuesday, 19 May 2026</p>
             <h2 className="text-lg md:text-xl xl:text-3xl font-semibold">Good Morning, Ahsan</h2>
           </div>
-          <MainButton label="Add New Cases" icon={<Plus/>}/>
+          <MainButton label="Add New Cases" icon={<Plus />} />
         </section>
         {/* status */}
-        <section className="border border-gray-200 rounded-xl">
-          <DashboardMetrics/>
-        </section>
+        <DashboardMetrics />
+        {/* upcomming hearing  */}
+        <UpcomingHearings/>
       </div>
       <div className="col-span-2 lg:col-span-1 border border-gray-200 rounded-xl">sfsf</div>
 
