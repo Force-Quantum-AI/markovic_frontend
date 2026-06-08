@@ -1,4 +1,5 @@
 import MainButton from "@/components/shared/MainButton";
+import DashboardMetrics from "@/components/user/DashboardMetrics";
 import { Plus } from "lucide-react";
 
 export default function page() {
@@ -15,7 +16,7 @@ export default function page() {
         </section>
         {/* status */}
         <section className="border border-gray-200 rounded-xl">
-          sdfsafsf
+          <DashboardMetrics/>
         </section>
       </div>
       <div className="col-span-2 lg:col-span-1 border border-gray-200 rounded-xl">sfsf</div>
