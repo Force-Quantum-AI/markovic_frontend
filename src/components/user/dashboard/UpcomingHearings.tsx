@@ -17,11 +17,8 @@ export interface HearingCardProps {
   deadline: string;
 }
 
-
-// --- MAIN GRID MODULE WRAPPER ---
-export default function UpcomingHearings() {
   // Dummy dataset replicating image contents precisely
-  const hearingsDataset: HearingCardProps[] = [
+export  const hearingsDataset: HearingCardProps[] = [
     {
       category: "Civil",
       clientName: "Vazquez Maria Liisana",
@@ -71,6 +68,10 @@ export default function UpcomingHearings() {
       deadline: "Not Assign",
     },
   ];
+
+
+// --- MAIN GRID MODULE WRAPPER ---
+export default function UpcomingHearings() {
 
   return (
     <section className="w-full max-w-7xl mx-auto p-3 md:p-5 space-y-3 md:space-y-6 bg-white rounded-2xl">
