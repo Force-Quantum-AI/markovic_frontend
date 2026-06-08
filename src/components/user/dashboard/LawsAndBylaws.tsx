@@ -47,7 +47,7 @@ export default function LawsAndBylaws() {
       </div>
 
       {/* Grid Container Matrix - responsive columns */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
         {lawsDataset.map((law, index) => (
           <LawCard
             key={index}

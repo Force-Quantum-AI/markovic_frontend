@@ -1,6 +1,7 @@
 import MainButton from "@/components/shared/MainButton";
 import DashboardMetrics from "@/components/user/dashboard/DashboardMetrics";
 import LawsAndBylaws from "@/components/user/dashboard/LawsAndBylaws";
+import RecentCases from "@/components/user/dashboard/RecentCases";
 import UpcomingHearings from "@/components/user/dashboard/UpcomingHearings";
 import { Plus } from "lucide-react";
 
@@ -19,7 +20,7 @@ export default function page() {
         <DashboardMetrics />
         <UpcomingHearings/>
         <LawsAndBylaws/>
-
+        <RecentCases/>
       </div>
       <div className="col-span-2 lg:col-span-1 border border-gray-200 rounded-xl">sfsf</div>
 
