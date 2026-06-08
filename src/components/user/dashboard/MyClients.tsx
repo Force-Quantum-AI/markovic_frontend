@@ -17,7 +17,7 @@ export default function MyClients() {
   const displayedClients = clientsData.slice(0, 5);
 
   return (
-    <div className="w-full max-w-3xl rounded-xl bg-white p-5 shadow-sm">
+    <div className="w-full rounded-xl bg-white p-5 shadow-sm">
       {/* Header Section */}
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-xl font-bold text-gray-900">My Clients</h3>
@@ -31,9 +31,9 @@ export default function MyClients() {
         {displayedClients.map((client, idx) => (
           <div
             key={idx}
-            className="flex items-center justify-between py-3 transition-all "
+            className="flex items-center justify-between flex-wrap gap-2 py-3 transition-all "
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center flex-wrap gap-2">
               <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                     <Image src={client.img} alt={client.name} fill className="object-cover" />
                   </div>

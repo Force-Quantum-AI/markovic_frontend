@@ -256,6 +256,9 @@ export default function LegalCalendar() {
 
   return (
     <div className="flex flex-col h-fit bg-white rounded-xl overflow-hidden select-none">
+      <h2 className="px-4 pt-4 pb-2 text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+          Upcomming
+        </h2>
       {/* ── Month Header ── */}
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-3">
