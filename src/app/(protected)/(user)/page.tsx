@@ -2,6 +2,7 @@ import MainButton from "@/components/shared/MainButton";
 import DashboardMetrics from "@/components/user/dashboard/DashboardMetrics";
 import LawsAndBylaws from "@/components/user/dashboard/LawsAndBylaws";
 import LegalCalendar from "@/components/user/dashboard/LegalCalendar";
+import MyClients from "@/components/user/dashboard/MyClients";
 import RecentCases from "@/components/user/dashboard/RecentCases";
 import UpcomingHearings from "@/components/user/dashboard/UpcomingHearings";
 import { Plus } from "lucide-react";
@@ -25,7 +26,7 @@ export default function page() {
       </div>
       <div className="col-span-2 lg:col-span-1 space-y-5">
         <LegalCalendar/>
-        
+        <MyClients/>
       </div>
 
     </div>
