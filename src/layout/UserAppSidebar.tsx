@@ -31,12 +31,12 @@ const navItems = [
   },
   {
     title: "My Cases",
-    href: "/cases",
+    href: "/my-cases",
     icon: Scale,
   },
   {
     title: "My Clients",
-    href: "/clients",
+    href: "/my-clients",
     icon: Users,
   },
   {
@@ -46,17 +46,17 @@ const navItems = [
   },
   {
     title: "Hearing & Deadline",
-    href: "/hearing",
+    href: "/hearing-deadline",
     icon: Gavel,
   },
   {
     title: "Law & Bylaw",
-    href: "/laws",
+    href: "/law-bylaw",
     icon: ScrollText,
   },
   {
     title: "Archive Cases",
-    href: "/archive",
+    href: "/archive-cases",
     icon: Archive,
   },
   {

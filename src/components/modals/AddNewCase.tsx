@@ -155,7 +155,7 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
           {data.avatarUrl ? (
             <Image src={data.avatarUrl} alt="Preview avatar" fill className="object-cover" />
           ) : (
-            <div className="absolute bottom-2 right-2 w-7 h-7 bg-[#135576] rounded-full flex items-center justify-center text-white shadow-sm">
+            <div className="w-7 h-7 bg-[#135576] rounded-full flex items-center justify-center text-white shadow-sm">
               <Camera className="w-4 h-4" />
             </div>
           )}
@@ -394,7 +394,7 @@ function ScheduleCard({
       </div>
 
       {/* Date, Month, and Year Selector Stack Row */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="space-y-1.5">
           <FieldLabel>Date:</FieldLabel>
           <div className="relative w-full">
@@ -425,7 +425,7 @@ function ScheduleCard({
 
         {/* Labeled 'Client name:' exactly mirroring Figma labels error */}
         <div className="space-y-1.5">
-          <FieldLabel>Client name:</FieldLabel>
+          <FieldLabel>Year :</FieldLabel>
           <div className="relative w-full">
             <select
               value={data.year}
@@ -517,7 +517,7 @@ const defaultFormData: AddNewCaseFormData = {
 // ─── MAIN MODAL COMPONENT ───────────────────────────────────────────────────
 
 export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProps) {
-  const [currentStep, setCurrentStep] = useState(3); // Defaults view straight to Step 3 for testing
+  const [currentStep, setCurrentStep] = useState(1); // Defaults view straight to Step 3 for testing
   const [formData, setFormData] = useState<AddNewCaseFormData>(defaultFormData);
 
   const handleClose = () => {
@@ -531,17 +531,6 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="max-w-7xl! w-[95vw] bg-white rounded-[32px] p-6 md:p-8 overflow-hidden border-none shadow-2xl flex flex-col focus:outline-none max-h-[95vh]">
-        
-        {/* Header Exit Cross Trigger */}
-        <div className="flex justify-end w-full absolute top-5 right-5 z-20">
-          <button
-            onClick={handleClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-50 border border-gray-100 text-gray-400 hover:text-gray-700 transition-colors focus:outline-none"
-            aria-label="Close form panel"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
 
         {/* Global Component Heading Block */}
         <div className="w-full text-center pb-2 pt-2">
@@ -582,7 +571,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
           <button
             type="button"
             onClick={handleClose}
-            className="px-6 py-3 rounded-full text-sm font-semibold text-gray-500 bg-[#e9eff2] hover:bg-gray-200 transition-all focus:outline-none"
+            className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-gray-500 bg-[#e9eff2] hover:bg-gray-200 transition-all focus:outline-none"
           >
             Save as draft
           </button>
@@ -592,7 +581,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
               <button
                 type="button"
                 onClick={() => setCurrentStep((p) => p - 1)}
-                className="px-6 py-3 rounded-full text-sm font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all focus:outline-none"
+                className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all focus:outline-none"
               >
                 Back
               </button>
@@ -602,7 +591,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
               <button
                 type="button"
                 onClick={() => setCurrentStep((p) => p + 1)}
-                className="px-8 py-3 rounded-full text-sm font-semibold text-white bg-[#135576] hover:bg-[#0f445f] transition-all focus:outline-none active:scale-95 shadow-md shadow-blue-900/10"
+                className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-white bg-[#135576] hover:bg-[#0f445f] transition-all focus:outline-none active:scale-95 shadow-md shadow-blue-900/10"
               >
                 Next
               </button>
@@ -613,7 +602,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
                   onSubmit?.(formData);
                   handleClose();
                 }}
-                className="px-10 py-3 rounded-full text-sm font-semibold text-white bg-[#135576] hover:bg-[#0f445f] transition-all focus:outline-none active:scale-95 shadow-md shadow-blue-900/10"
+                className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-white bg-[#135576] hover:bg-[#0f445f] transition-all focus:outline-none active:scale-95 shadow-md shadow-blue-900/10"
               >
                 Save
               </button>
