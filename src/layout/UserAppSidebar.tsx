@@ -26,7 +26,7 @@ import {
 const navItems = [
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: "/",
     icon: Grid2x2Check,
   },
   {
@@ -100,7 +100,7 @@ export function UserAppSidebar() {
               <Link
                 key={item.title}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 lg:py-3 2xl:py-4 text-sm font-medium transition-all group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0
+                className={`flex items-center gap-3 rounded-full px-3 py-2 lg:py-3 2xl:py-4 text-sm font-medium transition-all group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0
                   
                   ${
                     active

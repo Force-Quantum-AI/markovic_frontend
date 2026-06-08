@@ -1,3 +1,6 @@
+
+"use client";
+
 import { Bell, ChevronDown, Search } from "lucide-react";
 import {
   Avatar,
@@ -58,7 +61,7 @@ export default function UserLayout({
                   <button className="flex items-center gap-3 bg-gray-100 rounded-full p-1">
                     <Avatar>
                       <AvatarImage src="/dummy-user.jpg" />
-                      <AvatarFallback>JD</AvatarFallback>
+                      <AvatarFallback>AH</AvatarFallback>
                     </Avatar>
 
                     <div className=" text-left">
