@@ -44,7 +44,7 @@ export default function UserLayout({
             />
           </div>
 
-          <div className="flex flex-1 items-center justify-between">
+          <div className="flex flex-1 items-center justify-end lg:justify-between">
             {/* search  */}
             <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 border bg-gray-100 rounded-full">
               <Search className="h-5 w-5 text-black/60" />
@@ -58,13 +58,13 @@ export default function UserLayout({
               {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-3 bg-gray-100 rounded-full p-1">
+                  <button className="flex items-center gap-1 md:gap-3 bg-gray-100 rounded-full p-1">
                     <Avatar>
                       <AvatarImage src="/dummy-user.jpg" />
                       <AvatarFallback>AH</AvatarFallback>
                     </Avatar>
 
-                    <div className=" text-left">
+                    <div className="hidden md:block text-left">
                       <p className="text-sm font-medium text-black">
                         Ahshanul Haquc
                       </p>
