@@ -1,5 +1,6 @@
 import MainButton from "@/components/shared/MainButton";
 import DashboardMetrics from "@/components/user/dashboard/DashboardMetrics";
+import LawsAndBylaws from "@/components/user/dashboard/LawsAndBylaws";
 import UpcomingHearings from "@/components/user/dashboard/UpcomingHearings";
 import { Plus } from "lucide-react";
 
@@ -15,10 +16,10 @@ export default function page() {
           </div>
           <MainButton label="Add New Cases" icon={<Plus />} />
         </section>
-        {/* status */}
         <DashboardMetrics />
-        {/* upcomming hearing  */}
         <UpcomingHearings/>
+        <LawsAndBylaws/>
+
       </div>
       <div className="col-span-2 lg:col-span-1 border border-gray-200 rounded-xl">sfsf</div>
 
