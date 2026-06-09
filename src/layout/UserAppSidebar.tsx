@@ -46,12 +46,12 @@ const navItems = [
   },
   {
     title: "Hearing & Deadline",
-    href: "/hearing-deadline",
+    href: "/hearing-and-deadline",
     icon: Gavel,
   },
   {
     title: "Law & Bylaw",
-    href: "/law-bylaw",
+    href: "/law-and-bylaw",
     icon: ScrollText,
   },
   {
