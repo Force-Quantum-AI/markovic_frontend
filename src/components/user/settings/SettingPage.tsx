@@ -2,6 +2,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tab } from "@/types/settingPageTabs";
 import { Bell, Dock, Globe, Lock, Shield, User } from "lucide-react";
+import Password from "./Password";
+import Language from "./Language";
 const tabs:Tab[]=[  
     {
         value: "account",
@@ -38,16 +40,20 @@ export default function SettingPage() {
     return (
         <div className="bg-white rounded-2xl p-3">
             <Tabs defaultValue="account" orientation="vertical">
-                <TabsList>
+                <TabsList className="bg-white mr-2">
                     {tabs.map((tab) => (
-                        <TabsTrigger key={tab.value} value={tab.value}>
+                        <TabsTrigger className="py-3 px-2 data-[state=active]:bg-[#135576] data-[state=active]:text-white" key={tab.value} value={tab.value}>
                             {tab.icon}
                             {tab.label}
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                <TabsContent value="account">Make changes to your account here.</TabsContent>
-                <TabsContent value="password">Change your password here.</TabsContent>
+                {/* <TabsContent value="account"><Account/></TabsContent> */}
+                <TabsContent value="password"><Password/></TabsContent>
+                {/* <TabsContent value="notifications"><Notification/></TabsContent>
+                <TabsContent value="subscription"><Subscription/></TabsContent> */}
+                <TabsContent value="language"><Language/></TabsContent>
+                {/* <TabsContent value="privacy"><Privacy/></TabsContent> */}
             </Tabs>
         </div>
     );
