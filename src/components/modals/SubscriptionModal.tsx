@@ -58,58 +58,134 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
-      {/* Modal Container */}
-      <div className="relative w-full max-w-7xl bg-[#F8FAFC] rounded-[24px] shadow-2xl my-8 flex flex-col">
-        
+return (
+  <div
+    className="
+      fixed inset-0 z-50
+      bg-black/40 backdrop-blur-sm
+      p-2 md:p-4
+      overflow-y-auto
+    "
+  >
+    <div
+      className="
+        min-h-full
+        flex
+        items-center
+        justify-center
+      "
+    >
+      <div
+        className="
+          relative
+          w-full
+          max-w-6xl
+          bg-[#F8FAFC]
+          rounded-2xl
+          md:rounded-[24px]
+          shadow-2xl
+          flex
+          flex-col
+          max-h-[95vh]
+          overflow-hidden
+        "
+      >
         {/* Close Button */}
-        <button 
+        <button
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors z-10"
+          className="
+            absolute
+            top-3
+            right-3
+            md:top-6
+            md:right-6
+            p-2
+            text-gray-400
+            hover:text-gray-700
+            hover:bg-gray-100
+            rounded-full
+            transition-colors
+            z-20
+          "
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="p-8 md:p-12 flex flex-col items-center">
-          
-          {/* Header Section */}
-          <div className="text-center mb-4 flex flex-col items-center">
-            <div className="h-12 w-full relative flex items-center gap-2 text-[#135576] mb-3">
+        {/* Scrollable Content */}
+        <div
+          className="
+            overflow-y-auto
+            p-4
+            sm:p-6
+            md:p-8
+            lg:p-10
+          "
+        >
+          {/* Header */}
+          <div className="text-center mb-6 flex flex-col items-center">
+            <div
+              className="
+                relative
+                h-10
+                md:h-12
+                w-[180px]
+                md:w-[250px]
+                mb-3
+              "
+            >
               <Image
-                 src={"/brandLogo.png"}
-                 alt="Logo"
-                 fill
-                 className="h-full object-contain"
+                src="/brandLogo.png"
+                alt="Logo"
+                fill
+                className="object-contain"
               />
             </div>
-            
-            <h2 className="text-xl md:text-2xl font-bold text-slate-900">
+
+            <h2
+              className="
+                text-lg
+                sm:text-xl
+                md:text-2xl
+                font-bold
+                text-slate-900
+              "
+            >
               Choose your required package
             </h2>
-            <p className="text-slate-600 text-xs md:text-base mx-auto ">
+
+            <p
+              className="
+                text-slate-600
+                text-sm
+                md:text-base
+                max-w-2xl
+              "
+            >
               Subscription is based on the number of devices.
               All features are included in every plan.
             </p>
           </div>
 
-          {/* Shadcn Tabs Toggle */}
-          <div className="mb-10">
-            <Tabs 
-              value={billingCycle} 
-              onValueChange={(v) => setBillingCycle(v as "monthly" | "yearly")}
-              className="w-full"
+          {/* Billing Toggle */}
+          <div className="mb-8 flex justify-center">
+            <Tabs
+              value={billingCycle}
+              onValueChange={(v) =>
+                setBillingCycle(v as "monthly" | "yearly")
+              }
+              className="w-full max-w-xs"
             >
               <TabsList className="grid w-full grid-cols-2 h-11 bg-slate-200/60 p-1 rounded-lg">
-                <TabsTrigger 
-                  value="monthly" 
-                  className="rounded-md data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm font-medium"
+                <TabsTrigger
+                  value="monthly"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
                 >
                   Monthly
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="yearly" 
-                  className="rounded-md data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm font-medium"
+
+                <TabsTrigger
+                  value="yearly"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
                 >
                   Yearly
                 </TabsTrigger>
@@ -117,22 +193,45 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
             </Tabs>
           </div>
 
-          {/* Pricing Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-7xl mx-auto mb-10">
+          {/* Cards */}
+          <div
+            className="
+              grid
+              grid-cols-1
+              sm:grid-cols-2
+              xl:grid-cols-3
+              gap-6
+              mb-10
+            "
+          >
             {subscriptionPackages.map((pkg) => (
-              <PricingCard 
-                key={pkg.id} 
-                pkg={pkg} 
-                billingCycle={billingCycle} 
+              <PricingCard
+                key={pkg.id}
+                pkg={pkg}
+                billingCycle={billingCycle}
               />
             ))}
           </div>
 
-          {/* Footer Text */}
-          <div className="text-center space-y-4 w-full pt-6 border-t border-slate-200/60">
+          {/* Footer */}
+          <div
+            className="
+              text-center
+              space-y-3
+              w-full
+              pt-6
+              border-t
+              border-slate-200
+            "
+          >
             <p className="text-slate-500 text-sm">
-              You will get <span className="font-semibold text-slate-700">7 days free trial</span> for each subscription. After the trial period we will charge the amount.
+              You will get{" "}
+              <span className="font-semibold text-slate-700">
+                7 days free trial
+              </span>{" "}
+              for each subscription.
             </p>
+
             <p className="text-slate-500 text-sm">
               Need subscription for more device?{" "}
               <button className="text-[#135576] font-semibold hover:underline">
@@ -140,11 +239,11 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
               </button>
             </p>
           </div>
-
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 // ─── REUSABLE CARD COMPONENT ───────────────────────────────────────────────
