@@ -1,3 +1,6 @@
+"use client";
+
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import AdminHeader from "@/layout/AdminHeader";
 import AdminSidebar from "@/layout/AdminSidebar";
 
@@ -7,14 +10,16 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
+    <SidebarProvider>
       <AdminSidebar />
 
-      <div className="flex-1">
+      <SidebarInset>
         <AdminHeader />
 
-        <main className="p-6">{children}</main>
-      </div>
-    </div>
+        <main className="flex-1 p-2 md:p-3 xl:p-4 bg-slate-50">
+          {children}
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
