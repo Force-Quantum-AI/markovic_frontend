@@ -3,7 +3,7 @@
 import { LawCard } from "@/components/shared/LawCard";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-const lawsDataset = [
+export const lawsDataset = [
   {
     id: 1,
     title: "Law on Obligations",
