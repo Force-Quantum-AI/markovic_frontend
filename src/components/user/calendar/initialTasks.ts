@@ -194,32 +194,4 @@ export const initialTasks: Task[] = [
     allDay: false,
   },
 
-  // ========== YESTERDAY & TOMORROW ==========
-  {
-    id: "task-yd-1",
-    title: "Documentation Update",
-    type: "deadline",
-    date: getDateStr(-1), // Yesterday
-    startTime: "15:00",
-    endTime: "16:00",
-    allDay: false,
-  },
-  {
-    id: "task-tm-1",
-    title: "Performance Review",
-    type: "hearing",
-    date: getDateStr(1), // Tomorrow
-    startTime: "10:00",
-    endTime: "11:00",
-    allDay: false,
-  },
-  {
-    id: "task-tm-2",
-    title: "Compliance Check",
-    type: "deadline",
-    date: getDateStr(1), // Tomorrow
-    startTime: "14:00",
-    endTime: "15:00",
-    allDay: false,
-  },
 ];

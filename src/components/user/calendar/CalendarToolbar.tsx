@@ -214,19 +214,32 @@ export default function CalendarToolbar({
         </div>
       </div>
 
-      {/* Right section: Switcher controls */}
-      <div className="flex items-center self-end md:self-auto bg-[#EFF1F4] p-1 rounded-lg border border-gray-200/30">
+      <div 
+        style={{
+          borderRadius: "10px",
+          background: "#F3F4F6",
+          padding: "4px",
+        }}
+        className="flex items-center self-end md:self-auto border border-gray-200/20"
+      >
         {(["day", "week", "month"] as CalendarView[]).map((v) => {
           const isActive = activeView === v;
           return (
             <button
               key={v}
               onClick={() => onViewChange(v)}
-              className={`px-4 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-                isActive
-                  ? "bg-white text-gray-900 shadow-xs"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-white/30"
-              }`}
+              style={{
+                borderRadius: "6px",
+                background: isActive ? "#FFF" : "transparent",
+                boxShadow: isActive 
+                  ? "0 1.287px 3.86px 0 rgba(0, 0, 0, 0.10), 0 1.287px 2.573px -1.287px rgba(0, 0, 0, 0.10)"
+                  : "none",
+                color: isActive ? "#101828" : "#667085",
+                fontFamily: "Roboto, sans-serif",
+                fontSize: "16px",
+                textAlign: "center",
+              }}
+              className="px-5 py-2 font-semibold capitalize transition-all cursor-pointer border-none"
             >
               {v}
             </button>
