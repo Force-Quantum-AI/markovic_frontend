@@ -5,6 +5,7 @@ import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import MainButton from "@/components/shared/MainButton";
 import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "../dashboard/UpcomingHearings";
+import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
@@ -60,6 +61,10 @@ export default function AllCasesPage() {
 
     return (
         <div className="mx-auto w-full max-w-7xl p-2 md:p-3">
+            <PageHeadingTitle
+        title="My Cases"
+        subtitle="All your cases in one place"
+      />
             {/* Search Bar */}
             <div className="mb-6 flex items-center gap-5">
                 <div className="relative grow">

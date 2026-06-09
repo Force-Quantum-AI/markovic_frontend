@@ -2,19 +2,21 @@
 
 import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import MainButton from "@/components/shared/MainButton";
 import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
+import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
+import { InputField } from "@/components/shared/InputField";
+import { SelectField } from "@/components/shared/SelectField";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
-const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
-const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
+export const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
+export const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
 
 export default function HearingAndDeadlinePage() {
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
     const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
+    const [selectedSubCategory, setSelectedSubCategory] = useState("All");
     const [hearingDate, setHearingDate] = useState({ day: "", month: "", year: "" });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
@@ -60,57 +62,32 @@ export default function HearingAndDeadlinePage() {
 
     return (
         <div className="mx-auto w-full p-2 md:p-3 bg-white rounded-2xl">
+            <PageHeadingTitle
+                title="Hearings & Deadlines"
+                subtitle="Schedule and details for all court proceedings"
+            />
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div className="col-span-1 md:col-span-2">
-                    <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                        Search
-                    </label>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search cases, clients, laws, documents..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                        />
-                    </div>
+                <InputField
+                label="Search"
+                placeholder="Search cases, clients, laws, documents..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                icon={<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />}
+                />
                 </div>
-                {/* Case Status Filter */}
-                <div className="">
-                    <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                        Category
-                    </label>
-                    <select
-                        value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="w-full rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                    >
-                        {categoryOptions.map((status) => (
-                            <option key={status} value={status}>
-                                {status === "All" ? "Choose status..." : status}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {/* Case Category Filter */}
-                <div className="">
-                    <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                        Sub-category
-                    </label>
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value as CaseCategory)}
-                        className="w-full rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                    >
-                        {categoryOptions.map((category) => (
-                            <option key={category} value={category}>
-                                {category === "All" ? "Choose category..." : category}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <SelectField
+                    label="Category"
+                    options={categoryOptions}
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value as CaseCategory)}
+                />
+                <SelectField
+                    label="Sub-category"
+                    options={categoryOptions}
+                    value={selectedSubCategory}
+                    onChange={(e) => setSelectedSubCategory(e.target.value)}
+                />
             </div>
 
             {/* Filters Row */}
@@ -128,7 +105,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, day: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                         <input
@@ -138,7 +115,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, month: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                         <input
@@ -148,7 +125,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, year: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                     </div>
@@ -166,7 +143,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, day: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                         <input
@@ -176,7 +153,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, month: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                         <input
@@ -186,7 +163,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, year: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                     </div>

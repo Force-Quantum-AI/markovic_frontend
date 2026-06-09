@@ -6,6 +6,7 @@ import { User, Mail, Phone, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucid
 import Link from "next/link";
 import { toast } from "sonner";
 import OtpVerificationModal from "@/components/modals/OtpVerificationModal";
+import SubscriptionModal from "@/components/modals/SubscriptionModal";
 
 export default function RegisterPage() {
   // Form States
@@ -21,6 +22,7 @@ export default function RegisterPage() {
 
     // Modal State Management
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+    const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
   // Validation feedback matching the green check icon on the image
   const isEmailValid = email.includes("@") && email.includes(".");
@@ -42,6 +44,7 @@ export default function RegisterPage() {
     // };
 
     setIsOtpModalOpen(true)
+    setIsSubscriptionModalOpen(true)
   };
 
   return (
@@ -248,6 +251,10 @@ export default function RegisterPage() {
         onOpenChange={setIsOtpModalOpen}
         userEmail={email}
       />
+            <SubscriptionModal
+              isOpen={isSubscriptionModalOpen}
+              onClose={() => setIsSubscriptionModalOpen(false)}
+            />
     </div>
   );
 }
