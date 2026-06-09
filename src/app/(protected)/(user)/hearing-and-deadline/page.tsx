@@ -59,7 +59,7 @@ export default function HearingAndDeadlinePage() {
     };
 
     return (
-        <div className="mx-auto w-full p-2 md:p-3">
+        <div className="mx-auto w-full p-2 md:p-3 bg-white rounded-2xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div className="col-span-1 md:col-span-2">
                     <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
@@ -86,7 +86,7 @@ export default function HearingAndDeadlinePage() {
                         onChange={(e) => setSelectedStatus(e.target.value)}
                         className="w-full rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                     >
-                        {statusOptions.map((status) => (
+                        {categoryOptions.map((status) => (
                             <option key={status} value={status}>
                                 {status === "All" ? "Choose status..." : status}
                             </option>
@@ -195,7 +195,7 @@ export default function HearingAndDeadlinePage() {
             </div>
 
 
-            <section className="w-full mx-auto p-3 md:p-5 space-y-3 md:space-y-6 bg-white rounded-2xl">
+            <section className="w-full mx-auto space-y-3 md:space-y-6 rounded-2xl">
                 {/* Top Header Controls Block */}
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
