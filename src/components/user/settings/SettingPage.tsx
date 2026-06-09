@@ -4,6 +4,7 @@ import { Tab } from "@/types/settingPageTabs";
 import { Bell, Dock, Globe, Lock, Shield, User } from "lucide-react";
 import Password from "./Password";
 import Language from "./Language";
+import Account from "./Account";
 const tabs:Tab[]=[  
     {
         value: "account",
@@ -48,7 +49,7 @@ export default function SettingPage() {
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                {/* <TabsContent value="account"><Account/></TabsContent> */}
+                <TabsContent value="account"><Account/></TabsContent>
                 <TabsContent value="password"><Password/></TabsContent>
                 {/* <TabsContent value="notifications"><Notification/></TabsContent>
                 <TabsContent value="subscription"><Subscription/></TabsContent> */}
