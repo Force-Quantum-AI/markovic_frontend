@@ -17,7 +17,7 @@ const statsData = [
         id: "total-clients",
         label: "Total Clients",
         value: 7,
-        icon: <Users className="w-4 h-4 stroke-[2]" />,
+        icon: <Users className="w-4 h-4 stroke-2" />,
         bgColor: "bg-[#E6D1E3]", // Soft Pink hue
         iconBgColor: "bg-[#fbe6f7]"
     },
@@ -25,7 +25,7 @@ const statsData = [
         id: "total-cases",
         label: "Total Cases",
         value: 86,
-        icon: <Scale className="w-4 h-4 stroke-[2]" />,
+        icon: <Scale className="w-4 h-4 stroke-2" />,
         bgColor: "bg-[#DAE6C9]", // Soft Lime-Green hue
         iconBgColor: "bg-[#edf4e4]"
     },
@@ -33,7 +33,7 @@ const statsData = [
         id: "new-this-month",
         label: "New This Month",
         value: 2,
-        icon: <FileCheck2 className="w-4 h-4 stroke-[2]" />,
+        icon: <FileCheck2 className="w-4 h-4 stroke-2" />,
         bgColor: "bg-[#F2E6D8]", // Soft Cream/Orange hue
         iconBgColor: "bg-[#fff2de]"
     },
@@ -41,14 +41,13 @@ const statsData = [
         id: "active-cases",
         label: "Active Cases",
         value: 72,
-        icon: <Files className="w-4 h-4 stroke-[2]" />,
+        icon: <Files className="w-4 h-4 stroke-2" />,
         bgColor: "bg-[#C8F0DB]", // Soft Mint hue
         iconBgColor: "bg-[#e2f6ec]"
     }
 ];
 
 export default function ClientPage() {
-    const [searchQuery, setSearchQuery] = useState("");
     const [name, setName] = useState("");
     const [year, setYear] = useState("");
     const [court, setCourt] = useState("");
