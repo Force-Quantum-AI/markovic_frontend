@@ -5,6 +5,7 @@ import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import MainButton from "@/components/shared/MainButton";
 import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
+import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
@@ -60,6 +61,10 @@ export default function HearingAndDeadlinePage() {
 
     return (
         <div className="mx-auto w-full p-2 md:p-3 bg-white rounded-2xl">
+            <PageHeadingTitle
+                title="Hearings & Deadlines"
+                subtitle="Schedule and details for all court proceedings"
+            />
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div className="col-span-1 md:col-span-2">
                     <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
