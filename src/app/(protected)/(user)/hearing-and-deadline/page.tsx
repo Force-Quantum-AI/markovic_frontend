@@ -9,8 +9,8 @@ import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
-const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
-const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
+export const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
+export const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
 
 export default function HearingAndDeadlinePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -77,7 +77,7 @@ export default function HearingAndDeadlinePage() {
                             placeholder="Search cases, clients, laws, documents..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="w-full rounded-full border border-gray-200 bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                         />
                     </div>
                 </div>
@@ -89,7 +89,7 @@ export default function HearingAndDeadlinePage() {
                     <select
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="w-full rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                        className="w-full rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                     >
                         {categoryOptions.map((status) => (
                             <option key={status} value={status}>
@@ -107,7 +107,7 @@ export default function HearingAndDeadlinePage() {
                     <select
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value as CaseCategory)}
-                        className="w-full rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                        className="w-full rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                     >
                         {categoryOptions.map((category) => (
                             <option key={category} value={category}>
@@ -133,7 +133,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, day: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                         <input
@@ -143,7 +143,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, month: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                         <input
@@ -153,7 +153,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, year: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                     </div>
@@ -171,7 +171,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, day: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                         <input
@@ -181,7 +181,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, month: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                         <input
@@ -191,7 +191,7 @@ export default function HearingAndDeadlinePage() {
                             onChange={(e) =>
                                 setHearingDate({ ...hearingDate, year: e.target.value })
                             }
-                            className="rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
                     </div>

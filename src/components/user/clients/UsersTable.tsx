@@ -155,15 +155,12 @@ export default function UsersTable({ name, year, email }: UsersTableProps) {
     };
 
     return (
-        <div className="w-full max-w-7xl mx-auto p-4 md:p-6 space-y-4 bg-white rounded-2xl">
+        <div className="w-full mx-auto p-4 md:p-6 space-y-4 bg-white rounded-2xl">
             {/* Table Header Section */}
             <div className="flex items-center justify-between">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
                     Clients
                 </h2>
-                <button className="text-sm font-semibold text-[#135576] hover:underline">
-                    View All
-                </button>
             </div>
 
             {/* --- DESKTOP TABLE VIEW (Visible lg and up) --- */}
