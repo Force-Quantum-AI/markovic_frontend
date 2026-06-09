@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { CheckCircle2, X, Landmark } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
+import ContactSupportModal from "./ContactSupportModal";
 
 // ─── DUMMY DATASET ─────────────────────────────────────────────────────────
 
@@ -55,6 +56,7 @@ interface SubscriptionModalProps {
 
 export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("yearly");
+  const [isContactSupportOpen, setIsContactSupportOpen] = useState(false);
 
   if (!isOpen) return null;
 
@@ -234,7 +236,7 @@ return (
 
             <p className="text-slate-500 text-sm">
               Need subscription for more device?{" "}
-              <button className="text-[#135576] font-semibold hover:underline">
+              <button onClick={() => setIsContactSupportOpen(true)} className="text-[#135576] font-semibold hover:underline">
                 Contact support
               </button>
             </p>
@@ -242,6 +244,10 @@ return (
         </div>
       </div>
     </div>
+    <ContactSupportModal
+      isOpen={isContactSupportOpen}
+      onClose={() => setIsContactSupportOpen(false)}
+    />
   </div>
 );
 }
