@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import MainButton from "@/components/shared/MainButton";
 import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
+import { InputField } from "@/components/shared/InputField";
+import { SelectField } from "@/components/shared/SelectField";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
@@ -14,8 +15,8 @@ export const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property"
 
 export default function HearingAndDeadlinePage() {
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
     const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
+    const [selectedSubCategory, setSelectedSubCategory] = useState("All");
     const [hearingDate, setHearingDate] = useState({ day: "", month: "", year: "" });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
@@ -67,55 +68,26 @@ export default function HearingAndDeadlinePage() {
             />
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div className="col-span-1 md:col-span-2">
-                    <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                        Search
-                    </label>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search cases, clients, laws, documents..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full rounded-full border border-gray-200 bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                        />
-                    </div>
+                <InputField
+                label="Search"
+                placeholder="Search cases, clients, laws, documents..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                icon={<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />}
+                />
                 </div>
-                {/* Case Status Filter */}
-                <div className="">
-                    <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                        Category
-                    </label>
-                    <select
-                        value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="w-full rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                    >
-                        {categoryOptions.map((status) => (
-                            <option key={status} value={status}>
-                                {status === "All" ? "Choose status..." : status}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {/* Case Category Filter */}
-                <div className="">
-                    <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                        Sub-category
-                    </label>
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value as CaseCategory)}
-                        className="w-full rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                    >
-                        {categoryOptions.map((category) => (
-                            <option key={category} value={category}>
-                                {category === "All" ? "Choose category..." : category}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <SelectField
+                    label="Category"
+                    options={categoryOptions}
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value as CaseCategory)}
+                />
+                <SelectField
+                    label="Sub-category"
+                    options={categoryOptions}
+                    value={selectedSubCategory}
+                    onChange={(e) => setSelectedSubCategory(e.target.value)}
+                />
             </div>
 
             {/* Filters Row */}

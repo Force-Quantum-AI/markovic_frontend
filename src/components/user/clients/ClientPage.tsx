@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ChevronLeft, ChevronRight, Plus, Users, Files, Scale, FileCheck2 } from "lucide-react";
+import { Search, Plus, Users, Files, Scale, FileCheck2 } from "lucide-react";
 import MainButton from "@/components/shared/MainButton";
-import { CaseCard } from "@/components/shared/CaseCard";
-import { hearingsDataset } from "../dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { MetricCard } from "../dashboard/DashboardMetrics";
 import UsersTable from "./UsersTable";
@@ -51,13 +49,10 @@ const statsData = [
 
 export default function ClientPage() {
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
-    const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
-    const [hearingDate, setHearingDate] = useState({ day: "", month: "", year: "" });
+    const [name, setName] = useState("");
+    const [year, setYear] = useState("");
+    const [court, setCourt] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 4;
-    const totalPages = 4;
-
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -128,8 +123,8 @@ export default function ClientPage() {
                         <input
                             type="text"
                             placeholder="Search by client name..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                         />
                     </div>
@@ -138,8 +133,8 @@ export default function ClientPage() {
                         <input
                             type="text"
                             placeholder="Search by year..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={year}
+                            onChange={(e) => setYear(e.target.value)}
                             className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                         />
                     </div>
@@ -148,8 +143,8 @@ export default function ClientPage() {
                         <input
                             type="text"
                             placeholder="Search by court name..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={court}
+                            onChange={(e) => setCourt(e.target.value)}
                             className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                         />
                     </div>
@@ -157,7 +152,7 @@ export default function ClientPage() {
                 <MainButton icon={<Search className="h-4 w-4" />} label="Search" onClick={() => setCurrentPage(1)} />
             </div>
 
-                <UsersTable/>
+            <UsersTable />
         </div>
     );
 }

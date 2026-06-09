@@ -1,4 +1,10 @@
-export function InputField({ label, icon, placeholder = 'Search here...', value = '', onChange }: { label?: string; icon: React.ReactNode; placeholder: string; value: string | number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
+export function InputField({ 
+    label, 
+    icon, 
+    placeholder = 'Search here...', 
+    value = '', 
+    onChange 
+}: { label?: string; icon?: React.ReactNode; placeholder: string; value?: string | number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
     return (
         <div className="">
             {label &&
