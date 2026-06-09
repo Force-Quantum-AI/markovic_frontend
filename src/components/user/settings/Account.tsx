@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Camera, Check, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ export default function Account() {
   
   // Using a placeholder image similar to the design
   const [avatarUrl, setAvatarUrl] = useState("https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
     toast.success("Account information saved successfully", {
@@ -19,8 +20,17 @@ export default function Account() {
     });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      setAvatarUrl(imageUrl);
+      toast.success("Profile photo updated");
+    }
+  };
+
   const handleChangePhoto = () => {
-    toast("Change photo clicked", { description: "In a real app, this would open a file picker." });
+    fileInputRef.current?.click();
   };
 
   return (
@@ -52,6 +62,13 @@ export default function Account() {
             >
               Change Photo
             </button>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              className="hidden" 
+              accept="image/*" 
+            />
           </div>
         </div>
 
@@ -103,7 +120,7 @@ export default function Account() {
                   onChange={(e) => setProfessionalRole(e.target.value)}
                   className="w-full h-full bg-white border border-[#d1d5dc] rounded-[10px] px-4 text-[#101828] text-base focus:outline-none focus:border-[#135576] appearance-none cursor-pointer"
                 >
-                  <option value=""></option>
+                  <option value="">Choose role...</option>
                   <option value="lawyer">Lawyer</option>
                   <option value="attorney">Attorney</option>
                   <option value="paralegal">Paralegal</option>
