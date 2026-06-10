@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Archive,
 } from "lucide-react";
+import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -293,11 +294,11 @@ function ResultCard({
 
       {/* Actions */}
       <div className="flex items-center gap-3 pt-1">
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#135576] hover:bg-[#0d3f59] text-white text-xs font-medium transition-colors">
+        <Link href={`/ai-search/results/${result.id}`} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#135576] hover:bg-[#0d3f59] text-white text-xs font-medium transition-colors">
           <Eye className="w-3.5 h-3.5" />
           View Full Decision
-        </button>
-        <button
+        </Link>
+        {/* <button
           onClick={() => onSave(result.id)}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-xs font-medium transition-colors ${
             result.saved
@@ -307,7 +308,7 @@ function ResultCard({
         >
           <BookmarkPlus className="w-3.5 h-3.5" />
           {result.saved ? "Saved" : "Save to My Research"}
-        </button>
+        </button> */}
       </div>
     </div>
   );
