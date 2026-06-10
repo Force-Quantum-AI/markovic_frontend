@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { HearingCardProps } from "../user/dashboard/UpcomingHearings";
 import { Star } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function CaseCard({
+  id,
   category,
   clientName,
   clientImage,
@@ -21,8 +23,10 @@ export function CaseCard({
     "On revision": "bg-[#fff7ed] text-[#f97316] border-[#fed7aa]",
   };
 
+  const router = useRouter()
+
   return (
-    <div className="bg-[#f8f9fa] rounded-3xl p-3 2xl:p-6 border border-gray-100/80 shadow-sm flex flex-col justify-between transition-all hover:shadow-md w-full">
+    <div className="bg-[#f8f9fa] rounded-3xl p-3 2xl:p-6 border border-gray-100/80 shadow-sm flex flex-col justify-between transition-all hover:shadow-md w-full" onClick={()=> router.push(`/my-cases/${caseNumber}`)}>
       <div>
         {/* Top Header: Tag & Star Asset */}
         <div className="flex items-center justify-between mb-4">
