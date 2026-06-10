@@ -271,7 +271,7 @@ export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps)
                             ))}
                         </div>
                     </div>
-
+                            
                     {/* Input box */}
                     <div className="px-4 pb-4">
                         <div className="max-w-2xl mx-auto w-full border border-gray-200 rounded-2xl bg-gray-50 overflow-hidden focus-within:ring-2 focus-within:ring-[#135576]/20 focus-within:border-[#135576] transition-all">
