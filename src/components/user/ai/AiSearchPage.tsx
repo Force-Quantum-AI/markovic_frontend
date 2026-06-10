@@ -19,6 +19,7 @@ import {
 import { AiSearchFilters } from "@/types/ai";
 import AiFilters from "@/components/user/ai/AiFilters";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -175,6 +176,8 @@ export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps)
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const router = useRouter();
+
     // Auto-resize textarea
     useEffect(() => {
         if (textareaRef.current) {
@@ -190,11 +193,11 @@ export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps)
     };
 
     const handleSend = (text?: string) => {
-        const msg = (text ?? inputValue).trim();
-        if (!msg) return;
-        setInputValue("");
-        // Future: send to API
-    };
+  const msg = (text ?? inputValue).trim();
+  if (!msg) return;
+  setInputValue("");
+  router.push(`/ai-search/results?q=${encodeURIComponent(msg)}`);
+};
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
