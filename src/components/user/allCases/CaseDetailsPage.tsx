@@ -28,6 +28,8 @@ import {
 } from "@/data/caseData";
 import { CaseStatus, ClientCase } from "@/types/case.types";
 import CaseOverview from "./CaseOverview";
+import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -47,16 +49,16 @@ function StatusBadge({ status }: { status: CaseStatus }) {
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
-function Avatar({ name, size = "w-24 h-24" }: { name: string; size?: string }) {
-  // Using a real placeholder image service
-  return (
-    <div
-      className={`${size} rounded-full bg-gradient-to-br from-orange-300 to-orange-500 flex items-center justify-center text-white font-bold text-2xl overflow-hidden`}
-    >
-      {name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-    </div>
-  );
-}
+// function Avatar({ name, size = "w-24 h-24" }: { name: string; size?: string }) {
+//   // Using a real placeholder image service
+//   return (
+//     <div
+//       className={`${size} rounded-full bg-gradient-to-br from-orange-300 to-orange-500 flex items-center justify-center text-white font-bold text-2xl overflow-hidden`}
+//     >
+//       {name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+//     </div>
+//   );
+// }
 
 // ─── Tab definition ───────────────────────────────────────────────────────────
 
@@ -79,13 +81,13 @@ function LawyerAvatarStrip() {
         <div
           key={l.id}
           title={l.name}
-          className={`w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold ${l.color}`}
-          style={{ marginLeft: i > 0 ? "-8px" : 0, zIndex: DUMMY_CASE.assignedLawyers.length - i }}
+          className={`w-8 h-8 relative rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold ${l.color}`}
+          style={{ marginLeft: i > 0 ? "-12px" : 0, zIndex: DUMMY_CASE.assignedLawyers.length - i }}
         >
-          {l.initials}
+          <Image src={`/dummy-user.jpg`} alt={l.name} fill className="h-full w-full object-cover rounded-full" />
         </div>
       ))}
-      <button className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-[#135576] hover:bg-[#135576]/5 transition-colors ml-0.5">
+      <button className="w-7 h-7 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-[#135576] hover:bg-[#135576]/5 transition-colors ml-0.5">
         <Plus className="w-3.5 h-3.5 text-gray-400" />
       </button>
     </div>
@@ -150,7 +152,10 @@ export default function CaseDetailsPage() {
       <aside className="w-full lg:w-72 xl:w-100 shrink-0 space-y-6 bg-white rounded-2xl p-5 ">
         {/* Profile card */}
         <div className=" flex flex-col items-center text-center">
-          <Avatar name={client.name} />
+          <Avatar className="w-24 h-24">
+            <AvatarImage src="/dummy-user.jpg" />
+            <AvatarFallback>{client.name}</AvatarFallback>
+          </Avatar>
           <h2 className="text-lg font-bold text-gray-800 mt-3">{client.name}</h2>
           <p className="text-sm text-gray-400">{client.company}</p>
         </div>
@@ -203,9 +208,8 @@ export default function CaseDetailsPage() {
                     <button
                       key={s}
                       onClick={() => { setCaseFilter(s); setFilterOpen(false); }}
-                      className={`w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 transition-colors ${
-                        caseFilter === s ? "text-[#135576] font-medium" : "text-gray-600"
-                      }`}
+                      className={`w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 transition-colors ${caseFilter === s ? "text-[#135576] font-medium" : "text-gray-600"
+                        }`}
                     >
                       {s}
                     </button>
@@ -219,11 +223,10 @@ export default function CaseDetailsPage() {
             {filteredCases.map((c) => (
               <div
                 key={c.id}
-                className={`flex items-start gap-2 p-2.5 rounded-xl cursor-pointer transition-colors ${
-                  c.id === "case-1"
+                className={`flex items-start gap-2 p-2.5 rounded-xl cursor-pointer transition-colors ${c.id === "case-1"
                     ? "bg-[#135576]/5 border border-[#135576]/15"
                     : "hover:bg-gray-50 border border-transparent"
-                }`}
+                  }`}
               >
                 <Briefcase className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
                 <div className="flex-1 min-w-0">
@@ -278,7 +281,7 @@ export default function CaseDetailsPage() {
 
           <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Assign lawyers */}
-            <div className="flex items-center gap-3">
+            <div className="">
               <span className="text-xs text-gray-400">Assign Lawyer</span>
               <LawyerAvatarStrip />
             </div>
@@ -310,11 +313,10 @@ export default function CaseDetailsPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === tab.key
+                className={`shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key
                     ? "border-[#135576] text-[#135576]"
                     : "border-transparent text-gray-400 hover:text-gray-600"
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
