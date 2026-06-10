@@ -39,9 +39,8 @@ export function LawCard({
         duration-300
         hover:shadow-md
         hover:-translate-y-1
-        cursor-pointer
+        
       "
-      onClick={() => navigate.push(`/law-and-bylaw/${id}`)}
     >
       {/* Top Section */}
       <div className="flex items-start justify-between">
@@ -63,6 +62,7 @@ export function LawCard({
             bg-[#ECEFF1]
             transition-all
             hover:bg-[#dfe6ea]
+            z-999
           "
         >
           <Star
@@ -77,7 +77,7 @@ export function LawCard({
       </div>
 
       {/* Content */}
-      <div className="mt-5 flex flex-1 flex-col">
+      <div className="mt-5 flex flex-1 flex-col cursor-pointer" onClick={() => navigate.push(`/law-and-bylaw/${id}`)}>
         <h3 className="line-clamp-2 text-[18px] font-bold leading-7 text-[#2D3139]">
           {title}
         </h3>
