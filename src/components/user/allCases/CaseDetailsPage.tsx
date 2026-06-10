@@ -30,6 +30,7 @@ import { CaseStatus, ClientCase } from "@/types/case.types";
 import CaseOverview from "./CaseOverview";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { EditPersonalModal } from "@/components/modals/EditPersonalModal";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -333,7 +334,11 @@ export default function CaseDetailsPage() {
           {activeTab === "notes" && <CaseNotes notes={DUMMY_NOTES} />} */}
         </div>
       </main>
-
+            <EditPersonalModal
+              open={editPersonalOpen}
+              setOpen={setEditPersonalOpen}
+              clientData={client}
+            />
     </div>
   );
 }
