@@ -1,5 +1,3 @@
-"use client";
-
 import { Gavel, Clock3, TrendingUp } from "lucide-react";
 
 export default function CaseHealth() {
