@@ -255,19 +255,19 @@ export default function ArchiveTable() {
                         label="Status"
                         options={statusOptions}
                         value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
+                        onChange={(e: any) => setSelectedStatus(e.target.value)}
                         />
                         <SelectField
                         label="Category"
                         options={categoryOptions}
                         value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        onChange={(e: any) => setSelectedCategory(e.target.value)}
                         />
                         <SelectField
                         label="Sub-category"
                         options={statusOptions}
                         value={selectedSubCategory}
-                        onChange={(e) => setSelectedSubCategory(e.target.value)}
+                        onChange={(e: any) => setSelectedSubCategory(e.target.value)}
                         />
 
                     </div>

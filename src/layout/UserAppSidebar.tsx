@@ -13,7 +13,8 @@ import {
   Scale,
   Users,
   ScrollText,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Star
 } from "lucide-react";
 
 import {
@@ -28,6 +29,11 @@ const navItems = [
     title: "Dashboard",
     href: "/",
     icon: Grid2x2Check,
+  },
+  {
+    title: "Bookmarks",
+    href: "/bookmarks",
+    icon: Star,
   },
   {
     title: "My Cases",

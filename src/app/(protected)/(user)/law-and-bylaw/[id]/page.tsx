@@ -271,7 +271,7 @@ export default function LawDetailsPage() {
 
 
         {/* 3. Dropdown Selection Navigation Section Filters Menu */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 print:hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
           
           {/* Section Dynamic Controller Select Option */}
           <div className="space-y-1.5">
@@ -298,7 +298,7 @@ export default function LawDetailsPage() {
           </div>
 
           {/* Chapters Select Dropdown Filter Control Block */}
-          <div className="space-y-1.5">
+          {/* <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider px-1">Chapters:</label>
             <div className="relative w-full">
               <select
@@ -315,7 +315,7 @@ export default function LawDetailsPage() {
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
             </div>
-          </div>
+          </div> */}
 
           {/* Article Dynamic Dropdown Selection list filter trigger */}
           <div className="space-y-1.5">

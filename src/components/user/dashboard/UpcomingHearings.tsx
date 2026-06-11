@@ -5,6 +5,7 @@ import { CaseCard } from "@/components/shared/CaseCard";
 
 // --- TYPES FOR REUSABLE CARD ---
 export interface HearingCardProps {
+  id?: string;
   category: "Civil" | "Criminal";
   clientName: string;
   clientImage: string;

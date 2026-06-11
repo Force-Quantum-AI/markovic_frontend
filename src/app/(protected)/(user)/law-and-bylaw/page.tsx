@@ -112,16 +112,16 @@ export default function LawAndByLawPage() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
-                        {lawsDataset.map((law, index) => (
-                          <LawCard
+                    {lawsDataset.map((law, index) => (
+                        <LawCard
                             key={index}
                             title={law.title}
                             category={law.category}
                             officialGazette={law.officialGazette}
                             lastUpdate={law.lastUpdate}
-                          />
-                        ))}
-                      </div>
+                        />
+                    ))}
+                </div>
 
 
                 {/* Pagination */}

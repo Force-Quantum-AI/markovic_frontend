@@ -1,4 +1,4 @@
-export function SelectField({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }) {
+export function SelectField({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: any }) {
     return (
         <div className="">
             <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
