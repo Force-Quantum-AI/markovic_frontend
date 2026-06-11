@@ -31,6 +31,8 @@ import CaseOverview from "./CaseOverview";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import EditPersonalModal from "@/components/modals/EditPersonalModal";
+import AddLawyerModal from "@/components/modals/AddLawyerModal";
+import EditNoteModal from "@/components/modals/EditNoteModal";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -88,9 +90,9 @@ function LawyerAvatarStrip() {
           <Image src={`/dummy-user.jpg`} alt={l.name} fill className="h-full w-full object-cover rounded-full" />
         </div>
       ))}
-      <button className="w-7 h-7 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-[#135576] hover:bg-[#135576]/5 transition-colors ml-0.5">
+      {/* <button className="w-7 h-7 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-[#135576] hover:bg-[#135576]/5 transition-colors ml-0.5">
         <Plus className="w-3.5 h-3.5 text-gray-400" />
-      </button>
+      </button> */}
     </div>
   );
 }
@@ -225,8 +227,8 @@ export default function CaseDetailsPage() {
               <div
                 key={c.id}
                 className={`flex items-start gap-2 p-2.5 rounded-xl cursor-pointer transition-colors ${c.id === "case-1"
-                    ? "bg-[#135576]/5 border border-[#135576]/15"
-                    : "hover:bg-gray-50 border border-transparent"
+                  ? "bg-[#135576]/5 border border-[#135576]/15"
+                  : "hover:bg-gray-50 border border-transparent"
                   }`}
               >
                 <Briefcase className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
@@ -283,7 +285,7 @@ export default function CaseDetailsPage() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Assign lawyers */}
             <div className="">
-              <span className="text-xs text-gray-400">Assign Lawyer</span>
+              <span className="text-xs text-gray-400">Assigned Lawyer</span>
               <LawyerAvatarStrip />
             </div>
 
@@ -315,8 +317,8 @@ export default function CaseDetailsPage() {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key
-                    ? "border-[#135576] text-[#135576]"
-                    : "border-transparent text-gray-400 hover:text-gray-600"
+                  ? "border-[#135576] text-[#135576]"
+                  : "border-transparent text-gray-400 hover:text-gray-600"
                   }`}
               >
                 {tab.label}
@@ -339,6 +341,16 @@ export default function CaseDetailsPage() {
         setOpen={setEditPersonalOpen}
         data={client}
       />
+      <EditNoteModal
+        open={editNotesOpen}
+        setOpen={() => { setEditNotesOpen(false); }}
+        data={{ note: client.notes || "" }}
+      />
+      {/* <AddLawyerModal
+        open={addLawyerOpen}
+        setOpen={() => setAddLawyerOpen(false)}
+        data={{ caseId: caseDetail.id, caseName: caseDetail.client }}
+      /> */}
     </div>
   );
 }
