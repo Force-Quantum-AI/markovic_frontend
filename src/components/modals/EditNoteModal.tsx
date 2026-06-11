@@ -16,6 +16,7 @@ interface EditNoteModalProps {
   setOpen: (open: boolean) => void;
   data?: {
     note?: string;
+    id?: string;
   };
   onSave?: (note: string) => void;
 }
@@ -30,6 +31,11 @@ export default function EditNoteModal({ open, setOpen, data, onSave }: EditNoteM
   }, [open, data?.note]);
 
   const handleSave = () => {
+    if (data?.id) {
+      // Update existing note
+    } else {
+      // Save new note
+    }
     if (onSave) {
       onSave(note);
     }
@@ -70,12 +76,21 @@ export default function EditNoteModal({ open, setOpen, data, onSave }: EditNoteM
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleSave}
-            className="bg-[#135576] hover:bg-[#0e445e] text-white rounded-xl"
-          >
-            Save note
-          </Button>
+          {data?.id ? (
+            <Button
+              onClick={handleSave}
+              className="bg-[#135576] hover:bg-[#0e445e] text-white rounded-xl"
+            >
+              Update note
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSave}
+              className="bg-[#135576] hover:bg-[#0e445e] text-white rounded-xl"
+            >
+              Save note
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

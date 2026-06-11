@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { MoreVertical, Plus, Pencil } from "lucide-react";
+import { MoreVertical, Trash2, SquarePen } from "lucide-react";
 import { CaseDetail, Lawyer } from "@/types/case.types";
 import UpdateCaseOverviewModal from "@/components/modals/UpdateCaseOverviewModal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AddLawyerModal from "@/components/modals/AddLawyerModal";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 // ─── Avatar helpers ───────────────────────────────────────────────────────────
 
@@ -86,6 +87,10 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
     setEditOpen(false);
   };
 
+  const handleRemove = (lawyerId: string) => {
+    setLawyers(lawyers.filter((l) => l.id !== lawyerId));
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-4">
       {/* ── Left: Overview fields ── */}
@@ -97,7 +102,7 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
             onClick={() => setEditOpen(true)}
             className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
           >
-            <Pencil className="w-4 h-4 text-gray-400" />
+            <SquarePen className="w-4 h-4 text-gray-400" />
           </button>
         </div>
 
@@ -142,9 +147,20 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
                 </Avatar>
                 <span className="text-sm font-medium text-gray-700">{lawyer.name}</span>
               </div>
-              <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-gray-100">
-                <MoreVertical className="w-4 h-4 text-gray-400" />
-              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-gray-100">
+                    <MoreVertical className="w-4 h-4 text-gray-400" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-lg border border-gray-100 p-1">
+                  <DropdownMenuItem onClick={() => handleRemove(lawyer.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors focus:bg-red-50 focus:outline-none">
+                    <Trash2 className="w-4 h-4 text-red-400" />
+                    <span>Remove</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
             </div>
           ))}
         </div>
@@ -160,7 +176,7 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
       <AddLawyerModal
         open={addLawyerOpen}
         setOpen={() => setAddLawyerOpen(false)}
-        data={{caseId:caseDetail.id, caseName: caseDetail.client }}
+        data={{ caseId: caseDetail.id, caseName: caseDetail.client }}
       />
     </div>
   );

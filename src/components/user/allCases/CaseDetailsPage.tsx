@@ -6,24 +6,16 @@ import {
   Mail,
   MapPin,
   IdCard,
-  Pencil,
   Plus,
   Briefcase,
   ChevronDown,
   Calendar,
   Flag,
+  SquarePen,
 } from "lucide-react";
 
-// import Hearings from "@/components/user/cases/tabs/Hearings";
-// import Deadlines from "@/components/user/cases/tabs/Deadlines";
-// import Documents from "@/components/user/cases/tabs/Documents";
-// import CaseNotes from "@/components/user/cases/tabs/CaseNotes";
 import {
   DUMMY_CASE,
-  DUMMY_HEARINGS,
-  DUMMY_DEADLINES,
-  DUMMY_DOCUMENTS,
-  DUMMY_NOTES,
   DUMMY_CLIENT,
 } from "@/data/caseData";
 import { CaseStatus, ClientCase } from "@/types/case.types";
@@ -35,6 +27,8 @@ import AddLawyerModal from "@/components/modals/AddLawyerModal";
 import EditNoteModal from "@/components/modals/EditNoteModal";
 import HearingsTab from "./HearingsTab";
 import DeadlinesTab from "./DeadlinesTab";
+import DocumentsTab from "./DocumentsTab";
+import NoteTab from "./NoteTab";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -181,7 +175,7 @@ export default function CaseDetailsPage() {
               onClick={() => setEditPersonalOpen(true)}
               className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
             >
-              <Pencil className="w-3.5 h-3.5 text-gray-400" />
+              <SquarePen className="w-3.5 h-3.5 text-gray-400" />
             </button>
           </div>
           <div className="space-y-3">
@@ -267,7 +261,7 @@ export default function CaseDetailsPage() {
               onClick={() => { setNotesForm(client.notes); setEditNotesOpen(true); }}
               className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
             >
-              <Pencil className="w-3.5 h-3.5 text-gray-400" />
+              <SquarePen className="w-3.5 h-3.5 text-gray-400" />
             </button>
           </div>
           <p className="text-xs text-gray-500 leading-relaxed bg-gray-50 rounded-xl p-2 ">{client.notes}</p>
@@ -342,8 +336,8 @@ export default function CaseDetailsPage() {
           {activeTab === "overview" && <CaseOverview caseDetail={DUMMY_CASE} />}
           {activeTab === "hearings" && <HearingsTab />}
           {activeTab === "deadlines" && <DeadlinesTab />}
-          {/* {activeTab === "documents" && <Documents documents={DUMMY_DOCUMENTS} />} */}
-          {/* {activeTab === "notes" && <CaseNotes notes={DUMMY_NOTES} />} */}
+          {activeTab === "documents" && <DocumentsTab />}
+          {activeTab === "notes" && <NoteTab />}
         </div>
       </main>
       <EditPersonalModal
