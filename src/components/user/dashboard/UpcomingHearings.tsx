@@ -2,6 +2,7 @@
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CaseCard } from "@/components/shared/CaseCard";
+import { useRouter } from "next/navigation";
 
 // --- TYPES FOR REUSABLE CARD ---
 export interface HearingCardProps {
@@ -73,7 +74,7 @@ export  const hearingsDataset: HearingCardProps[] = [
 
 // --- MAIN GRID MODULE WRAPPER ---
 export default function UpcomingHearings() {
-
+  const router = useRouter();
   return (
     <section className="w-full max-w-7xl mx-auto p-3 md:p-5 space-y-3 md:space-y-6 bg-white rounded-2xl">
       {/* Top Header Controls Block */}
@@ -81,7 +82,7 @@ export default function UpcomingHearings() {
         <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
           Upcoming Hearings
         </h3>
-        <button className="text-sm font-semibold text-[#135576] hover:underline transition-all">
+        <button onClick={() => router.push("/hearing-and-deadline")} className="text-sm font-semibold text-[#135576] hover:underline transition-all">
           View All
         </button>
       </div>

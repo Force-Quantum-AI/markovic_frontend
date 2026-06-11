@@ -9,6 +9,9 @@ const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 export const metadata: Metadata = {
   title: "Actio",
   description: "Legal Research Assistant",
+  icons: {
+    icon: '/actioProjectBrandFavLogo.png', 
+  },
 };
 
 export default function RootLayout({

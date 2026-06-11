@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 // --- TYPES & INTERFACES ---
 interface CaseItem {
@@ -23,6 +24,8 @@ interface CaseItem {
 }
 
 export default function RecentCases() {
+  const router = useRouter();
+
   // Dummy dataset exactly mimicking the UI image specifications
   const [cases, setCases] = useState<CaseItem[]>([
     {
@@ -93,7 +96,7 @@ export default function RecentCases() {
         <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
           Recent Cases
         </h2>
-        <button className="text-sm font-semibold text-[#135576] hover:underline">
+        <button onClick={() => router.push("/my-cases")} className="text-sm font-semibold text-[#135576] hover:underline">
           View All
         </button>
       </div>
