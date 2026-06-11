@@ -60,9 +60,9 @@ export const DUMMY_CASE: CaseDetail = {
   hearingDate: "May 22, 2026",
   deadlineDate: "May 30, 2026",
   assignedLawyers: [
-    { id: "l1", name: "Eleanor Pena", initials: "EP", color: "bg-pink-300" },
-    { id: "l2", name: "Cameron Williamson", initials: "CW", color: "bg-gray-400" },
-    { id: "l3", name: "Darrell Steward", initials: "DS", color: "bg-yellow-400" },
+    { id: "l1", name: "Eleanor Pena", initials: "EP", color: "bg-pink-300", image: "/dummy-user.jpg" },
+    { id: "l2", name: "Cameron Williamson", initials: "CW", color: "bg-gray-400", image: "/dummy-user.jpg" },
+    { id: "l3", name: "Darrell Steward", initials: "DS", color: "bg-yellow-400", image: "/dummy-user.jpg" },
   ],
 };
 

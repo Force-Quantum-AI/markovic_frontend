@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MoreVertical, Plus, Pencil } from "lucide-react";
 import { CaseDetail, Lawyer } from "@/types/case.types";
+import UpdateCaseOverviewModal from "@/components/modals/UpdateCaseOverviewModal";
 
 // ─── Avatar helpers ───────────────────────────────────────────────────────────
 
@@ -34,9 +35,8 @@ function StatusBadge({ status }: { status: string }) {
   };
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${
-        map[status] ?? "bg-gray-100 text-gray-600 border-gray-200"
-      }`}
+      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${map[status] ?? "bg-gray-100 text-gray-600 border-gray-200"
+        }`}
     >
       {status}
     </span>
@@ -87,7 +87,7 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
   return (
     <div className="flex flex-col lg:flex-row gap-4">
       {/* ── Left: Overview fields ── */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 border-r pr-5">
         {/* Section header */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-semibold text-gray-800">Overview</h3>
@@ -117,7 +117,7 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
 
       {/* ── Right: Responsible Lawyers ── */}
       <div className="w-full lg:w-72 shrink-0">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 border-b border-gray-100 pb-3">
           <h3 className="text-sm font-semibold text-gray-700">Responsible Lawyer:</h3>
           <button
             onClick={() => setAddLawyerOpen(true)}
@@ -146,46 +146,11 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
       </div>
 
       {/* ── Edit Overview Modal ── */}
-      {/* <Modal isOpen={editOpen} onClose={() => setEditOpen(false)} title="Edit Overview">
-        <div className="space-y-4">
-          {(
-            [
-              { key: "client", label: "Client" },
-              { key: "opposingParty", label: "Opposing Party" },
-              { key: "court", label: "Court" },
-              { key: "category", label: "Category" },
-              { key: "subcategory", label: "Subcategory" },
-              { key: "nextHearing", label: "Next Hearing" },
-              { key: "nextDeadline", label: "Next Deadline" },
-              { key: "scn", label: "SCN" },
-            ] as { key: keyof typeof form; label: string }[]
-          ).map(({ key, label }) => (
-            <div key={key}>
-              <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
-              <input
-                type="text"
-                value={form[key]}
-                onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576]"
-              />
-            </div>
-          ))}
-          <div className="flex gap-3 pt-2">
-            <button
-              onClick={() => setEditOpen(false)}
-              className="flex-1 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              className="flex-1 py-2 rounded-lg bg-[#135576] text-white text-sm font-medium hover:bg-[#0d3f59] transition-colors"
-            >
-              Save Changes
-            </button>
-          </div>
-        </div>
-      </Modal> */}
+      <UpdateCaseOverviewModal
+        open={editOpen}
+        setOpen={setEditOpen}
+        // data={caseDetail}
+      />
 
       {/* ── Add Lawyer Modal ── */}
       {/* <Modal isOpen={addLawyerOpen} onClose={() => setAddLawyerOpen(false)} title="Add Responsible Lawyer">
@@ -233,11 +198,10 @@ function AddLawyerForm({
         {available.map((l) => (
           <label
             key={l.id}
-            className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
-              selected === l.id
+            className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selected === l.id
                 ? "border-[#135576] bg-[#135576]/5"
                 : "border-gray-100 hover:border-gray-200"
-            }`}
+              }`}
           >
             <input
               type="radio"

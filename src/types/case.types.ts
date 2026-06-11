@@ -6,6 +6,7 @@ export interface Lawyer {
   avatar?: string;
   initials: string;
   color: string; // bg color for initials avatar
+  image?: string;
 }
 
 export interface ClientCase {
