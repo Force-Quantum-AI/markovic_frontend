@@ -80,13 +80,13 @@ export default function HearingAndDeadlinePage() {
                     label="Category"
                     options={categoryOptions}
                     value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value as CaseCategory)}
+                    onChange={(e:any) => setSelectedCategory(e.target.value as CaseCategory)}
                 />
                 <SelectField
                     label="Sub-category"
                     options={categoryOptions}
                     value={selectedSubCategory}
-                    onChange={(e) => setSelectedSubCategory(e.target.value)}
+                    onChange={(e:any) => setSelectedSubCategory(e.target.value)}
                 />
             </div>
 
