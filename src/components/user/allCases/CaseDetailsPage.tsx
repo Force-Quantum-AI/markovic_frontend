@@ -33,6 +33,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import EditPersonalModal from "@/components/modals/EditPersonalModal";
 import AddLawyerModal from "@/components/modals/AddLawyerModal";
 import EditNoteModal from "@/components/modals/EditNoteModal";
+import HearingsTab from "./HearingsTab";
+import DeadlinesTab from "./DeadlinesTab";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -78,7 +80,9 @@ const TABS: { key: TabKey; label: string }[] = [
 // ─── Lawyer avatars strip ─────────────────────────────────────────────────────
 
 function LawyerAvatarStrip() {
+  const [addLawyerOpen, setAddLawyerOpen] = useState(false);
   return (
+    <>
     <div className="flex items-center gap-1">
       {DUMMY_CASE.assignedLawyers.map((l, i) => (
         <div
@@ -90,10 +94,16 @@ function LawyerAvatarStrip() {
           <Image src={`/dummy-user.jpg`} alt={l.name} fill className="h-full w-full object-cover rounded-full" />
         </div>
       ))}
-      {/* <button className="w-7 h-7 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-[#135576] hover:bg-[#135576]/5 transition-colors ml-0.5">
+      <button onClick={() => setAddLawyerOpen(true)} className="w-7 h-7 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-[#135576] hover:bg-[#135576]/5 transition-colors ml-0.5">
         <Plus className="w-3.5 h-3.5 text-gray-400" />
-      </button> */}
+      </button>
     </div>
+    <AddLawyerModal
+        open={addLawyerOpen}
+        setOpen={() => setAddLawyerOpen(false)}
+        data={{ caseId: "", caseName: "" }}
+      />
+      </>
   );
 }
 
@@ -330,10 +340,10 @@ export default function CaseDetailsPage() {
         {/* Tab content */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           {activeTab === "overview" && <CaseOverview caseDetail={DUMMY_CASE} />}
-          {/* {activeTab === "hearings" && <Hearings hearings={DUMMY_HEARINGS} />}
-          {activeTab === "deadlines" && <Deadlines deadlines={DUMMY_DEADLINES} />}
-          {activeTab === "documents" && <Documents documents={DUMMY_DOCUMENTS} />}
-          {activeTab === "notes" && <CaseNotes notes={DUMMY_NOTES} />} */}
+          {activeTab === "hearings" && <HearingsTab />}
+          {activeTab === "deadlines" && <DeadlinesTab />}
+          {/* {activeTab === "documents" && <Documents documents={DUMMY_DOCUMENTS} />} */}
+          {/* {activeTab === "notes" && <CaseNotes notes={DUMMY_NOTES} />} */}
         </div>
       </main>
       <EditPersonalModal
@@ -346,11 +356,6 @@ export default function CaseDetailsPage() {
         setOpen={() => { setEditNotesOpen(false); }}
         data={{ note: client.notes || "" }}
       />
-      {/* <AddLawyerModal
-        open={addLawyerOpen}
-        setOpen={() => setAddLawyerOpen(false)}
-        data={{ caseId: caseDetail.id, caseName: caseDetail.client }}
-      /> */}
     </div>
   );
 }
