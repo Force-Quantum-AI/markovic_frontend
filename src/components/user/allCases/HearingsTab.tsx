@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Plus, Edit2, Calendar } from "lucide-react";
+import AddEditHearingModal from "@/components/modals/AddEditHearingModal";
 
 // 1. TypeScript Interface for type safety
 interface Hearing {
@@ -50,25 +51,35 @@ export default function HearingsTab() {
   // Find the next upcoming hearing dynamically
   const nextHearing = hearings.find((h) => h.status === "Upcoming");
 
-  // Mock handler for adding a new hearing dynamically
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedHearing, setSelectedHearing] =
+    useState<Hearing | null>(null);
+
+  const [mode, setMode] =
+    useState<"add" | "edit">("add");
+
   const handleAddHearing = () => {
-    const newMockHearing: Hearing = {
-      id: Date.now().toString(),
-      date: "15 June 2026",
-      time: "10:00",
-      location: "Basic Court Podgorica",
-      type: "Follow-up hearing",
-      status: "Upcoming",
-      daysRemaining: 4,
-    };
-    // If we want a strict flow where only one is "Upcoming", you can modify logic here
-    setHearings([newMockHearing, ...hearings]);
-    alert("Dummy hearing added successfully! (Local state updated)");
+    setMode("add");
+    setSelectedHearing(null);
+    setOpenModal(true);
   };
 
-  // Mock handler for editing a hearing
   const handleEditHearing = (id: string) => {
-    alert(`Edit mode triggered for hearing ID: ${id}`);
+    const hearing = hearings.find(
+      (item) => item.id === id
+    );
+
+    if (!hearing) return;
+
+    setSelectedHearing(hearing);
+    setMode("edit");
+    setOpenModal(true);
+  };
+
+  const handleSubmitHearing = (data: any) => {
+    console.log("Submitted Hearing:", data);
+
+    // Later replace with API mutation
   };
 
   // Helper function for styling status badges dynamically
@@ -87,7 +98,7 @@ export default function HearingsTab() {
 
   return (
     <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6">
-      
+
       {/* LEFT COLUMN: Upcoming Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex flex-col justify-between">
         <div>
@@ -181,7 +192,13 @@ export default function HearingsTab() {
           ))}
         </div>
       </div>
-
+      <AddEditHearingModal
+        open={openModal}
+        setOpen={setOpenModal}
+        mode={mode}
+        hearing={selectedHearing}
+        onSubmit={handleSubmitHearing}
+      />
     </div>
   );
 }
