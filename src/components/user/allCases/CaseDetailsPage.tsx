@@ -29,6 +29,7 @@ import HearingsTab from "./HearingsTab";
 import DeadlinesTab from "./DeadlinesTab";
 import DocumentsTab from "./DocumentsTab";
 import NoteTab from "./NoteTab";
+import AddNewCase from "@/components/modals/AddNewCase";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -350,6 +351,10 @@ export default function CaseDetailsPage() {
         setOpen={() => { setEditNotesOpen(false); }}
         data={{ note: client.notes || "" }}
       />
+      <AddNewCase
+            isOpen={addCaseOpen}
+            onClose={()=> setAddCaseOpen(false)}
+            />
     </div>
   );
 }
