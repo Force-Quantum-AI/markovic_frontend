@@ -12,6 +12,7 @@ export const DUMMY_CLIENT: ClientProfile = {
   name: "Esther Howard",
   company: "Bank of America",
   phone: "(702) 555-0122",
+  avatarUrl: "/dummy-user.jpg",
   email: "sara.cruz@example.com",
   address: "1901 Thornridge Cir. Shiloh, Hawaii 81063",
   personalId: "#555-0128",

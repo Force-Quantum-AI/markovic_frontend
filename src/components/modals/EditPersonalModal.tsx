@@ -1,85 +1,257 @@
 "use client";
 
-import React, { useState } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Camera, X } from "lucide-react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Camera, User, Mail, Phone, IdCard, MapPin } from "lucide-react";
-import { InputField } from "../shared/InputField";
 
-export function EditPersonalModal({ clientData, open, setOpen }: { clientData: any, open: boolean, setOpen: (open: boolean) => void }) {
-  const [formData, setFormData] = useState(clientData);
+import { InputField } from "@/components/shared/InputField";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-    setFormData({ ...formData, [field]: e.target.value });
+interface UserData {
+  avatarUrl?: string;
+  name: string;
+  email: string;
+  phone: string;
+  personalId: string;
+  address: string;
+}
+
+interface PersonalDetailsModalProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  data?: UserData;
+}
+
+export default function EditPersonalModal({
+  open,
+  setOpen,
+  data,
+}: PersonalDetailsModalProps) {
+  const [formData, setFormData] = useState<UserData>({
+    avatarUrl: "",
+    name: "",
+    email: "",
+    phone: "",
+    personalId: "",
+    address: "",
+  });
+
+  useEffect(() => {
+    if (data) {
+      setFormData(data);
+    }
+  }, [data]);
+
+  const handleInputChange =
+    (field: keyof UserData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.target.value,
+      }));
+    };
+
+  const handleImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const imageUrl = URL.createObjectURL(file);
+
+    setFormData((prev) => ({
+      ...prev,
+      avatarUrl: imageUrl,
+    }));
+  };
+
+  const handleUpdate = () => {
+    console.log("Updated Data:", formData);
+
+    // later API integration
+    // await updateProfile(formData)
+
+    setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-xl rounded-3xl p-8">
-        <DialogHeader>
-          <DialogTitle className="text-center text-xl font-bold mb-6">
-            Personal Details
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className="
+          max-w-3xl!
+          rounded-[32px]
+          border-none
+          p-0
+          overflow-hidden
+        "
+        showCloseButton={false}
+      >
+        <DialogTitle className="hidden">
+          Personal Details
+        </DialogTitle>
 
-        {/* Basic Information Section */}
-        <div className="space-y-6">
-          <div className="text-xs font-bold text-gray-900 mb-2">Basic information</div>
-          
-          <div className="flex flex-col items-center gap-2 mb-6">
-            <div className="w-24 h-24 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center relative">
-              <User className="w-10 h-10 text-gray-400" />
-              <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full border border-gray-200 shadow-sm">
-                <Camera className="w-4 h-4 text-gray-600" />
+        <div className="relative bg-white px-6 py-8 md:px-8 md:py-10">
+          {/* Close Button */}
+          <button
+            onClick={() => setOpen(false)}
+            className="absolute right-6 top-6"
+          >
+            <X className="h-5 w-5 text-[#343A40]" />
+          </button>
+
+          {/* Heading */}
+          <h2 className="text-center text-[24px] font-semibold text-[#111827]">
+            Personal Details
+          </h2>
+
+          {/* Content */}
+          <div className="mt-10">
+            <h3 className="mb-6 text-[16px] font-semibold text-[#111827]">
+              Basic information
+            </h3>
+
+            {/* Avatar Upload */}
+            <div className="mb-8 flex items-center gap-7">
+              <div className="relative">
+                <div
+                  className="
+                    h-24
+                    w-24
+                    overflow-hidden
+                    rounded-full
+                    border
+                    border-dashed
+                    border-[#9CAFC3]
+                    bg-[#F8FAFC]
+                  "
+                >
+                  {formData.avatarUrl ? (
+                    <Image
+                      src={formData.avatarUrl}
+                      alt="profile"
+                      width={96}
+                      height={96}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : null}
+                </div>
+
+                <label
+                  htmlFor="profile-upload"
+                  className="
+                    absolute
+                    bottom-0
+                    right-0
+                    flex
+                    h-8
+                    w-8
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-[#135576]
+                    text-white
+                  "
+                >
+                  <Camera size={16} />
+                </label>
+
+                <input
+                  id="profile-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </div>
+
+              <label
+                htmlFor="profile-upload"
+                className="
+                  flex
+                  h-11
+                  cursor-pointer
+                  items-center
+                  justify-center
+                  rounded-xl
+                  border
+                  border-[#D0D5DD]
+                  px-8
+                  text-[16px]
+                  font-medium
+                  text-[#344054]
+                "
+              >
+                Add Photo
+              </label>
+            </div>
+
+            {/* Form */}
+            <div className="space-y-5">
+              <InputField
+                label="Client name:"
+                placeholder="Client Name"
+                value={formData.name}
+                onChange={handleInputChange("name")}
+              />
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <InputField
+                  label="Email Address:"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleInputChange("email")}
+                />
+
+                <InputField
+                  label="Phone Number:"
+                  placeholder="Phone"
+                  value={formData.phone}
+                  onChange={handleInputChange("phone")}
+                />
+              </div>
+
+              <InputField
+                label="Personal ID Number:"
+                placeholder="Personal ID"
+                value={formData.personalId}
+                onChange={handleInputChange("personalId")}
+              />
+
+              <InputField
+                label="Address:"
+                placeholder="Address"
+                value={formData.address}
+                onChange={handleInputChange("address")}
+              />
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 flex justify-end">
+              <button
+                onClick={handleUpdate}
+                className="
+                  rounded-full
+                  bg-[#135576]
+                  px-8
+                  py-3
+                  text-sm
+                  font-semibold
+                  text-white
+                  transition-all
+                  hover:bg-[#0f4762]
+                "
+              >
+                Update Now
               </button>
             </div>
-            <button className="text-sm text-gray-600 font-medium">Add Photo</button>
           </div>
-
-          <InputField
-            label="Client name:"
-            placeholder="Markovic Aleksa"
-            value={formData.name}
-            onChange={(e) => handleChange(e, 'name')}
-          />
-
-          <div className="grid grid-cols-2 gap-4">
-            <InputField 
-              label="Email Address:"
-              placeholder="markovicaleksa@email.com"
-              value={formData.email}
-              onChange={(e) => handleChange(e, 'email')}
-            />
-            <InputField 
-              label="Phone Number:"
-              placeholder="+386 54683248"
-              value={formData.phone}
-              onChange={(e) => handleChange(e, 'phone')}
-            />
-          </div>
-
-          <InputField 
-            label="Personal ID Number:"
-            placeholder="#555-0128"
-            value={formData.personalId}
-            onChange={(e) => handleChange(e, 'personalId')}
-          />
-
-          <InputField 
-            label="Address:"
-            placeholder="Ulica Nedeljka Merdovića 42, 84000 Bijelo Polje"
-            value={formData.address}
-            onChange={(e) => handleChange(e, 'address')}
-          />
-
-          <button className="w-full bg-[#135576] hover:bg-[#0f4661] text-white py-3 rounded-full font-bold transition-colors mt-6">
-            Update Now
-          </button>
         </div>
       </DialogContent>
     </Dialog>
