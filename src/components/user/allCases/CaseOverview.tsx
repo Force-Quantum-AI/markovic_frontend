@@ -4,6 +4,8 @@ import { useState } from "react";
 import { MoreVertical, Plus, Pencil } from "lucide-react";
 import { CaseDetail, Lawyer } from "@/types/case.types";
 import UpdateCaseOverviewModal from "@/components/modals/UpdateCaseOverviewModal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AddLawyerModal from "@/components/modals/AddLawyerModal";
 
 // ─── Avatar helpers ───────────────────────────────────────────────────────────
 
@@ -121,7 +123,7 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
           <h3 className="text-sm font-semibold text-gray-700">Responsible Lawyer:</h3>
           <button
             onClick={() => setAddLawyerOpen(true)}
-            className="px-3 py-1.5 rounded-lg bg-[#135576] hover:bg-[#0d3f59] text-white text-xs font-medium transition-colors"
+            className="px-5 py-2 rounded-2xl bg-[#135576] hover:bg-[#0d3f59] text-white text-xs font-medium transition-colors"
           >
             Add New
           </button>
@@ -134,7 +136,10 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
               className="flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 transition-colors group"
             >
               <div className="flex items-center gap-3">
-                <LawyerAvatar lawyer={lawyer} />
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={lawyer.image} />
+                  <AvatarFallback>{lawyer.initials}</AvatarFallback>
+                </Avatar>
                 <span className="text-sm font-medium text-gray-700">{lawyer.name}</span>
               </div>
               <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-gray-100">
@@ -149,17 +154,14 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
       <UpdateCaseOverviewModal
         open={editOpen}
         setOpen={setEditOpen}
-        // data={caseDetail}
+      // data={caseDetail}
       />
 
-      {/* ── Add Lawyer Modal ── */}
-      {/* <Modal isOpen={addLawyerOpen} onClose={() => setAddLawyerOpen(false)} title="Add Responsible Lawyer">
-        <AddLawyerForm
-          existing={lawyers}
-          onAdd={(l) => { setLawyers((p) => [...p, l]); setAddLawyerOpen(false); }}
-          onClose={() => setAddLawyerOpen(false)}
-        />
-      </Modal> */}
+      <AddLawyerModal
+        open={addLawyerOpen}
+        setOpen={() => setAddLawyerOpen(false)}
+        data={{caseId:caseDetail.id, caseName: caseDetail.client }}
+      />
     </div>
   );
 }
@@ -172,72 +174,3 @@ const AVAILABLE_LAWYERS: Lawyer[] = [
   { id: "l6", name: "Olivia Turner", initials: "OT", color: "bg-teal-400" },
   { id: "l7", name: "Robert Fox", initials: "RF", color: "bg-red-400" },
 ];
-
-function AddLawyerForm({
-  existing,
-  onAdd,
-  onClose,
-}: {
-  existing: Lawyer[];
-  onAdd: (l: Lawyer) => void;
-  onClose: () => void;
-}) {
-  const existingIds = new Set(existing.map((l) => l.id));
-  const available = AVAILABLE_LAWYERS.filter((l) => !existingIds.has(l.id));
-  const [selected, setSelected] = useState<string>("");
-
-  const handleAdd = () => {
-    const lawyer = available.find((l) => l.id === selected);
-    if (lawyer) onAdd(lawyer);
-  };
-
-  return (
-    <div className="space-y-4">
-      <p className="text-sm text-gray-500">Select a lawyer to assign to this case.</p>
-      <div className="space-y-2">
-        {available.map((l) => (
-          <label
-            key={l.id}
-            className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selected === l.id
-                ? "border-[#135576] bg-[#135576]/5"
-                : "border-gray-100 hover:border-gray-200"
-              }`}
-          >
-            <input
-              type="radio"
-              name="lawyer"
-              value={l.id}
-              checked={selected === l.id}
-              onChange={() => setSelected(l.id)}
-              className="accent-[#135576]"
-            />
-            <div
-              className={`w-8 h-8 rounded-full ${l.color} flex items-center justify-center text-white text-xs font-bold`}
-            >
-              {l.initials}
-            </div>
-            <span className="text-sm font-medium text-gray-700">{l.name}</span>
-          </label>
-        ))}
-        {available.length === 0 && (
-          <p className="text-sm text-gray-400 text-center py-4">All available lawyers are already assigned.</p>
-        )}
-      </div>
-      <div className="flex gap-3 pt-2">
-        <button
-          onClick={onClose}
-          className="flex-1 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleAdd}
-          disabled={!selected}
-          className="flex-1 py-2 rounded-lg bg-[#135576] text-white text-sm font-medium hover:bg-[#0d3f59] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          Add Lawyer
-        </button>
-      </div>
-    </div>
-  );
-}
