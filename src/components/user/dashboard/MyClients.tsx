@@ -2,6 +2,7 @@
 
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Dummy dataset for clients
 const clientsData = [
@@ -13,6 +14,7 @@ const clientsData = [
 ];
 
 export default function MyClients() {
+  const router = useRouter();
   // Show only first 5 clients
   const displayedClients = clientsData.slice(0, 5);
 
@@ -21,7 +23,7 @@ export default function MyClients() {
       {/* Header Section */}
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-xl font-bold text-gray-900">My Clients</h3>
-        <button className="text-sm font-medium text-[#135576] transition-all hover:opacity-80 cursor-pointer ">
+        <button onClick={() => router.push("/my-clients")} className="text-sm font-medium text-[#135576] transition-all hover:opacity-80 cursor-pointer ">
           View All
         </button>
       </div>

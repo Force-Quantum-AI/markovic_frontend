@@ -2,6 +2,7 @@
 
 import { LawCard } from "@/components/shared/LawCard";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export const lawsDataset = [
   {
@@ -34,6 +35,7 @@ export const lawsDataset = [
   },
 ];
 export default function LawsAndBylaws() {
+  const router = useRouter();
   return (
     <section className="mx-auto w-full max-w-7xl space-y-3 rounded-2xl bg-white p-3 md:p-5 md:space-y-6">
       {/* Top Header Controls Block */}
@@ -41,7 +43,7 @@ export default function LawsAndBylaws() {
         <h3 className="text-xl font-bold tracking-tight text-gray-900 md:text-2xl">
           Laws &amp; Bylaws
         </h3>
-        <button className="text-sm font-semibold transition-all hover:underline" style={{ color: "#135576" }}>
+        <button onClick={() => router.push("/law-and-bylaw")} className="text-sm font-semibold transition-all hover:underline" style={{ color: "#135576" }}>
           View All
         </button>
       </div>
