@@ -66,7 +66,7 @@ export default function Notification() {
         {/* Reminder Timing */}
         <div className="flex flex-col mb-6 mt-1">
           <label className="text-[#364153] text-sm font-medium mb-2">Reminder Timing</label>
-          <div className="relative w-[320px] h-[49px]">
+          <div className="relative w-full md:w-[320px] h-[49px]">
             <select 
               value={reminderTiming}
               onChange={(e) => setReminderTiming(e.target.value)}

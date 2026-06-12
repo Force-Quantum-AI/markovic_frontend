@@ -7,7 +7,7 @@ import Language from "./Language";
 import Account from "./Account";
 import Notification from "./Notification";
 import Privacy from "./Privacy";
-const tabs:Tab[]=[  
+const tabs: Tab[] = [
     {
         value: "account",
         label: "Account",
@@ -42,21 +42,66 @@ const tabs:Tab[]=[
 export default function SettingPage() {
     return (
         <div className="bg-white rounded-2xl p-3">
-            <Tabs defaultValue="account" orientation="vertical">
-                <TabsList className="bg-white mr-2">
+            <Tabs
+                defaultValue="account"
+                orientation="vertical"
+                className="flex flex-col lg:flex-row gap-4"
+            >
+                <TabsList
+                    className="
+                    bg-white
+                    w-full
+                    md:w-auto
+                    flex
+                    flex-wrap
+                    md:flex-col
+                    justify-start
+                    md:justify-normal
+                    h-auto
+                    gap-2
+                    mr-0
+                    md:mr-2
+                    "
+                >
                     {tabs.map((tab) => (
-                        <TabsTrigger className="py-3 px-2 data-[state=active]:bg-[#135576] data-[state=active]:text-white" key={tab.value} value={tab.value}>
+                        <TabsTrigger
+                            key={tab.value}
+                            value={tab.value}
+                            className="
+          py-3
+          px-3
+          data-[state=active]:bg-[#135576]
+          data-[state=active]:text-white
+          whitespace-nowrap
+        "
+                        >
                             {tab.icon}
-                            {tab.label}
+                            <span className="ml-2">{tab.label}</span>
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                <TabsContent value="account"><Account/></TabsContent>
-                <TabsContent value="password"><Password/></TabsContent>
-                <TabsContent value="notifications"><Notification/></TabsContent>
-                {/* <TabsContent value="subscription"><Subscription/></TabsContent> */}
-                <TabsContent value="language"><Language/></TabsContent>
-                <TabsContent value="privacy"><Privacy/></TabsContent>
+
+                <div className="flex-1">
+                    <TabsContent value="account">
+                        <Account />
+                    </TabsContent>
+
+                    <TabsContent value="password">
+                        <Password />
+                    </TabsContent>
+
+                    <TabsContent value="notifications">
+                        <Notification />
+                    </TabsContent>
+
+                    <TabsContent value="language">
+                        <Language />
+                    </TabsContent>
+
+                    <TabsContent value="privacy">
+                        <Privacy />
+                    </TabsContent>
+                </div>
             </Tabs>
         </div>
     );
