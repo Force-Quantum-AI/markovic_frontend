@@ -15,6 +15,11 @@ export interface ClientCase {
   status: CaseStatus;
 }
 
+export interface CaseStatusOption {
+  value: string;
+  label: string;
+}
+
 export interface CaseDetail {
   id: string;
   caseNumber: string;

@@ -9,27 +9,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import { InputField } from "@/components/shared/InputField";
 import { SelectField } from "../shared/SelectField";
+import { CaseStatusOptions } from "@/data/selectDropdownData";
+import { TextAreaField } from "../shared/TextAreaField";
 
 export interface Lawyer {
   id: string;
   name: string;
 }
-
-export type CaseStatus =
-  | "Active"
-  | "Pending"
-  | "Closed"
-  | "Archive";
 
 interface CaseDetail {
   id: string;
@@ -41,13 +29,14 @@ interface CaseDetail {
   court: string;
   category: string;
   subcategory: string;
-  status: CaseStatus;
+  status: string;
   nextHearing: string;
   nextDeadline: string;
   scn: string;
   hearingDate: string;
   deadlineDate: string;
   assignedLawyers: Lawyer[];
+  shortDescription: string;
 }
 
 const caseData: CaseDetail = {
@@ -67,6 +56,7 @@ const caseData: CaseDetail = {
   hearingDate: "2026-05-22",
   deadlineDate: "2026-06-05",
   assignedLawyers: [],
+  shortDescription: "",
 };
 
 interface UpdateCaseOverviewModalProps {
@@ -89,17 +79,11 @@ const subcategories = [
   "Property Issue",
 ];
 
-const statuses: CaseStatus[] = [
-  "Active",
-  "Pending",
-  "Closed",
-  "Archive",
-];
 
 export default function UpdateCaseOverviewModal({
   open,
   setOpen,
-  data=caseData,
+  data = caseData,
 }: UpdateCaseOverviewModalProps) {
   const [formData, setFormData] =
     useState<CaseDetail>(data);
@@ -110,12 +94,21 @@ export default function UpdateCaseOverviewModal({
 
   const handleInputChange =
     (field: keyof CaseDetail) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: e.target.value,
+        }));
+      };
+
+  const handleTextAreaChange =
+    (field: keyof CaseDetail) =>
+      (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: e.target.value,
+        }));
+      };
 
   const handleUpdate = () => {
     console.log("Updated Case:", formData);
@@ -193,26 +186,26 @@ export default function UpdateCaseOverviewModal({
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
               <SelectField
-              label="Category:"
-              value={formData.category}
-              onChange={(value:any) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  category: value,
-                }))
-              }
-              options={categories}
+                label="Category:"
+                value={formData.category}
+                onChange={(value: any) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    category: value,
+                  }))
+                }
+                options={categories}
               />
               <SelectField
-              label="Subcategory:"
-              value={formData.subcategory}
-              onChange={(value:any) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  subcategory: value,
-                }))
-              }
-              options={subcategories}
+                label="Subcategory:"
+                value={formData.subcategory}
+                onChange={(value: any) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    subcategory: value,
+                  }))
+                }
+                options={subcategories}
               />
             </div>
 
@@ -220,35 +213,49 @@ export default function UpdateCaseOverviewModal({
             <SelectField
               label="Status:"
               value={formData.status}
-              onChange={(value:any) =>
+              onChange={(value: any) =>
                 setFormData((prev) => ({
                   ...prev,
                   status: value,
                 }))
               }
-              options={subcategories}
-              />
+              options={CaseStatusOptions}
+            />
 
-            {/* Hearing + Deadline */}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <InputField
-                label="Next Hearing:"
-                placeholder="Next Hearing"
-                value={formData.nextHearing}
-                onChange={handleInputChange(
-                  "nextHearing"
-                )}
-              />
+            {
+              formData.status !== "Finished" ? (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <InputField
+                    label="Next Hearing:"
+                    placeholder="Next Hearing"
+                    value={formData.nextHearing}
+                    onChange={handleInputChange(
+                      "nextHearing"
+                    )}
+                  />
 
-              <InputField
-                label="Next Deadline:"
-                placeholder="Next Deadline"
-                value={formData.nextDeadline}
-                onChange={handleInputChange(
-                  "nextDeadline"
-                )}
-              />
-            </div>
+                  <InputField
+                    label="Next Deadline:"
+                    placeholder="Next Deadline"
+                    value={formData.nextDeadline}
+                    onChange={handleInputChange(
+                      "nextDeadline"
+                    )}
+                  />
+                </div>
+              ) : (
+                <TextAreaField
+                  label="Short description :"
+                  placeholder="write short description here..."
+                  value={formData.shortDescription}
+                  onChange={handleTextAreaChange(
+                    "shortDescription"
+                  )}
+                />
+              )
+            }
+
+
 
             {/* Footer */}
             <div className="flex justify-end pt-3">
