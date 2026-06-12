@@ -7,6 +7,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import OtpVerificationModal from "@/components/modals/OtpVerificationModal";
 import SubscriptionModal from "@/components/modals/SubscriptionModal";
+import { useRegisterUserMutation } from "@/store/features/auth/authApi";
 
 export default function RegisterPage() {
   // Form States
@@ -24,10 +25,13 @@ export default function RegisterPage() {
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
     const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
+  // api 
+  const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
+
   // Validation feedback matching the green check icon on the image
   const isEmailValid = email.includes("@") && email.includes(".");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -36,15 +40,23 @@ export default function RegisterPage() {
     }
 
     // Dummy backend API payload
-    // const dummyRegisterPayload = {
-    //   fullName,
-    //   email,
-    //   phone,
-    //   password,
-    // };
+    const dummyRegisterPayload = {
+      full_name:fullName,
+      email,
+      number: phone,
+      password,
+      confirm_password: confirmPassword,
+    };
 
-    setIsOtpModalOpen(true)
-    setIsSubscriptionModalOpen(true)
+    await registerUser(dummyRegisterPayload).unwrap();
+
+    if(isSuccess){
+      toast.success("user registered successfully");
+      setIsOtpModalOpen(true)
+      setIsSubscriptionModalOpen(true)
+    }else{
+      toast.error("user registration failed");
+    }
   };
 
   return (

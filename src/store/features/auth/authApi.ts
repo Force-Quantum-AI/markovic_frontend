@@ -3,6 +3,13 @@ import { setUser } from "./authSlice";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    registerUser: builder.mutation<any, any>({
+      query: (userData) => ({
+        url: "/auth/register",
+        method: "POST",
+        body: userData,
+      }),
+    }),
     getMe: builder.query<any, void>({
       query: () => "/auth/me",
       providesTags: ["Auth"],
@@ -47,13 +54,6 @@ export const authApi = baseApi.injectEndpoints({
           }
         } catch (error) {}
       },
-    }),
-    signupUser: builder.mutation<any, any>({
-      query: (userData) => ({
-        url: "/auth/userSignup",
-        method: "POST",
-        body: userData,
-      }),
     }),
     adminSignup: builder.mutation<any, any>({
       query: (userData) => ({
@@ -101,10 +101,10 @@ export const authApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useRegisterUserMutation,
   useGetMeQuery,
   useLoginUserMutation,
   useGoogleLoginUserMutation,
-  useSignupUserMutation,
   useAdminSignupMutation,
   useLogoutUserMutation,
   useForgotPasswordRequestMutation,
