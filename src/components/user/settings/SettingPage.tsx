@@ -7,6 +7,7 @@ import Language from "./Language";
 import Account from "./Account";
 import Notification from "./Notification";
 import Privacy from "./Privacy";
+import Subscription from "./Subscription";
 const tabs: Tab[] = [
     {
         value: "account",
@@ -92,6 +93,10 @@ export default function SettingPage() {
 
                     <TabsContent value="notifications">
                         <Notification />
+                    </TabsContent>
+                    
+                    <TabsContent value="subscription">
+                        <Subscription />
                     </TabsContent>
 
                     <TabsContent value="language">
