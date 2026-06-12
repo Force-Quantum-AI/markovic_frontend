@@ -129,7 +129,7 @@ export default function DocumentsTab() {
             </div>
 
             {/* Main Documents Table container */}
-            <div className="overflow-hidden border border-gray-200 rounded-2xl bg-white shadow-sm">
+            <div className="overflow-x-auto border border-gray-200 rounded-2xl bg-white shadow-sm">
                 <table className="w-full border-collapse text-left">
 
                     {/* Table Header */}

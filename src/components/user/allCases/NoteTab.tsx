@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { FileText, MoreHorizontal, Plus, SquarePen, Trash2 } from "lucide-react";
+import { Eye, FileText, MoreHorizontal, Plus, SquarePen, Trash2 } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import MainButton from "@/components/shared/MainButton";
 import EditNoteModal from "@/components/modals/EditNoteModal";
+import PreviewNoteModal from "@/components/modals/PreviewNoteModal";
 
 // 1. TypeScript Interface matching the API payload structure
 interface DocumentItem {
@@ -27,7 +28,7 @@ interface DocumentItem {
 const DUMMY_DOCUMENTS: DocumentItem[] = [
     {
         id: "doc-1",
-        note: "Medical Report dsfdsfsdfsdfs",
+        note: "Medical Report dsfdsfsdfsdfs Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae, praesentium. Dolore numquam vitae animi cum? Magni, sed sit doloribus voluptatibus repellendus sint temporibus, commodi laborum atque soluta magnam natus, itaque beatae! Vitae voluptas in quidem at quos mollitia inventore tempora!",
         lastUpdated: "17 May, 2026",
         uploadedBy: {
             name: "Eleanor Pena",
@@ -36,7 +37,7 @@ const DUMMY_DOCUMENTS: DocumentItem[] = [
     },
     {
         id: "doc-2",
-        note: "Lawsuit Submission sadfsafsfs",
+        note: "Lawsuit Submission sadfsafsfs Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae, praesentium. Dolore numquam vitae animi cum? Magni, sed sit doloribus voluptatibus repellendus sint temporibus, commodi laborum atque soluta magnam natus, itaque beatae! Vitae voluptas in quidem at quos mollitia inventore tempora!",
         lastUpdated: "22 Mar, 2026",
         uploadedBy: {
             name: "Cameron Williamson",
@@ -45,7 +46,7 @@ const DUMMY_DOCUMENTS: DocumentItem[] = [
     },
     {
         id: "doc-3",
-        note: "Financial Statement retewt",
+        note: "Financial Statement retewt Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae, praesentium. Dolore numquam vitae animi cum? Magni, sed sit doloribus voluptatibus repellendus sint temporibus, commodi laborum atque soluta magnam natus, itaque beatae! Vitae voluptas in quidem at quos mollitia inventore tempora!",
         lastUpdated: "1 Mar, 2026",
         uploadedBy: {
             name: "Darrell Steward",
@@ -54,7 +55,7 @@ const DUMMY_DOCUMENTS: DocumentItem[] = [
     },
     {
         id: "doc-4",
-        note: "Power of Attorneyfgdfg",
+        note: "Power of Attorneyfgdfg Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae, praesentium. Dolore numquam vitae animi cum? Magni, sed sit doloribus voluptatibus repellendus sint temporibus, commodi laborum atque soluta magnam natus, itaque beatae! Vitae voluptas in quidem at quos mollitia inventore tempora!",
         lastUpdated: "24 Feb, 2026",
         uploadedBy: {
             name: "Eleanor Pena",
@@ -66,6 +67,7 @@ const DUMMY_DOCUMENTS: DocumentItem[] = [
 export default function NoteTab() {
     const [documents, setDocuments] = useState<DocumentItem[]>(DUMMY_DOCUMENTS);
     const [editNotesOpen, setEditNotesOpen] = useState(false);
+    const [previewNotesOpen, setPreviewNotesOpen] = useState(false);
     const [addNotesOpen, setAddNotesOpen] = useState(false);
     const [note, setNote] = useState({
         note: "",
@@ -80,10 +82,13 @@ export default function NoteTab() {
         setEditNotesOpen(true);
     }
 
-    // Mock Actions Menu Handler
-    const handleActionClick = (id: string, name: string) => {
-        alert(`Opened context menu for: "${name}" (ID: ${id})`);
-    };
+    const handlePreviewNote = (id: string, note: string) => {
+        setNote({
+            note,
+            id,
+        });
+        setPreviewNotesOpen(true);
+    }
 
     // Mock Delete Handler
     const handleRemove = (id: string) => {
@@ -93,7 +98,7 @@ export default function NoteTab() {
     };
 
     return (
-        <div className="w-full max-w-7xl mx-auto  bg-white min-h-screen">
+        <div className="w-full mx-auto  bg-white min-h-screen">
 
             {/* Header section with explicit custom color matching button */}
             <div className="flex justify-between items-center mb-6">
@@ -106,13 +111,13 @@ export default function NoteTab() {
             </div>
 
             {/* Main Documents Table container */}
-            <div className="overflow-hidden border border-gray-200 rounded-2xl bg-white shadow-sm">
+            <div className="overflow-x-auto border border-gray-200 rounded-2xl bg-white shadow-sm">
                 <table className="w-full border-collapse text-left">
 
                     {/* Table Header */}
                     <thead>
                         <tr className="bg-[#eaedf2] text-[#4a5568] text-[14px] font-medium border-b border-gray-200">
-                            <th className="py-3 px-5 w-[45%] font-medium">Files</th>
+                            <th className="py-3 px-5 w-66 font-medium">Files</th>
                             <th className="py-3 px-5 w-[35%] font-medium border-l border-gray-300/40">Upload by</th>
                             <th className="py-3 px-5 w-[20%] font-medium border-l border-gray-300/40">Last Updated</th>
                         </tr>
@@ -126,7 +131,7 @@ export default function NoteTab() {
                                 className="hover:bg-gray-50/70 transition-colors group text-[#2d3748]"
                             >
                                 {/* Column 1: Files */}
-                                <td className="py-4 px-5 flex items-center gap-4">
+                                <td className="py-4 px-5 max-w-66 flex items-center gap-4" onClick={() => handlePreviewNote(doc.id, doc.note)} >
                                     <div className="bg-[#eef2f6] text-[#0c5174] p-2.5 rounded-lg flex items-center justify-center shrink-0">
                                         <FileText className="w-5 h-5 stroke-[2.2]" />
                                     </div>
@@ -135,8 +140,8 @@ export default function NoteTab() {
                                     </span>
                                 </td>
 
-                                {/* Column 3: Uploaded By */}
-                                <td className="py-4 px-5 align-middle">
+                                {/* Column 2: Uploaded By */}
+                                <td className="py-4 px-5 align-middle" onClick={() => handlePreviewNote(doc.id, doc.note)} >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                             {doc.uploadedBy.avatarUrl ? (
@@ -158,8 +163,8 @@ export default function NoteTab() {
                                     </div>
                                 </td>
 
-                                {/* Column 2: Uploaded Date */}
-                                <td className="py-4 px-5 text-gray-700 text-[15px] align-middle flex items-center justify-between">
+                                {/* Column 3: Uploaded Date */}
+                                <td className="py-4 px-5 text-gray-700 text-[15px] align-middle flex items-center justify-between" >
                                     {doc.lastUpdated}
                                     {/* Options Actions Button */}
                                     <DropdownMenu>
@@ -172,6 +177,10 @@ export default function NoteTab() {
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-lg border border-gray-100 p-1">
+                                            <DropdownMenuItem onClick={() => handlePreviewNote(doc.id, doc.note)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
+                                                <Eye className="w-4 h-4" />
+                                                <span>Preview</span>
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleEditNote(doc.id, doc.note)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
                                                 <SquarePen className="w-4 h-4" />
                                                 <span>Edit</span>
@@ -198,6 +207,12 @@ export default function NoteTab() {
                 open={editNotesOpen}
                 setOpen={() => { setEditNotesOpen(false); }}
                 data={note}
+            />
+            <PreviewNoteModal
+                open={previewNotesOpen}
+                setOpen={() => { setPreviewNotesOpen(false); }}
+                id={note.id}
+                handleEdit={handleEditNote}
             />
         </div>
     );
