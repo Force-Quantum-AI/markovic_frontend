@@ -76,12 +76,6 @@ export default function HearingsTab() {
     setOpenModal(true);
   };
 
-  const handleSubmitHearing = (data: any) => {
-    console.log("Submitted Hearing:", data);
-
-    // Later replace with API mutation
-  };
-
   // Helper function for styling status badges dynamically
   const getStatusStyles = (status: Hearing["status"]) => {
     switch (status) {
@@ -193,11 +187,11 @@ export default function HearingsTab() {
         </div>
       </div>
       <AddEditHearingModal
+        forModal="hearing"
         open={openModal}
         setOpen={setOpenModal}
         mode={mode}
         hearing={selectedHearing}
-        onSubmit={handleSubmitHearing}
       />
     </div>
   );

@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import { Plus, Edit2, Calendar } from "lucide-react";
+import AddEditHearingModal from "@/components/modals/AddEditHearingModal";
 
 // 1. TypeScript Interface for type safety
-interface Hearing {
+interface Deadline {
   id: string;
   date: string;
   time: string;
@@ -15,13 +16,13 @@ interface Hearing {
 }
 
 // 2. Dummy Dataset mimicking future API response
-const DUMMY_HEARINGS: Hearing[] = [
+const DUMMY_DeadlineS: Deadline[] = [
   {
     id: "1",
     date: "22 May 2026",
     time: "09:00",
     location: "Basic Court Podgorica",
-    type: "New hearing",
+    type: "New Deadline",
     status: "Upcoming",
     daysRemaining: 3,
   },
@@ -30,7 +31,7 @@ const DUMMY_HEARINGS: Hearing[] = [
     date: "10 April 2026",
     time: "11:30",
     location: "Basic Court Podgorica",
-    type: "Regular hearing",
+    type: "Regular Deadline",
     status: "Held",
   },
   {
@@ -38,41 +39,45 @@ const DUMMY_HEARINGS: Hearing[] = [
     date: "15 March 2026",
     time: "09:00",
     location: "Basic Court Podgorica",
-    type: "Review hearing",
+    type: "Review Deadline",
     status: "Postponed",
   },
 ];
 
 export default function DeadlinesTab() {
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedDeadline, setSelectedDeadline] =
+    useState<Deadline | null>(null);
+
+  const [mode, setMode] =
+    useState<"add" | "edit">("add");
+
   // Local state to handle dynamic additions/interactions in frontend
-  const [hearings, setHearings] = useState<Hearing[]>(DUMMY_HEARINGS);
+  const [hearings, setDeadlines] = useState<Deadline[]>(DUMMY_DeadlineS);
 
-  // Find the next upcoming hearing dynamically
-  const nextHearing = hearings.find((h) => h.status === "Upcoming");
+  // Find the next upcoming Deadline dynamically
+  const nextDeadline = hearings.find((h) => h.status === "Upcoming");
 
-  // Mock handler for adding a new hearing dynamically
-  const handleAddHearing = () => {
-    const newMockHearing: Hearing = {
-      id: Date.now().toString(),
-      date: "15 June 2026",
-      time: "10:00",
-      location: "Basic Court Podgorica",
-      type: "Follow-up hearing",
-      status: "Upcoming",
-      daysRemaining: 4,
-    };
-    // If we want a strict flow where only one is "Upcoming", you can modify logic here
-    setHearings([newMockHearing, ...hearings]);
-    alert("Dummy hearing added successfully! (Local state updated)");
+  const handleAddDeadline = () => {
+    setMode("add");
+    setSelectedDeadline(null);
+    setOpenModal(true);
   };
 
-  // Mock handler for editing a hearing
-  const handleEditHearing = (id: string) => {
-    alert(`Edit mode triggered for hearing ID: ${id}`);
+  const handleEditDeadline = (id: string) => {
+    const hearing = hearings.find(
+      (item) => item.id === id
+    );
+
+    if (!hearing) return;
+
+    setSelectedDeadline(hearing);
+    setMode("edit");
+    setOpenModal(true);
   };
 
   // Helper function for styling status badges dynamically
-  const getStatusStyles = (status: Hearing["status"]) => {
+  const getStatusStyles = (status: Deadline["status"]) => {
     switch (status) {
       case "Upcoming":
         return "text-blue-600 font-semibold";
@@ -87,42 +92,42 @@ export default function DeadlinesTab() {
 
   return (
     <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6">
-      
+
       {/* LEFT COLUMN: Upcoming Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex flex-col justify-between">
         <div>
           <h2 className="text-gray-800 font-bold text-lg mb-4">Upcoming:</h2>
           <hr className="border-gray-100 mb-5" />
 
-          {nextHearing ? (
+          {nextDeadline ? (
             <div className="bg-[#FFF4D4] border border-[#FFDD8F] rounded-xl p-5 relative group">
               <div className="flex justify-between items-start">
                 <div>
                   <span className="text-[#C28203] text-sm font-medium block mb-3">
-                    Next Hearing:
+                    Next Deadline:
                   </span>
                   <div className="text-gray-900 font-bold text-xl tracking-tight">
-                    {nextHearing.date}
+                    {nextDeadline.date}
                   </div>
                   <div className="text-gray-900 font-bold text-xl tracking-tight mb-4">
-                    {nextHearing.time}
+                    {nextDeadline.time}
                   </div>
                   <span className="text-gray-700 text-sm bg-[#fbe297] px-2.5 py-1 rounded-md">
-                    {nextHearing.type}
+                    {nextDeadline.type}
                   </span>
                 </div>
 
                 <div className="flex flex-col items-end justify-between h-full space-y-8">
                   <button
-                    onClick={() => handleEditHearing(nextHearing.id)}
+                    onClick={() => handleEditDeadline(nextDeadline.id)}
                     className="p-2 text-[#C28203] hover:bg-[#fbe297] rounded-lg transition-colors"
-                    aria-label="Edit hearing"
+                    aria-label="Edit Deadline"
                   >
                     <Edit2 className="w-5 h-5" />
                   </button>
-                  {nextHearing.daysRemaining !== undefined && (
+                  {nextDeadline.daysRemaining !== undefined && (
                     <span className="text-gray-500 text-xs font-medium">
-                      {nextHearing.daysRemaining} Days Remaining
+                      {nextDeadline.daysRemaining} Days Remaining
                     </span>
                   )}
                 </div>
@@ -130,23 +135,23 @@ export default function DeadlinesTab() {
             </div>
           ) : (
             <div className="text-center py-8 text-gray-400 border border-dashed rounded-xl">
-              No upcoming hearings scheduled.
+              No upcoming Deadlines scheduled.
             </div>
           )}
         </div>
 
         <button
-          onClick={handleAddHearing}
+          onClick={handleAddDeadline}
           className="mt-6 inline-flex items-center justify-center gap-2 bg-[#0c5174] hover:bg-[#0a4360] text-white font-medium py-3 px-5 rounded-full shadow-sm transition-colors w-fit text-sm"
         >
-          <Plus className="w-4 h-4" /> Add new Hearing
+          <Plus className="w-4 h-4" /> Add new Deadline
         </button>
       </div>
 
-      {/* RIGHT COLUMN: Hearing History Section */}
+      {/* RIGHT COLUMN: Deadline History Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         <h2 className="text-[#62728d] font-semibold text-base mb-4">
-          Hearing History:
+          Deadline History:
         </h2>
         <hr className="border-gray-100 mb-4" />
 
@@ -181,7 +186,13 @@ export default function DeadlinesTab() {
           ))}
         </div>
       </div>
-
+      <AddEditHearingModal
+        forModal="deadline"
+        open={openModal}
+        setOpen={setOpenModal}
+        mode={mode}
+        hearing={selectedDeadline}
+      />
     </div>
   );
 }

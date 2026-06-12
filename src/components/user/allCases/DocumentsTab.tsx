@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { FileText, MoreHorizontal, Plus, Trash2 } from "lucide-react";
+import { Download, FileText, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -87,6 +87,10 @@ export default function DocumentsTab() {
         if (confirm("Are you sure you want to remove this document?")) {
             setDocuments(documents.filter((d) => d.id !== id));
         }
+    };
+
+    const handleDownload = () => {
+        alert("Downloading document");
     };
 
     return (
@@ -195,8 +199,12 @@ export default function DocumentsTab() {
                                                 </button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-lg border border-gray-100 p-1">
-                                                <DropdownMenuItem onClick={() => handleRemove(doc.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors focus:bg-red-50 focus:outline-none">
-                                                    <Trash2 className="w-4 h-4 text-red-400" />
+                                                <DropdownMenuItem onClick={handleDownload} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
+                                                <Download className="w-4 h-4" />
+                                                <span>Download</span>
+                                            </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleRemove(doc.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors focus:bg-red-50 focus:outline-none hover:text-red-600!">
+                                                    <Trash2 className="w-4 h-4 text-red-400 " />
                                                     <span>Remove</span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>

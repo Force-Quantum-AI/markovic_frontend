@@ -29,7 +29,7 @@ interface HearingModalProps {
 
   hearing?: Hearing | null;
 
-  onSubmit: (data: HearingFormData) => void;
+  forModal?: "hearing" | "deadline";
 }
 
 export interface HearingFormData {
@@ -43,11 +43,11 @@ export interface HearingFormData {
 }
 
 export default function AddEditHearingModal({
+  forModal="hearing",
   open,
   setOpen,
   mode = "add",
-  hearing,
-  onSubmit,
+  hearing
 }: HearingModalProps) {
   const [formData, setFormData] = useState<HearingFormData>({
     reason: "",
@@ -94,7 +94,19 @@ export default function AddEditHearingModal({
   };
 
   const handleSubmit = () => {
-    onSubmit(formData);
+    if (mode === "add") {
+      if (forModal === "hearing") {
+        
+      }else{
+        
+      }
+    } else {
+      if (forModal === "hearing") {
+        
+      }else{
+        
+      }
+    }
     setOpen(false);
   };
 
@@ -127,7 +139,7 @@ export default function AddEditHearingModal({
 
           {/* Heading */}
           <h2 className="text-center text-3xl font-bold text-[#111827] mb-10">
-            {mode === "edit" ? "Edit hearing" : "Add hearing"}
+            {mode === "edit" ? "Edit" : "Add"} {forModal}
           </h2>
 
           {/* Form */}
@@ -315,7 +327,7 @@ export default function AddEditHearingModal({
               >
                 {mode === "edit"
                   ? "Update Now"
-                  : "Add Hearing"}
+                  : `Add ${forModal}`}
               </button>
             </div>
           </div>
