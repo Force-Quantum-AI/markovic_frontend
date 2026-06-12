@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Eye, Trash2, FileText, Database, Search, Clock, Landmark } from "lucide-react";
 
 interface CaseRow {
