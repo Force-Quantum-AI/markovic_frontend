@@ -223,7 +223,16 @@ export default function UpdateCaseOverviewModal({
             />
 
             {
-              formData.status !== "Finished" ? (
+              formData.status === "Finished" || formData.status === "Archived" ? (
+                <TextAreaField
+                  label="Short description :"
+                  placeholder="write short description here..."
+                  value={formData.shortDescription}
+                  onChange={handleTextAreaChange(
+                    "shortDescription"
+                  )}
+                />
+              ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <InputField
                     label="Next Hearing:"
@@ -243,15 +252,6 @@ export default function UpdateCaseOverviewModal({
                     )}
                   />
                 </div>
-              ) : (
-                <TextAreaField
-                  label="Short description :"
-                  placeholder="write short description here..."
-                  value={formData.shortDescription}
-                  onChange={handleTextAreaChange(
-                    "shortDescription"
-                  )}
-                />
               )
             }
 
