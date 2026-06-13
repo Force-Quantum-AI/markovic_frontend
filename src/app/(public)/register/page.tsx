@@ -48,7 +48,11 @@ export default function RegisterPage() {
       confirm_password: confirmPassword,
     };
 
-    await registerUser(dummyRegisterPayload).unwrap();
+    try {
+      await registerUser(dummyRegisterPayload).unwrap();
+
+    console.log("is success is : ",isSuccess);
+    
 
     if(isSuccess){
       toast.success("user registered successfully");
@@ -57,6 +61,11 @@ export default function RegisterPage() {
     }else{
       toast.error("user registration failed");
     }
+    } catch (error) {
+      console.log("error is : ",error);
+      toast.error("user registration failed, Please try again later.");
+    }
+    
   };
 
   return (

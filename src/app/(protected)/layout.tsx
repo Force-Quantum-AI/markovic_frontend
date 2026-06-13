@@ -1,7 +1,9 @@
+import ProtectedRoute from "../ProtectedRoute";
+
 export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <ProtectedRoute>{children}</ProtectedRoute>;
 }
