@@ -12,7 +12,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     login: builder.mutation<
-      { access: string; refresh: string },
+      { access: string; refresh: string; role: string },
       { email: string; password: string }
     >({
       query: (credentials) => ({
@@ -29,6 +29,7 @@ export const authApi = baseApi.injectEndpoints({
             setCredentials({
               access: data.access,
               refresh: data.refresh,
+              role: data.role
             })
           );
         } catch {

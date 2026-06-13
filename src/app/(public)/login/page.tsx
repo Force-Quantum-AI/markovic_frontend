@@ -9,6 +9,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { useLoginMutation } from "@/store/features/auth/authApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function LoginPage() {
   // Form States
@@ -34,14 +35,15 @@ export default function LoginPage() {
     try {
       const res = await login({ email, password }).unwrap();
 
-      // Also store the access token in a client-readable cookie so middleware
-      // can detect authentication on subsequent navigations.
-      // Note: ideally the backend should set HttpOnly cookies directly.
       document.cookie = `accessToken=${res.access}; path=/; SameSite=Lax`;
 
       // Redirect to the originally requested page or dashboard
       const callbackUrl = searchParams.get("callbackUrl") || "/";
-      router.replace(callbackUrl);
+      if (res.role === "admin") {
+        router.replace("/admin/dashboard");
+      } else {
+        router.replace(callbackUrl);
+      }
     } catch (err: any) {
       const detail =
         err?.data?.detail ||

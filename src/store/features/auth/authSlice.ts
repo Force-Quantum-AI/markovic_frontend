@@ -3,12 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
+  role: "lawyer" | "admin";
   isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
+  role: "lawyer",
   isAuthenticated: false,
 };
 
@@ -20,16 +22,18 @@ const authSlice = createSlice({
     // Called after a successful login — backend returns { access, refresh }
     setCredentials: (
       state,
-      action: PayloadAction<{ access: string; refresh: string }>
+      action: PayloadAction<{ access: string; refresh: string; role: string }>
     ) => {
       state.accessToken = action.payload.access;
       state.refreshToken = action.payload.refresh;
       state.isAuthenticated = true;
+      state.role = action.payload.role as "lawyer" | "admin" || "lawyer";
     },
 
-    setAccessToken: (state, action: PayloadAction<string>) => {
+    setAccessToken: (state, action: PayloadAction<any>) => {
       state.accessToken = action.payload;
       state.isAuthenticated = true;
+      state.role = action.payload.role as "lawyer" | "admin" || "lawyer";
     },
 
     setRefreshToken: (state, action: PayloadAction<string>) => {
