@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import SubscriptionModal from "./SubscriptionModal";
 
 // Step type definitions
 type ModalStep = "ENTER_OTP" | "SUCCESS" | "ERROR";
@@ -28,6 +29,7 @@ export default function OtpVerificationModal({
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState<number>(299); // 4:59 in seconds
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -94,7 +96,7 @@ export default function OtpVerificationModal({
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").trim().replace(/[^0-9]/g, "");
-    
+
     if (pastedData.length === 6) {
       const newOtp = pastedData.split("");
       setOtp(newOtp);
@@ -138,7 +140,7 @@ export default function OtpVerificationModal({
                 OTP Verification
               </DialogTitle>
             </DialogHeader>
-            
+
             <p className="text-sm text-gray-500 max-w-md mt-4 leading-relaxed">
               We have sent a 6-digit verification code to your email address.
               Please enter the code below to complete your registration.
@@ -174,8 +176,8 @@ export default function OtpVerificationModal({
             {/* Support Links */}
             <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
               Didn&apos;t get code.{" "}
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleResend}
                 className="text-[#135576] font-bold hover:underline"
               >
@@ -217,12 +219,16 @@ export default function OtpVerificationModal({
         );
 
       case "SUCCESS":
+        const timeId = setTimeout(() => {
+          onOpenChange(false);
+        }, 2000);
+        setIsSubscriptionModalOpen(true);
         return (
           <div className="flex flex-col items-center justify-center text-center p-8 min-h-[350px]">
             <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mb-6 border border-emerald-100">
               <CheckCircle2 className="w-10 h-10 text-emerald-500 fill-emerald-500 stroke-white" />
             </div>
-            
+
             <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
               Verification Successful
             </h2>
@@ -230,13 +236,13 @@ export default function OtpVerificationModal({
               Your identity has been confirmed. Welcome to the law office system interface.
             </p>
 
-            <button
+            {/* <button
               onClick={() => onOpenChange(false)}
               className="mt-8 bg-[#135576] hover:bg-[#0f445f] text-white text-sm font-medium py-2.5 px-8 rounded-full shadow-sm flex items-center gap-2 transition-all group"
             >
               Go to Dashboard
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </button>
+            </button> */}
           </div>
         );
 
@@ -281,10 +287,16 @@ export default function OtpVerificationModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl! w-[92vw] sm:w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 shadow-2xl border-none">
-        {renderModalContent()}
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-2xl! w-[92vw] sm:w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 shadow-2xl border-none">
+          {renderModalContent()}
+        </DialogContent>
+      </Dialog>
+      <SubscriptionModal
+        isOpen={isSubscriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
+      />
+    </>
   );
 }

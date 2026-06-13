@@ -16,14 +16,13 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+
   // Toggle Password Visibility States
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    // Modal State Management
+  // Modal State Management
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
-    const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
   // api 
   const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
@@ -41,7 +40,7 @@ export default function RegisterPage() {
 
     // Dummy backend API payload
     const dummyRegisterPayload = {
-      full_name:fullName,
+      full_name: fullName,
       email,
       number: phone,
       password,
@@ -51,31 +50,30 @@ export default function RegisterPage() {
     try {
       await registerUser(dummyRegisterPayload).unwrap();
 
-    console.log("is success is : ",isSuccess);
-    
+      console.log("is success is : ", isSuccess);
 
-    if(isSuccess){
-      toast.success("user registered successfully");
-      setIsOtpModalOpen(true)
-      setIsSubscriptionModalOpen(true)
-    }else{
-      toast.error("user registration failed");
-    }
+
+      // if (isSuccess) {
+        toast.success("user registered successfully");
+        setIsOtpModalOpen(true)
+      // } else {
+      //   toast.error("user registration failed");
+      // }
     } catch (error) {
-      console.log("error is : ",error);
+      console.log("error is : ", error);
       toast.error("user registration failed, Please try again later.");
     }
-    
+
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       {/* Container: constrained to max-w-6xl and 70vh */}
       <div className="w-full max-w-6xl h-auto md:h-[70vh] min-h-[600px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
-        
+
         {/* Left Side: Form Controls */}
         <div className="w-full md:w-7/12 lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
-          
+
           {/* Header Brand */}
           <div className="flex items-center gap-2 text-[#135576]">
             <div className="p-1.5 border-2 border-[#135576] rounded-full flex items-center justify-center">
@@ -90,7 +88,7 @@ export default function RegisterPage() {
             <p className="text-sm text-gray-400 mb-6">Get started with your law office management system</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              
+
               {/* Full Name Input (Full Width row) */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#8a94a6] block">
@@ -235,16 +233,16 @@ export default function RegisterPage() {
         {/* Right Side: Visual Banner Component */}
         <div className="hidden md:block w-1/2 md:w-5/12 lg:w-1/2 p-3 h-full">
           <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#181d20] flex flex-col justify-end p-8 lg:p-12 text-white">
-            
+
             {/* Background Image Setup mimicking Lady Justice theme */}
             <Image
-              src="/lawImg4.png" 
+              src="/lawImg4.png"
               alt="Lady Justice statue banner"
               fill
               priority
               className="object-cover opacity-35 mix-blend-luminosity select-none pointer-events-none"
             />
-            
+
             {/* Dark gradient overlay to preserve readable text contrast */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
@@ -257,7 +255,7 @@ export default function RegisterPage() {
                 Created by lawyers, for lawyers. Quick case creation, smart calendar,
                 powerful AI court practice search, and clean organization — all in one place.
               </p>
-              
+
               <div className="pt-4 border-t border-white/20">
                 <p className="text-base font-semibold tracking-wide">Markovic Aleksa</p>
                 <p className="text-xs text-gray-400">Founder of Case Solver</p>
@@ -272,10 +270,7 @@ export default function RegisterPage() {
         onOpenChange={setIsOtpModalOpen}
         userEmail={email}
       />
-            <SubscriptionModal
-              isOpen={isSubscriptionModalOpen}
-              onClose={() => setIsSubscriptionModalOpen(false)}
-            />
+      
     </div>
   );
 }
