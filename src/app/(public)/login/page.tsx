@@ -32,8 +32,6 @@ export default function LoginPage() {
     e.preventDefault();
     setErrorMsg("");
     try {
-      // The backend returns { access, refresh } directly
-      // authApi's onQueryStarted already dispatches setCredentials into Redux
       const res = await login({ email, password }).unwrap();
 
       // Also store the access token in a client-readable cookie so middleware
@@ -42,7 +40,7 @@ export default function LoginPage() {
       document.cookie = `accessToken=${res.access}; path=/; SameSite=Lax`;
 
       // Redirect to the originally requested page or dashboard
-      const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+      const callbackUrl = searchParams.get("callbackUrl") || "/";
       router.replace(callbackUrl);
     } catch (err: any) {
       const detail =

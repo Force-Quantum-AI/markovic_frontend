@@ -48,16 +48,29 @@ export default function OtpVerificationModal({
     }
   }, [isOpen]);
 
-  // Countdown Timer Logic
-  useEffect(() => {
-    if (!isOpen || step !== "ENTER_OTP" || timeLeft <= 0) return;
+  // Keep a reference to any pending close timer so we can clear it on
+  // unmount to avoid dangling timeouts.
+  const closeTimerRef = useRef<number | null>(null);
+  const closeTimerId = useRef<number | null>(null);
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+  // Countdown Timer Logic — create a single interval while the modal is
+  // open and the user is entering the OTP. Use functional updates so the
+  // effect does not re-run every second.
+  useEffect(() => {
+    if (!isOpen || step !== "ENTER_OTP") return;
+
+    const timer = window.setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [isOpen, step, timeLeft]);
+    return () => window.clearInterval(timer);
+  }, [isOpen, step]);
 
   // Format seconds to MM:SS
   const formatTime = (seconds: number) => {
@@ -126,9 +139,14 @@ export default function OtpVerificationModal({
       };
 
       await verifyOtp(verifyPayload).unwrap();
-      setIsVerifying(false)
+      setIsVerifying(false);
       setStep("SUCCESS");
       toast.success("OTP verified successfully");
+      setIsSubscriptionModalOpen(true);
+      // Close modal after a short delay. Store timeout id to clear on unmount.
+      closeTimerRef.current = window.setTimeout(() => {
+        onOpenChange(false);
+      }, 2000);
     } catch (error) {
       console.log("error is : ", error);
       toast.error("OTP verification failed, Please try again later.");
@@ -233,10 +251,6 @@ export default function OtpVerificationModal({
         );
 
       case "SUCCESS":
-        const timeId = setTimeout(() => {
-          onOpenChange(false);
-        }, 2000);
-        setIsSubscriptionModalOpen(true);
         return (
           <div className="flex flex-col items-center justify-center text-center p-8 min-h-[350px]">
             <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mb-6 border border-emerald-100">

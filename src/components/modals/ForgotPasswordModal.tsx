@@ -59,13 +59,25 @@ export default function ForgotPasswordModal({
     }
   }, [isOpen]);
 
-  // Timer logic for Step 2
+  // Track pending timeouts so we can clear them if the component unmounts
+  const pendingTimeouts = useRef<number[]>([]);
+
+  // Timer logic for Step 2 — create a single interval while on OTP step.
   useEffect(() => {
-    if (step === "OTP" && timeLeft > 0) {
-      const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000);
-      return () => clearInterval(timer);
-    }
-  }, [step, timeLeft]);
+    if (step !== "OTP") return;
+
+    const timer = window.setInterval(() => {
+      setTimeLeft((t) => {
+        if (t <= 1) {
+          window.clearInterval(timer);
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [step]);
 
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
@@ -77,20 +89,22 @@ export default function ForgotPasswordModal({
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
+    const t = window.setTimeout(() => {
       setIsLoading(false);
       setStep("OTP"); // Advance to OTP
     }, 1200);
+    pendingTimeouts.current.push(t);
   };
 
   const handleOtpVerify = () => {
     setIsLoading(true);
-    setTimeout(() => {
+    const t = window.setTimeout(() => {
       setIsLoading(false);
       // Dummy Check: '123456' for success
       if (otp.join("") === "123456") setStep("NEW_PASSWORD");
       else setStep("ERROR");
     }, 1200);
+    pendingTimeouts.current.push(t);
   };
 
   const handlePasswordReset = (e: React.FormEvent) => {
@@ -100,10 +114,11 @@ export default function ForgotPasswordModal({
       return;
     }
     setIsLoading(true);
-    setTimeout(() => {
+    const t = window.setTimeout(() => {
       setIsLoading(false);
       setStep("SUCCESS");
     }, 1500);
+    pendingTimeouts.current.push(t);
   };
 
   const handleOtpChange = (val: string, idx: number) => {
@@ -287,6 +302,16 @@ export default function ForgotPasswordModal({
         );
     }
   };
+
+  // Clear any pending timeouts when this component unmounts
+  useEffect(() => {
+    return () => {
+      if (pendingTimeouts.current && pendingTimeouts.current.length) {
+        pendingTimeouts.current.forEach((id) => window.clearTimeout(id));
+        pendingTimeouts.current = [];
+      }
+    };
+  }, []);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

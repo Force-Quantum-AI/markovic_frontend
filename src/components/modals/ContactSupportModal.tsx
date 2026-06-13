@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { X, User, Mail, Phone, Landmark } from "lucide-react";
 import Image from "next/image";
 
@@ -20,6 +20,16 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const pendingTimeouts = useRef<number[]>([]);
+
+  useEffect(() => {
+    return () => {
+      if (pendingTimeouts.current && pendingTimeouts.current.length) {
+        pendingTimeouts.current.forEach((id) => window.clearTimeout(id));
+        pendingTimeouts.current = [];
+      }
+    };
+  }, []);
 
   if (!isOpen) return null;
 
@@ -28,14 +38,16 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
     setIsSubmitting(true);
     
     // Simulate API integration delay
-    setTimeout(() => {
+    const t1 = window.setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
-      setTimeout(() => {
+      const t2 = window.setTimeout(() => {
         setIsSuccess(false);
         onClose();
       }, 2000);
+      pendingTimeouts.current.push(t2);
     }, 1200);
+    pendingTimeouts.current.push(t1);
   };
 
   return (
@@ -199,3 +211,5 @@ make a custom subscription package for you.
     </div>
   );
 }
+
+// (cleanup moved inside component)
