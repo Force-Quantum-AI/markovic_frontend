@@ -133,7 +133,7 @@ export default function LoginPage() {
 
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 text-gray-500 cursor-pointer select-none">
+                <label className="flex items-center gap-2 text-[#135576] cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={rememberMe}
@@ -144,7 +144,7 @@ export default function LoginPage() {
                 </label>
                 <button
                   onClick={() => setIsForgotPasswordModalOpen(true)}
-                  className="text-red-500  hover:underline"
+                  className="text-[#135576] hover:underline"
                 >
                   Forgot Password?
                 </button>

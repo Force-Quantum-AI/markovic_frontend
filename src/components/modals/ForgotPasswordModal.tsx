@@ -17,6 +17,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog"; // Standard Shadcn/UI import
 import { toast } from "sonner";
+import { useForgotPasswordRequestMutation, useResetPasswordMutation } from "@/store/features/auth/authApi";
 
 // Step Definitions
 type ResetStep = "EMAIL" | "OTP" | "NEW_PASSWORD" | "SUCCESS" | "ERROR";
@@ -30,6 +31,10 @@ export default function ForgotPasswordModal({
   isOpen,
   onOpenChange,
 }: ForgotPasswordModalProps) {
+
+  const [forgotPasswordRequest, {isLoading:isForgotPasswordRequestLoading}] = useForgotPasswordRequestMutation();
+  const [resetPassword, {isLoading:isResetPasswordLoading}] = useResetPasswordMutation();
+
   // --- STATE MANAGEMENT ---
   const [step, setStep] = useState<ResetStep>("EMAIL");
   const [isLoading, setIsLoading] = useState(false);
@@ -85,40 +90,24 @@ export default function ForgotPasswordModal({
     return `${m}:${sec < 10 ? "0" : ""}${sec}`;
   };
 
-  // --- HANDLERS ---
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const t = window.setTimeout(() => {
-      setIsLoading(false);
-      setStep("OTP"); // Advance to OTP
-    }, 1200);
-    pendingTimeouts.current.push(t);
-  };
-
-  const handleOtpVerify = () => {
-    setIsLoading(true);
-    const t = window.setTimeout(() => {
-      setIsLoading(false);
-      // Dummy Check: '123456' for success
-      if (otp.join("") === "123456") setStep("NEW_PASSWORD");
-      else setStep("ERROR");
-    }, 1200);
-    pendingTimeouts.current.push(t);
-  };
-
-  const handlePasswordReset = (e: React.FormEvent) => {
+  const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    setIsLoading(true);
-    const t = window.setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const res = await resetPassword({ 
+        email : email,
+        otp: otp.join(""),
+        new_password : password,
+        confirm_password: confirmPassword
+      }).unwrap();
+      toast.success("Password reset successfully");
       setStep("SUCCESS");
-    }, 1500);
-    pendingTimeouts.current.push(t);
+    } catch (error:any) {
+      toast.error("Failed to reset password");
+    }
   };
 
   const handleOtpChange = (val: string, idx: number) => {
@@ -128,6 +117,18 @@ export default function ForgotPasswordModal({
     newOtp[idx] = cleanVal.substring(cleanVal.length - 1);
     setOtp(newOtp);
     if (idx < 5) otpRefs.current[idx + 1]?.focus();
+  };
+
+  const handleOtpSent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await forgotPasswordRequest({ email }).unwrap();
+      setStep("OTP");
+      toast.success("An OTP has been sent to your email address.");
+    } catch (error: any) {
+      console.log(error);
+      toast.error("Failed to send OTP");
+    }
   };
 
   // --- SWITCH CASE UI RENDER ---
@@ -141,7 +142,7 @@ export default function ForgotPasswordModal({
               No problem. Enter your registered email address and we&apos;ll send you 6 digit verification code to reset your password.
             </p>
 
-            <form onSubmit={handleEmailSubmit} className="w-full max-w-md space-y-8">
+            <form onSubmit={handleOtpSent} className="w-full max-w-md space-y-8">
               <div className="relative flex items-center">
                 <Mail className="absolute left-5 w-5 h-5 text-gray-400" />
                 <input
@@ -159,9 +160,10 @@ export default function ForgotPasswordModal({
 
               <button
                 type="submit"
+                disabled={isForgotPasswordRequestLoading}
                 className="w-full sm:w-64 mx-auto bg-[#135576] hover:bg-[#0f445f] text-white font-medium py-3.5 rounded-full shadow-md flex items-center justify-center gap-2"
               >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Send OTP"}
+                {isForgotPasswordRequestLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Send OTP"}
               </button>
             </form>
 
@@ -206,7 +208,7 @@ export default function ForgotPasswordModal({
             </div>
 
             <button
-              onClick={handleOtpVerify}
+              onClick={()=> setStep("NEW_PASSWORD")}
               disabled={otp.join("").length < 6}
               className="w-full sm:w-64 bg-[#135576] text-white py-3.5 rounded-full font-medium disabled:opacity-50"
             >
