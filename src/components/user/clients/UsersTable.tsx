@@ -9,6 +9,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 // --- TYPES & INTERFACES ---
 interface User {
@@ -52,6 +53,7 @@ const filterUsers = (users: User[], name?: string, year?: string, email?: string
 };
 
 export default function UsersTable({ name, year, email }: UsersTableProps) {
+    const router = useRouter();
     // Full dataset from the image
     const [users] = useState<User[]>([
         {
@@ -178,7 +180,7 @@ export default function UsersTable({ name, year, email }: UsersTableProps) {
                     </thead>
                     <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                         {currentUsers.map((user) => (
-                            <tr key={user.id} className="hover:bg-gray-50/70 transition-colors">
+                            <tr onClick={() => router.push(`/my-cases/${user.id}`)} key={user.id} className="cursor-pointer hover:bg-gray-50/70 transition-colors">
                                 {/* Name column */}
                                 <td className="py-4 px-5 flex items-center gap-2">
                                     <div className="h-8 w-8 relative rounded-full overflow-hidden">

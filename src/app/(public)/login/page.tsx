@@ -75,7 +75,7 @@ export default function LoginPage() {
             <p className="text-sm text-gray-500 mb-8">Sign in to your Law Office System</p>
 
             {errorMsg && (
-              <div className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <div className="mb-5 text-sm text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                 {errorMsg}
               </div>
             )}
