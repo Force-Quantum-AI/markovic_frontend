@@ -1,6 +1,9 @@
 "use client";
 
+import React, { useState } from "react";
 import PackageCard, { PackageProps } from "./PackageCard";
+import UpdatePackageDialog from "./UpdatePackageDialog";
+import { toast } from "sonner";
 
 const FEATURES = [
   "Unlimited Cases.",
@@ -88,11 +91,33 @@ const YEARLY_PLANS: PackageProps[] = [
 ];
 
 export default function PackagesContent() {
+  const [monthlyPlans, setMonthlyPlans] = useState<PackageProps[]>(MONTHLY_PLANS);
+  const [yearlyPlans, setYearlyPlans] = useState<PackageProps[]>(YEARLY_PLANS);
+  const [selectedPlan, setSelectedPlan] = useState<PackageProps | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleOpenDialog = (plan: PackageProps) => {
+    setSelectedPlan(plan);
+    setIsDialogOpen(true);
+  };
+
+  const handleUpdatePackage = (updatedPlan: PackageProps) => {
+    const updateInList = (list: PackageProps[]) => 
+      list.map(plan => plan.id === updatedPlan.id ? updatedPlan : plan);
+
+    if (updatedPlan.billingCycle === "month") {
+      setMonthlyPlans(updateInList);
+    } else {
+      setYearlyPlans(updateInList);
+    }
+
+    toast.success(`Package "${updatedPlan.name}" updated successfully!`);
+  };
+
   return (
     <div className="w-full flex flex-col items-center py-8 pb-24">
       <h1 className="text-2xl md:text-[28px] font-bold text-[#1A2328] mb-8">Update your package</h1>
       
-      {/* Monthly Section */}
       <div className="mb-6 flex justify-center">
         <span className="px-5 py-1.5 rounded-md bg-white border border-[#BEC4D2] text-[13px] font-semibold text-[#135576]">
           Monthly Package
@@ -100,12 +125,15 @@ export default function PackagesContent() {
       </div>
       
       <div className="flex flex-col md:flex-row gap-5 mb-16">
-        {MONTHLY_PLANS.map(plan => (
-          <PackageCard key={plan.id} plan={plan} />
+        {monthlyPlans.map(plan => (
+          <PackageCard 
+            key={plan.id} 
+            plan={plan} 
+            onUpdate={handleOpenDialog}
+          />
         ))}
       </div>
 
-      {/* Yearly Section */}
       <div className="mb-6 flex justify-center">
         <span className="px-5 py-1.5 rounded-md bg-white border border-[#BEC4D2] text-[13px] font-semibold text-[#135576]">
           Yearly package
@@ -113,10 +141,22 @@ export default function PackagesContent() {
       </div>
       
       <div className="flex flex-col md:flex-row gap-5">
-        {YEARLY_PLANS.map(plan => (
-          <PackageCard key={plan.id} plan={plan} />
+        {yearlyPlans.map(plan => (
+          <PackageCard 
+            key={plan.id} 
+            plan={plan} 
+            onUpdate={handleOpenDialog}
+          />
         ))}
       </div>
+
+      <UpdatePackageDialog
+        key={selectedPlan?.id || "empty"}
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        plan={selectedPlan}
+        onUpdate={handleUpdatePackage}
+      />
     </div>
   );
 }

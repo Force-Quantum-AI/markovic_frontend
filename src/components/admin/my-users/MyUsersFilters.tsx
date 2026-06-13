@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Filter } from "lucide-react";
 import BasedSelect from "@/components/shared/BasedSelect";
+import AdminButton from "@/components/shared/AdminButton";
 
 interface MyUsersFiltersProps {
   onFilter: (filters: {
@@ -111,18 +112,17 @@ export default function MyUsersFilters({ onFilter, onReset }: MyUsersFiltersProp
 
         {/* Action buttons */}
         <div className="flex gap-4 pt-2">
-          <button 
+          <AdminButton
             onClick={handleApplyFilter}
-            className="px-6 py-3 rounded-[32px] bg-[#0F5A7F] text-white font-roboto text-[14px] font-medium leading-[20px] hover:bg-[#0c4968] transition-all cursor-pointer"
-          >
-            Apply Filter
-          </button>
-          <button 
+            label="Apply Filter"
+            className="py-3"
+          />
+          <AdminButton
             onClick={handleResetFilter}
-            className="px-6 py-3 rounded-[32px] border border-[#BEC4D2] bg-white text-[#475467] font-roboto text-[14px] font-medium leading-[20px] hover:bg-gray-50 transition-all cursor-pointer"
-          >
-            Reset Filter
-          </button>
+            label="Reset Filter"
+            variant="secondary"
+            className="py-3"
+          />
         </div>
 
       </div>

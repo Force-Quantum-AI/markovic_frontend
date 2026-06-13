@@ -10,7 +10,6 @@ import {
   Grid2x2Check,
   Users,
   Archive,
-  Megaphone,
   SlidersHorizontal,
   CreditCard,
   ChartColumn,
@@ -70,11 +69,6 @@ const navItems: NavItem[] = [
     title: "Archive Cases",
     href: "/admin/archive-cases",
     icon: Archive,
-  },
-  {
-    title: "Anouncement",
-    href: "/admin/anouncement",
-    icon: Megaphone,
   },
   {
     title: "Categories & Sub-Category",

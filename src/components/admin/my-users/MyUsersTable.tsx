@@ -29,22 +29,33 @@ interface UserRow {
     | "Limited Edition";
 }
 
+import AddUserDialog from "./AddUserDialog";
+import AdminButton from "@/components/shared/AdminButton";
+
 interface MyUsersTableProps {
   usersList: UserRow[];
+  onAddUser?: (user: {
+    name: string;
+    email: string;
+    avatar: string;
+    phone: string;
+    role: string;
+  }) => void;
 }
 
 const planBadgeStyles: Record<UserRow["plan"], string> = {
-  Basic: "bg-[#EFF1F4] text-[#344054] border border-[#D0D5DD]",
+  Basic: "bg-[#DBEAFE] text-[#1447E6] border border-[#1447E6]/20",
   Professional: "bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD]",
-  Standard: "bg-[#F3E8FF] text-[#7E22CE] border border-[#E9D5FF]",
-  Premium: "bg-[#FCE7F3] text-[#BE185D] border border-[#FBCFE8]",
+  Standard: "bg-[#E8D5FF] text-[#7314E6] border border-[#7314E6]/20",
+  Premium: "bg-[#FFF3E0] text-[#E69514] border border-[#E69514]/20",
   Enterprise: "bg-[#E0F2FE] text-[#0284C7] border border-[#BAE6FD]",
   Ultimate: "bg-[#F3E8FF] text-[#6B21A8] border border-[#E9D5FF]",
-  Custom: "bg-[#EFF6FF] text-[#1D4ED8] border border-[#DBEAFE]",
+  Custom: "bg-[#EFF1F4] text-[#667085] border border-[#667085]/20",
   "Limited Edition": "bg-[#F3F4F6] text-[#374151] border border-[#E5E7EB]",
 };
 
-export default function MyUsersTable({ usersList }: MyUsersTableProps) {
+export default function MyUsersTable({ usersList, onAddUser }: MyUsersTableProps) {
+  const [isAddUserOpen, setIsAddUserOpen] = React.useState(false);
   return (
     <div className="w-full bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-6">
       
@@ -60,20 +71,19 @@ export default function MyUsersTable({ usersList }: MyUsersTableProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          <button 
+          <AdminButton
             onClick={() => alert("Exporting database...")}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 font-roboto text-[14px] font-semibold leading-[20px] hover:bg-gray-50 transition-all cursor-pointer"
-          >
-            <Download className="w-4 h-4 text-gray-500" />
-            <span>Export</span>
-          </button>
-          <button 
-            onClick={() => alert("Add User modal placeholder")}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0F5A7F] text-white font-roboto text-[14px] font-semibold leading-[20px] hover:bg-[#0c4968] transition-all cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add User</span>
-          </button>
+            label="Export"
+            icon={<Download className="w-4 h-4" />}
+            variant="secondary"
+            className="py-2.5"
+          />
+          <AdminButton
+            onClick={() => setIsAddUserOpen(true)}
+            label="Add User"
+            icon={<Plus className="w-4 h-4" />}
+            className="py-2.5"
+          />
         </div>
       </div>
 
@@ -199,7 +209,13 @@ export default function MyUsersTable({ usersList }: MyUsersTableProps) {
           </button>
         </div>
       </div>
-
+      {onAddUser && (
+        <AddUserDialog
+          isOpen={isAddUserOpen}
+          onOpenChange={setIsAddUserOpen}
+          onAddUser={onAddUser}
+        />
+      )}
     </div>
   );
 }

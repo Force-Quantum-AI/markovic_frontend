@@ -14,7 +14,13 @@ export interface PackageProps {
   showIcon?: boolean;
 }
 
-export default function PackageCard({ plan }: { plan: PackageProps }) {
+export default function PackageCard({ 
+  plan, 
+  onUpdate 
+}: { 
+  plan: PackageProps; 
+  onUpdate?: (plan: PackageProps) => void;
+}) {
   return (
     <div className="bg-white rounded-2xl border border-[#BEC4D2]/40 p-6 flex flex-col w-[300px] xl:w-[320px] shadow-sm">
       <div className="flex justify-between items-center mb-1">
@@ -45,7 +51,11 @@ export default function PackageCard({ plan }: { plan: PackageProps }) {
         </ul>
       </div>
 
-      <Button variant="outline" className="w-full border-[#135576] text-[#135576] hover:bg-[#135576]/5 hover:text-[#135576] rounded-full font-semibold h-10 mt-auto">
+      <Button 
+        variant="outline" 
+        onClick={() => onUpdate?.(plan)}
+        className="w-full border-[#135576] text-[#135576] hover:bg-[#135576]/5 hover:text-[#135576] rounded-full font-semibold h-10 mt-auto cursor-pointer"
+      >
         {plan.showIcon && <Settings className="w-4 h-4 mr-2" />}
         {plan.actionText}
       </Button>

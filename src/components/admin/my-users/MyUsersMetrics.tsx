@@ -1,12 +1,9 @@
-"use client";
-
-import React from "react";
 import { Users, UserCheck, Clock, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
 
 export default function MyUsersMetrics() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-      {/* Card 1: Total Users */}
       <div 
         style={{ height: "142px" }}
         className="relative flex w-full p-6 justify-between items-center rounded-[24px] border border-[#BEDBFF] bg-gradient-to-br from-[#DBEAFE] to-[#EFF6FF] shadow-sm hover:shadow-md transition-all overflow-hidden"
@@ -28,9 +25,11 @@ export default function MyUsersMetrics() {
         </div>
         
         {/* Card Bg image graphic */}
-        <img 
+        <Image
           src="/admin-images/my-users/avg-case.png"
           alt="Total Users Graphic"
+          width={155}
+          height={155}
           className="absolute -top-[58px] left-1/2 -translate-x-[15%] w-[155px] h-[155px] select-none pointer-events-none z-0 object-contain"
         />
       </div>
@@ -57,9 +56,11 @@ export default function MyUsersMetrics() {
         </div>
         
         {/* Card Bg image graphic */}
-        <img 
+        <Image
           src="/admin-images/my-users/platform.png"
           alt="Active Users Graphic"
+          width={155}
+          height={155}
           className="absolute -top-[58px] left-1/2 -translate-x-[15%] w-[155px] h-[155px] select-none pointer-events-none z-0 object-contain"
         />
       </div>
@@ -86,9 +87,11 @@ export default function MyUsersMetrics() {
         </div>
         
         {/* Card Bg image graphic */}
-        <img 
+        <Image
           src="/admin-images/my-users/response.png"
           alt="New Today Graphic"
+          width={155}
+          height={155}
           className="absolute -top-[58px] left-1/2 -translate-x-[15%] w-[155px] h-[155px] select-none pointer-events-none z-0 object-contain"
         />
       </div>

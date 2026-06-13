@@ -17,6 +17,7 @@ interface UserRow {
     | "Basic" 
     | "Standard" 
     | "Premium"
+    | "Custom"
 }
 
 const initialUsers: UserRow[] = [
@@ -58,7 +59,7 @@ const initialUsers: UserRow[] = [
     role: "Legal Researcher",
     phone: "+382 67 456 789",
     created: "12 Jun 2026",
-    plan: "Premium",
+    plan: "Custom",
   },
   {
     id: "5",
@@ -103,15 +104,34 @@ const initialUsers: UserRow[] = [
 ];
 
 export default function MyUsers() {
-  const [usersList, setUsersList] = useState<UserRow[]>(initialUsers);
+  const [allUsers, setAllUsers] = useState<UserRow[]>(initialUsers);
+  const [filters, setFilters] = useState({
+    search: "",
+    clientName: "",
+    year: "",
+    subscription: "all",
+  });
 
-  const handleFilter = (filters: {
+  const handleFilter = (newFilters: {
     search: string;
     clientName: string;
     year: string;
     subscription: string;
   }) => {
-    let filtered = initialUsers;
+    setFilters(newFilters);
+  };
+
+  const handleReset = () => {
+    setFilters({
+      search: "",
+      clientName: "",
+      year: "",
+      subscription: "all",
+    });
+  };
+
+  const usersList = React.useMemo(() => {
+    let filtered = allUsers;
     if (filters.search) {
       filtered = filtered.filter(
         (u) =>
@@ -134,11 +154,34 @@ export default function MyUsers() {
         (u) => u.plan.toLowerCase() === filters.subscription.toLowerCase()
       );
     }
-    setUsersList(filtered);
-  };
+    return filtered;
+  }, [allUsers, filters]);
 
-  const handleReset = () => {
-    setUsersList(initialUsers);
+  const handleAddUser = (user: {
+    name: string;
+    email: string;
+    avatar: string;
+    phone: string;
+    role: string;
+  }) => {
+    const createdDate = new Date().toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+
+    const newUser: UserRow = {
+      id: String(allUsers.length + 1),
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      role: user.role,
+      phone: user.phone,
+      created: createdDate,
+      plan: "Basic",
+    };
+
+    setAllUsers((prev) => [newUser, ...prev]);
   };
 
   return (
@@ -150,7 +193,7 @@ export default function MyUsers() {
       <MyUsersFilters onFilter={handleFilter} onReset={handleReset} />
 
       {/* All Users Table Section */}
-      <MyUsersTable usersList={usersList} />
+      <MyUsersTable usersList={usersList} onAddUser={handleAddUser} />
     </div>
   );
 }
