@@ -1,18 +1,45 @@
 "use client";
-import { useState, useRef } from "react";
-import { Camera, Check, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Camera, Check, ChevronDown, Loader, Loader2, LoaderPinwheel } from "lucide-react";
 import { toast } from "sonner";
+import { useGetProfileInfoQuery } from "@/store/features/profile/profile.api";
+
+// {
+//     "id": "92dd722c-d7c1-4149-979c-8c05c08b351d",
+//     "full_name": "Mollitia aut assumen",
+//     "email": "xehax52271@afterdo.com",
+//     "email_verified": true,
+//     "number": "+1 (576) 299-1214",
+//     "professional_role": null,
+//     "bar_association_number": null,
+//     "two_factor_enabled": false,
+//     "profile_image": null
+// }
 
 export default function Account() {
-  const [fullName, setFullName] = useState("Wade Warren");
-  const [email, setEmail] = useState("wade.warren@email.com");
-  const [phoneNumber, setPhoneNumber] = useState("Wade Warren");
+  const { data: profileInfo, isLoading:isLoadingProfileInfo } = useGetProfileInfoQuery({});
+
+  console.log(profileInfo);
+  
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [professionalRole, setProfessionalRole] = useState("");
-  const [barAssociationNumber, setBarAssociationNumber] = useState("BAR-MNE-2024-1234");
+  const [barAssociationNumber, setBarAssociationNumber] = useState("");
   
   // Using a placeholder image similar to the design
-  const [avatarUrl, setAvatarUrl] = useState("https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80");
+  const [avatarUrl, setAvatarUrl] = useState("https://images.unsplash.com/vector-1742875355318-00d715aec3e8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setFullName(profileInfo?.full_name || "");
+    setEmail(profileInfo?.email || "");
+    setPhoneNumber(profileInfo?.number || "");
+    setProfessionalRole(profileInfo?.professional_role || "");
+    setBarAssociationNumber(profileInfo?.bar_association_number || "");
+    setAvatarUrl(profileInfo?.profile_image || "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0 ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  }, [profileInfo]);
 
   const handleSave = () => {
     toast.success("Account information saved successfully", {
@@ -43,11 +70,15 @@ export default function Account() {
           <label className="text-[#364153] text-sm font-medium">Profile Photo</label>
           <div className="flex items-center gap-7">
             <div className="relative w-24 h-24 rounded-full">
-              <img 
-                src={avatarUrl} 
-                alt="Profile" 
-                className="w-full h-full object-cover rounded-full"
-              />
+              {isLoadingProfileInfo ? (
+                <Loader2 className="animate-spin w-24 h-24 text-[#9abed1]" />
+              ) : (
+                <img 
+                  src={avatarUrl} 
+                  alt="Profile" 
+                  className="w-full h-full object-cover rounded-full"
+                />
+              )}
               <button 
                 onClick={handleChangePhoto}
                 className="absolute bottom-0 right-0 bg-[#135576] w-8 h-8 rounded-full flex items-center justify-center text-white border-2 border-white hover:bg-[#0f435c] transition-colors"
