@@ -1,60 +1,43 @@
 import { baseApi } from "../../api/baseApi";
-import { setUser } from "./authSlice";
+import { setCredentials, logout as logoutAction } from "./authSlice";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getMe: builder.query<any, void>({
-      query: () => "/auth/me",
-      providesTags: ["Auth"],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          dispatch(setUser(data.userInfo || data.user || null));
-        } catch (error) {
-          dispatch(setUser(null));
-        }
-      },
-      
-    }),
-    loginUser: builder.mutation<any, any>({
-      query: (credentials) => ({
-        url: "/auth/userLogin",
-        method: "POST",
-        body: credentials,
-      }),
-      invalidatesTags: ["Auth"],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data.user || data.userInfo) {
-            dispatch(setUser(data.user || data.userInfo));
-          }
-        } catch (error) {}
-      },
-    }),
-    googleLoginUser: builder.mutation<any, any>({
-      query: (credentials) => ({
-        url: "/auth/googleLogin",
-        method: "POST",
-        body: credentials,
-      }),
-      invalidatesTags: ["Auth"],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data.user || data.userInfo) {
-            dispatch(setUser(data.user || data.userInfo));
-          }
-        } catch (error) {}
-      },
-    }),
-    signupUser: builder.mutation<any, any>({
+    registerUser: builder.mutation<any, any>({
       query: (userData) => ({
-        url: "/auth/userSignup",
+        url: "/auth/register/",
         method: "POST",
         body: userData,
       }),
     }),
+
+    login: builder.mutation<
+      { access: string; refresh: string; role: string },
+      { email: string; password: string }
+    >({
+      query: (credentials) => ({
+        url: "/auth/login/",
+        method: "POST",
+        body: credentials,
+        credentials: "include",
+      }),
+      // After a successful login, save the tokens in Redux store
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            setCredentials({
+              access: data.access,
+              refresh: data.refresh,
+              role: data.role
+            })
+          );
+        } catch {
+          // login failed — leave state unchanged
+        }
+      },
+    }),
+
     adminSignup: builder.mutation<any, any>({
       query: (userData) => ({
         url: "/auth/admin/signup",
@@ -62,52 +45,57 @@ export const authApi = baseApi.injectEndpoints({
         body: userData,
       }),
     }),
-    // reset password Api
+
+    // Reset password APIs
     forgotPasswordRequest: builder.mutation({
       query: (data) => ({
-        url: "/auth/forgot-password",
+        url: "/auth/forgot-password/",
         method: "POST",
         body: data, // { email }
       }),
     }),
+
     verifyOtp: builder.mutation({
       query: (data) => ({
-        url: "/auth/verify-otp",
+        url: "/auth/verify-email/",
         method: "POST",
         body: data, // { email, otp }
       }),
     }),
+
     resetPassword: builder.mutation({
-      query: (data) => ({
-        url: "/auth/reset-password",
+      query: (data:{email: string; otp: string; new_password: string; confirm_password: string;}) => ({
+        url: "/auth/reset-password/",
         method: "POST",
-        body: data, // { email, otp, password }
+        body: data, // { email, otp, new_password, confirm_password }
       }),
     }),
-    logoutUser: builder.mutation<any, void>({
+
+    logoutUser: builder.mutation<void, void>({
       query: () => ({
-        url: "/auth/userLogout",
-        method: "GET",
+        url: "/auth/logout",
+        method: "POST",
+        credentials: "include",
       }),
-      invalidatesTags: ["Auth"],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          dispatch(setUser(null));
-        } catch (error) {}
+        } catch {
+          // Even if server logout fails, clear local state
+        } finally {
+          dispatch(logoutAction());
+        }
       },
     }),
   }),
 });
 
 export const {
-  useGetMeQuery,
-  useLoginUserMutation,
-  useGoogleLoginUserMutation,
-  useSignupUserMutation,
+  useRegisterUserMutation,
+  useLoginMutation,
   useAdminSignupMutation,
-  useLogoutUserMutation,
   useForgotPasswordRequestMutation,
   useVerifyOtpMutation,
   useResetPasswordMutation,
+  useLogoutUserMutation,
 } = authApi;

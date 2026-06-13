@@ -98,7 +98,7 @@ export default function ClientPage() {
                     title="My Clients"
                     subtitle="Manage and track your clients and their legal matters"
                 />
-                <MainButton icon={<Plus className="h-4 w-4" />} label="Add Client" onClick={() => setCurrentPage(1)} />
+                {/* <MainButton icon={<Plus className="h-4 w-4" />} label="Add Client" onClick={() => setCurrentPage(1)} /> */}
             </div>
 
             {/* matrix card  */}

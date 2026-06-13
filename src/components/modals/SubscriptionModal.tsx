@@ -50,15 +50,21 @@ const subscriptionPackages = [
 interface SubscriptionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  userEmail?: string;
+  userPassword?: string;
 }
 
 // ─── MAIN COMPONENT ────────────────────────────────────────────────────────
 
-export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
+export default function SubscriptionModal({ isOpen, onClose, userEmail, userPassword }: SubscriptionModalProps) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("yearly");
   const [isContactSupportOpen, setIsContactSupportOpen] = useState(false);
 
   if (!isOpen) return null;
+
+  const handleClose = async() => {
+    onClose();
+  };
 
 return (
   <div
@@ -94,7 +100,7 @@ return (
       >
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="
             absolute
             top-3

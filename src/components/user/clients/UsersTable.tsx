@@ -9,6 +9,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 // --- TYPES & INTERFACES ---
 interface User {
@@ -52,6 +53,7 @@ const filterUsers = (users: User[], name?: string, year?: string, email?: string
 };
 
 export default function UsersTable({ name, year, email }: UsersTableProps) {
+    const router = useRouter();
     // Full dataset from the image
     const [users] = useState<User[]>([
         {
@@ -178,7 +180,7 @@ export default function UsersTable({ name, year, email }: UsersTableProps) {
                     </thead>
                     <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                         {currentUsers.map((user) => (
-                            <tr key={user.id} className="hover:bg-gray-50/70 transition-colors">
+                            <tr onClick={() => router.push(`/my-cases/${user.id}`)} key={user.id} className="cursor-pointer hover:bg-gray-50/70 transition-colors">
                                 {/* Name column */}
                                 <td className="py-4 px-5 flex items-center gap-2">
                                     <div className="h-8 w-8 relative rounded-full overflow-hidden">
@@ -300,8 +302,8 @@ export default function UsersTable({ name, year, email }: UsersTableProps) {
                                 onClick={() => handlePageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
                                 className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === 1
-                                        ? "cursor-not-allowed border-gray-200 text-gray-300"
-                                        : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
+                                    ? "cursor-not-allowed border-gray-200 text-gray-300"
+                                    : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
                                     }`}
                             >
                                 <ChevronLeft className="h-4 w-4" /> Prev
@@ -313,8 +315,8 @@ export default function UsersTable({ name, year, email }: UsersTableProps) {
                                         key={page}
                                         onClick={() => handlePageChange(page)}
                                         className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${currentPage === page
-                                                ? "bg-[#135576] text-white"
-                                                : "text-gray-600 hover:bg-gray-100"
+                                            ? "bg-[#135576] text-white"
+                                            : "text-gray-600 hover:bg-gray-100"
                                             }`}
                                     >
                                         {page}
@@ -326,8 +328,8 @@ export default function UsersTable({ name, year, email }: UsersTableProps) {
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === totalPages}
                                 className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === totalPages
-                                        ? "cursor-not-allowed border-gray-200 text-gray-300"
-                                        : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
+                                    ? "cursor-not-allowed border-gray-200 text-gray-300"
+                                    : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
                                     }`}
                             >
                                 Next <ChevronRight className="h-4 w-4" />

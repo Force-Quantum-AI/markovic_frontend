@@ -8,6 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import SubscriptionModal from "./SubscriptionModal";
+import { toast } from "sonner";
+import { useVerifyOtpMutation } from "@/store/features/auth/authApi";
 
 // Step type definitions
 type ModalStep = "ENTER_OTP" | "SUCCESS" | "ERROR";
@@ -16,18 +19,23 @@ interface OtpModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   userEmail?: string;
+  userPassword?: string;
 }
 
 export default function OtpVerificationModal({
   isOpen,
   onOpenChange,
   userEmail = "marko@markoviclaw.me",
+  userPassword,
 }: OtpModalProps) {
+  const [verifyOtp, { isLoading, isSuccess }] = useVerifyOtpMutation();
+
   // State Matrix
   const [step, setStep] = useState<ModalStep>("ENTER_OTP");
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState<number>(299); // 4:59 in seconds
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -40,16 +48,29 @@ export default function OtpVerificationModal({
     }
   }, [isOpen]);
 
-  // Countdown Timer Logic
-  useEffect(() => {
-    if (!isOpen || step !== "ENTER_OTP" || timeLeft <= 0) return;
+  // Keep a reference to any pending close timer so we can clear it on
+  // unmount to avoid dangling timeouts.
+  const closeTimerRef = useRef<number | null>(null);
+  const closeTimerId = useRef<number | null>(null);
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+  // Countdown Timer Logic — create a single interval while the modal is
+  // open and the user is entering the OTP. Use functional updates so the
+  // effect does not re-run every second.
+  useEffect(() => {
+    if (!isOpen || step !== "ENTER_OTP") return;
+
+    const timer = window.setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [isOpen, step, timeLeft]);
+    return () => window.clearInterval(timer);
+  }, [isOpen, step]);
 
   // Format seconds to MM:SS
   const formatTime = (seconds: number) => {
@@ -94,7 +115,7 @@ export default function OtpVerificationModal({
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").trim().replace(/[^0-9]/g, "");
-    
+
     if (pastedData.length === 6) {
       const newOtp = pastedData.split("");
       setOtp(newOtp);
@@ -103,22 +124,35 @@ export default function OtpVerificationModal({
   };
 
   // Simulation Trigger for Verification Process
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const fullOtp = otp.join("");
-    if (fullOtp.length < 6) return;
+    if (fullOtp.length < 6) {
+      toast.error("Please enter a valid 6-digit OTP");
+      return;
+    }
 
-    setIsVerifying(true);
+    try {
+      setIsVerifying(true);
+      const verifyPayload = {
+        email: userEmail,
+        otp: fullOtp,
+      };
 
-    // Simulated API timeout delay
-    setTimeout(() => {
+      await verifyOtp(verifyPayload).unwrap();
       setIsVerifying(false);
-      // Dummy check dataset logic: if OTP is "123456", trigger Success, otherwise Error
-      if (fullOtp === "123456") {
-        setStep("SUCCESS");
-      } else {
-        setStep("ERROR");
-      }
-    }, 1500);
+      setStep("SUCCESS");
+      toast.success("OTP verified successfully");
+      setIsSubscriptionModalOpen(true);
+      // Close modal after a short delay. Store timeout id to clear on unmount.
+      closeTimerRef.current = window.setTimeout(() => {
+        onOpenChange(false);
+      }, 2000);
+    } catch (error) {
+      console.log("error is : ", error);
+      toast.error("OTP verification failed, Please try again later.");
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const handleResend = () => {
@@ -138,7 +172,7 @@ export default function OtpVerificationModal({
                 OTP Verification
               </DialogTitle>
             </DialogHeader>
-            
+
             <p className="text-sm text-gray-500 max-w-md mt-4 leading-relaxed">
               We have sent a 6-digit verification code to your email address.
               Please enter the code below to complete your registration.
@@ -174,8 +208,8 @@ export default function OtpVerificationModal({
             {/* Support Links */}
             <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
               Didn&apos;t get code.{" "}
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleResend}
                 className="text-[#135576] font-bold hover:underline"
               >
@@ -222,7 +256,7 @@ export default function OtpVerificationModal({
             <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mb-6 border border-emerald-100">
               <CheckCircle2 className="w-10 h-10 text-emerald-500 fill-emerald-500 stroke-white" />
             </div>
-            
+
             <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
               Verification Successful
             </h2>
@@ -230,13 +264,13 @@ export default function OtpVerificationModal({
               Your identity has been confirmed. Welcome to the law office system interface.
             </p>
 
-            <button
+            {/* <button
               onClick={() => onOpenChange(false)}
               className="mt-8 bg-[#135576] hover:bg-[#0f445f] text-white text-sm font-medium py-2.5 px-8 rounded-full shadow-sm flex items-center gap-2 transition-all group"
             >
               Go to Dashboard
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </button>
+            </button> */}
           </div>
         );
 
@@ -281,10 +315,16 @@ export default function OtpVerificationModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl! w-[92vw] sm:w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 shadow-2xl border-none">
-        {renderModalContent()}
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-2xl! w-[92vw] sm:w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 shadow-2xl border-none">
+          {renderModalContent()}
+        </DialogContent>
+      </Dialog>
+      <SubscriptionModal
+        isOpen={isSubscriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
+      />
+    </>
   );
 }

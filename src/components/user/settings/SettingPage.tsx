@@ -69,12 +69,12 @@ export default function SettingPage() {
                             key={tab.value}
                             value={tab.value}
                             className="
-          py-3
-          px-3
-          data-[state=active]:bg-[#135576]
-          data-[state=active]:text-white
-          whitespace-nowrap
-        "
+                                    py-3
+                                    px-3
+                                    data-[state=active]:bg-[#135576]
+                                    data-[state=active]:text-white
+                                    whitespace-nowrap
+                                    "
                         >
                             {tab.icon}
                             <span className="ml-2">{tab.label}</span>
