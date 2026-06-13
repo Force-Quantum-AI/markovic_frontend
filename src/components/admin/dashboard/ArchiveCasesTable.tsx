@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Eye, Trash2, FileText, Database, Search, Clock, Landmark } from "lucide-react";
 
 interface CaseRow {
@@ -74,7 +74,7 @@ export default function ArchiveCasesTable() {
   const [cases, setCases] = useState<CaseRow[]>(casesData);
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this archived case record?")) {
+      if (confirm("Are you sure you want to delete this archived case record?")) {
       setCases(cases.filter((item) => item.id !== id));
     }
   };
@@ -96,19 +96,19 @@ export default function ArchiveCasesTable() {
       <div className="flex items-center justify-between border-b border-[#E5E7EB] px-6">
         <div className="relative pb-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-[#135576] font-roboto text-[16px] font-semibold leading-[24px]">
+          <h2 className="text-[#135576] font-roboto text-[16px] font-semibold leading-[24px]">
               Archive Cases
-            </h2>
+          </h2>
             <span className="text-[#427791] font-roboto text-[12px] font-medium leading-[140%]">
               (247 Cases)
-            </span>
-          </div>
+          </span>
+        </div>
           {/* Tab Underline */}
           <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#135576]" />
         </div>
-        <button className="text-sm font-semibold text-[#135576] hover:underline font-inter pb-3">
-          View All
-        </button>
+          <button className="text-sm font-semibold text-[#135576] hover:underline font-inter pb-3">
+            View All
+          </button>
       </div>
 
       {/* Desktop Table */}
@@ -245,12 +245,12 @@ export default function ArchiveCasesTable() {
       </div>
 
       {/* Pagination component */}
-      <div className="flex flex-col sm:flex-row items-center justify-between pt-4 pb-6 px-6 border-t border-[#E5E7EB] text-sm font-roboto text-[#475467] gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between pt-4 pb-6 px-6 border-t border-[#E5E7EB] text-sm font-roboto text-[#475467] gap-4">
         <span>Showing 1-6 of 247 results</span>
-        <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1">
           <button className="px-3 py-1.5 text-[#475467] hover:text-[#135576] text-sm font-medium font-roboto cursor-pointer">
-            Prev.
-          </button>
+              Prev.
+            </button>
           
           <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#F2F4F7] text-[#344054] text-sm font-medium font-roboto cursor-pointer">
             1
@@ -267,10 +267,10 @@ export default function ArchiveCasesTable() {
           <span className="px-2 text-[#475467] font-roboto">...</span>
           
           <button className="px-3 py-1.5 text-[#135576] hover:text-[#135576]/85 text-sm font-bold font-roboto cursor-pointer">
-            Next
-          </button>
+              Next
+            </button>
+          </div>
         </div>
-      </div>
     </div>
   );
 }

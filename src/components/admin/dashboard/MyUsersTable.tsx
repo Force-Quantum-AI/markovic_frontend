@@ -65,8 +65,8 @@ const users: UserRow[] = [
 ];
 
 const planBadgeStyles = {
-  Standard: "bg-[#F3E8FF] text-[#8200DB]",
-  Basic: "bg-[#F3F4F6] text-[#364153]",
+  Standard: "bg-[#E8D5FF] text-[#7314E6]",
+  Basic: "bg-[#DBEAFE] text-[#1447E6]",
   Professional: "bg-[#DBEAFE] text-[#1447E6]",
 };
 

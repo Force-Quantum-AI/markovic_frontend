@@ -8,7 +8,7 @@ import SystemHealth from "@/components/admin/dashboard/SystemHealth";
 import MyUsersTable from "@/components/admin/dashboard/MyUsersTable";
 import ArchiveCasesTable from "@/components/admin/dashboard/ArchiveCasesTable";
 
-export default function Page() {
+export default function Dashboard() {
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
