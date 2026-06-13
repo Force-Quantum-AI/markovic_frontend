@@ -11,6 +11,7 @@ import {
   FileCheck2, 
   ArrowUpRight 
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // --- TYPES FOR THE REUSABLE CARD ---
 interface MetricCardProps {
@@ -45,6 +46,7 @@ export function MetricCard({ icon, value, label, bgColor, iconBgColor }: MetricC
 
 // --- MAIN WRAPPER COMPONENT ---
 export default function DashboardMetrics() {
+  const router = useRouter()
   
   // Dummy dataset representing your backend API payloads
   const statsData = [
@@ -99,7 +101,7 @@ export default function DashboardMetrics() {
   ];
 
   const handleExploreAction = () => {
-    console.log("Redirecting user to Full AI Search module...");
+    router.push("/ai-search")
   };
 
   return (

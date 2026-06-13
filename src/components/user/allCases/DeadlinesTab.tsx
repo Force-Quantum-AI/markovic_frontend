@@ -1,0 +1,198 @@
+"use client";
+
+import React, { useState } from "react";
+import { Plus, Edit2, Calendar } from "lucide-react";
+import AddEditHearingModal from "@/components/modals/AddEditHearingModal";
+
+// 1. TypeScript Interface for type safety
+interface Deadline {
+  id: string;
+  date: string;
+  time: string;
+  location: string;
+  type: string;
+  status: "Upcoming" | "Held" | "Postponed";
+  daysRemaining?: number;
+}
+
+// 2. Dummy Dataset mimicking future API response
+const DUMMY_DeadlineS: Deadline[] = [
+  {
+    id: "1",
+    date: "22 May 2026",
+    time: "09:00",
+    location: "Basic Court Podgorica",
+    type: "New Deadline",
+    status: "Upcoming",
+    daysRemaining: 3,
+  },
+  {
+    id: "2",
+    date: "10 April 2026",
+    time: "11:30",
+    location: "Basic Court Podgorica",
+    type: "Regular Deadline",
+    status: "Held",
+  },
+  {
+    id: "3",
+    date: "15 March 2026",
+    time: "09:00",
+    location: "Basic Court Podgorica",
+    type: "Review Deadline",
+    status: "Postponed",
+  },
+];
+
+export default function DeadlinesTab() {
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedDeadline, setSelectedDeadline] =
+    useState<Deadline | null>(null);
+
+  const [mode, setMode] =
+    useState<"add" | "edit">("add");
+
+  // Local state to handle dynamic additions/interactions in frontend
+  const [hearings, setDeadlines] = useState<Deadline[]>(DUMMY_DeadlineS);
+
+  // Find the next upcoming Deadline dynamically
+  const nextDeadline = hearings.find((h) => h.status === "Upcoming");
+
+  const handleAddDeadline = () => {
+    setMode("add");
+    setSelectedDeadline(null);
+    setOpenModal(true);
+  };
+
+  const handleEditDeadline = (id: string) => {
+    const hearing = hearings.find(
+      (item) => item.id === id
+    );
+
+    if (!hearing) return;
+
+    setSelectedDeadline(hearing);
+    setMode("edit");
+    setOpenModal(true);
+  };
+
+  // Helper function for styling status badges dynamically
+  const getStatusStyles = (status: Deadline["status"]) => {
+    switch (status) {
+      case "Upcoming":
+        return "text-blue-600 font-semibold";
+      case "Held":
+        return "text-green-600 font-semibold";
+      case "Postponed":
+        return "text-amber-600 font-semibold";
+      default:
+        return "text-gray-600";
+    }
+  };
+
+  return (
+    <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+      {/* LEFT COLUMN: Upcoming Section */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <h2 className="text-gray-800 font-bold text-lg mb-4">Upcoming:</h2>
+          <hr className="border-gray-100 mb-5" />
+
+          {nextDeadline ? (
+            <div className="bg-[#FFF4D4] border border-[#FFDD8F] rounded-xl p-5 relative group">
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="text-[#C28203] text-sm font-medium block mb-3">
+                    Next Deadline:
+                  </span>
+                  <div className="text-gray-900 font-bold text-xl tracking-tight">
+                    {nextDeadline.date}
+                  </div>
+                  <div className="text-gray-900 font-bold text-xl tracking-tight mb-4">
+                    {nextDeadline.time}
+                  </div>
+                  <span className="text-gray-700 text-sm bg-[#fbe297] px-2.5 py-1 rounded-md">
+                    {nextDeadline.type}
+                  </span>
+                </div>
+
+                <div className="flex flex-col items-end justify-between h-full space-y-8">
+                  <button
+                    onClick={() => handleEditDeadline(nextDeadline.id)}
+                    className="p-2 text-[#C28203] hover:bg-[#fbe297] rounded-lg transition-colors"
+                    aria-label="Edit Deadline"
+                  >
+                    <Edit2 className="w-5 h-5" />
+                  </button>
+                  {nextDeadline.daysRemaining !== undefined && (
+                    <span className="text-gray-500 text-xs font-medium">
+                      {nextDeadline.daysRemaining} Days Remaining
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-400 border border-dashed rounded-xl">
+              No upcoming Deadlines scheduled.
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={handleAddDeadline}
+          className="mt-6 inline-flex items-center justify-center gap-2 bg-[#0c5174] hover:bg-[#0a4360] text-white font-medium py-3 px-5 rounded-full shadow-sm transition-colors w-fit text-sm"
+        >
+          <Plus className="w-4 h-4" /> Add new Deadline
+        </button>
+      </div>
+
+      {/* RIGHT COLUMN: Deadline History Section */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <h2 className="text-[#62728d] font-semibold text-base mb-4">
+          Deadline History:
+        </h2>
+        <hr className="border-gray-100 mb-4" />
+
+        <div className="space-y-3">
+          {hearings.map((hearing) => (
+            <div
+              key={hearing.id}
+              className="border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 hover:border-gray-300 transition-all bg-white"
+            >
+              {/* Date & Time block */}
+              <div className="w-1/3 min-w-[110px]">
+                <div className="text-gray-900 font-medium text-[15px]">
+                  {hearing.date}
+                </div>
+                <div className="text-gray-500 text-sm mt-0.5">
+                  {hearing.time}
+                </div>
+              </div>
+
+              {/* Court Location block */}
+              <div className="w-1/2 border-l text-nowrap md:text-wrap border-gray-100 pl-4 text-gray-600 text-sm font-normal">
+                {hearing.location}
+              </div>
+
+              {/* Status Badge block */}
+              <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm">
+                <span className={getStatusStyles(hearing.status)}>
+                  {hearing.status}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <AddEditHearingModal
+        forModal="deadline"
+        open={openModal}
+        setOpen={setOpenModal}
+        mode={mode}
+        hearing={selectedDeadline}
+      />
+    </div>
+  );
+}

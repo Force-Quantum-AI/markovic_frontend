@@ -7,6 +7,7 @@ import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
 import { lawsDataset } from "@/components/user/dashboard/LawsAndBylaws";
 import { LawCard } from "@/components/shared/LawCard";
+import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
@@ -62,6 +63,10 @@ export default function LawAndByLawPage() {
 
     return (
         <div className="mx-auto w-full p-2 md:p-3 bg-white rounded-2xl">
+            <PageHeadingTitle
+                title="Laws & By-laws"
+                subtitle="Explore all laws & bylaws here"
+            />
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 my-4">
                 <div className="col-span-1 md:col-span-3">
                     <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
@@ -107,16 +112,16 @@ export default function LawAndByLawPage() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
-                        {lawsDataset.map((law, index) => (
-                          <LawCard
+                    {lawsDataset.map((law, index) => (
+                        <LawCard
                             key={index}
                             title={law.title}
                             category={law.category}
                             officialGazette={law.officialGazette}
                             lastUpdate={law.lastUpdate}
-                          />
-                        ))}
-                      </div>
+                        />
+                    ))}
+                </div>
 
 
                 {/* Pagination */}

@@ -22,12 +22,34 @@ import {
 
 import { UserAppSidebar } from "@/layout/UserAppSidebar";
 import NotificationDropdown from "@/components/shared/NotificationDropdown";
+import { useAppDispatch } from "@/store/hooks";
+import { logout } from "@/store/features/auth/authSlice";
+import { useLogoutUserMutation } from "@/store/features/auth/authApi";
+import { useRouter } from "next/navigation";
 
 export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [logoutUser] = useLogoutUserMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser().unwrap();
+    } catch {
+      // Ignore server errors — still log out locally
+    }
+    dispatch(logout());
+    // Clear cookies
+    document.cookie = "accessToken=; Max-Age=0; path=/";
+    document.cookie = "access=; Max-Age=0; path=/";
+    document.cookie = "refresh=; Max-Age=0; path=/";
+    router.replace("/login");
+  };
+
   return (
     <SidebarProvider>
       <UserAppSidebar />
@@ -87,7 +109,9 @@ export default function UserLayout({
                     Settings
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem className="text-red-500">
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="text-red-500">
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>

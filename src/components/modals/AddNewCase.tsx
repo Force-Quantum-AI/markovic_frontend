@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import Image from "next/image";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ChevronDown, X, Camera, Info } from "lucide-react";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
@@ -530,6 +530,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogTitle/>
       <DialogContent className="max-w-7xl! w-[95vw] bg-white rounded-[32px] p-6 md:p-8 overflow-hidden border-none shadow-2xl flex flex-col focus:outline-none max-h-[95vh]">
 
         {/* Global Component Heading Block */}

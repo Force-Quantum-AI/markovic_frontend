@@ -3,12 +3,16 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "@/lib/Providers";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Actio",
   description: "Legal Research Assistant",
+  icons: {
+    icon: '/actioProjectBrandFavLogo.png', 
+  },
 };
 
 export default function RootLayout({
@@ -19,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body>
-        {children}
-        <Toaster />
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

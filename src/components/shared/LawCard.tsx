@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Scale, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export interface LawCardProps {
+  id?: string;
   title: string;
   category: string;
   officialGazette: string;
@@ -12,12 +14,14 @@ export interface LawCardProps {
 }
 
 export function LawCard({
+  id="1",
   title,
   category,
   officialGazette,
   lastUpdate,
 }: LawCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useRouter()
 
   return (
     <div
@@ -35,6 +39,7 @@ export function LawCard({
         duration-300
         hover:shadow-md
         hover:-translate-y-1
+        
       "
     >
       {/* Top Section */}
@@ -57,6 +62,7 @@ export function LawCard({
             bg-[#ECEFF1]
             transition-all
             hover:bg-[#dfe6ea]
+            z-999
           "
         >
           <Star
@@ -71,7 +77,7 @@ export function LawCard({
       </div>
 
       {/* Content */}
-      <div className="mt-5 flex flex-1 flex-col">
+      <div className="mt-5 flex flex-1 flex-col cursor-pointer" onClick={() => navigate.push(`/law-and-bylaw/${id}`)}>
         <h3 className="line-clamp-2 text-[18px] font-bold leading-7 text-[#2D3139]">
           {title}
         </h3>

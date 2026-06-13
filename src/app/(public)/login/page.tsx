@@ -5,6 +5,11 @@ import Image from "next/image";
 import { Mail, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
 import Link from "next/link";
 import ForgotPasswordModal from "@/components/modals/ForgotPasswordModal";
+import { useAppDispatch } from "@/store/hooks";
+import { useLoginMutation } from "@/store/features/auth/authApi";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function LoginPage() {
   // Form States
@@ -12,32 +17,50 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [login, { isLoading }] = useLoginMutation();
+
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
-  
+
   // Basic validation state to show the green checkmark from login.png
   const isEmailValid = email.includes("@") && email.includes(".");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Dummy dataset / API simulation placeholder
-    // const dummyAuthPayload = {
-    //   email,
-    //   password,
-    //   rememberMe,
-    // };
+    setErrorMsg("");
+    try {
+      const res = await login({ email, password }).unwrap();
 
+      document.cookie = `accessToken=${res.access}; path=/; SameSite=Lax`;
+
+      // Redirect to the originally requested page or dashboard
+      const callbackUrl = searchParams.get("callbackUrl") || "/";
+      if (res.role === "admin") {
+        router.replace("/admin/dashboard");
+      } else {
+        router.replace(callbackUrl);
+      }
+    } catch (err: any) {
+      const detail =
+        err?.data?.detail ||
+        err?.data?.non_field_errors?.[0] ||
+        "Invalid email or password. Please try again.";
+      setErrorMsg(detail);
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       {/* Main Container tailored to max-w-6xl and 70vh */}
       <div className="w-full max-w-6xl h-auto lg:h-[70vh] min-h-[550px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
-        
+
         {/* Left Side: Form Area */}
         <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
-          
+
           {/* Logo / Brand Header */}
           <div className="flex items-center gap-2 text-[#135576]">
             <div className="p-1.5 border-2 border-[#135576] rounded-full flex items-center justify-center">
@@ -50,6 +73,12 @@ export default function LoginPage() {
           <div className="my-auto py-6 max-w-md w-full mx-auto">
             <h1 className="text-3xl font-bold text-gray-900 mb-1">Welcome Back</h1>
             <p className="text-sm text-gray-500 mb-8">Sign in to your Law Office System</p>
+
+            {errorMsg && (
+              <div className="mb-5 text-sm text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                {errorMsg}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email Input */}
@@ -104,7 +133,7 @@ export default function LoginPage() {
 
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 text-gray-500 cursor-pointer select-none">
+                <label className="flex items-center gap-2 text-[#135576] cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={rememberMe}
@@ -115,7 +144,7 @@ export default function LoginPage() {
                 </label>
                 <button
                   onClick={() => setIsForgotPasswordModalOpen(true)}
-                  className="text-red-500  hover:underline"
+                  className="text-[#135576] hover:underline"
                 >
                   Forgot Password?
                 </button>
@@ -125,9 +154,11 @@ export default function LoginPage() {
               <div className="flex justify-center pt-4">
                 <button
                   type="submit"
-                  className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm"
+                  disabled={isLoading}
+                  className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] disabled:opacity-60 text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm flex items-center justify-center gap-2"
                 >
-                  Log in
+                  {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {isLoading ? "Logging in..." : "Log in"}
                 </button>
               </div>
             </form>
@@ -157,7 +188,7 @@ export default function LoginPage() {
         {/* Right Side: Visual Hero Card */}
         <div className="hidden lg:block w-1/2 p-3 h-full">
           <div className="relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-b from-gray-900 to-black flex flex-col justify-end p-8 lg:p-12 text-white">
-            
+
             {/* Background Image Placeholder */}
             <Image
               src="/lawImg1.jpg"
@@ -166,7 +197,7 @@ export default function LoginPage() {
               priority
               className="object-cover opacity-40 select-none pointer-events-none"
             />
-            
+
             {/* Content overlay matched to login.png */}
             <div className="relative z-10 space-y-4 max-w-md">
               <h2 className="text-2xl lg:text-3xl 2xl:text-4xl font-bold leading-tight tracking-tight">
@@ -176,7 +207,7 @@ export default function LoginPage() {
                 Created by lawyers, for lawyers. Quick case creation, smart calendar,
                 powerful AI court practice search, and clean organization — all in one place.
               </p>
-              
+
               <div className="pt-4 border-t border-white/20">
                 <p className="text-base font-semibold tracking-wide">Markovic Aleksa</p>
                 <p className="text-xs text-gray-400">Founder of Case Solver</p>

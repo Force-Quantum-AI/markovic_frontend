@@ -1,22 +1,58 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
-  user: any | null | undefined;
+  accessToken: string | null;
+  refreshToken: string | null;
+  role: "lawyer" | "admin";
+  isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
-  user: undefined,
+  accessToken: null,
+  refreshToken: null,
+  role: "lawyer",
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
+
   reducers: {
-    setUser: (state, action: PayloadAction<any>) => {
-      state.user = action.payload;
+    // Called after a successful login — backend returns { access, refresh }
+    setCredentials: (
+      state,
+      action: PayloadAction<{ access: string; refresh: string; role: string }>
+    ) => {
+      state.accessToken = action.payload.access;
+      state.refreshToken = action.payload.refresh;
+      state.isAuthenticated = true;
+      state.role = action.payload.role as "lawyer" | "admin" || "lawyer";
+    },
+
+    setAccessToken: (state, action: PayloadAction<any>) => {
+      state.accessToken = action.payload;
+      state.isAuthenticated = true;
+      state.role = action.payload.role as "lawyer" | "admin" || "lawyer";
+    },
+
+    setRefreshToken: (state, action: PayloadAction<string>) => {
+      state.refreshToken = action.payload;
+    },
+
+    logout: (state) => {
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.isAuthenticated = false;
     },
   },
 });
 
-export const { setUser } = authSlice.actions;
+export const {
+  setCredentials,
+  setAccessToken,
+  setRefreshToken,
+  logout,
+} = authSlice.actions;
+
 export default authSlice.reducer;
