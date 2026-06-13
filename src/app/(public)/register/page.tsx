@@ -54,7 +54,7 @@ export default function RegisterPage() {
 
 
       // if (isSuccess) {
-        toast.success("user registered successfully");
+        toast.success("An OTP has been sent to your email address.");
         setIsOtpModalOpen(true)
       // } else {
       //   toast.error("user registration failed");
@@ -201,9 +201,10 @@ export default function RegisterPage() {
               <div className="flex justify-center pt-4">
                 <button
                   type="submit"
-                  className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm"
+                  disabled={isLoading}
+                  className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Register
+                  {isLoading ? "Registering..." : "Register"}
                 </button>
               </div>
             </form>
@@ -269,6 +270,7 @@ export default function RegisterPage() {
         isOpen={isOtpModalOpen}
         onOpenChange={setIsOtpModalOpen}
         userEmail={email}
+        userPassword={password}
       />
       
     </div>

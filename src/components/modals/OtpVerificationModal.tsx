@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import SubscriptionModal from "./SubscriptionModal";
+import { toast } from "sonner";
+import { useVerifyOtpMutation } from "@/store/features/auth/authApi";
 
 // Step type definitions
 type ModalStep = "ENTER_OTP" | "SUCCESS" | "ERROR";
@@ -17,13 +19,17 @@ interface OtpModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   userEmail?: string;
+  userPassword?: string;
 }
 
 export default function OtpVerificationModal({
   isOpen,
   onOpenChange,
   userEmail = "marko@markoviclaw.me",
+  userPassword,
 }: OtpModalProps) {
+  const [verifyOtp, { isLoading, isSuccess }] = useVerifyOtpMutation();
+
   // State Matrix
   const [step, setStep] = useState<ModalStep>("ENTER_OTP");
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
@@ -105,22 +111,30 @@ export default function OtpVerificationModal({
   };
 
   // Simulation Trigger for Verification Process
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const fullOtp = otp.join("");
-    if (fullOtp.length < 6) return;
+    if (fullOtp.length < 6) {
+      toast.error("Please enter a valid 6-digit OTP");
+      return;
+    }
 
-    setIsVerifying(true);
+    try {
+      setIsVerifying(true);
+      const verifyPayload = {
+        email: userEmail,
+        otp: fullOtp,
+      };
 
-    // Simulated API timeout delay
-    setTimeout(() => {
+      await verifyOtp(verifyPayload).unwrap();
+      setIsVerifying(false)
+      setStep("SUCCESS");
+      toast.success("OTP verified successfully");
+    } catch (error) {
+      console.log("error is : ", error);
+      toast.error("OTP verification failed, Please try again later.");
+    } finally {
       setIsVerifying(false);
-      // Dummy check dataset logic: if OTP is "123456", trigger Success, otherwise Error
-      if (fullOtp === "123456") {
-        setStep("SUCCESS");
-      } else {
-        setStep("ERROR");
-      }
-    }, 1500);
+    }
   };
 
   const handleResend = () => {
