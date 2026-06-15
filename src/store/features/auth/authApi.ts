@@ -71,6 +71,14 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
+    updatePassword: builder.mutation({
+      query: (data: {current_password: string; new_password: string; confirm_new_password: string;}) => ({
+        url: "/auth/profile/change-password/",
+        method: "POST",
+        body: data, 
+      }),
+    }),
+
     logoutUser: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout",
@@ -97,5 +105,6 @@ export const {
   useForgotPasswordRequestMutation,
   useVerifyOtpMutation,
   useResetPasswordMutation,
+  useUpdatePasswordMutation,
   useLogoutUserMutation,
 } = authApi;
