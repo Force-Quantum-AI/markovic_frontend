@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Routes that are publicly accessible (no auth required)
 const publicPaths = [
   "/login",
+  "/admin-login",
   "/register",
   "/verify-otp",
   "/forgot-password",
