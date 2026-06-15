@@ -5,11 +5,14 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useGetProfileInfoQuery, useUpdateProfileInfoMutation } from "@/store/features/profile/profile.api";
 import { useUpdatePasswordMutation } from "@/store/features/auth/authApi";
+import { useGetActiveSessionQuery, useRevokeActiveSessionMutation } from "@/store/features/setting/setting.api";
 
 export default function Password() {
   const { data: profileInfo, isLoading: isLoadingProfileInfo } = useGetProfileInfoQuery({});
   const [updateProfileInfo, { isLoading: isLoadingUpdateProfileInfo }] = useUpdateProfileInfoMutation();
   const [updatePassword, { isLoading: isLoadingUpdatePassword }] = useUpdatePasswordMutation();
+  const { data: activeSessions, isLoading: isLoadingActiveSessions } = useGetActiveSessionQuery({});
+  const [revokeActiveSession] = useRevokeActiveSessionMutation();
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

@@ -37,6 +37,32 @@ export const authApi = baseApi.injectEndpoints({
         }
       },
     }),
+    adminLogin: builder.mutation<
+      { access: string; refresh: string; role: string },
+      { email: string; password: string }
+    >({
+      query: (credentials) => ({
+        url: "/auth/admin/login/",
+        method: "POST",
+        body: credentials,
+        credentials: "include",
+      }),
+      // After a successful login, save the tokens in Redux store
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            setCredentials({
+              access: data.access,
+              refresh: data.refresh,
+              role: data.role
+            })
+          );
+        } catch {
+          // login failed — leave state unchanged
+        }
+      },
+    }),
 
     adminSignup: builder.mutation<any, any>({
       query: (userData) => ({
@@ -101,6 +127,7 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginMutation,
+  useAdminLoginMutation,
   useAdminSignupMutation,
   useForgotPasswordRequestMutation,
   useVerifyOtpMutation,
