@@ -1,18 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { useGetNotificationSettingsQuery, useUpdateNotificationSettingsMutation } from "@/store/features/notification/notification.api";
 
 export default function Notification() {
-  const [upcomingHearing, setUpcomingHearing] = useState(true);
-  const [caseDeadline, setCaseDeadline] = useState(true);
-  const [lawDatabase, setLawDatabase] = useState(true);
+  const {data,isLoading}= useGetNotificationSettingsQuery();
+  const [updateNotificationSettings, {isLoading: isUpdating}] = useUpdateNotificationSettingsMutation();
+
+  const [upcomingHearing, setUpcomingHearing] = useState(false);
+  const [caseDeadline, setCaseDeadline] = useState(false);
+  const [lawDatabase, setLawDatabase] = useState(false);
   const [systemAnnouncements, setSystemAnnouncements] = useState(false);
   const [reminderTiming, setReminderTiming] = useState("24 Hour before");
 
-  const handleSave = () => {
-    toast.success("Notification preferences saved successfully");
+  useEffect(() => {
+    setUpcomingHearing(data?.notif_hearing_reminders??false);
+    setCaseDeadline(data?.notif_case_deadlines??false);
+    setLawDatabase(data?.notif_law_updates??false);
+    setSystemAnnouncements(data?.notif_system_announcements??false);
+  }, [data]);
+
+  const handleSave = async () => {
+    try {
+      const payload= {notif_hearing_reminders:upcomingHearing,notif_case_deadlines:caseDeadline,notif_law_updates:lawDatabase,notif_system_announcements:systemAnnouncements};
+      console.log("Payload is :", payload);
+      
+      await updateNotificationSettings(payload).unwrap();
+      toast.success("Notification preferences saved successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Notification preferences not saved");
+    }
   };
 
   return (
@@ -29,7 +49,9 @@ export default function Notification() {
               <span className="text-[#364153] text-base font-normal">Upcoming Hearing Reminders</span>
               <Switch 
                 checked={upcomingHearing} 
-                onCheckedChange={setUpcomingHearing}
+                onCheckedChange={()=>{
+                  setUpcomingHearing(!upcomingHearing);
+                }}
                 className="data-[state=checked]:bg-[#135576]"
               />
             </div>
@@ -38,7 +60,9 @@ export default function Notification() {
               <span className="text-[#364153] text-base font-normal">Case Deadline Alerts</span>
               <Switch 
                 checked={caseDeadline} 
-                onCheckedChange={setCaseDeadline}
+                onCheckedChange={()=>{
+                  setCaseDeadline(!caseDeadline);
+                }}
                 className="data-[state=checked]:bg-[#135576]"
               />
             </div>
@@ -47,7 +71,9 @@ export default function Notification() {
               <span className="text-[#364153] text-base font-normal">Law Database Updates</span>
               <Switch 
                 checked={lawDatabase} 
-                onCheckedChange={setLawDatabase}
+                onCheckedChange={()=>{
+                  setLawDatabase(!lawDatabase);
+                }}
                 className="data-[state=checked]:bg-[#135576]"
               />
             </div>
@@ -56,7 +82,9 @@ export default function Notification() {
               <span className="text-[#364153] text-base font-normal">System Announcements</span>
               <Switch 
                 checked={systemAnnouncements} 
-                onCheckedChange={setSystemAnnouncements}
+                onCheckedChange={()=>{
+                  setSystemAnnouncements(!systemAnnouncements);
+                }}
                 className="data-[state=checked]:bg-[#135576]"
               />
             </div>

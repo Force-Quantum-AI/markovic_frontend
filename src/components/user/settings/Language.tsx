@@ -1,20 +1,49 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { toast } from "sonner";
+import { useGetLanguageAndTimeSettingQuery, useUpdateLanguageAndTimeSettingMutation } from "@/store/features/setting/setting.api";
 
 export default function Language() {
-  const [language, setLanguage] = useState("Montenegrin");
-  const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
-  const [timeFormat, setTimeFormat] = useState("12-hour");
-  const [timezone, setTimezone] = useState("Europe/Podgorica (GMT+1)");
+  const { data: languageAndTimeSettingData, isLoading: isLanguageAndTimeSettingLoading } = useGetLanguageAndTimeSettingQuery({});
+  const [updatelanguageAndTimeSetting] = useUpdateLanguageAndTimeSettingMutation();
 
-  const handleSave = () => {
-    // Make it fully functional by showing a success message
-    toast.success("Settings saved successfully", {
-      description: `Language: ${language}, Date: ${dateFormat}, Time: ${timeFormat}, Zone: ${timezone}`
-    });
+  const [language, setLanguage] = useState("");
+  const [dateFormat, setDateFormat] = useState("");
+  const [timeFormat, setTimeFormat] = useState("");
+  const [timezone, setTimezone] = useState("");
+
+  useEffect(() => {
+    if (languageAndTimeSettingData) {
+      setLanguage(languageAndTimeSettingData.language);
+      setDateFormat(languageAndTimeSettingData.date_format);
+      setTimeFormat(languageAndTimeSettingData.time_format);
+      setTimezone(languageAndTimeSettingData.timezone);
+    }
+  }, [languageAndTimeSettingData]);
+
+  const handleSave = async () => {
+    try {
+      await updatelanguageAndTimeSetting({
+        language,
+        date_format: dateFormat,
+        time_format: timeFormat,
+        timezone,
+      }).unwrap();
+      toast.success("Language and time setting updated successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to update language and time setting");
+    }
   };
+
+  if (isLanguageAndTimeSettingLoading) {
+    return (
+      <div className="w-full flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#135576]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -31,9 +60,9 @@ export default function Language() {
                 onChange={(e) => setLanguage(e.target.value)}
                 className="w-full h-full bg-white border border-[#d1d5dc] rounded-[10px] px-4 text-[#364153] text-base focus:outline-none focus:border-[#135576] appearance-none cursor-pointer"
               >
-                <option>Montenegrin</option>
-                <option>English</option>
-                <option>Serbian</option>
+                <option value="montenegrin">Montenegrin</option>
+                <option value="english">English</option>
+                <option value="serbian">Serbian</option>
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
             </div>
@@ -48,9 +77,9 @@ export default function Language() {
                 onChange={(e) => setDateFormat(e.target.value)}
                 className="w-full h-full bg-white border border-[#d1d5dc] rounded-[10px] px-4 text-[#364153] text-base focus:outline-none focus:border-[#135576] appearance-none cursor-pointer"
               >
-                <option>DD/MM/YYYY</option>
-                <option>MM/DD/YYYY</option>
-                <option>YYYY-MM-DD</option>
+                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
             </div>
@@ -64,8 +93,8 @@ export default function Language() {
                 <input 
                   type="radio" 
                   name="timeFormat" 
-                  value="12-hour"
-                  checked={timeFormat === "12-hour"}
+                  value="12"
+                  checked={timeFormat === "12"}
                   onChange={(e) => setTimeFormat(e.target.value)}
                   className="w-4 h-4 text-[#135576] focus:ring-[#135576] border-gray-300"
                 />
@@ -75,8 +104,8 @@ export default function Language() {
                 <input 
                   type="radio" 
                   name="timeFormat" 
-                  value="24-hour"
-                  checked={timeFormat === "24-hour"}
+                  value="24"
+                  checked={timeFormat === "24"}
                   onChange={(e) => setTimeFormat(e.target.value)}
                   className="w-4 h-4 text-[#135576] focus:ring-[#135576] border-gray-300"
                 />
@@ -94,10 +123,10 @@ export default function Language() {
                 onChange={(e) => setTimezone(e.target.value)}
                 className="w-full h-full bg-white border border-[#d1d5dc] rounded-[10px] px-4 text-[#364153] text-base focus:outline-none focus:border-[#135576] appearance-none cursor-pointer"
               >
-                <option>Europe/Podgorica (GMT+1)</option>
-                <option>Europe/London (GMT+0)</option>
-                <option>America/New_York (GMT-5)</option>
-                <option>Asia/Tokyo (GMT+9)</option>
+                <option value="Europe/Podgorica">Europe/Podgorica (GMT+1)</option>
+                <option value="Europe/London">Europe/London (GMT+0)</option>
+                <option value="America/New_York">America/New_York (GMT-5)</option>
+                <option value="Asia/Tokyo">Asia/Tokyo (GMT+9)</option>
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
             </div>

@@ -90,7 +90,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     resetPassword: builder.mutation({
-      query: (data:{email: string; otp: string; new_password: string; confirm_password: string;}) => ({
+      query: (data: { email: string; otp: string; new_password: string; confirm_password: string; }) => ({
         url: "/auth/reset-password/",
         method: "POST",
         body: data, // { email, otp, new_password, confirm_password }
@@ -98,10 +98,10 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     updatePassword: builder.mutation({
-      query: (data: {current_password: string; new_password: string; confirm_new_password: string;}) => ({
+      query: (data: { current_password: string; new_password: string; confirm_new_password: string; }) => ({
         url: "/auth/profile/change-password/",
         method: "POST",
-        body: data, 
+        body: data,
       }),
     }),
 
@@ -121,6 +121,14 @@ export const authApi = baseApi.injectEndpoints({
         }
       },
     }),
+
+    deleteUserAccount: builder.mutation({
+      query: () => ({
+        url: "/auth/delete-account/",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Auth"],
+    }),
   }),
 });
 
@@ -134,4 +142,5 @@ export const {
   useResetPasswordMutation,
   useUpdatePasswordMutation,
   useLogoutUserMutation,
+  useDeleteUserAccountMutation,
 } = authApi;
