@@ -38,6 +38,31 @@ export const settingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["languageAndTime"],
     }),
+    // for privacy page 
+    getCookiePreference: builder.query({
+      query: () => ({
+        url: "/auth/preferences/cookies/",
+        method: "GET",
+      }),
+      providesTags: ["cookiePreference"],
+    }),
+
+    updateCookiePreference: builder.mutation({
+      query: (cookie_preference) => ({
+        url: "/auth/preferences/cookies/",
+        method: "PATCH",
+        body: cookie_preference,
+      }),
+      invalidatesTags: ["cookiePreference"],
+    }),
+
+    exportDataFromSettingPage: builder.mutation<Blob, void>({
+      query: () => ({
+        url: "/auth/data-export/",
+        method: "GET",
+        responseHandler: async (response) => response.blob(),
+      }),
+    }),
   }),
 });
 
@@ -46,4 +71,7 @@ export const {
   useRevokeActiveSessionMutation,
   useGetLanguageAndTimeSettingQuery,
   useUpdateLanguageAndTimeSettingMutation,
+  useGetCookiePreferenceQuery,
+  useUpdateCookiePreferenceMutation,
+  useExportDataFromSettingPageMutation,
 } = settingApi;
