@@ -13,3 +13,11 @@ export interface ActiveSession {
   created_at: string;
   last_active: string;
 }
+
+export interface NotificationSettings{
+  notif_hearing_reminders: boolean;
+  notif_case_deadlines: boolean;
+  notif_law_updates: boolean;
+  notif_system_announcements: boolean;
+}
+    

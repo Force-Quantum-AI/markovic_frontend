@@ -2,6 +2,7 @@ import { baseApi } from "../../api/baseApi";
 
 export const settingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    // for active session 
     getActiveSession: builder.query({
       query: () => ({
         url: "/auth/sessions/",
