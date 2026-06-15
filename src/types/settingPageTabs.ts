@@ -5,3 +5,11 @@ export interface Tab{
     label: string;
     icon: ReactNode;
 }
+
+export interface ActiveSession {
+  id: number;
+  device_info: string;
+  ip_address: string;
+  created_at: string;
+  last_active: string;
+}

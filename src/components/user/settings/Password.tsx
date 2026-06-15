@@ -6,13 +6,14 @@ import { toast } from "sonner";
 import { useGetProfileInfoQuery, useUpdateProfileInfoMutation } from "@/store/features/profile/profile.api";
 import { useUpdatePasswordMutation } from "@/store/features/auth/authApi";
 import { useGetActiveSessionQuery, useRevokeActiveSessionMutation } from "@/store/features/setting/setting.api";
+import { ActiveSession } from "@/types/settingPageTabs";
 
 export default function Password() {
   const { data: profileInfo, isLoading: isLoadingProfileInfo } = useGetProfileInfoQuery({});
   const [updateProfileInfo, { isLoading: isLoadingUpdateProfileInfo }] = useUpdateProfileInfoMutation();
   const [updatePassword, { isLoading: isLoadingUpdatePassword }] = useUpdatePasswordMutation();
   const { data: activeSessions, isLoading: isLoadingActiveSessions } = useGetActiveSessionQuery({});
-  const [revokeActiveSession] = useRevokeActiveSessionMutation();
+  const [revokeActiveSession, { isLoading: isLoadingRevokeActiveSession }] = useRevokeActiveSessionMutation();
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -29,9 +30,35 @@ export default function Password() {
     { id: 3, device: "Windows Desktop", icon: Monitor, location: "Belgrade, Serbia", time: "Last active 3 days ago", current: false },
   ]);
 
-  const handleRevoke = (id: number) => {
-    setSessions(sessions.filter(s => s.id !== id));
-    toast.success("Session revoked successfully");
+  const getDeviceName = (userAgent: string) => {
+    if (userAgent.includes("Mac")) return "MacBook";
+    if (userAgent.includes("iPhone")) return "iPhone";
+    if (userAgent.includes("Windows")) return "Windows PC";
+    if (userAgent.includes("Android")) return "Android Device";
+    if (userAgent.includes("Postman")) return "Postman";
+
+    return "Unknown Device";
+  };
+
+  const getDeviceIcon = (userAgent: string) => {
+    if (
+      userAgent.includes("iPhone") ||
+      userAgent.includes("Android")
+    ) {
+      return Smartphone;
+    }
+
+    return Monitor;
+  };
+
+  const handleRevoke = async (id: number) => {
+    try {
+      await revokeActiveSession(id.toString()).unwrap();
+      toast.success("Session revoked successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to revoke session");
+    }
   };
 
   const handleUpdatePassword = async () => {
@@ -196,37 +223,62 @@ export default function Password() {
         <h2 className="text-[#101828] text-xl font-semibold leading-7 mb-2">Active Sessions</h2>
 
         <div className="flex flex-col gap-0">
-          {sessions.map((session) => {
-            const Icon = session.icon;
-            return (
-              <div key={session.id} className="flex items-center justify-between p-4 bg-white rounded-2xl w-full">
-                <div className="flex items-center gap-4">
-                  <div className="bg-[#e5e7eb] p-3 rounded-xl flex items-center justify-center">
-                    <Icon className="text-gray-600" size={20} />
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[#101828] text-base font-medium">{session.device}</span>
-                      {session.current && (
-                        <span className="bg-[#ecfdf5] text-[#007a55] text-[12px] px-2 py-0.5 rounded-md">Current</span>
-                      )}
+          {isLoadingActiveSessions ? (
+            <div className="flex justify-center py-6">
+              <Loader className="w-6 h-6 animate-spin" />
+            </div>
+          ) : activeSessions?.map(
+            (session: ActiveSession, index: number) => {
+              const Icon = getDeviceIcon(session.device_info);
+
+              // Latest session is current session
+              const isCurrent = index === 0;
+
+              return (
+                <div
+                  key={session.id}
+                  className="flex items-center justify-between p-4 bg-white rounded-2xl w-full"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="bg-[#e5e7eb] p-3 rounded-xl flex items-center justify-center">
+                      <Icon className="text-gray-600" size={20} />
                     </div>
-                    <span className="text-[#4a5565] text-sm mt-0.5">{session.location} • {session.time}</span>
+
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#101828] text-base font-medium">
+                          {getDeviceName(session.device_info)}
+                        </span>
+
+                        {isCurrent && (
+                          <span className="bg-[#ecfdf5] text-[#007a55] text-[12px] px-2 py-0.5 rounded-md">
+                            Current
+                          </span>
+                        )}
+                      </div>
+
+                      <span className="text-[#4a5565] text-sm mt-0.5">
+                        {session.ip_address} •{" "}
+                        {new Date(session.last_active).toLocaleString()}
+                      </span>
+                    </div>
                   </div>
+
+                  {!isCurrent ? (
+                    <button
+                      onClick={() => handleRevoke(session.id)}
+                      disabled={isLoadingRevokeActiveSession}
+                      className="text-[#e7000b] text-sm font-medium hover:bg-red-50 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Revoke
+                    </button>
+                  ) : (
+                    <div className="w-[77px]"></div>
+                  )}
                 </div>
-                {!session.current ? (
-                  <button
-                    onClick={() => handleRevoke(session.id)}
-                    className="text-[#e7000b] text-sm font-medium hover:bg-red-50 px-4 py-2 rounded-lg transition-colors"
-                  >
-                    Revoke
-                  </button>
-                ) : (
-                  <div className="w-[77px]"></div>
-                )}
-              </div>
-            );
-          })}
+              );
+            }
+          )}
         </div>
       </div>
     </div>
