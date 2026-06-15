@@ -10,7 +10,7 @@ export const profileApi = baseApi.injectEndpoints({
       providesTags: ["Profile"],
     }),
     updateProfileInfo: builder.mutation({
-      query: (data: { profile_image?: File; data: any }) => ({
+      query: (data: { profile_image?: any; data: any }) => ({
         url: "/auth/profile/",
         method: "PATCH",
         body: data,
