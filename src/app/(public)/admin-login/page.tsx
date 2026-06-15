@@ -35,13 +35,7 @@ export default function AdminLoginPage() {
 
       document.cookie = `accessToken=${res.access}; path=/; SameSite=Lax`;
 
-      // Redirect to the originally requested page or dashboard
-      const callbackUrl = searchParams.get("callbackUrl") || "/";
-      if (res.role === "admin") {
-        router.replace("/admin/dashboard");
-      } else {
-        router.replace(callbackUrl);
-      }
+      router.push("/admin/dashboard");
     } catch (err: any) {
       const detail =
         err?.data?.detail ||
@@ -156,26 +150,8 @@ export default function AdminLoginPage() {
               </div>
             </form>
 
-            {/* Registration Prompt */}
-            <p className="text-center text-xs text-gray-400 mt-6">
-              Don&apos;t have an account?{" "}
-              <Link href="/register" className="text-[#135576] font-bold hover:underline">
-                Register
-              </Link>
-            </p>
           </div>
 
-          {/* Footer Agreement */}
-          <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
-            By logging in, you agree to our{" "}
-            <a href="#terms" className="underline hover:text-gray-600 font-medium">
-              Terms of services
-            </a>{" "}
-            and{" "}
-            <a href="#privacy" className="underline hover:text-gray-600 font-medium">
-              Privacy Policy
-            </a>.
-          </div>
         </div>
 
         {/* Right Side: Visual Hero Card */}
