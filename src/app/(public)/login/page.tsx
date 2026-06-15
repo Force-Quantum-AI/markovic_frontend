@@ -155,6 +155,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
+                  onClick={handleSubmit}
                   className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] disabled:opacity-60 text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm flex items-center justify-center gap-2"
                 >
                   {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
