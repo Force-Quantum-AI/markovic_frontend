@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "@/store/store";
 
@@ -31,6 +32,6 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Auth","Profile","active_sessions", "notification", "languageAndTime","cookiePreference"],
+  tagTypes: ["Auth","Profile","active_sessions", "notification", "languageAndTime","cookiePreference", "Category","Subcategory"],
   endpoints: () => ({}),
 });
