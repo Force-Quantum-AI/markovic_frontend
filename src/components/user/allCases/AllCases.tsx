@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import MainButton from "@/components/shared/MainButton";
-import { CaseCard } from "@/components/shared/CaseCard";
+import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "../dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { useGetAllCasesQuery } from "@/store/features/case/case.api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
@@ -15,7 +16,7 @@ const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insu
 
 export default function AllCasesPage() {
     const {data: allCases, isLoading: isAllCasesLoading} = useGetAllCasesQuery();
-    console.log("xsfs",allCases)
+
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
     const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
@@ -172,7 +173,13 @@ export default function AllCasesPage() {
 
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
                 <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                    {hearingsDataset.map((card, index) => (
+                    {isAllCasesLoading ? (
+                       <>
+                       <Skeleton className="aspect-square rounded-lg bg-gray-300" />
+                       <Skeleton className="aspect-square rounded-lg bg-gray-300" />
+                       <Skeleton className="aspect-square rounded-lg bg-gray-300" />
+                       </>
+                    ) : allCases.map((card:CaseCardProps, index:number) => (
                         <CaseCard key={index} {...card} />
                     ))}
                 </div>
