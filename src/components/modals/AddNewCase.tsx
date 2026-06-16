@@ -4,7 +4,7 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ChevronDown, X, Camera, Info, Loader2 } from "lucide-react";
-import { useCreateCaseMutation } from "@/store/features/case/case.api";
+import { useAddCaseDeadlineMutation, useAddCaseHearingMutation, useCreateCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
@@ -520,11 +520,12 @@ const defaultFormData: AddNewCaseFormData = {
   },
 };
 
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 // ─── HELPER: Build ISO date string from schedule card data ───────────────────
 
 function buildDateString(card: DateCardData): string | undefined {
-  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  const monthIndex = months.indexOf(card.month);
+  const monthIndex = MONTHS.indexOf(card.month);
   if (monthIndex === -1 || !card.date || !card.year) return undefined;
   const day = card.date.padStart(2, "0");
   const month = String(monthIndex + 1).padStart(2, "0");
@@ -536,7 +537,10 @@ function buildDateString(card: DateCardData): string | undefined {
 export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<AddNewCaseFormData>(defaultFormData);
+  
   const [createCase, { isLoading }] = useCreateCaseMutation();
+  const [addCaseHearing, {isLoading: isHearingLoading}] = useAddCaseHearingMutation();
+  const [addCaseDeadline, {isLoading: isDeadlineLoading}] = useAddCaseDeadlineMutation();
 
   const handleClose = () => {
     onClose();
@@ -551,6 +555,11 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
     if (!formData.basicInfo.clientName.trim()) {
       toast.error("Client name is required to create a case.");
       setCurrentStep(1);
+      return;
+    }
+    if (!formData.legalDetails.caseName.trim()) {
+      toast.error("Case name is required to create a case.");
+      setCurrentStep(2);
       return;
     }
 
@@ -597,15 +606,51 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
     }
 
     try {
-      await createCase({
+      const res = await createCase({
         client_image: formData.basicInfo.avatarFile || undefined,
         data: apiData as any,
       }).unwrap();
+
+      if(res?.id){
+        const hearingTimeFrom = formData.schedule.hearing.timeRange.split("-")[0].trim();
+        const hearingTimeTo = formData.schedule.hearing.timeRange.split("-")[1].trim();
+        await addCaseHearing({
+          caseId: res.id,
+          data: {
+            reason: formData.schedule.hearing.reason,
+            status: formData.schedule.hearing.status.toLowerCase(),
+            time_from: hearingTimeFrom,
+            time_to: hearingTimeTo,
+            am_pm: formData.schedule.hearing.period.toUpperCase(),
+            day: Number(formData.schedule.hearing.date),
+            month: MONTHS.indexOf(formData.schedule.hearing.month) + 1,
+            year: Number(formData.schedule.hearing.year),
+          },
+        }).unwrap();
+
+        const deadlineTimeFrom = formData.schedule.deadline.timeRange.split("-")[0].trim();
+        const deadlineTimeTo = formData.schedule.deadline.timeRange.split("-")[1].trim();
+        await addCaseDeadline({
+          caseId: res.id,
+          data: {
+            reason: formData.schedule.deadline.reason,
+            status: formData.schedule.deadline.status.toLowerCase(),
+            time_from: deadlineTimeFrom,
+            time_to: deadlineTimeTo,
+            am_pm: formData.schedule.deadline.period.toUpperCase(),
+            day: Number(formData.schedule.deadline.date),
+            month: MONTHS.indexOf(formData.schedule.deadline.month) + 1,
+            year: Number(formData.schedule.deadline.year),
+          },
+        }).unwrap();
+      }
 
       toast.success("Case created successfully!");
       onSubmit?.(formData);
       handleClose();
     } catch (error: any) {
+      console.log("error iss:", error);
+      
       const message = error?.data?.message || error?.data?.detail || "Failed to create case. Please try again.";
       toast.error(message);
     }

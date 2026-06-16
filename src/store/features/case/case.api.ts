@@ -49,6 +49,52 @@ export const caseApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["case"],
     }),
+    // case hearing 
+    addCaseHearing: builder.mutation({
+      query: ({ caseId, data }: {
+        caseId: string, 
+        data: {
+          reason: string,
+          status: string,
+          time_from: string,
+          time_to: string,
+          am_pm: string,
+          day: number,
+          month: number,
+          year: number
+        }
+      }) => {
+        return {
+          url: `/cases/${caseId}/hearings/`,
+          method: "POST",
+          body: data,
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
+    addCaseDeadline: builder.mutation({
+      query: ({ caseId, data }: {
+        caseId: string, 
+        data: {
+          reason: string,
+          status: string,
+          time_from: string,
+          time_to: string,
+          am_pm: string,
+          day: number,
+          month: number,
+          year: number
+        }
+      }) => {
+        return {
+          url: `/cases/${caseId}/deadlines/`,
+          method: "POST",
+          body: data,
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
+
   }),
 });
 
@@ -56,4 +102,6 @@ export const {
   useGetAllCasesQuery,
   useGetCaseDetailsQuery,
   useCreateCaseMutation,
+  useAddCaseHearingMutation,
+  useAddCaseDeadlineMutation,
 } = caseApi;
