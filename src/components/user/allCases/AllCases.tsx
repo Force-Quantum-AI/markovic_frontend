@@ -6,6 +6,7 @@ import MainButton from "@/components/shared/MainButton";
 import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "../dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
+import { useGetAllCasesQuery } from "@/store/features/case/case.api";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
@@ -13,6 +14,8 @@ const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcem
 const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
 
 export default function AllCasesPage() {
+    const {data: allCases, isLoading: isAllCasesLoading} = useGetAllCasesQuery();
+    console.log("xsfs",allCases)
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
     const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
