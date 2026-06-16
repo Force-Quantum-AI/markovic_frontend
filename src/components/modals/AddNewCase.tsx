@@ -3,12 +3,15 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ChevronDown, X, Camera, Info } from "lucide-react";
+import { ChevronDown, X, Camera, Info, Loader2 } from "lucide-react";
+import { useCreateCaseMutation } from "@/store/features/case/case.api";
+import { toast } from "sonner";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
 
 export interface BasicInfoData {
   avatarUrl: string;
+  avatarFile: File | null;
   clientName: string;
   emailAddress: string;
   phoneNumber: string;
@@ -162,7 +165,9 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
         </div>
         <input type="file" ref={fileInputRef} onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) onChange({ ...data, avatarUrl: URL.createObjectURL(file) });
+          if (file) {
+            onChange({ ...data, avatarUrl: URL.createObjectURL(file), avatarFile: file });
+          }
         }} accept="image/*" className="hidden" />
         <button type="button" onClick={() => fileInputRef.current?.click()} className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-all shadow-sm">
           Add Photo
@@ -475,50 +480,63 @@ function ScheduleStep({
 const defaultFormData: AddNewCaseFormData = {
   basicInfo: {
     avatarUrl: "",
-    clientName: "Markovic Aleksa",
-    emailAddress: "markovicaleksa@email.com",
-    phoneNumber: "+386 54683248",
-    personalIdNumber: "#555-0128",
-    address: "Ulica Nedeljka Merdovića 42, 84000 Bijelo Polje",
+    avatarFile: null,
+    clientName: "",
+    emailAddress: "",
+    phoneNumber: "",
+    personalIdNumber: "",
+    address: "",
     note: "",
   },
   legalDetails: {
-    caseName: "Markovic/Lovence Insurance - damages claim - PI",
+    caseName: "",
     category: "Civil Litigation",
     subCategory: "Damages",
     status: "Active",
-    responsibleLawyers: ["Kathryn Murphy", "Darrell Steward"],
+    responsibleLawyers: [],
     court: "Montenegro suprime Court",
-    caseNumber: "MKL-87587345-TA",
-    opposingParties: ["John William", "Kathryn Murphy"],
+    caseNumber: "",
+    opposingParties: [],
   },
   schedule: {
     hearing: {
-      reason: "New hearing",
+      reason: "",
       status: "Upcoming",
-      timeRange: "9:30 - 10:00",
+      timeRange: "",
       period: "AM",
-      date: "22",
-      month: "May",
+      date: "1",
+      month: "January",
       year: "2026",
     },
     deadline: {
-      reason: "New hearing",
+      reason: "",
       status: "Upcoming",
-      timeRange: "9:30 - 10:00",
+      timeRange: "",
       period: "AM",
-      date: "22",
-      month: "May",
+      date: "1",
+      month: "January",
       year: "2026",
     },
   },
 };
 
+// ─── HELPER: Build ISO date string from schedule card data ───────────────────
+
+function buildDateString(card: DateCardData): string | undefined {
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const monthIndex = months.indexOf(card.month);
+  if (monthIndex === -1 || !card.date || !card.year) return undefined;
+  const day = card.date.padStart(2, "0");
+  const month = String(monthIndex + 1).padStart(2, "0");
+  return `${card.year}-${month}-${day}`;
+}
+
 // ─── MAIN MODAL COMPONENT ───────────────────────────────────────────────────
 
 export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProps) {
-  const [currentStep, setCurrentStep] = useState(1); // Defaults view straight to Step 3 for testing
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<AddNewCaseFormData>(defaultFormData);
+  const [createCase, { isLoading }] = useCreateCaseMutation();
 
   const handleClose = () => {
     onClose();
@@ -526,6 +544,71 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
       setCurrentStep(1);
       setFormData(defaultFormData);
     }, 300);
+  };
+
+  const handleSave = async () => {
+    // Validate required field
+    if (!formData.basicInfo.clientName.trim()) {
+      toast.error("Client name is required to create a case.");
+      setCurrentStep(1);
+      return;
+    }
+
+    // Build API payload
+    const apiData: Record<string, any> = {
+      client_name: formData.basicInfo.clientName.trim(),
+    };
+
+    // Optional basic info fields
+    if (formData.basicInfo.emailAddress.trim()) {
+      apiData.client_email = formData.basicInfo.emailAddress.trim();
+    }
+    if (formData.basicInfo.phoneNumber.trim()) {
+      apiData.client_phone = formData.basicInfo.phoneNumber.trim();
+    }
+    if (formData.basicInfo.address.trim()) {
+      apiData.client_address = formData.basicInfo.address.trim();
+    }
+    if (formData.basicInfo.note.trim()) {
+      apiData.note = formData.basicInfo.note.trim();
+    }
+
+    // Optional legal details
+    if (formData.legalDetails.caseName.trim()) {
+      apiData.case_name = formData.legalDetails.caseName.trim();
+    }
+    if (formData.legalDetails.responsibleLawyers.length > 0) {
+      apiData.responsible_lawyer_ids = formData.legalDetails.responsibleLawyers;
+    }
+    if (formData.legalDetails.opposingParties.length > 0) {
+      apiData.opposing_parties = formData.legalDetails.opposingParties;
+    }
+
+    // Schedule: hearing date
+    const hearingDate = buildDateString(formData.schedule.hearing);
+    if (hearingDate) {
+      apiData.hearing_date = hearingDate;
+    }
+
+    // Schedule: deadline date
+    const deadlineDate = buildDateString(formData.schedule.deadline);
+    if (deadlineDate) {
+      apiData.deadline_date = deadlineDate;
+    }
+
+    try {
+      await createCase({
+        client_image: formData.basicInfo.avatarFile || undefined,
+        data: apiData as any,
+      }).unwrap();
+
+      toast.success("Case created successfully!");
+      onSubmit?.(formData);
+      handleClose();
+    } catch (error: any) {
+      const message = error?.data?.message || error?.data?.detail || "Failed to create case. Please try again.";
+      toast.error(message);
+    }
   };
 
   return (
@@ -599,13 +682,12 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
             ) : (
               <button
                 type="button"
-                onClick={() => {
-                  onSubmit?.(formData);
-                  handleClose();
-                }}
-                className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-white bg-[#135576] hover:bg-[#0f445f] transition-all focus:outline-none active:scale-95 shadow-md shadow-blue-900/10"
+                disabled={isLoading}
+                onClick={handleSave}
+                className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-white bg-[#135576] hover:bg-[#0f445f] transition-all focus:outline-none active:scale-95 shadow-md shadow-blue-900/10 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                Save
+                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isLoading ? "Saving..." : "Save"}
               </button>
             )}
           </div>

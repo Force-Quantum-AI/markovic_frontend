@@ -179,7 +179,7 @@ export default function AllCasesPage() {
                        <Skeleton className="aspect-square rounded-lg bg-gray-300" />
                        <Skeleton className="aspect-square rounded-lg bg-gray-300" />
                        </>
-                    ) : allCases.map((card:CaseCardProps, index:number) => (
+                    ) : allCases?.results.map((card:CaseCardProps, index:number) => (
                         <CaseCard key={index} {...card} />
                     ))}
                 </div>
