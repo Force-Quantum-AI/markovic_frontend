@@ -162,7 +162,10 @@ export default function LawDetailsPage() {
               Print
             </button>
 
-            <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98">
+            <button
+              onClick={handlePrint}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98"
+            >
               <FileText className="w-4 h-4" />
               Export as PDF
             </button>
