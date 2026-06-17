@@ -1,8 +1,10 @@
 "use client"
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { Loader2, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToggleBookmarkedCasesMutation } from "@/store/features/case/case.api";
+import { toast } from "sonner";
 
 export interface CaseCardProps {
   id?: string;
@@ -114,6 +116,7 @@ export function CaseCard({
   hearingDate,
   deadline,
 }: CaseCardProps) {
+  const [toggleBookmarkedCases, {isLoading}] = useToggleBookmarkedCasesMutation();
   const [isFavorite, setIsFavorite] = useState(bookmark || false);
 
   // Color configuration mapping for status pill badges
@@ -129,9 +132,15 @@ export function CaseCard({
 
   const router = useRouter();
 
-  const handleAddToFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsFavorite(!isFavorite);
+  const handleAddToFavorite = async(e: React.MouseEvent) => {
+    try {
+      await toggleBookmarkedCases({ caseId: id }).unwrap()
+      toast.success(isFavorite ? "Case removed from favorite" : "Case added to favorite")
+      setIsFavorite(prev => !prev)
+    } catch (error) {
+      console.log("error is",error);
+      toast.error("Failed to add case to favorite")
+    }
   };
 
   // Resolve fields (fallback hierarchy)
@@ -156,12 +165,17 @@ export function CaseCard({
 
   return (
     <div className="relative">
-      <div
+      <button
+        disabled={isLoading}
         onClick={handleAddToFavorite}
-        className="absolute top-5 right-5 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm z-10 cursor-pointer"
+        className="absolute top-5 right-5 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm z-10 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <Star className={`w-4 h-4 ${isFavorite ? "text-[#eab308] fill-[#eab308]" : "text-gray-300"}`} />
-      </div>
+        {isLoading ? (
+          <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+        ) : (
+          <Star className={`w-4 h-4 ${isFavorite ? "text-[#eab308] fill-[#eab308]" : "text-gray-300"}`} />
+        )}
+      </button>
       <div
         className="bg-[#f8f9fa] rounded-3xl p-3 2xl:p-6 border border-gray-100/80 shadow-sm flex flex-col justify-between transition-all hover:shadow-md w-full cursor-pointer"
         onClick={() => router.push(`/my-cases/${displayCaseNumber}`)}

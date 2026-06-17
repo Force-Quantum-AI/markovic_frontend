@@ -94,7 +94,20 @@ export const caseApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["case"],
     }),
-
+    getAllBookmarkedCases: builder.query<any, void>({ 
+      query: () => ({
+        url: `/cases/bookmarks/`,
+        method: "GET",
+      }),
+      providesTags: ["case"],
+    }),
+    toggleBookmarkedCases: builder.mutation({
+        query: ({caseId})=>({
+            url:`/cases/${caseId}/bookmark/`,
+            method: "PATCH"
+        }),
+        invalidatesTags: ["case"]
+    })
   }),
 });
 
@@ -104,4 +117,6 @@ export const {
   useCreateCaseMutation,
   useAddCaseHearingMutation,
   useAddCaseDeadlineMutation,
+  useGetAllBookmarkedCasesQuery,
+  useToggleBookmarkedCasesMutation
 } = caseApi;

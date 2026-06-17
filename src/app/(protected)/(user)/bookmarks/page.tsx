@@ -5,10 +5,15 @@ import { LawCard } from "@/components/shared/LawCard";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { lawsDataset } from "@/components/user/dashboard/LawsAndBylaws";
 import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
+import { useGetAllBookmarkedCasesQuery } from "@/store/features/case/case.api";
+import { useGetAllBookmarkedLawsQuery } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
 import { useState } from "react";
 
 export default function Page() {
-    const [activeBtn, setActiveBtn] = useState("cases")
+    const {data: bookmarkedCases, isLoading: isBookmarkedCasesLoading} = useGetAllBookmarkedCasesQuery();
+    const {data: bookmarkedLaws, isLoading: isBookmarkedLawsLoading} = useGetAllBookmarkedLawsQuery();
+    const [activeBtn, setActiveBtn] = useState("cases");
+
     return (
         <div>
             <PageHeadingTitle title="Bookmarks" subtitle="View your Bookmarks cases and law/ByLaw" />
@@ -29,13 +34,13 @@ export default function Page() {
                 <div>
                     {activeBtn === "cases" ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                            {hearingsDataset.map((card, index) => (
+                            {bookmarkedCases?.map((card : any, index : number) => (
                                 <CaseCard key={index} {...card} />
                             ))}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
-                            {lawsDataset.map((law, index) => (
+                            {bookmarkedLaws?.map((law:any, index:number) => (
                                 <LawCard
                                     key={index}
                                     title={law.title}

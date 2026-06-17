@@ -33,10 +33,26 @@ export const lawAndBylawApi = baseApi.injectEndpoints({
       }),
       providesTags: ["lawAndBylaw"],
     }),
+    getAllBookmarkedLaws: builder.query<any, void>({ 
+      query: () => ({
+        url: `/laws/bookmarks/`,
+        method: "GET",
+      }),
+      providesTags: ["lawAndBylaw"],
+    }),
+    toggleBookmarkedLaws: builder.mutation({
+        query: ({id})=>({
+            url:`/laws/${id}/bookmark/`,
+            method: "PATCH"
+        }),
+        invalidatesTags: ["lawAndBylaw"]
+    })
   }),
 });
 
 export const {
     useGetAllLawAndBylawQuery,
-    useGetLawBylawDetailsQuery
+    useGetLawBylawDetailsQuery,
+    useGetAllBookmarkedLawsQuery,
+    useToggleBookmarkedLawsMutation
 } = lawAndBylawApi;
