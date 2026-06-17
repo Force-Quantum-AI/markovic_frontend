@@ -31,6 +31,6 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Auth","Profile","active_sessions", "notification", "languageAndTime","cookiePreference","case","lawAndBylaw"],
+  tagTypes: ["Auth","Profile","active_sessions", "notification", "languageAndTime","cookiePreference","case","lawAndBylaw", "archive"],
   endpoints: () => ({}),
 });
