@@ -177,7 +177,9 @@ export default function AllCasesPage() {
                     <CaseCardSkeleton cardNumber={3}/>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                        {allCases?.results.map((card: CaseCardProps, index: number) => (
+                        {allCases?.results ? allCases?.results.map((card: CaseCardProps, index: number) => (
+                            <CaseCard key={index} {...card} />
+                        )): allCases.map((card: CaseCardProps, index: number) => (
                             <CaseCard key={index} {...card} />
                         ))}
                     </div>
