@@ -1,3 +1,4 @@
+import { HearingAndDeadlinePageDataParamsType } from "@/types/case.types";
 import { baseApi } from "../../api/baseApi";
 
 export const caseApi = baseApi.injectEndpoints({
@@ -49,7 +50,7 @@ export const caseApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["case"],
     }),
-    // case hearing 
+    // case hearing & deadline
     addCaseHearing: builder.mutation({
       query: ({ caseId, data }: {
         caseId: string, 
@@ -94,6 +95,15 @@ export const caseApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["case"],
     }),
+    getHearingAndDeadlinePageData: builder.query<any, HearingAndDeadlinePageDataParamsType>({
+      query: (params) => ({
+        url: `/cases/schedules/`,
+        method: "GET",
+        params
+      }),
+      providesTags: ["case"],
+    }),
+    // bookmarked cases
     getAllBookmarkedCases: builder.query<any, void>({ 
       query: () => ({
         url: `/cases/bookmarks/`,
@@ -115,8 +125,11 @@ export const {
   useGetAllCasesQuery,
   useGetCaseDetailsQuery,
   useCreateCaseMutation,
+  // case hearing & deadline
   useAddCaseHearingMutation,
   useAddCaseDeadlineMutation,
+  useGetHearingAndDeadlinePageDataQuery,
+  // bookmarked cases
   useGetAllBookmarkedCasesQuery,
   useToggleBookmarkedCasesMutation
 } = caseApi;

@@ -73,6 +73,20 @@ export interface Deadline {
   assignedTo: string;
 }
 
+export interface HearingAndDeadlinePageDataParamsType{
+  search?: string;
+  category?: number;
+  sub_category?: number;
+  hearing_day?: number;
+  hearing_month?: number;
+  hearing_year?: number;
+  deadline_day?: number;
+  deadline_month?: number;
+  deadline_year?: number;
+  page?: number;
+  page_size?: number;
+}
+
 export interface CaseDocument {
   id: string;
   name: string;

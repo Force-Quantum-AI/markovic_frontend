@@ -250,7 +250,9 @@ export default function ArchiveTable() {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                                     {currentItems.map((item: any) => (
-                                        <tr key={item.id} className="hover:bg-gray-50/70 transition-colors">
+                                        <tr key={item.id} className="hover:bg-gray-50/70 transition-colors"
+                                        
+                                        >
                                             <td className="py-4 px-5">
                                                 <span className="block font-medium text-gray-900">{item.case_name}</span>
                                             </td>
