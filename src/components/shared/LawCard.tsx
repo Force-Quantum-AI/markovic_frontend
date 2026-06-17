@@ -33,7 +33,6 @@ export function LawCard({
     try {
       await toggleBookmarkedLaws({ id }).unwrap()
       toast.success(isFavorite ? "Law removed from favorite" : "Law added to favorite")
-      setIsFavorite(prev => !prev)
     } catch (error) {
       console.log("error is", error);
       toast.error("Failed to add case to favorite")

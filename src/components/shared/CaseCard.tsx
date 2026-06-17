@@ -136,7 +136,6 @@ export function CaseCard({
     try {
       await toggleBookmarkedCases({ caseId: id }).unwrap()
       toast.success(isFavorite ? "Case removed from favorite" : "Case added to favorite")
-      setIsFavorite(prev => !prev)
     } catch (error) {
       console.log("error is",error);
       toast.error("Failed to add case to favorite")
@@ -192,7 +191,7 @@ export function CaseCard({
           <div className="flex items-center gap-3 mb-4">
             <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
               <Image
-                src={displayClientImage}
+                src="/dummy-user.jpg"
                 alt={displayClientName}
                 fill
                 className="object-cover"
@@ -258,7 +257,7 @@ export function CaseCard({
                     >
                       {!isInitials ? (
                         <Image
-                          src={resolvedAvatar}
+                          src="/dummy-user.jpg"
                           alt="Lawyer profile"
                           fill
                           className="object-cover"
