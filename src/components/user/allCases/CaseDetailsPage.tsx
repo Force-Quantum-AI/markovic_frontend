@@ -104,7 +104,7 @@ function LawyerAvatarStrip() {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function CaseDetailsPage() {
+export default function CaseDetailsPage({caseId}: {caseId: string}) {
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [editPersonalOpen, setEditPersonalOpen] = useState(false);
   const [addCaseOpen, setAddCaseOpen] = useState(false);
@@ -335,7 +335,7 @@ export default function CaseDetailsPage() {
         {/* Tab content */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           {activeTab === "overview" && <CaseOverview caseDetail={DUMMY_CASE} />}
-          {activeTab === "hearings" && <HearingsTab />}
+          {activeTab === "hearings" && <HearingsTab caseId={caseId}/>}
           {activeTab === "deadlines" && <DeadlinesTab />}
           {activeTab === "documents" && <DocumentsTab />}
           {activeTab === "notes" && <NoteTab />}
