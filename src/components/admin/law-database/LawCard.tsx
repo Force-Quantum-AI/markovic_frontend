@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Scale, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -73,7 +72,7 @@ export default function LawCard({ law, onEdit, onDelete }: LawCardProps) {
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => handleAction("delete")}
-              className="flex items-center px-4 py-2.5 text-[15px] font-medium text-[#292E38] rounded-xl hover:bg-slate-50 cursor-pointer focus:bg-slate-50 focus:outline-none transition-colors text-slate-800"
+              className="flex items-center px-4 py-2.5 text-[15px] font-medium text-red-600 hover:text-red-700 hover:bg-red-50 focus:text-red-700 focus:bg-red-50 rounded-xl cursor-pointer focus:outline-none transition-colors"
             >
               Delete
             </DropdownMenuItem>

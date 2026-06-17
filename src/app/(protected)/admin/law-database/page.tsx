@@ -1,105 +1,43 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Plus, Download, ChevronDown, Scale } from "lucide-react";
 import AdminButton from "@/components/shared/AdminButton";
 import LawCard, { Law } from "@/components/admin/law-database/LawCard";
 import AddLawDialog from "@/components/admin/law-database/AddLawDialog";
+import UpdateLawDialog from "@/components/admin/law-database/UpdateLawDialog";
+import DeleteLawDialog from "@/components/admin/law-database/DeleteLawDialog";
 import { toast } from "sonner";
-
-const INITIAL_LAWS: Law[] = [
-  {
-    id: "1",
-    title: "Law on Obligations",
-    gazette: "031/17 of 05/12/2017",
-    lastUpdate: "17 Oct, 2020",
-    category: "Civil Law",
-  },
-  {
-    id: "2",
-    title: "Civil Procedure Law",
-    gazette: "22/10, 49/13, 44/21",
-    lastUpdate: "17 Oct, 2020",
-    category: "Procedural Law",
-  },
-  {
-    id: "3",
-    title: "Law on Courts",
-    gazette: "13/18, 01/23",
-    lastUpdate: "21 Sep, 2020",
-    category: "Civil Law",
-  },
-  {
-    id: "4",
-    title: "Law on Enforcement and Security",
-    gazette: "36/11, 58/14, 11/17",
-    lastUpdate: "24 May, 2020",
-    category: "Procedural Law",
-  },
-  {
-    id: "5",
-    title: "Criminal Procedure Law",
-    gazette: "031/17 of 05/12/2017",
-    lastUpdate: "17 Oct, 2020",
-    category: "Criminal Law",
-  },
-  {
-    id: "6",
-    title: "Family Law",
-    gazette: "72/21",
-    lastUpdate: "1 Feb, 2020",
-    category: "Procedural Law",
-  },
-  {
-    id: "7",
-    title: "Law on Courts",
-    gazette: "13/18, 01/23",
-    lastUpdate: "1 Feb, 2020",
-    category: "Civil Law",
-  },
-  {
-    id: "8",
-    title: "Law on Obligations",
-    gazette: "47/08, 04/10, 22/17",
-    lastUpdate: "24 May, 2020",
-    category: "Civil Law",
-  },
-  {
-    id: "9",
-    title: "Criminal Procedure Law",
-    gazette: "031/17 of 05/12/2017",
-    lastUpdate: "17 Oct, 2020",
-    category: "Criminal Law",
-  },
-  {
-    id: "10",
-    title: "Family Law",
-    gazette: "72/21",
-    lastUpdate: "1 Feb, 2020",
-    category: "Procedural Law",
-  },
-  {
-    id: "11",
-    title: "Law on Courts",
-    gazette: "13/18, 01/23",
-    lastUpdate: "1 Feb, 2020",
-    category: "Civil Law",
-  },
-  {
-    id: "12",
-    title: "Law on Obligations",
-    gazette: "47/08, 04/10, 22/17",
-    lastUpdate: "24 May, 2020",
-    category: "Civil Law",
-  },
-];
+import {
+  useGetAllLawsQuery,
+  useCreateLawMutation,
+  useUpdateLawsMutation,
+  useDeleteLawsMutation,
+} from "@/store/features/admin/laws-database/laws.api";
+import { LawDetails } from "@/store/features/admin/laws-database/laws.type";
 
 export default function LawDatabasePage() {
-  const [laws, setLaws] = useState<Law[]>(INITIAL_LAWS);
+  const { data: allLaws, isLoading, isError } = useGetAllLawsQuery(undefined);
+  const [createLaw] = useCreateLawMutation();
+  const [updateLaw] = useUpdateLawsMutation();
+  const [deleteLaw, { isLoading: isDeleting }] = useDeleteLawsMutation();
+
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedLaw, setSelectedLaw] = useState<Law | null>(null);
+
+  const laws = useMemo(() => {
+    return allLaws?.results.map((item) => ({
+      id: String(item.id),
+      title: item.title,
+      gazette: item.official_gazette,
+      lastUpdate: item.last_updated,
+      category: item.category_name,
+    })) || [];
+  }, [allLaws]);
 
   const filteredLaws = useMemo(() => {
     return laws.filter((law) => {
@@ -124,18 +62,67 @@ export default function LawDatabasePage() {
     setIsAddDialogOpen(true);
   };
 
-  const handleAddNewLaw = (newLaw: Law) => {
-    setLaws((prev) => [newLaw, ...prev]);
-    toast.success(`"${newLaw.title}" added to database!`);
+  const handleAddNewLaw = async (newLaw: LawDetails) => {
+    try {
+      await createLaw(newLaw).unwrap();
+      toast.success(`"${newLaw.title}" added to database!`);
+    } catch (error: unknown) {
+      const err = error as { data?: Record<string, string[]> };
+      if (err?.data) {
+        const messages = Object.entries(err.data)
+          .map(([field, msgs]) => `${field}: ${msgs.join(", ")}`)
+          .join(" | ");
+        toast.error(messages);
+      } else {
+        toast.error("Failed to add law. Please try again.");
+      }
+    }
   };
 
   const handleEditLaw = (law: Law) => {
-    toast.info(`Editing "${law.title}"...`);
+    setSelectedLaw(law);
+    setIsUpdateDialogOpen(true);
   };
 
   const handleDeleteLaw = (law: Law) => {
-    setLaws((prev) => prev.filter((item) => item.id !== law.id));
-    toast.success(`"${law.title}" deleted successfully!`);
+    setSelectedLaw(law);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleUpdateLaw = async (id: string | number, updatedLaw: LawDetails) => {
+    try {
+      await updateLaw({ id, data: updatedLaw }).unwrap();
+      toast.success(`"${updatedLaw.title}" updated successfully!`);
+    } catch (error: unknown) {
+      const err = error as { data?: Record<string, string[]> };
+      if (err?.data) {
+        const messages = Object.entries(err.data)
+          .map(([field, msgs]) => `${field}: ${msgs.join(", ")}`)
+          .join(" | ");
+        toast.error(messages);
+      } else {
+        toast.error("Failed to update law. Please try again.");
+      }
+    }
+  };
+
+  const handleDeleteLawConfirm = async () => {
+    if (!selectedLaw) return;
+    try {
+      await deleteLaw(selectedLaw.id).unwrap();
+      toast.success(`"${selectedLaw.title}" deleted successfully!`);
+      setIsDeleteDialogOpen(false);
+    } catch (error: unknown) {
+      const err = error as { data?: Record<string, string[]> };
+      if (err?.data) {
+        const messages = Object.entries(err.data)
+          .map(([field, msgs]) => `${field}: ${msgs.join(", ")}`)
+          .join(" | ");
+        toast.error(messages);
+      } else {
+        toast.error("Failed to delete law. Please try again.");
+      }
+    }
   };
 
   return (
@@ -227,7 +214,15 @@ export default function LawDatabasePage() {
           }}
           className="w-full"
         >
-          {filteredLaws.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-16 text-slate-400 font-roboto">
+              <p className="text-lg font-medium">Loading laws...</p>
+            </div>
+          ) : isError ? (
+            <div className="flex flex-col items-center justify-center py-16 text-red-500 font-roboto">
+              <p className="text-lg font-medium">Error loading laws. Please try again later.</p>
+            </div>
+          ) : filteredLaws.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-slate-400 font-roboto">
               <Scale className="w-12 h-12 mb-3 opacity-60 text-slate-400" />
               <p className="text-lg font-medium">No laws found matching your search</p>
@@ -250,56 +245,20 @@ export default function LawDatabasePage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-100 w-full font-roboto">
           
           <span className="text-sm text-gray-500">
-            Showing 1-{Math.min(filteredLaws.length, 6)} of {filteredLaws.length} results
+            Showing {filteredLaws.length} of {allLaws?.count || filteredLaws.length} results
           </span>
 
           <div className="flex items-center gap-1">
             <button 
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-all font-semibold rounded-md hover:bg-slate-50 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
-              disabled={currentPage === 1}
+              disabled={!allLaws?.previous}
             >
               Prev.
             </button>
 
             <button 
-              onClick={() => setCurrentPage(1)}
-              className={`w-8 h-8 flex items-center justify-center text-sm font-semibold rounded-full transition-all cursor-pointer ${
-                currentPage === 1 
-                  ? "bg-[#135576] text-white shadow-sm" 
-                  : "text-gray-600 hover:bg-slate-50"
-              }`}
-            >
-              1
-            </button>
-
-            <button 
-              onClick={() => setCurrentPage(2)}
-              className={`w-8 h-8 flex items-center justify-center text-sm font-semibold rounded-full transition-all cursor-pointer ${
-                currentPage === 2 
-                  ? "bg-[#135576] text-white shadow-sm" 
-                  : "text-gray-600 hover:bg-slate-50"
-              }`}
-            >
-              2
-            </button>
-
-            <button 
-              onClick={() => setCurrentPage(3)}
-              className={`w-8 h-8 flex items-center justify-center text-sm font-semibold rounded-full transition-all cursor-pointer ${
-                currentPage === 3 
-                  ? "bg-[#135576] text-white shadow-sm" 
-                  : "text-gray-600 hover:bg-slate-50"
-              }`}
-            >
-              3
-            </button>
-
-            <span className="text-sm text-gray-400 px-1 font-semibold">...</span>
-
-            <button 
-              onClick={() => setCurrentPage(prev => prev + 1)}
-              className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-all font-semibold rounded-md hover:bg-slate-50 cursor-pointer"
+              className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-all font-semibold rounded-md hover:bg-slate-50 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+              disabled={!allLaws?.next}
             >
               Next
             </button>
@@ -313,6 +272,25 @@ export default function LawDatabasePage() {
           isOpen={isAddDialogOpen}
           onOpenChange={setIsAddDialogOpen}
           onAdd={handleAddNewLaw}
+        />
+      )}
+
+      {isUpdateDialogOpen && selectedLaw && (
+        <UpdateLawDialog
+          isOpen={isUpdateDialogOpen}
+          onOpenChange={setIsUpdateDialogOpen}
+          lawId={selectedLaw.id}
+          onUpdate={handleUpdateLaw}
+        />
+      )}
+
+      {isDeleteDialogOpen && selectedLaw && (
+        <DeleteLawDialog
+          isOpen={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          lawTitle={selectedLaw.title}
+          onConfirm={handleDeleteLawConfirm}
+          isLoading={isDeleting}
         />
       )}
 

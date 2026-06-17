@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,22 +16,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AdminButton from "@/components/shared/AdminButton";
-import { Law } from "./LawCard";
+import { LawDetails } from "@/store/features/admin/laws-database/laws.type";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllSubCategoriesQuery,
+} from "@/store/features/admin/category-subcategory/category.api";
 
-interface Article {
+interface DialogSection {
   name: string;
-  description: string;
-}
-
-interface Section {
-  name: string;
-  articles: Article[];
+  articles: { name: string; description: string }[];
 }
 
 interface AddLawDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (newLaw: Law) => void;
+  onAdd: (newLaw: LawDetails) => void;
 }
 
 export default function AddLawDialog({
@@ -39,13 +38,25 @@ export default function AddLawDialog({
   onOpenChange,
   onAdd,
 }: AddLawDialogProps) {
+  const { data: categories } = useGetAllCategoriesQuery();
+  const { data: allSubCategories } = useGetAllSubCategoriesQuery();
+
   const [title, setTitle] = useState("");
   const [source, setSource] = useState("");
   const [gazette, setGazette] = useState("");
   const [category, setCategory] = useState("");
   const [subcategory, setSubcategory] = useState("");
 
-  const [sections, setSections] = useState<Section[]>([
+  // Filter subcategories based on selected category
+  const filteredSubCategories =
+    allSubCategories?.filter((sub) => sub.category === Number(category)) || [];
+
+  const handleCategoryChange = (value: string) => {
+    setCategory(value);
+    setSubcategory("");
+  };
+
+  const [sections, setSections] = useState<DialogSection[]>([
     {
       name: "",
       articles: [
@@ -126,25 +137,24 @@ export default function AddLawDialog({
     e.preventDefault();
     if (!title || !source) return;
 
-    const categoryMapping: Record<string, string> = {
-      "Civil Litigation": "Civil Law",
-      "Criminal Defense": "Criminal Law",
-      "Administrative Law": "Procedural Law",
-    };
-
-    const newLaw: Law = {
-      id: String(Date.now()),
+    const lawData: LawDetails = {
       title,
-      gazette,
-      lastUpdate: new Date().toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }),
-      category: categoryMapping[category] || "Civil Law",
+      source,
+      official_gazette: gazette,
+      category: Number(category),
+      sub_category: Number(subcategory),
+      sections: sections.map((sec, sIdx) => ({
+        title: sec.name,
+        order: sIdx + 1,
+        articles: sec.articles.map((art, aIdx) => ({
+          title: art.name,
+          description: art.description,
+          order: aIdx + 1,
+        })),
+      })),
     };
 
-    onAdd(newLaw);
+    onAdd(lawData);
     onOpenChange(false);
   };
 
@@ -166,7 +176,7 @@ export default function AddLawDialog({
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 w-full font-roboto overflow-y-auto pr-2 flex-1 custom-scrollbar"
+          className="space-y-6 w-full font-roboto overflow-y-auto p-1 flex-1 custom-scrollbar"
         >
           <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
             <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
@@ -213,7 +223,10 @@ export default function AddLawDialog({
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
                 Category:
               </label>
-              <Select value={category || undefined} onValueChange={setCategory}>
+              <Select
+                value={category || undefined}
+                onValueChange={handleCategoryChange}
+              >
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-white p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all">
                   <SelectValue placeholder="Category" />
                   <ChevronDown className="ml-auto w-5 h-5 shrink-0 text-[#9CA6BB]" />
@@ -223,24 +236,15 @@ export default function AddLawDialog({
                   sideOffset={4}
                   className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#161A20] font-roboto min-w-[var(--radix-select-trigger-width)]"
                 >
-                  <SelectItem
-                    value="Civil Litigation"
-                    className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]"
-                  >
-                    Civil Litigation
-                  </SelectItem>
-                  <SelectItem
-                    value="Criminal Defense"
-                    className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]"
-                  >
-                    Criminal Defense
-                  </SelectItem>
-                  <SelectItem
-                    value="Administrative Law"
-                    className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]"
-                  >
-                    Administrative Law
-                  </SelectItem>
+                  {categories?.map((cat) => (
+                    <SelectItem
+                      key={cat.id}
+                      value={String(cat.id)}
+                      className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]"
+                    >
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -252,9 +256,14 @@ export default function AddLawDialog({
               <Select
                 value={subcategory || undefined}
                 onValueChange={setSubcategory}
+                disabled={!category}
               >
-                <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-white p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all">
-                  <SelectValue placeholder="Subcategory" />
+                <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-white p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                  <SelectValue
+                    placeholder={
+                      category ? "Subcategory" : "Select category first"
+                    }
+                  />
                   <ChevronDown className="ml-auto w-5 h-5 shrink-0 text-[#9CA6BB]" />
                 </SelectTrigger>
                 <SelectContent
@@ -262,24 +271,15 @@ export default function AddLawDialog({
                   sideOffset={4}
                   className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#161A20] font-roboto min-w-[var(--radix-select-trigger-width)]"
                 >
-                  <SelectItem
-                    value="Traffic Accident Damages"
-                    className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]"
-                  >
-                    Traffic Accident Damages
-                  </SelectItem>
-                  <SelectItem
-                    value="Contract Disputes"
-                    className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]"
-                  >
-                    Contract Disputes
-                  </SelectItem>
-                  <SelectItem
-                    value="Property Disputes"
-                    className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]"
-                  >
-                    Property Disputes
-                  </SelectItem>
+                  {filteredSubCategories.map((sub) => (
+                    <SelectItem
+                      key={sub.id}
+                      value={String(sub.id)}
+                      className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]"
+                    >
+                      {sub.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -370,7 +370,7 @@ export default function AddLawDialog({
           <div className="flex justify-center pt-4">
             <AdminButton
               type="submit"
-              label="Update"
+              label="Add Law"
               className="px-12 py-3 w-[160px]"
             />
           </div>
