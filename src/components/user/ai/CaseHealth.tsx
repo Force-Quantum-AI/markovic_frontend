@@ -1,16 +1,22 @@
 import { Gavel, Clock3, TrendingUp } from "lucide-react";
 
-export default function CaseHealth() {
-  // Dummy data representing the case health status
-  const caseData = {
-    title: "Johnson v. Meridian",
-    caseId: "LIT-2024-00847",
-    status: "Active",
-    progress: 100,
-    totalHearings: 14,
-    deadline: "Mar 10, 2026",
-    caseAge: "452 days"
-  };
+interface CaseHealthProps {
+  case_name?: string;
+  case_number?: string;
+  status_name?: string;
+  total_hearings?: number;
+  total_deadlines?: number;
+  case_age_days?: number;
+}
+
+export default function CaseHealth({
+  case_name = "N/A",
+  case_number = "N/A",
+  status_name = "Archived",
+  total_hearings = 0,
+  total_deadlines = 0,
+  case_age_days = 0
+}: CaseHealthProps) {
 
   return (
     <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -19,26 +25,12 @@ export default function CaseHealth() {
         <div className="flex justify-between items-start mb-4">
           <div>
             <p className="text-xs font-medium text-white/70 uppercase tracking-wider mb-1">Case Health</p>
-            <h2 className="text-2xl font-bold">{caseData.title}</h2>
-            <p className="text-sm text-white/80 font-mono">{caseData.caseId}</p>
+            <h2 className="text-2xl font-bold">{case_name}</h2>
+            <p className="text-sm text-white/80 font-mono">{case_number}</p>
           </div>
           <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-semibold">
-            {caseData.status}
+            {status_name}
           </span>
-        </div>
-
-        {/* Progress Section */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm font-medium">
-            <span>Case Progress</span>
-            <span>{caseData.progress}%</span>
-          </div>
-          <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-white rounded-full" 
-              style={{ width: `${caseData.progress}%` }}
-            />
-          </div>
         </div>
       </div>
 
@@ -47,25 +39,25 @@ export default function CaseHealth() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-slate-500">
             <Gavel className="w-5 h-5" />
-            <span className="text-sm font-medium">Total Hearing</span>
+            <span className="text-sm font-medium">Total Hearings</span>
           </div>
-          <span className="text-sm font-bold text-[#135576]">{caseData.totalHearings}</span>
+          <span className="text-sm font-bold text-[#135576]">{total_hearings}</span>
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-slate-500">
             <Clock3 className="w-5 h-5" />
-            <span className="text-sm font-medium">Case Deadline</span>
+            <span className="text-sm font-medium">Total Deadlines</span>
           </div>
-          <span className="text-sm font-bold text-amber-600">{caseData.deadline}</span>
+          <span className="text-sm font-bold text-amber-600">{total_deadlines}</span>
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-slate-500">
             <TrendingUp className="w-5 h-5" />
-            <span className="text-sm font-medium">Case Age</span>
+            <span className="text-sm font-medium">Case Age (Days)</span>
           </div>
-          <span className="text-sm font-bold text-slate-900">{caseData.caseAge}</span>
+          <span className="text-sm font-bold text-slate-900">{case_age_days}</span>
         </div>
       </div>
     </div>

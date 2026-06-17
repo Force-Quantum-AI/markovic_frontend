@@ -1,5 +1,4 @@
 import ArchiveTable from "@/components/user/archive/ArchiveTable";
-import ClientPage from "@/components/user/clients/ClientPage";
 import LegalCalendar from "@/components/user/dashboard/LegalCalendar";
 
 export default function page() {
