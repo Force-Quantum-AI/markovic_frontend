@@ -1,166 +1,61 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { 
   ArrowLeft, 
   Star, 
   Copy, 
-  Link2, 
   Printer, 
   FileText, 
-  ChevronDown 
+  ChevronDown,
+  Scale
 } from "lucide-react";
 import Image from "next/image";
-
-// ─── TYPES & INTERFACES ──────────────────────────────────────────────────────
-
-interface Article {
-  id: string;
-  title: string;
-  subtitle?: string;
-  content: string[];
-}
-
-interface Chapter {
-  id: string;
-  title: string;
-  articles: Article[];
-}
-
-interface Section {
-  id: string;
-  title: string;
-  chapters: Chapter[];
-}
-
-interface LawData {
-  id: string;
-  title: string;
-  category: string;
-  source: string;
-  effectiveDate: string;
-  lastAmended: string;
-  sections: Section[];
-}
-
-// ─── MOCK DATA (MATCHING FIGMA AND SCALABLE FOR API REPLACEMENT) ─────────────
-
-const mockLawDataset: Record<string, LawData> = {
-  "obligations": {
-    id: "obligations",
-    title: "Law on Obligations",
-    category: "Civil Law",
-    source: "Official Gazette of Montenegro",
-    effectiveDate: "1 January 2008",
-    lastAmended: "8 Sep, 2020",
-    sections: [
-      {
-        id: "general-part",
-        title: "Part One: General Part",
-        chapters: [
-          {
-            id: "basic-principles",
-            title: "Chapter 1: Basic Principles",
-            articles: [
-              {
-                id: "article-1",
-                title: "Article 1 – Scope of the Law",
-                content: [
-                  "This Law regulates obligatory relations that arise from contracts, causing damage, unjust enrichment, conducting affairs without order, unilateral expression of will, and other legal facts."
-                ]
-              },
-              {
-                id: "article-2",
-                title: "Article 2 – Freedom of Contracting",
-                content: [
-                  "Parties are free to regulate their obligatory relations, within the limits set by law and moral principles."
-                ]
-              },
-              {
-                id: "article-16",
-                title: "Article 16 – Prohibition of Causing Damage",
-                content: [
-                  "Everyone is obliged to refrain from actions by which damage could be caused to another."
-                ]
-              },
-              {
-                id: "article-172",
-                title: "Article 172 – Compensation for Non-Material Damage",
-                subtitle: "(Highly Important)",
-                content: [
-                  "(1) For physical pain, mental suffering, fear, reduced life activities, disfigurement, violation of personal dignity, honor and reputation, as well as other forms of suffering, the injured party is entitled to just compensation.",
-                  "(2) When determining the amount of compensation, the court shall take into account the intensity and duration of the physical and mental pain and suffering, the degree of guilt of the tortfeasor, and all other circumstances of the case.",
-                  "(3) In the case of violation of personality rights, the court may also award compensation in the form of publication of the judgment or correction of the statement."
-                ]
-              },
-              {
-                id: "article-199",
-                title: "Article 199 – Compensation for Non-Material Damage",
-                subtitle: "(Highly Important)",
-                content: [
-                  "(1) For physical pain, mental suffering, fear, reduced life activities, disfigurement, violation of personal dignity, honor and reputation, as well as other forms of suffering, the injured party is entitled to just compensation.",
-                  "(2) When determining the amount of compensation, the court shall take into account the intensity and duration of the physical and mental pain and suffering, the degree of guilt of the tortfeasor, and all other circumstances of the case.",
-                  "(3) In the case of violation of personality rights, the court may also award compensation in the form of publication of the judgment or correction of the statement."
-                ]
-              },
-              {
-                id: "article-200",
-                title: "Article 200 – Liability for Damage",
-                content: [
-                  "The provisions on divided liability and reduction of compensation applicable to material damage shall apply accordingly to non-material damage."
-                ]
-              },
-              {
-                id: "article-206",
-                title: "Article 206 – Joint and Several Liability",
-                content: [
-                  "(1) If several persons cause damage together, they shall be jointly and severally liable.",
-                  "(2) When determining the amount of compensation, the court shall take into account the intensity and duration of the physical and mental pain and suffering, the degree of guilt of the tortfeasor, and all other circumstances of the case."
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-};
-
-// ─── COMPONENT IMPLEMENTATION ────────────────────────────────────────────────
+import { useGetLawBylawDetailsQuery } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LawDetailsPage() {
   const params = useParams();
+  const lawId = (params?.id as string) || "";
   
-  // Fallback to "obligations" if id doesn't match mock keys, ensuring beautiful initial render
-  const lawId = (params?.id as string) || "obligations";
-  const lawData = mockLawDataset[lawId] || mockLawDataset["obligations"];
+  const { data: lawDetailsData, isLoading, error } = useGetLawBylawDetailsQuery({ id: lawId });
 
   // States for interactive UI filters and copy feedback
-  const [selectedSectionId, setSelectedSectionId] = useState(lawData.sections[0]?.id || "");
-  const [selectedChapterId, setSelectedChapterId] = useState(lawData.sections[0]?.chapters[0]?.id || "");
+  const [selectedSectionId, setSelectedSectionId] = useState("");
   const [selectedArticleId, setSelectedArticleId] = useState("all");
   const [copiedText, setCopiedText] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // Dynamic dropdown dependency updates
-  const currentSection = lawData.sections.find(s => s.id === selectedSectionId);
-  const currentChapter = currentSection?.chapters.find(c => c.id === selectedChapterId);
+  const sections = lawDetailsData?.sections || [];
+
+  // Update selected section when data loads
+  useEffect(() => {
+    if (sections.length > 0 && !selectedSectionId) {
+      setSelectedSectionId(sections[0].id.toString());
+    }
+  }, [sections, selectedSectionId]);
+
+  const currentSection = useMemo(() => {
+    return sections.find((s: any) => s.id.toString() === selectedSectionId) || sections[0];
+  }, [sections, selectedSectionId]);
+
+  const articles = currentSection?.articles || [];
 
   // Filtered Articles based on selection state matrix
   const displayedArticles = useMemo(() => {
-    if (!currentChapter) return [];
     if (selectedArticleId === "all") {
-      return currentChapter.articles;
+      return articles;
     }
-    return currentChapter.articles.filter(art => art.id === selectedArticleId);
-  }, [currentChapter, selectedArticleId]);
+    return articles.filter((art: any) => art.id.toString() === selectedArticleId);
+  }, [articles, selectedArticleId]);
 
   // Copy Entire Text content utilities function
   const handleCopyFullText = () => {
-    const rawTextContent = displayedArticles.map(art => 
-      `${art.title} ${art.subtitle || ""}\n${art.content.join("\n")}`
+    if (displayedArticles.length === 0) return;
+    const rawTextContent = displayedArticles.map((art: any) => 
+      `${art.title}\n${art.description || ""}`
     ).join("\n\n");
 
     navigator.clipboard.writeText(rawTextContent).then(() => {
@@ -173,6 +68,36 @@ export default function LawDetailsPage() {
   const handlePrint = () => {
     window.print();
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white rounded-2xl p-4 space-y-6">
+        <Skeleton className="h-10 w-36 rounded-full" />
+        <Skeleton className="h-[300px] w-full rounded-[24px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="h-14 w-full rounded-full" />
+          <Skeleton className="h-14 w-full rounded-full" />
+        </div>
+        <Skeleton className="h-[400px] w-full rounded-[28px]" />
+      </div>
+    );
+  }
+
+  if (error || !lawDetailsData) {
+    return (
+      <div className="min-h-screen bg-white rounded-2xl p-4 flex flex-col items-center justify-center text-red-500 font-roboto">
+        <Scale className="w-12 h-12 mb-3 opacity-60 text-red-400" />
+        <p className="text-lg font-medium">Failed to load law details</p>
+        <p className="text-sm">Please check the connection or try again later.</p>
+        <Link 
+          href="/law-and-bylaw" 
+          className="mt-4 px-4 py-2 bg-[#135576] text-white rounded-full text-xs font-bold hover:bg-[#135576]/90 transition-all"
+        >
+          Back to Laws & Bylaws
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white rounded-2xl p-1 md:p-4 font-sans selection:bg-[#135576]/10 print:bg-white print:p-0">
@@ -192,29 +117,29 @@ export default function LawDetailsPage() {
       <div className="max-w-[1600px] mx-auto space-y-6">
 
         {/* 2. Hero Header Block Section */}
-        <div className="w-full h-[60vh] md:h-fit bg-[#135576] rounded-[24px] p-6 md:p-8 text-white relative overflow-hidden shadow-xl shadow-blue-950/10 flex flex-col lg:flex-row justify-between items-start  gap-6 print:border print:border-gray-300 print:text-black print:bg-white">
+        <div className="w-full h-[60vh] md:h-fit bg-[#135576] rounded-[24px] p-6 md:p-8 text-white relative overflow-hidden shadow-xl shadow-blue-950/10 flex flex-col lg:flex-row justify-between items-start gap-6 print:border print:border-gray-300 print:text-black print:bg-white">
           
           <div className="space-y-4 max-w-3xl z-10">
             {/* Tag Badge Category indicator label */}
             <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-xs font-bold tracking-wide backdrop-blur-sm border border-white/10 print:border-black print:text-black">
-              {lawData.category}
+              {lawDetailsData.category_name}
             </span>
             
             {/* Main Title Header string identifier */}
             <h1 className="text-3xl md:text-4xl font-serif font-bold tracking-tight italic">
-              {lawData.title}
+              {lawDetailsData.title}
             </h1>
 
             {/* Source mapping reference detail indicator */}
             <p className="text-sm opacity-80 font-medium">
-              Source: <span className="underline decoration-white/40 underline-offset-4">{lawData.source}</span>
+              Source: <span className="underline decoration-white/40 underline-offset-4">{lawDetailsData.source || "Official Source"}</span>
             </p>
 
             {/* Revision metadata horizontal text string */}
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1.5 pt-2 text-xs font-medium opacity-90 border-t border-white/10">
-              <div>Effective Date: <span className="font-semibold text-white print:text-black">{lawData.effectiveDate}</span></div>
+              <div>Official Gazette: <span className="font-semibold text-white print:text-black">{lawDetailsData.official_gazette}</span></div>
               <div className="hidden sm:inline w-1 h-1 bg-white/40 rounded-full" />
-              <div>Last Amended: <span className="font-semibold text-white print:text-black">{lawData.lastAmended}</span></div>
+              <div>Last Updated: <span className="font-semibold text-white print:text-black">{lawDetailsData.last_updated}</span></div>
             </div>
           </div>
 
@@ -228,11 +153,6 @@ export default function LawDetailsPage() {
               <Copy className="w-4 h-4" />
               {copiedText ? "Copied!" : "Copy Full Text"}
             </button>
-
-            {/* <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/10 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98">
-              <Link2 className="w-4 h-4" />
-              Link to Case
-            </button> */}
 
             <button 
               onClick={handlePrint}
@@ -249,7 +169,7 @@ export default function LawDetailsPage() {
           </div>
 
           {/* Absolute Background Graphics Image Composition Panel */}
-          <div className="absolute right-8 bottom-0 top-0  hidden xl:block pointer-events-none w-96 h-full">
+          <div className="absolute right-8 bottom-0 top-0 hidden xl:block pointer-events-none w-96 h-full">
             <div className="relative w-44 h-44 flex items-center justify-center">
               <Image
                 src="/lawImgForLawDetailsPage.png"
@@ -265,7 +185,7 @@ export default function LawDetailsPage() {
             onClick={() => setIsFavorite(!isFavorite)}
             className="absolute top-6 right-6 p-2 rounded-full bg-white/10 border border-white/10 hover:bg-white/20 text-white transition-all print:hidden"
           >
-            <Star className={`w-5 h-5 ${isFavorite ? "fill-amber-400 stroke-amber-400" : ""}`} />
+            <Star className={`w-5 h-5 ${isFavorite || lawDetailsData.bookmark ? "fill-amber-400 stroke-amber-400" : ""}`} />
           </button>
         </div>
 
@@ -281,41 +201,17 @@ export default function LawDetailsPage() {
                 value={selectedSectionId}
                 onChange={(e) => {
                   setSelectedSectionId(e.target.value);
-                  const firstSec = lawData.sections.find(s => s.id === e.target.value);
-                  if (firstSec?.chapters[0]) {
-                    setSelectedChapterId(firstSec.chapters[0].id);
-                    setSelectedArticleId("all");
-                  }
+                  setSelectedArticleId("all");
                 }}
                 className="w-full px-5 py-4 border border-gray-200/80 rounded-full text-sm font-semibold text-gray-800 bg-gray-100 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer shadow-sm pr-12 transition-all"
               >
-                {lawData.sections.map((sec) => (
-                  <option key={sec.id} value={sec.id}>{sec.title}</option>
+                {sections.map((sec: any) => (
+                  <option key={sec.id} value={sec.id.toString()}>{sec.title}</option>
                 ))}
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
             </div>
           </div>
-
-          {/* Chapters Select Dropdown Filter Control Block */}
-          {/* <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider px-1">Chapters:</label>
-            <div className="relative w-full">
-              <select
-                value={selectedChapterId}
-                onChange={(e) => {
-                  setSelectedChapterId(e.target.value);
-                  setSelectedArticleId("all");
-                }}
-                className="w-full px-5 py-4 border border-gray-200/80 rounded-full text-sm font-semibold text-gray-800 bg-gray-100 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer shadow-sm pr-12 transition-all"
-              >
-                {currentSection?.chapters.map((chap) => (
-                  <option key={chap.id} value={chap.id}>{chap.title}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
-            </div>
-          </div> */}
 
           {/* Article Dynamic Dropdown Selection list filter trigger */}
           <div className="space-y-1.5">
@@ -327,8 +223,8 @@ export default function LawDetailsPage() {
                 className="w-full px-5 py-4 border border-gray-200/80 rounded-full text-sm font-semibold text-gray-800 bg-gray-100 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer shadow-sm pr-12 transition-all"
               >
                 <option value="all">All Articles</option>
-                {currentChapter?.articles.map((art) => (
-                  <option key={art.id} value={art.id}>{art.title.split(" – ")[0] || art.title}</option>
+                {articles.map((art: any) => (
+                  <option key={art.id} value={art.id.toString()}>{art.title}</option>
                 ))}
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
@@ -346,27 +242,22 @@ export default function LawDetailsPage() {
               No matching articles found in this section.
             </div>
           ) : (
-            displayedArticles.map((article, idx) => (
+            displayedArticles.map((article: any, idx: number) => (
               <div 
                 key={article.id} 
                 className={`space-y-3.5 pb-8 ${
                   idx !== displayedArticles.length - 1 ? "border-b border-gray-200 " : ""
                 } print:pb-6 print:break-inside-avoid`}
               >
-                {/* Article Header & Secondary Identifier Attributes */}
-                <h3 className="text-lg font-bold text-[#1a202c] tracking-tight flex flex-wrap items-center gap-2">
+                {/* Article Header */}
+                <h3 className="text-lg font-bold text-[#1a202c] tracking-tight">
                   <span>{article.title}</span>
-                  {article.subtitle && (
-                    <span className="text-blue-600 text-xs font-bold bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100 print:border-none print:bg-none">
-                      {article.subtitle}
-                    </span>
-                  )}
                 </h3>
 
                 {/* Article Detailed Body Segment Iterations Area */}
                 <div className="space-y-3 text-sm md:text-base text-gray-600 leading-relaxed font-normal">
-                  {article.content.map((paragraph, pIdx) => (
-                    <p key={pIdx} className="text-justify">
+                  {article.description?.split("\n").map((paragraph: string, pIdx: number) => (
+                    <p key={pIdx} className="text-justify whitespace-pre-line">
                       {paragraph}
                     </p>
                   ))}

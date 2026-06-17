@@ -26,9 +26,17 @@ export const lawAndBylawApi = baseApi.injectEndpoints({
       },
       providesTags: ["lawAndBylaw"],
     }),
+    getLawBylawDetails: builder.query<any, { id: string }>({ 
+      query: ({ id }) => ({
+        url: `/laws/${id}/`,
+        method: "GET",
+      }),
+      providesTags: ["lawAndBylaw"],
+    }),
   }),
 });
 
 export const {
-    useGetAllLawAndBylawQuery
+    useGetAllLawAndBylawQuery,
+    useGetLawBylawDetailsQuery
 } = lawAndBylawApi;
