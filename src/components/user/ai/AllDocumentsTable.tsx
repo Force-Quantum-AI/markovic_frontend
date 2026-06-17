@@ -3,15 +3,17 @@
 import React from "react";
 import { Eye, FileText, File } from "lucide-react";
 
-// ─── DUMMY DATASET ─────────────────────────────────────────────────────────
+interface Document {
+  id: number;
+  file_name: string;
+  file_url?: string;
+  uploaded_by?: string | null;
+  created_at?: string;
+}
 
-const documentsData = [
-  { id: 1, name: "Exhibit A — Bank Statements 2021-2022", category: "Evidence", uploadedBy: "Emily Torres", date: "Jun 6, 2025", type: "pdf" },
-  { id: 2, name: "Opposition to Summary Judgment Motion", category: "Pleadings", uploadedBy: "Sarah Mitchell", date: "Jun 4, 2025", type: "doc" },
-  { id: 3, name: "Expert Witness Report — Dr. Alan Park", category: "Expert Reports", uploadedBy: "James Chen", date: "May 29, 2025", type: "pdf" },
-  { id: 4, name: "Defendant's Interrogatory Responses", category: "Discovery", uploadedBy: "Emily Torres", date: "May 22, 2025", type: "pdf" },
-  { id: 5, name: "Client Meeting Notes — May 2025", category: "Internal Notes", uploadedBy: "Sarah Mitchell", date: "May 18, 2025", type: "doc" },
-];
+interface AllDocumentsTableProps {
+  documents?: Document[];
+}
 
 // Helper to get dynamic category colors
 const getCategoryStyles = (category: string) => {
@@ -24,7 +26,13 @@ const getCategoryStyles = (category: string) => {
   }
 };
 
-export default function AllDocumentsTable() {
+// Helper to determine file type from URL or extension
+const getFileType = (fileName: string): "pdf" | "doc" => {
+  const ext = fileName.split(".").pop()?.toLowerCase();
+  return ext === "pdf" ? "pdf" : "doc";
+};
+
+export default function AllDocumentsTable({ documents = [] }: AllDocumentsTableProps) {
   return (
     <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       
@@ -38,7 +46,7 @@ export default function AllDocumentsTable() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50/50">
-              {["DOCUMENT NAME", "CATEGORY", "UPLOADED BY", "DATE", "ACTIONS"].map((header) => (
+              {["DOCUMENT NAME", "UPLOADED BY", "DATE", "ACTIONS"].map((header) => (
                 <th key={header} className="px-6 py-4 text-[11px] font-bold text-gray-400 tracking-wider uppercase">
                   {header}
                 </th>
@@ -47,36 +55,34 @@ export default function AllDocumentsTable() {
           </thead>
           
           <tbody className="divide-y divide-gray-100">
-            {documentsData.map((doc) => (
+            {documents && documents.length > 0 ? documents.map((doc) => (
               <tr key={doc.id} className="hover:bg-gray-50/30 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    {doc.type === "pdf" ? (
+                    {getFileType(doc.file_name) === "pdf" ? (
                       <FileText className="w-5 h-5 text-rose-400" />
                     ) : (
                       <File className="w-5 h-5 text-sky-400" />
                     )}
-                    <span className="text-sm font-medium text-gray-700">{doc.name}</span>
+                    <span className="text-sm font-medium text-gray-700">{doc.file_name}</span>
                   </div>
                 </td>
                 
-                <td className="px-6 py-4">
-                  <span className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold ${getCategoryStyles(doc.category)}`}>
-                    {doc.category}
-                  </span>
-                </td>
-                
-                <td className="px-6 py-4 text-sm text-gray-600">{doc.uploadedBy}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{doc.date}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{doc.uploaded_by || "Unknown"}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{doc.created_at ? new Date(doc.created_at).toLocaleDateString() : "N/A"}</td>
                 
                 <td className="px-6 py-4">
-                  <button className="flex items-center gap-2 text-sm font-semibold text-sky-600 hover:text-sky-700 transition-colors">
+                  <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-semibold text-sky-600 hover:text-sky-700 transition-colors">
                     <Eye className="w-4 h-4" />
                     Preview
-                  </button>
+                  </a>
                 </td>
               </tr>
-            ))}
+            )) : (
+              <tr>
+                <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">No documents available</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

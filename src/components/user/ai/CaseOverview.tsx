@@ -2,28 +2,27 @@
 import { ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const caseData = {
-  client: "Esther Howard",
-  opposingParty: "Lovćen Insurance Company",
-  court: "Basic Court Podgorica",
-  caseNumber: "CS-126097-AGVT",
-  category: "Civil Litigation",
-  subcategory: "Traffic Accident Damages",
-  status: "Archive",
-  totalHearing: "22 May 2026, 09:00",
-  caseDeadline: "05 June 2026",
-  description: `
-This case concerns a dispute arising from an investment management agreement executed on 15 January 2021 between Harrison Capital (plaintiff) and Global Asset Partners Ltd. (defendant). The plaintiff alleges that the defendant mismanaged investment portfolios, provided materially misleading financial reports, and failed to uphold fiduciary duties as required under the agreement.
+interface CaseOverviewProps {
+  client_name?: string;
+  opposing_parties?: Array<{ [key: string]: string }>;
+  court_name?: string;
+  case_number?: string;
+  category_name?: string;
+  sub_category_name?: string;
+  status_name?: string;
+  closing_description?: string;
+}
 
-Between Q2 2021 and Q4 2023, the defendant allegedly executed high-risk derivative trades beyond approved mandate limits, resulting in cumulative financial losses of approximately $4.2 million USD. The plaintiff further claims that quarterly performance reports were intentionally overstated, concealing exposure to volatile assets.
-
-The defendant denies all allegations and argues that losses were due to market volatility during the global downturn in 2022–2023 and were within the agreed risk tolerance framework.
-
-The matter is currently active before the Superior Court (Commercial Division) and is in the advanced litigation phase, including discovery completion, expert witness submissions, and pre-trial motions.
-`,
-};
-
-export default function CaseOverview() {
+export default function CaseOverview({
+  client_name = "N/A",
+  opposing_parties = [],
+  court_name = "N/A",
+  case_number = "N/A",
+  category_name = "N/A",
+  sub_category_name = "N/A",
+  status_name = "N/A",
+  closing_description = "No description available"
+}: CaseOverviewProps) {
   const router = useRouter()
   return (
     <div className="w-full rounded-[30px] bg-white p-7 relative">
@@ -44,12 +43,12 @@ export default function CaseOverview() {
 
       {/* Information Grid */}
       <div className="space-y-8">
-        <InfoRow label="Client:" value={caseData.client} />
-        <InfoRow label="Opposing Party:" value={caseData.opposingParty} />
-        <InfoRow label="Court:" value={caseData.court} />
-        <InfoRow label="Case Number:" value={caseData.caseNumber} />
-        <InfoRow label="Category:" value={caseData.category} />
-        <InfoRow label="Subcategory:" value={caseData.subcategory} />
+        <InfoRow label="Client:" value={client_name} />
+        <InfoRow label="Opposing Party:" value={opposing_parties && opposing_parties.length > 0 ? Object.values(opposing_parties[0])[0] : "N/A"} />
+        <InfoRow label="Court:" value={court_name} />
+        <InfoRow label="Case Number:" value={case_number} />
+        <InfoRow label="Category:" value={category_name} />
+        <InfoRow label="Subcategory:" value={sub_category_name} />
 
         <div className="grid grid-cols-[160px_1fr] items-center gap-x-6">
           <p className="text-[14px] font-semibold text-[#667085]">
@@ -58,20 +57,10 @@ export default function CaseOverview() {
 
           <div className="flex justify-end">
             <span className="rounded-full border border-[#E11D48] px-4 py-[5px] text-[14px] font-medium text-[#DC2626]">
-              {caseData.status}
+              {status_name}
             </span>
           </div>
         </div>
-
-        <InfoRow
-          label="Total Hearing:"
-          value={caseData.totalHearing}
-        />
-
-        <InfoRow
-          label="Case Deadline:"
-          value={caseData.caseDeadline}
-        />
       </div>
 
       {/* Description Section */}
@@ -79,7 +68,7 @@ export default function CaseOverview() {
         <h3 className="text-[14px] font-semibold text-[#667085]">
           Description
         </h3>
-        <p className="text-[14px] text-[#4B5563]">{caseData.description}</p>
+        <p className="text-[14px] text-[#4B5563]">{closing_description}</p>
     </div>
     <div className="mt-12">
         <div className="space-y-8 text-[14px] leading-[32px] text-[#4B5563]">
