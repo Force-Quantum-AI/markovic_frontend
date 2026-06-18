@@ -26,12 +26,16 @@ import { useAppDispatch } from "@/store/hooks";
 import { logout } from "@/store/features/auth/authSlice";
 import { useLogoutUserMutation } from "@/store/features/auth/authApi";
 import { useRouter } from "next/navigation";
+import { useGetProfileInfoQuery } from "@/store/features/profile/profile.api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { data: profileInfo, isLoading: isLoadingProfileInfo } = useGetProfileInfoQuery({});
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [logoutUser] = useLogoutUserMutation();
@@ -80,32 +84,42 @@ export default function UserLayout({
               {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
+                  {isLoadingProfileInfo ? (
+                    <div className="flex items-center gap-1 md:gap-2 bg-gray-100 rounded-full p-1">
+                      <Skeleton className="h-10 w-10 rounded-full bg-gray-300" />
+                      <div className="flex flex-col gap-2 mr-2">
+                        <Skeleton className="h-4 w-40 bg-gray-300" />
+                        <Skeleton className="h-3 w-20 bg-gray-300" />
+                      </div>
+                    </div>
+                  ) : (
                   <button className="flex items-center gap-1 md:gap-3 bg-gray-100 rounded-full p-1">
                     <Avatar>
-                      <AvatarImage src="/dummy-user.jpg" />
+                      <AvatarImage src={profileInfo?.profile_image}/>
                       <AvatarFallback>AH</AvatarFallback>
                     </Avatar>
 
                     <div className="hidden md:block text-left">
                       <p className="text-sm font-medium text-black">
-                        Ahshanul Haquc
+                        {profileInfo?.full_name ? profileInfo?.full_name : "Mr/Mrs User"}
                       </p>
 
                       <p className="text-xs text-muted-foreground">
-                       ahshanulhaquc@gmail.com
+                        {profileInfo?.email ? profileInfo?.email : "me@gmail.com"}
                       </p>
                     </div>
 
                     <ChevronDown className="h-4 w-4 mr-1 bg-black rounded-full text-white cursor-pointer" />
                   </button>
+                  )}
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
+                  <DropdownMenuItem  onClick={() => router.push("/settings")}>
                     Profile
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem>
+                  <DropdownMenuItem  onClick={() => router.push("/settings")}>
                     Settings
                   </DropdownMenuItem>
 
