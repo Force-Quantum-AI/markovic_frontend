@@ -116,7 +116,7 @@ export function CaseCard({
   hearingDate,
   deadline,
 }: CaseCardProps) {
-  const [toggleBookmarkedCases, {isLoading}] = useToggleBookmarkedCasesMutation();
+  const [toggleBookmarkedCases, { isLoading }] = useToggleBookmarkedCasesMutation();
   const [isFavorite, setIsFavorite] = useState(bookmark || false);
 
   // Color configuration mapping for status pill badges
@@ -132,12 +132,13 @@ export function CaseCard({
 
   const router = useRouter();
 
-  const handleAddToFavorite = async(e: React.MouseEvent) => {
+  const handleAddToFavorite = async (e: React.MouseEvent) => {
     try {
       await toggleBookmarkedCases({ caseId: id }).unwrap()
       toast.success(isFavorite ? "Case removed from favorite" : "Case added to favorite")
+      setIsFavorite(!isFavorite)
     } catch (error) {
-      console.log("error is",error);
+      console.log("error is", error);
       toast.error("Failed to add case to favorite")
     }
   };

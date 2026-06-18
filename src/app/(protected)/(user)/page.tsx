@@ -18,15 +18,33 @@ export default function Page() {
 
   const displayUser = data?.overview?.client_name || "Ahsan";
 
+  const now = new Date();
+
+  const currentDate = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const hour = now.getHours();
+
+  const greeting =
+    hour < 12
+      ? "Good Morning"
+      : hour < 17
+      ? "Good Afternoon"
+      : "Good Evening";
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
       <div className="col-span-2 lg:col-span-3 space-y-5">
         {/* header  */}
         <section className="flex items-center justify-center md:justify-between flex-wrap gap-5 md:gap-3">
           <div className="text-center md:text-left">
-            <p className="text-gray-500 text-xs md:text-base">Tuesday, 19 May 2026</p>
+            <p className="text-gray-500 text-xs md:text-base">{currentDate}</p>
             <h2 className="text-lg md:text-xl xl:text-3xl font-semibold">
-              Good Morning, {isLoading ? "..." : displayUser}
+              {greeting}, {isLoading ? "..." : displayUser}
             </h2>
           </div>
           <MainButton label="Add New Cases" icon={<Plus />} onClick={()=> setIsAddNewCaseOpen(true)} />

@@ -103,8 +103,8 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
               <th className="py-3.5 px-4">Case Name</th>
               <th className="py-3.5 px-4">Case Number</th>
               <th className="py-3.5 px-4">Hearing</th>
-              <th className="py-3.5 px-4">Status</th>
-              <th className="py-3.5 px-5 text-right"></th>
+              <th className="py-3.5 px-4 w-28">Status</th>
+              {/* <th className="py-3.5 px-5 text-right"></th> */}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
@@ -130,7 +130,7 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
                   <td className="py-4 px-4">
                     <div className="h-6 bg-gray-200 rounded-full w-16" />
                   </td>
-                  <td className="py-4 px-5"></td>
+                  {/* <td className="py-4 px-5"></td> */}
                 </tr>
               ))
             ) : (
@@ -160,7 +160,7 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
                   </td>
 
                   {/* Actions interactive trigger */}
-                  <td className="py-4 px-5 text-right">
+                  {/* <td className="py-4 px-5 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all focus:outline-none">
@@ -178,7 +178,7 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </td>
+                  </td> */}
                 </tr>
               ))
             )}

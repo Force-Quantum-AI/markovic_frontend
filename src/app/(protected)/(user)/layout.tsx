@@ -28,6 +28,7 @@ import { useLogoutUserMutation } from "@/store/features/auth/authApi";
 import { useRouter } from "next/navigation";
 import { useGetProfileInfoQuery } from "@/store/features/profile/profile.api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 export default function UserLayout({
   children,
@@ -39,6 +40,15 @@ export default function UserLayout({
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [logoutUser] = useLogoutUserMutation();
+
+  const handleSearch = (value: string) => {
+    // api will cal after 5 second when user type something in search bar 
+    // and also show loading in search bar
+    
+    setTimeout(() => {
+      toast.info("This feature will be implement later!")
+    }, 2000); 
+  };
 
   const handleLogout = async () => {
     try {
@@ -74,7 +84,7 @@ export default function UserLayout({
             {/* search  */}
             <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 border bg-gray-100 rounded-full">
               <Search className="h-5 w-5 text-black/60" />
-              <input className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs" type="text" placeholder="Search cases, clients, laws, documents..." />
+              <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs" type="text" placeholder="Search cases, clients, laws, documents..." />
             </div>
 
             <div className="flex items-center gap-5">
