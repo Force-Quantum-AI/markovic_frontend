@@ -23,10 +23,22 @@ const lawsApi = baseApi.injectEndpoints({
       providesTags: ["Laws"],
     }),
 
-    getSingleLaws: build.query<LawDetails & { id: number }, { id: string | number }>({
+    getSingleLaws: build.query<
+      LawDetails & { id: number },
+      { id: string | number }
+    >({
       query: ({ id }) => ({
         url: `/laws/${id}/`,
         method: "GET",
+      }),
+      providesTags: ["Laws"],
+    }),
+
+    exportLaws: build.query<string, { id: string | number }>({
+      query: ({ id }) => ({
+        url: `/laws/${id}/export/`,
+        method: "GET",
+        responseHandler: "text",
       }),
       providesTags: ["Laws"],
     }),
@@ -47,7 +59,6 @@ const lawsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Laws"],
     }),
-    
   }),
 });
 
@@ -55,7 +66,8 @@ export const {
   useCreateLawMutation,
   useGetAllLawsQuery,
   useGetSingleLawsQuery,
+  useExportLawsQuery,
+  useLazyExportLawsQuery,
   useUpdateLawsMutation,
   useDeleteLawsMutation,
 } = lawsApi;
-

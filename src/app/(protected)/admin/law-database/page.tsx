@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Plus, Download, ChevronDown, Scale } from "lucide-react";
-import AdminButton from "@/components/shared/AdminButton";
+import { useState, useMemo, useEffect } from "react";
+import { Scale } from "lucide-react";
+import { jsPDF } from "jspdf";
 import LawCard, { Law } from "@/components/admin/law-database/LawCard";
+import LawFilters from "@/components/admin/law-database/LawFilters";
 import AddLawDialog from "@/components/admin/law-database/AddLawDialog";
 import UpdateLawDialog from "@/components/admin/law-database/UpdateLawDialog";
 import DeleteLawDialog from "@/components/admin/law-database/DeleteLawDialog";
@@ -13,20 +14,39 @@ import {
   useCreateLawMutation,
   useUpdateLawsMutation,
   useDeleteLawsMutation,
+  useLazyExportLawsQuery,
 } from "@/store/features/admin/laws-database/laws.api";
 import { LawDetails } from "@/store/features/admin/laws-database/laws.type";
 
+import { parseCSVToLawDetails, generateLawPDF } from "./utils";
+import { useGetAllCategoriesQuery } from "@/store/features/admin/category-subcategory/category.api";
+import ViewLawDetailsDialog from "@/components/admin/law-database/ViewLawDetailsDialog";
+
 export default function LawDatabasePage() {
-  const { data: allLaws, isLoading, isError } = useGetAllLawsQuery(undefined);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  const { data: allLaws, isLoading, isError } = useGetAllLawsQuery({
+    title: debouncedSearch || undefined,
+  });
   const [createLaw] = useCreateLawMutation();
   const [updateLaw] = useUpdateLawsMutation();
   const [deleteLaw, { isLoading: isDeleting }] = useDeleteLawsMutation();
+  const [triggerExport] = useLazyExportLawsQuery();
+  const { data: categories } = useGetAllCategoriesQuery();
 
-  const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedLaw, setSelectedLaw] = useState<Law | null>(null);
 
   const laws = useMemo(() => {
@@ -39,24 +59,223 @@ export default function LawDatabasePage() {
     })) || [];
   }, [allLaws]);
 
+  const filterCategories = useMemo(() => {
+    const apiCatNames = categories?.map((cat) => cat.name) || [];
+    const lawCatNames = laws
+      .map((law) => law.category)
+      .filter((cat): cat is string => !!cat);
+    return Array.from(new Set([...apiCatNames, ...lawCatNames])).sort();
+  }, [categories, laws]);
+
   const filteredLaws = useMemo(() => {
     return laws.filter((law) => {
+      const lawTitle = law.title || "";
+      const lawGazette = law.gazette || "";
+      const lawCategory = law.category || "";
+
       const matchesSearch =
-        law.title.toLowerCase().includes(search.toLowerCase()) ||
-        law.gazette.toLowerCase().includes(search.toLowerCase()) ||
-        law.category.toLowerCase().includes(search.toLowerCase());
+        lawTitle.toLowerCase().includes(search.toLowerCase()) ||
+        lawGazette.toLowerCase().includes(search.toLowerCase()) ||
+        lawCategory.toLowerCase().includes(search.toLowerCase());
       
       const matchesCategory =
         categoryFilter === "all" ||
-        law.category.toLowerCase() === categoryFilter.toLowerCase();
+        lawCategory.toLowerCase() === categoryFilter.toLowerCase();
 
       return matchesSearch && matchesCategory;
     });
   }, [laws, search, categoryFilter]);
 
-  const handleExport = () => {
-    toast.success("Laws database exported successfully!");
+  const handleExportSingleLaw = async (law: Law) => {
+    const toastId = toast.loading(`Exporting "${law.title}" as PDF...`);
+    try {
+      const result = await triggerExport({ id: law.id }).unwrap();
+      const parsed = parseCSVToLawDetails(result);
+      generateLawPDF(parsed);
+      toast.success(`"${law.title}" exported as PDF successfully!`, { id: toastId });
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast.error("Failed to export law as PDF. Please try again.", { id: toastId });
+    }
   };
+
+  // const handleExportSingleLawCSV = async (law: Law) => {
+  //   const toastId = toast.loading(`Exporting "${law.title}" as CSV...`);
+  //   try {
+  //     const result = await triggerExport({ id: law.id }).unwrap();
+  //     downloadCSVFile(result, `${law.title.replace(/\s+/g, "_")}_export.csv`);
+  //     toast.success(`"${law.title}" exported as CSV successfully!`, { id: toastId });
+  //   } catch (error) {
+  //     console.error("Export failed:", error);
+  //     toast.error("Failed to export law as CSV. Please try again.", { id: toastId });
+  //   }
+  // };
+
+  const handleExport = async () => {
+    if (filteredLaws.length === 0) {
+      toast.error("No laws available to export.");
+      return;
+    }
+    const toastId = toast.loading("Exporting laws database as PDF...");
+    try {
+      const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      const contentWidth = pageWidth - 2 * margin;
+
+      let firstLaw = true;
+
+      for (const law of filteredLaws) {
+        const result = await triggerExport({ id: law.id }).unwrap();
+        const parsed = parseCSVToLawDetails(result);
+
+        if (!firstLaw) {
+          doc.addPage();
+        } else {
+          firstLaw = false;
+        }
+
+        let y = margin;
+
+        const checkPageBreak = (neededHeight: number) => {
+          if (y + neededHeight > pageHeight - margin) {
+            doc.addPage();
+            y = margin;
+          }
+        };
+
+        // Title
+        doc.setFont("Helvetica", "bold");
+        doc.setFontSize(22);
+        doc.setTextColor(0, 0, 0);
+        const titleLines = doc.splitTextToSize(parsed.title || "Law Document", contentWidth);
+        const titleHeight = titleLines.length * 8;
+        checkPageBreak(titleHeight + 10);
+        doc.text(titleLines, margin, y);
+        y += titleHeight + 10;
+
+        // Metadata
+        doc.setFont("Helvetica", "normal");
+        doc.setFontSize(10);
+        
+        const metadata = [
+          { label: "Source:", value: parsed.source },
+          { label: "Official Gazette:", value: parsed.official_gazette },
+          { label: "Category:", value: parsed.categoryName },
+          { label: "Subcategory:", value: parsed.subCategoryName },
+          { label: "Last Updated:", value: parsed.lastUpdated },
+        ];
+
+        metadata.forEach((item) => {
+          if (item.value) {
+            doc.setFont("Helvetica", "bold");
+            const labelText = item.label;
+            const labelWidth = doc.getTextWidth(labelText) + 2;
+
+            doc.setFont("Helvetica", "normal");
+            const valueLines = doc.splitTextToSize(String(item.value), contentWidth - labelWidth);
+            const valHeight = valueLines.length * 5;
+
+            checkPageBreak(valHeight + 4);
+
+            doc.setFont("Helvetica", "bold");
+            doc.setTextColor(80, 80, 80);
+            doc.text(labelText, margin, y);
+
+            doc.setFont("Helvetica", "normal");
+            doc.setTextColor(120, 120, 120);
+            doc.text(valueLines, margin + labelWidth, y);
+
+            y += valHeight + 2;
+          }
+        });
+
+        y += 5; // spacing after metadata
+
+        // Divider Line
+        checkPageBreak(5);
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.5);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 10;
+
+        // Sections & Articles
+        if (parsed.sections && parsed.sections.length > 0) {
+          parsed.sections.forEach((section) => {
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(14);
+            doc.setTextColor(19, 85, 118); // #135576 brand color
+            
+            const secLines = doc.splitTextToSize(section.title, contentWidth);
+            const secHeight = secLines.length * 6;
+            checkPageBreak(secHeight + 8);
+            doc.text(secLines, margin, y);
+            y += secHeight + 6;
+
+            if (section.articles && section.articles.length > 0) {
+              section.articles.forEach((article) => {
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(11);
+                doc.setTextColor(40, 40, 40);
+
+                const artLines = doc.splitTextToSize(article.title, contentWidth);
+                const artHeight = artLines.length * 5;
+                
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(10);
+                doc.setTextColor(80, 80, 80);
+
+                const descLines = doc.splitTextToSize(article.description, contentWidth);
+                const descHeight = descLines.length * 5;
+
+                checkPageBreak(artHeight + descHeight + 12);
+
+                doc.setFont("Helvetica", "bold");
+                doc.text(artLines, margin, y);
+                y += artHeight + 2;
+
+                doc.setFont("Helvetica", "normal");
+                doc.text(descLines, margin, y);
+                y += descHeight + 8;
+              });
+            }
+
+            y += 4;
+          });
+        }
+      }
+      doc.save("laws_database_export.pdf");
+      toast.success("Laws database exported successfully as PDF!", { id: toastId });
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast.error("Failed to export laws database as PDF. Please try again.", { id: toastId });
+    }
+  };
+
+  // const handleExportCSV = async () => {
+  //   if (filteredLaws.length === 0) {
+  //     toast.error("No laws available to export.");
+  //     return;
+  //   }
+  //   const toastId = toast.loading("Exporting laws database as CSV...");
+  //   try {
+  //     let combinedCsvContent = "";
+  //     for (const law of filteredLaws) {
+  //       const result = await triggerExport({ id: law.id }).unwrap();
+  //       combinedCsvContent += result + "\n---\n\n";
+  //     }
+  //     downloadCSVFile(combinedCsvContent, "laws_database_export.csv");
+  //     toast.success("Laws database exported successfully as CSV!", { id: toastId });
+  //   } catch (error) {
+  //     console.error("Export failed:", error);
+  //     toast.error("Failed to export laws database as CSV. Please try again.", { id: toastId });
+  //   }
+  // };
 
   const handleAddLaw = () => {
     setIsAddDialogOpen(true);
@@ -87,6 +306,11 @@ export default function LawDatabasePage() {
   const handleDeleteLaw = (law: Law) => {
     setSelectedLaw(law);
     setIsDeleteDialogOpen(true);
+  };
+
+  const handleViewLaw = (law: Law) => {
+    setSelectedLaw(law);
+    setIsViewDialogOpen(true);
   };
 
   const handleUpdateLaw = async (id: string | number, updatedLaw: LawDetails) => {
@@ -141,55 +365,15 @@ export default function LawDatabasePage() {
         Laws Database
       </h1>
 
-      <div className="w-full bg-white p-6 rounded-[24px] border border-[#E5E7EB] shadow-sm flex flex-col md:flex-row items-end justify-between gap-4">
-        
-        <div className="w-full md:flex-1 space-y-1.5 flex flex-col items-start">
-          <span className="text-sm font-semibold text-gray-700 pl-1">Search:</span>
-          <input
-            type="text"
-            placeholder="Search laws, bylaws, articles, keywords"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-5 py-3 h-12 rounded-full border border-[#D1D5DC] bg-[#F5F6F7] text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all"
-          />
-        </div>
-
-        <div className="w-full md:w-[220px] space-y-1.5 flex flex-col items-start">
-          <span className="text-sm font-semibold text-gray-700 pl-1">Filters:</span>
-          <div className="relative w-full">
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full h-12 rounded-full border border-[#D1D5DC] bg-[#F5F6F7] px-5 py-3 text-[#101828] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all appearance-none cursor-pointer pr-10"
-            >
-              <option value="all">All Laws</option>
-              <option value="Civil Law">Civil Law</option>
-              <option value="Procedural Law">Procedural Law</option>
-              <option value="Criminal Law">Criminal Law</option>
-            </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
-          </div>
-        </div>
-
-        <div className="flex gap-3 w-full md:w-auto shrink-0">
-          <AdminButton
-            label="Export"
-            icon={<Download className="w-4 h-4" />}
-            variant="secondary"
-            onClick={handleExport}
-            style={{ padding: "12px 24px" }}
-            className="flex-1 md:flex-none h-12"
-          />
-          <AdminButton
-            label="Add Law"
-            icon={<Plus className="w-4 h-4" />}
-            onClick={handleAddLaw}
-            style={{ padding: "12px 24px" }}
-            className="flex-1 md:flex-none h-12"
-          />
-        </div>
-
-      </div>
+      <LawFilters
+        search={search}
+        onSearchChange={setSearch}
+        categoryFilter={categoryFilter}
+        onCategoryChange={setCategoryFilter}
+        filterCategories={filterCategories}
+        onExport={handleExport}
+        onAddLaw={handleAddLaw}
+      />
 
       <h2 
         style={{
@@ -236,6 +420,8 @@ export default function LawDatabasePage() {
                   law={law} 
                   onEdit={handleEditLaw}
                   onDelete={handleDeleteLaw}
+                  onExportPDF={handleExportSingleLaw}
+                  onView={handleViewLaw}
                 />
               ))}
             </div>
@@ -291,6 +477,14 @@ export default function LawDatabasePage() {
           lawTitle={selectedLaw.title}
           onConfirm={handleDeleteLawConfirm}
           isLoading={isDeleting}
+        />
+      )}
+
+      {isViewDialogOpen && selectedLaw && (
+        <ViewLawDetailsDialog
+          isOpen={isViewDialogOpen}
+          onOpenChange={setIsViewDialogOpen}
+          lawId={selectedLaw.id}
         />
       )}
 

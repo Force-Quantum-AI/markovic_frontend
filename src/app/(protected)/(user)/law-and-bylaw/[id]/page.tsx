@@ -13,6 +13,7 @@ import {
   ChevronDown 
 } from "lucide-react";
 import Image from "next/image";
+import { jsPDF } from "jspdf";
 
 // ─── TYPES & INTERFACES ──────────────────────────────────────────────────────
 
@@ -174,6 +175,145 @@ export default function LawDetailsPage() {
     window.print();
   };
 
+  const handleExportPDF = () => {
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentWidth = pageWidth - 2 * margin;
+
+    let y = margin;
+
+    const checkPageBreak = (neededHeight: number) => {
+      if (y + neededHeight > pageHeight - margin) {
+        doc.addPage();
+        y = margin;
+      }
+    };
+
+    // Title
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(22);
+    const titleLines = doc.splitTextToSize(lawData.title, contentWidth);
+    const titleHeight = titleLines.length * 8;
+    checkPageBreak(titleHeight + 10);
+    doc.text(titleLines, margin, y);
+    y += titleHeight + 10;
+
+    // Metadata
+    doc.setFont("Helvetica", "normal");
+    doc.setFontSize(10);
+
+    const metadata = [
+      { label: "Source:", value: lawData.source },
+      { label: "Category:", value: lawData.category },
+      { label: "Effective Date:", value: lawData.effectiveDate },
+      { label: "Last Amended:", value: lawData.lastAmended },
+    ];
+
+    metadata.forEach((item) => {
+      if (item.value) {
+        doc.setFont("Helvetica", "bold");
+        const labelText = item.label;
+        const labelWidth = doc.getTextWidth(labelText) + 2;
+
+        doc.setFont("Helvetica", "normal");
+        const valueLines = doc.splitTextToSize(String(item.value), contentWidth - labelWidth);
+        const valHeight = valueLines.length * 5;
+
+        checkPageBreak(valHeight + 4);
+
+        doc.setFont("Helvetica", "bold");
+        doc.setTextColor(80, 80, 80);
+        doc.text(labelText, margin, y);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(120, 120, 120);
+        doc.text(valueLines, margin + labelWidth, y);
+
+        y += valHeight + 2;
+      }
+    });
+
+    y += 5;
+
+    // Divider Line
+    checkPageBreak(5);
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 10;
+
+    // Sections & Chapters & Articles
+    if (lawData.sections && lawData.sections.length > 0) {
+      lawData.sections.forEach((section) => {
+        doc.setFont("Helvetica", "bold");
+        doc.setFontSize(14);
+        doc.setTextColor(19, 85, 118);
+        
+        const secLines = doc.splitTextToSize(section.title, contentWidth);
+        const secHeight = secLines.length * 6;
+        checkPageBreak(secHeight + 8);
+        doc.text(secLines, margin, y);
+        y += secHeight + 6;
+
+        if (section.chapters && section.chapters.length > 0) {
+          section.chapters.forEach((chapter) => {
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(12);
+            doc.setTextColor(60, 60, 60);
+
+            const chapLines = doc.splitTextToSize(chapter.title, contentWidth);
+            const chapHeight = chapLines.length * 5;
+            checkPageBreak(chapHeight + 6);
+            doc.text(chapLines, margin, y);
+            y += chapHeight + 4;
+
+            if (chapter.articles && chapter.articles.length > 0) {
+              chapter.articles.forEach((article) => {
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(11);
+                doc.setTextColor(40, 40, 40);
+
+                const artTitle = article.subtitle
+                  ? `${article.title} (${article.subtitle})`
+                  : article.title;
+
+                const artLines = doc.splitTextToSize(artTitle, contentWidth);
+                const artHeight = artLines.length * 5;
+                
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(10);
+                doc.setTextColor(80, 80, 80);
+
+                const fullContentStr = article.content.join("\n\n");
+                const descLines = doc.splitTextToSize(fullContentStr, contentWidth);
+                const descHeight = descLines.length * 5;
+
+                checkPageBreak(artHeight + descHeight + 12);
+
+                doc.setFont("Helvetica", "bold");
+                doc.text(artLines, margin, y);
+                y += artHeight + 2;
+
+                doc.setFont("Helvetica", "normal");
+                doc.text(descLines, margin, y);
+                y += descHeight + 8;
+              });
+            }
+          });
+        }
+      });
+    }
+
+    doc.save(`${lawData.title.replace(/\s+/g, "_")}.pdf`);
+  };
+
   return (
     <div className="min-h-screen bg-white rounded-2xl p-1 md:p-4 font-sans selection:bg-[#135576]/10 print:bg-white print:p-0">
       
@@ -242,7 +382,10 @@ export default function LawDetailsPage() {
               Print
             </button>
 
-            <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98">
+            <button 
+              onClick={handleExportPDF}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98"
+            >
               <FileText className="w-4 h-4" />
               Export as PDF
             </button>

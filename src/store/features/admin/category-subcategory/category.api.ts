@@ -22,7 +22,10 @@ const categoryApi = baseApi.injectEndpoints({
       providesTags: ["Category", "Subcategory"],
     }),
 
-    createSubCategory: build.mutation<any, { category: string | number; name: string }>({
+    createSubCategory: build.mutation<
+      any,
+      { category: string | number; name: string }
+    >({
       query: (data) => ({
         url: "/cases/sub-categories/",
         method: "POST",
@@ -53,7 +56,10 @@ const categoryApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Category", "Subcategory"],
     }),
-    updateSubCategory: build.mutation<any, { id: string | number; name: string; category: string | number }>({
+    updateSubCategory: build.mutation<
+      any,
+      { id: string | number; name: string; category: string | number }
+    >({
       query: ({ id, ...data }) => ({
         url: `cases/sub-categories/${id}/`,
         method: "PATCH",

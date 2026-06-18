@@ -4,9 +4,12 @@ import { useState } from "react";
 import PackagesContent from "@/components/admin/subscription/packages/PackagesContent";
 import AdminButton from "@/components/shared/AdminButton";
 import CustomSubscriptionDialog from "@/components/admin/subscription/packages/CustomSubscriptionDialog";
+import AddSubscriptionDialog from "@/components/admin/subscription/packages/AddSubscriptionDialog";
+import { Plus } from "lucide-react";
 
 export default function PackagesPage() {
   const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   return (
     <div className="w-full flex flex-col h-full bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -14,11 +17,20 @@ export default function PackagesPage() {
       <div className="bg-white px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100">
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-xl font-bold text-[#1A2328]">Subscriptions</h1>
-          <AdminButton
-            label="Provide Custom Subscription"
-            onClick={() => setIsCustomDialogOpen(true)}
-            className="h-10 py-2 px-4 sm:px-5 text-[13px] sm:text-[14px] font-roboto font-semibold shrink-0"
-          />
+          <div className="flex items-center gap-3">
+            <AdminButton
+              label="Add Subscription Package"
+              onClick={() => setIsAddDialogOpen(true)}
+              variant="secondary"
+              icon={<Plus className="w-4 h-4 text-[#135576]" />}
+              className="h-10 py-2 px-4 sm:px-5 text-[#135576] border-[#135576] hover:text-[#135576] text-[13px] sm:text-[14px] font-roboto font-semibold shrink-0 bg-transparent"
+            />
+            <AdminButton
+              label="Provide Custom Subscription"
+              onClick={() => setIsCustomDialogOpen(true)}
+              className="h-10 py-2 px-4 sm:px-5 text-[13px] sm:text-[14px] font-roboto font-semibold shrink-0"
+            />
+          </div>
         </div>
       </div>
 
@@ -31,6 +43,12 @@ export default function PackagesPage() {
       <CustomSubscriptionDialog
         isOpen={isCustomDialogOpen}
         onOpenChange={setIsCustomDialogOpen}
+      />
+
+      {/* Add Subscription Dialog */}
+      <AddSubscriptionDialog
+        isOpen={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
       />
     </div>
   );

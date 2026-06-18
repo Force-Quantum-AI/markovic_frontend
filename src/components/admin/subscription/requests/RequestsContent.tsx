@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { User, Mail, Phone, CheckCircle2 } from "lucide-react";
+import { User, Mail, Phone, CheckCircle2, X } from "lucide-react";
 import AdminButton from "@/components/shared/AdminButton";
 import { toast } from "sonner";
 
@@ -11,7 +11,7 @@ interface SubscriptionRequest {
   email: string;
   phone: string;
   message: string;
-  status: "pending" | "accepted";
+  status: "pending" | "accepted" | "declined";
 }
 
 const initialRequests: SubscriptionRequest[] = [
@@ -60,11 +60,20 @@ const initialRequests: SubscriptionRequest[] = [
       "Hi,\n\nI'm lawyer Markovic. I have seen that you have only three plan to subscribe. But I need subscription for 50 devices can you help me with this condition?\n\nLooking forward to your reply.\n\nRegards",
     status: "pending",
   },
+  {
+    id: "6",
+    name: "Markovic Aleksa",
+    email: "markovic@email.com",
+    phone: "(225) 555-0118",
+    message:
+      "Hi,\n\nI'm lawyer Markovic. I have seen that you have only three plan to subscribe. But I need subscription for 50 devices can you help me with this condition?\n\nLooking forward to your reply.\n\nRegards",
+    status: "declined",
+  },
 ];
 
 export default function RequestsContent() {
   const [requests, setRequests] = useState<SubscriptionRequest[]>(initialRequests);
-  const [filter, setFilter] = useState<"all" | "accepted" | "pending">("all");
+  const [filter, setFilter] = useState<"all" | "accepted" | "pending" | "declined">("all");
 
   const handleAcceptRequest = (id: string) => {
     setRequests((prev) =>
@@ -111,6 +120,16 @@ export default function RequestsContent() {
         >
           Pending request
         </button>
+        <button
+          onClick={() => setFilter("declined")}
+          className={`px-5 py-2.5 text-center font-roboto text-[16px] font-medium leading-[24px] rounded-[14px] transition-all duration-200 cursor-pointer ${
+            filter === "declined"
+              ? "bg-[#161A20] text-white shadow-sm"
+              : "bg-[#DDE0E7] text-[#667085] hover:bg-[#C8CBD3] hover:text-[#161A20]"
+          }`}
+        >
+          Decline request
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
@@ -122,6 +141,12 @@ export default function RequestsContent() {
             {req.status === "accepted" && (
               <div className="absolute top-5 right-5 w-[34px] h-[34px] flex items-center justify-center z-10">
                 <CheckCircle2 className="w-[34px] h-[34px] text-[#0C9C37]" strokeWidth={1.5} />
+              </div>
+            )}
+
+            {req.status === "declined" && (
+              <div className="absolute top-5 right-5 w-[34px] h-[34px] flex items-center justify-center z-10 border border-red-500 rounded-full bg-red-50 text-red-500">
+                <X className="w-[20px] h-[20px] text-red-500" strokeWidth={2.5} />
               </div>
             )}
 
@@ -173,6 +198,11 @@ export default function RequestsContent() {
                 <div className="flex items-center gap-1.5 text-[#0C9C37] font-roboto text-[13px] italic font-normal leading-[140%]">
                   <CheckCircle2 className="w-4 h-4 shrink-0 text-[#0C9C37]" />
                   <span>Already approved this user subscription request</span>
+                </div>
+              ) : req.status === "declined" ? (
+                <div className="flex items-center gap-1.5 text-[#EF4444] font-roboto text-[13px] italic font-normal leading-[140%]">
+                  <X className="w-4 h-4 shrink-0 text-[#EF4444]" />
+                  <span>Declined this user subscription request</span>
                 </div>
               ) : (
                 <div className="w-full flex justify-end">

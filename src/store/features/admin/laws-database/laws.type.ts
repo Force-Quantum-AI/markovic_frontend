@@ -24,6 +24,7 @@ export type LawsQueryParams = {
   count?: number;
   next?: string | null;
   previous?: string | null;
+  title?: string;
 };
 
 // Post law type data

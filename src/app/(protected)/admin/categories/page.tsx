@@ -475,7 +475,7 @@ export default function CategoriesPage() {
       </div>
 
       <AddCategoryDialog
-        key={addCategoryOpen ? "add-category-open" : "closed"}
+        key={addCategoryOpen ? "add-category-open" : "add-category-closed"}
         isOpen={addCategoryOpen}
         onOpenChange={setAddCategoryOpen}
         onSubmit={handleCreateCategory}
@@ -483,7 +483,7 @@ export default function CategoriesPage() {
       />
 
       <EditCategoryDialog
-        key={editCategoryOpen ? `edit-category-${editId}-${defaultName}` : "closed"}
+        key={editCategoryOpen ? `edit-category-${editId}-${defaultName}` : "edit-category-closed"}
         isOpen={editCategoryOpen}
         onOpenChange={setEditCategoryOpen}
         defaultName={defaultName}
@@ -492,7 +492,7 @@ export default function CategoriesPage() {
       />
 
       <AddSubCategoryDialog
-        key={addSubCategoryOpen ? `add-subcategory-${selectedCategoryId}` : "closed"}
+        key={addSubCategoryOpen ? `add-subcategory-${selectedCategoryId}` : "add-subcategory-closed"}
         isOpen={addSubCategoryOpen}
         onOpenChange={setAddSubCategoryOpen}
         categories={categoriesData}
@@ -502,7 +502,7 @@ export default function CategoriesPage() {
       />
 
       <EditSubCategoryDialog
-        key={editSubCategoryOpen ? `edit-subcategory-${editId}-${selectedCategoryId}-${defaultName}` : "closed"}
+        key={editSubCategoryOpen ? `edit-subcategory-${editId}-${selectedCategoryId}-${defaultName}` : "edit-subcategory-closed"}
         isOpen={editSubCategoryOpen}
         onOpenChange={setEditSubCategoryOpen}
         categories={categoriesData}
@@ -513,7 +513,7 @@ export default function CategoriesPage() {
       />
 
       <DeleteConfirmationDialog
-        key={deleteConfirmOpen ? `delete-${deleteConfirmType}-${deleteConfirmId}` : "closed"}
+        key={deleteConfirmOpen ? `delete-${deleteConfirmType}-${deleteConfirmId}` : "delete-confirm-closed"}
         isOpen={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
         title={deleteConfirmType === "category" ? "Delete Category" : "Delete Sub-Category"}
