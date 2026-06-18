@@ -4,6 +4,8 @@ import { LawCard } from "@/components/shared/LawCard";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import LawCardSkeleton from "@/components/skeletons/LawCardSkeleton";
+import { useState } from "react";
 
 export const lawsDataset = [
   {
@@ -36,7 +38,18 @@ export const lawsDataset = [
   },
 ];
 export default function LawsAndBylaws({ data, isLoading }: { data?: any[]; isLoading?: boolean }) {
+  const [min, setMin] = useState<number>(0);
+  const [max, setMax] = useState<number>(4);
   const router = useRouter();
+
+  const prevPage = ()=>{
+    setMin(min - 4)
+    setMax(max - 4)
+  }
+  const nextPage = ()=>{
+    setMin(min + 4)
+    setMax(max + 4)
+  }
   return (
     <section className="mx-auto w-full max-w-7xl space-y-3 rounded-2xl bg-white p-3 md:p-5 md:space-y-6">
       {/* Top Header Controls Block */}
@@ -50,28 +63,11 @@ export default function LawsAndBylaws({ data, isLoading }: { data?: any[]; isLoa
       </div>
 
       {/* Grid Container Matrix - responsive columns */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
-        {isLoading ? (
-          Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="flex min-h-[250px] flex-col rounded-3xl bg-gray-50 border border-gray-100/80 p-4 animate-pulse">
-              <div className="flex items-start justify-between">
-                <div className="h-10 w-10 rounded-lg bg-gray-200" />
-                <div className="h-10 w-10 rounded-full bg-gray-200" />
-              </div>
-              <div className="mt-5 flex-1 flex flex-col space-y-3 justify-between">
-                <div className="space-y-2">
-                  <div className="h-6 bg-gray-200 rounded w-3/4" />
-                  <div className="h-4 bg-gray-200 rounded w-1/2" />
-                  <div className="h-4 bg-gray-200 rounded w-2/3" />
-                </div>
-                <div className="flex justify-end">
-                  <div className="h-6 w-16 bg-gray-200 rounded-full" />
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          data?.slice(0, 4).map((law, index) => (
+      {isLoading ? (
+        <LawCardSkeleton />
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
+          {data?.slice(min, max).map((law, index) => (
             <LawCard
               key={index}
               id={String(law.id)}
@@ -82,18 +78,21 @@ export default function LawsAndBylaws({ data, isLoading }: { data?: any[]; isLoa
               bookmark={law.bookmark}
             />
           ))
-        )}
-      </div>
+          }
+        </div>
+      )}
 
       {/* Pagination control buttons positioned at the bottom right */}
-      <div className="flex items-center justify-end gap-3 pt-2">
+      <div className={`${data?.length && data?.length<=4 ? "hidden": ""} flex items-center justify-end gap-3 pt-2`}>
         <button
+          onClick={prevPage}
           aria-label="Previous page"
           className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition-all hover:border-gray-300 hover:bg-gray-50 active:scale-95"
         >
           <ArrowLeft className="h-4 w-4 stroke-[2]" />
         </button>
         <button
+          onClick={nextPage}
           aria-label="Next page"
           className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition-all hover:border-gray-300 hover:bg-gray-50 active:scale-95"
         >

@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
+import { useState } from "react";
 
 // --- TYPES FOR REUSABLE CARD ---
 export interface HearingCardProps {
@@ -75,7 +77,18 @@ export const hearingsDataset: HearingCardProps[] = [
 
 // --- MAIN GRID MODULE WRAPPER ---
 export default function UpcomingHearings({ data, isLoading }: { data?: any[]; isLoading?: boolean }) {
+  const [min, setMin] = useState<number>(0);
+  const [max, setMax] = useState<number>(3);
   const router = useRouter();
+
+  const prevPage = ()=>{
+    setMin(min - 3)
+    setMax(max - 3)
+  }
+  const nextPage = ()=>{
+    setMin(min + 3)
+    setMax(max + 3)
+  }
   return (
     <section className="w-full max-w-7xl mx-auto p-3 md:p-5 space-y-3 md:space-y-6 bg-white rounded-2xl">
       {/* Top Header Controls Block */}
@@ -89,28 +102,29 @@ export default function UpcomingHearings({ data, isLoading }: { data?: any[]; is
       </div>
 
       {/* Grid Container Matrix mapping responsive column breakdowns */}
+      {isLoading ? (
+          <CaseCardSkeleton/>
+        ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-        {isLoading ? (
-          <>
-            <Skeleton className="aspect-square rounded-lg bg-gray-300" />
-            <Skeleton className="aspect-square rounded-lg bg-gray-300" />
-            <Skeleton className="aspect-square rounded-lg bg-gray-300" />
-          </>
-        ) : data?.slice(0, 3).map((card: CaseCardProps, index: number) => (
+        {data?.slice(min, max).map((card: CaseCardProps, index: number) => (
           <CaseCard key={index} {...card} />
         ))}
       </div>
+      )}
 
       {/* Pagination control buttons positioned at the bottom right */}
-      <div className="flex items-center justify-end gap-3 pt-2">
+      <div className={`${data?.length && data?.length<=3 ? "hidden": ""} flex items-center justify-end gap-3 pt-2`}>
         <button
           aria-label="Previous page"
+          onClick={prevPage}
+          disabled={min === 0}
           className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 shadow-sm"
         >
           <ArrowLeft className="w-4 h-4 stroke-[2]" />
         </button>
         <button
           aria-label="Next page"
+          onClick={nextPage}
           className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 shadow-sm"
         >
           <ArrowRight className="w-4 h-4 stroke-[2]" />

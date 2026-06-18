@@ -104,8 +104,8 @@ function Stepper({ current }: { current: number }) {
   return (
     <div className="relative flex items-center justify-between w-full max-w-2xl mx-auto px-4 md:px-12">
       <div className="absolute top-5 left-[12%] right-[12%] h-[2px] bg-gray-200 -z-10">
-        <div 
-          className="h-full bg-[#135576] transition-all duration-300" 
+        <div
+          className="h-full bg-[#135576] transition-all duration-300"
           style={{ width: current === 1 ? "0%" : current === 2 ? "50%" : "100%" }}
         />
       </div>
@@ -118,9 +118,8 @@ function Stepper({ current }: { current: number }) {
         return (
           <div key={step.id} className="flex flex-col items-center gap-2.5 relative z-10">
             <div
-              className={`w-11 h-11 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-white shadow-sm ${
-                isCompletedOrActive ? "border-[#135576] text-[#135576]" : "border-gray-200 text-gray-400"
-              }`}
+              className={`w-11 h-11 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-white shadow-sm ${isCompletedOrActive ? "border-[#135576] text-[#135576]" : "border-gray-200 text-gray-400"
+                }`}
             >
               {step.id === 1 && <BasicInfoIcon active={isCompletedOrActive} />}
               {step.id === 2 && <LegalIcon active={isCompletedOrActive} />}
@@ -457,7 +456,7 @@ function ScheduleStep({
   return (
     <div className="w-full space-y-6 animate-fade-in">
       <h3 className="text-xl font-bold text-gray-900 tracking-tight">Schedule</h3>
-      
+
       {/* Add Hearing Date Segment Card */}
       <ScheduleCard
         title="Add Hearing Date"
@@ -537,10 +536,10 @@ function buildDateString(card: DateCardData): string | undefined {
 export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<AddNewCaseFormData>(defaultFormData);
-  
+
   const [createCase, { isLoading }] = useCreateCaseMutation();
-  const [addCaseHearing, {isLoading: isHearingLoading}] = useAddCaseHearingMutation();
-  const [addCaseDeadline, {isLoading: isDeadlineLoading}] = useAddCaseDeadlineMutation();
+  const [addCaseHearing, { isLoading: isHearingLoading }] = useAddCaseHearingMutation();
+  const [addCaseDeadline, { isLoading: isDeadlineLoading }] = useAddCaseDeadlineMutation();
 
   const handleClose = () => {
     onClose();
@@ -611,54 +610,66 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
         data: apiData as any,
       }).unwrap();
 
-      if(res?.id){
-        const hearingTimeFrom = formData.schedule.hearing.timeRange.split("-")[0].trim();
-        const hearingTimeTo = formData.schedule.hearing.timeRange.split("-")[1].trim();
-        await addCaseHearing({
-          caseId: res.id,
-          data: {
-            reason: formData.schedule.hearing.reason,
-            status: formData.schedule.hearing.status.toLowerCase(),
-            time_from: hearingTimeFrom,
-            time_to: hearingTimeTo,
-            am_pm: formData.schedule.hearing.period.toUpperCase(),
-            day: Number(formData.schedule.hearing.date),
-            month: MONTHS.indexOf(formData.schedule.hearing.month) + 1,
-            year: Number(formData.schedule.hearing.year),
-          },
-        }).unwrap();
-
-        const deadlineTimeFrom = formData.schedule.deadline.timeRange.split("-")[0].trim();
-        const deadlineTimeTo = formData.schedule.deadline.timeRange.split("-")[1].trim();
-        await addCaseDeadline({
-          caseId: res.id,
-          data: {
-            reason: formData.schedule.deadline.reason,
-            status: formData.schedule.deadline.status.toLowerCase(),
-            time_from: deadlineTimeFrom,
-            time_to: deadlineTimeTo,
-            am_pm: formData.schedule.deadline.period.toUpperCase(),
-            day: Number(formData.schedule.deadline.date),
-            month: MONTHS.indexOf(formData.schedule.deadline.month) + 1,
-            year: Number(formData.schedule.deadline.year),
-          },
-        }).unwrap();
-      }
-
       toast.success("Case created successfully!");
+      if (res?.id) {
+        await createHearingAndDeadline(res.id);
+      }
       onSubmit?.(formData);
       handleClose();
     } catch (error: any) {
       console.log("error iss:", error);
-      
+
       const message = error?.data?.message || error?.data?.detail || "Failed to create case. Please try again.";
       toast.error(message);
     }
   };
 
+  const createHearingAndDeadline = async (caseId: string) => {
+    try {
+      const hearingTimeFrom = formData.schedule.hearing.timeRange.split("-")[0].trim();
+      const hearingTimeTo = formData.schedule.hearing.timeRange.split("-")[1].trim();
+      await addCaseHearing({
+        caseId: caseId,
+        data: {
+          reason: formData.schedule.hearing.reason,
+          status: formData.schedule.hearing.status.toLowerCase(),
+          time_from: hearingTimeFrom,
+          time_to: hearingTimeTo,
+          am_pm: formData.schedule.hearing.period.toUpperCase(),
+          day: Number(formData.schedule.hearing.date),
+          month: MONTHS.indexOf(formData.schedule.hearing.month) + 1,
+          year: Number(formData.schedule.hearing.year),
+        },
+      }).unwrap();
+
+      const deadlineTimeFrom = formData.schedule.deadline.timeRange.split("-")[0].trim();
+      const deadlineTimeTo = formData.schedule.deadline.timeRange.split("-")[1].trim();
+      await addCaseDeadline({
+        caseId: caseId,
+        data: {
+          reason: formData.schedule.deadline.reason,
+          status: formData.schedule.deadline.status.toLowerCase(),
+          time_from: deadlineTimeFrom,
+          time_to: deadlineTimeTo,
+          am_pm: formData.schedule.deadline.period.toUpperCase(),
+          day: Number(formData.schedule.deadline.date),
+          month: MONTHS.indexOf(formData.schedule.deadline.month) + 1,
+          year: Number(formData.schedule.deadline.year),
+        },
+      }).unwrap();
+      setTimeout(() => {
+        toast.success("Hearing and deadline added successfully!");
+      }, 1000);
+    } catch (error) {
+      setTimeout(() => {
+        toast.error("Please enter hearing and deadline from case details page for this case.");
+      }, 1000);
+    }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogTitle/>
+      <DialogTitle />
       <DialogContent className="max-w-7xl! w-[95vw] bg-white rounded-[32px] p-6 md:p-8 overflow-hidden border-none shadow-2xl flex flex-col focus:outline-none max-h-[95vh]">
 
         {/* Global Component Heading Block */}
@@ -669,7 +680,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProp
         {/* Component Core Scrollable Viewport Content Layer */}
         <div className="flex-1 overflow-y-auto pr-1 py-4 space-y-6 my-2 scrollbar-thin">
           <Stepper current={currentStep} />
-          
+
           <div className="w-full h-[1px] bg-gray-100" />
 
           {/* Steps Conditional Controller Container */}
