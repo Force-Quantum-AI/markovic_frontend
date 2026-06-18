@@ -30,6 +30,7 @@ import DeadlinesTab from "./DeadlinesTab";
 import DocumentsTab from "./DocumentsTab";
 import NoteTab from "./NoteTab";
 import AddNewCase from "@/components/modals/AddNewCase";
+import { useGetLeftSideCaseDetailsQuery } from "@/store/features/case/case.api";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -111,6 +112,9 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
   const [editNotesOpen, setEditNotesOpen] = useState(false);
   const [caseFilter, setCaseFilter] = useState<"All" | CaseStatus>("All");
   const [filterOpen, setFilterOpen] = useState(false);
+
+  // using rtk query
+  const { data: caseDataOfLeftSide, isLoading: isLoadingCaseDataOfLeftSide } = useGetLeftSideCaseDetailsQuery(caseId);
 
   // Local editable client state
   const [client, setClient] = useState(DUMMY_CLIENT);

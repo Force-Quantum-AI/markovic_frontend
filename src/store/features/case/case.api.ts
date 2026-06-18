@@ -10,9 +10,16 @@ export const caseApi = baseApi.injectEndpoints({
       }),
       providesTags: ["case"],
     }),
-    getCaseDetails: builder.query<any, string>({
-      query: (case_id: string) => ({
-        url: `/cases/${case_id}/`,
+    getLeftSideCaseDetails: builder.query<any, string>({
+      query: (caseId: string) => ({
+        url: `/cases/${caseId}/`,
+        method: "GET",
+      }),
+      providesTags: ["case"],
+    }),
+    getRightSideCaseDetails: builder.query<any, {leftCaseId: string, rightCaseId: string}>({
+      query: ({leftCaseId, rightCaseId}) => ({
+        url: `/cases/${leftCaseId}/client-case/${rightCaseId}/`,
         method: "GET",
       }),
       providesTags: ["case"],
@@ -123,7 +130,8 @@ export const caseApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllCasesQuery,
-  useGetCaseDetailsQuery,
+  useGetLeftSideCaseDetailsQuery,
+  useLazyGetRightSideCaseDetailsQuery,
   useCreateCaseMutation,
   // case hearing & deadline
   useAddCaseHearingMutation,

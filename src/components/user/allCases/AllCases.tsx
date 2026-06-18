@@ -7,7 +7,6 @@ import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "../dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { useGetAllCasesQuery } from "@/store/features/case/case.api";
-import { Skeleton } from "@/components/ui/skeleton";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
