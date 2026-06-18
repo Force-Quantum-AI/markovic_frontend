@@ -60,35 +60,27 @@ function OverviewRow({ label, value, children }: { label: string; value?: string
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 interface CaseOverviewProps {
-  caseDetail: CaseDetail;
+  activeData: any;
 }
 
-export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
+export default function CaseOverview({ activeData }: CaseOverviewProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [addLawyerOpen, setAddLawyerOpen] = useState(false);
-  const [lawyers, setLawyers] = useState<Lawyer[]>(caseDetail.assignedLawyers);
-
-  // local editable state
-  const [form, setForm] = useState({
-    client: caseDetail.client,
-    opposingParty: caseDetail.opposingParty,
-    court: caseDetail.court,
-    category: caseDetail.category,
-    subcategory: caseDetail.subcategory,
-    nextHearing: caseDetail.nextHearing,
-    nextDeadline: caseDetail.nextDeadline,
-    scn: caseDetail.scn,
-  });
-
-  const [saved, setSaved] = useState(form);
+  const lawyers = activeData?.responsible_lawyers || [];
 
   const handleSave = () => {
-    setSaved(form);
+    // Implement save logic via RTK
     setEditOpen(false);
   };
 
   const handleRemove = (lawyerId: string) => {
-    setLawyers(lawyers.filter((l) => l.id !== lawyerId));
+    // Implement lawyer removal logic
+    console.log("Remove lawyer", lawyerId);
+  };
+
+  const getNextDateStr = (arr: any) => {
+    if (!arr || !arr.length) return "Not set";
+    return `${arr[0].day}-${arr[0].month}-${arr[0].year}`;
   };
 
   return (
@@ -107,18 +99,18 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
         </div>
 
         <div>
-          <OverviewRow label="Client" value={saved.client} />
-          <OverviewRow label="Opposing Party" value={saved.opposingParty} />
-          <OverviewRow label="Court" value={saved.court} />
-          <OverviewRow label="Case Number" value={caseDetail.caseNumber} />
-          <OverviewRow label="Category" value={saved.category} />
-          <OverviewRow label="Subcategory" value={saved.subcategory} />
+          <OverviewRow label="Client" value={activeData?.client_name} />
+          <OverviewRow label="Opposing Party" value={activeData?.opposing_parties?.[0]?.test || "N/A"} />
+          <OverviewRow label="Court" value={activeData?.court_name} />
+          <OverviewRow label="Case Number" value={activeData?.case_number} />
+          <OverviewRow label="Category" value={activeData?.category_name} />
+          <OverviewRow label="Subcategory" value={activeData?.sub_category_name} />
           <OverviewRow label="Status">
-            <StatusBadge status={caseDetail.status} />
+            <StatusBadge status={activeData?.status_name} />
           </OverviewRow>
-          <OverviewRow label="Next Hearing" value={saved.nextHearing} />
-          <OverviewRow label="Next Deadline" value={saved.nextDeadline} />
-          <OverviewRow label="SCN" value={saved.scn} />
+          <OverviewRow label="Next Hearing" value={getNextDateStr(activeData?.next_hearing)} />
+          <OverviewRow label="Next Deadline" value={getNextDateStr(activeData?.next_deadline)} />
+          <OverviewRow label="SCN" value={"N/A"} />
         </div>
       </div>
 
@@ -135,17 +127,17 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
         </div>
 
         <div className="space-y-2">
-          {lawyers.map((lawyer) => (
+          {lawyers.map((lawyer: any) => (
             <div
               key={lawyer.id}
               className="flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 transition-colors group"
             >
               <div className="flex items-center gap-3">
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={lawyer.image} />
-                  <AvatarFallback>{lawyer.initials}</AvatarFallback>
+                <Avatar className="w-8 h-8 bg-gray-200">
+                  <AvatarImage src={lawyer.profile_image?.startsWith("http") ? lawyer.profile_image : `https://res.cloudinary.com/dnu0axtez/${lawyer.profile_image}`} />
+                  <AvatarFallback>{lawyer.full_name?.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <span className="text-sm font-medium text-gray-700">{lawyer.name}</span>
+                <span className="text-sm font-medium text-gray-700">{lawyer.full_name}</span>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -170,13 +162,13 @@ export default function CaseOverview({ caseDetail }: CaseOverviewProps) {
       <UpdateCaseOverviewModal
         open={editOpen}
         setOpen={setEditOpen}
-      // data={caseDetail}
+      // data={activeData}
       />
 
       <AddLawyerModal
         open={addLawyerOpen}
         setOpen={() => setAddLawyerOpen(false)}
-        data={{ caseId: caseDetail.id, caseName: caseDetail.client }}
+        data={{ caseId: activeData?.id, caseName: activeData?.case_name }}
       />
     </div>
   );

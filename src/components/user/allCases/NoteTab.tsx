@@ -64,8 +64,8 @@ const DUMMY_DOCUMENTS: DocumentItem[] = [
     },
 ];
 
-export default function NoteTab() {
-    const [documents, setDocuments] = useState<DocumentItem[]>(DUMMY_DOCUMENTS);
+export default function NoteTab({caseId, notes = []}: {caseId: string, notes?: any[]}) {
+    const displayNotes = notes.length > 0 ? notes : [];
     const [editNotesOpen, setEditNotesOpen] = useState(false);
     const [previewNotesOpen, setPreviewNotesOpen] = useState(false);
     const [addNotesOpen, setAddNotesOpen] = useState(false);
@@ -92,8 +92,8 @@ export default function NoteTab() {
 
     // Mock Delete Handler
     const handleRemove = (id: string) => {
-        if (confirm("Are you sure you want to remove this document?")) {
-            setDocuments(documents.filter((d) => d.id !== id));
+        if (confirm("Are you sure you want to remove this note?")) {
+            // Placeholder: RTK mutation call
         }
     };
 
@@ -125,38 +125,30 @@ export default function NoteTab() {
 
                     {/* Table Body */}
                     <tbody className="divide-y divide-gray-100">
-                        {documents.map((doc) => (
+                        {displayNotes.map((doc: any) => (
                             <tr
                                 key={doc.id}
                                 className="hover:bg-gray-50/70 transition-colors group text-[#2d3748]"
                             >
                                 {/* Column 1: Files */}
-                                <td className="py-4 px-5 max-w-66 flex items-center gap-4" onClick={() => handlePreviewNote(doc.id, doc.note)} >
+                                <td className="py-4 px-5 max-w-66 flex items-center gap-4 cursor-pointer" onClick={() => handlePreviewNote(doc.id, doc.content)} >
                                     <div className="bg-[#eef2f6] text-[#0c5174] p-2.5 rounded-lg flex items-center justify-center shrink-0">
                                         <FileText className="w-5 h-5 stroke-[2.2]" />
                                     </div>
                                     <span className="font-medium text-gray-800 text-[15px] truncate">
-                                        {doc.note}
+                                        {doc.title}
                                     </span>
                                 </td>
 
                                 {/* Column 2: Uploaded By */}
-                                <td className="py-4 px-5 align-middle" onClick={() => handlePreviewNote(doc.id, doc.note)} >
+                                <td className="py-4 px-5 align-middle cursor-pointer" onClick={() => handlePreviewNote(doc.id, doc.content)} >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            {doc.uploadedBy.avatarUrl ? (
-                                                <img
-                                                    src={doc.uploadedBy.avatarUrl}
-                                                    alt={doc.uploadedBy.name}
-                                                    className="w-8 h-8 rounded-full object-cover border border-gray-100"
-                                                />
-                                            ) : (
-                                                <div className="w-8 h-8 rounded-full bg-[#fef08a] text-[#854d0e] flex items-center justify-center text-xs font-bold tracking-wider">
-                                                    {doc.uploadedBy.initials || "U"}
-                                                </div>
-                                            )}
+                                            <div className="w-8 h-8 rounded-full bg-[#fef08a] text-[#854d0e] flex items-center justify-center text-xs font-bold tracking-wider">
+                                                {doc.created_by ? doc.created_by.charAt(0) : "U"}
+                                            </div>
                                             <span className="text-gray-800 font-medium text-[15px]">
-                                                {doc.uploadedBy.name}
+                                                {doc.created_by || "Unknown"}
                                             </span>
                                         </div>
 
@@ -165,7 +157,7 @@ export default function NoteTab() {
 
                                 {/* Column 3: Uploaded Date */}
                                 <td className="py-4 px-5 text-gray-700 text-[15px] align-middle flex items-center justify-between" >
-                                    {doc.lastUpdated}
+                                    {doc.updated_at ? new Date(doc.updated_at).toLocaleDateString() : "-"}
                                     {/* Options Actions Button */}
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -177,11 +169,11 @@ export default function NoteTab() {
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-lg border border-gray-100 p-1">
-                                            <DropdownMenuItem onClick={() => handlePreviewNote(doc.id, doc.note)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
+                                            <DropdownMenuItem onClick={() => handlePreviewNote(doc.id, doc.content)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
                                                 <Eye className="w-4 h-4" />
                                                 <span>Preview</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleEditNote(doc.id, doc.note)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
+                                            <DropdownMenuItem onClick={() => handleEditNote(doc.id, doc.content)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
                                                 <SquarePen className="w-4 h-4" />
                                                 <span>Edit</span>
                                             </DropdownMenuItem>

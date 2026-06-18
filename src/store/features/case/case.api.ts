@@ -10,6 +10,7 @@ export const caseApi = baseApi.injectEndpoints({
       }),
       providesTags: ["case"],
     }),
+    // get case details for left  side
     getLeftSideCaseDetails: builder.query<any, string>({
       query: (caseId: string) => ({
         url: `/cases/${caseId}/`,
@@ -17,6 +18,7 @@ export const caseApi = baseApi.injectEndpoints({
       }),
       providesTags: ["case"],
     }),
+    // get case details for right side
     getRightSideCaseDetails: builder.query<any, {leftCaseId: string, rightCaseId: string}>({
       query: ({leftCaseId, rightCaseId}) => ({
         url: `/cases/${leftCaseId}/client-case/${rightCaseId}/`,

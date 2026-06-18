@@ -62,8 +62,8 @@ const DUMMY_DOCUMENTS: DocumentItem[] = [
     },
 ];
 
-export default function DocumentsTab() {
-    const [documents, setDocuments] = useState<DocumentItem[]>(DUMMY_DOCUMENTS);
+export default function DocumentsTab({caseId, documents = []}: {caseId: string, documents?: any[]}) {
+    const displayDocuments = documents.length > 0 ? documents : [];
     const [uploadDocument, setUploadDocument] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,7 +85,7 @@ export default function DocumentsTab() {
     // Mock Delete Handler
     const handleRemove = (id: string) => {
         if (confirm("Are you sure you want to remove this document?")) {
-            setDocuments(documents.filter((d) => d.id !== id));
+            // Placeholder: RTK mutation call
         }
     };
 
@@ -147,7 +147,7 @@ export default function DocumentsTab() {
 
                     {/* Table Body */}
                     <tbody className="divide-y divide-gray-100">
-                        {documents.map((doc) => (
+                        {displayDocuments.map((doc: any) => (
                             <tr
                                 key={doc.id}
                                 className="hover:bg-gray-50/70 transition-colors group text-[#2d3748]"
@@ -158,32 +158,24 @@ export default function DocumentsTab() {
                                         <FileText className="w-5 h-5 stroke-[2.2]" />
                                     </div>
                                     <span className="font-medium text-gray-800 text-[15px] truncate">
-                                        {doc.fileName}
+                                        {doc.file_name}
                                     </span>
                                 </td>
 
                                 {/* Column 2: Uploaded Date */}
                                 <td className="py-4 px-5 text-gray-700 text-[15px] align-middle">
-                                    {doc.uploadedDate}
+                                    {doc.created_at ? new Date(doc.created_at).toLocaleDateString() : "-"}
                                 </td>
 
                                 {/* Column 3: Uploaded By */}
                                 <td className="py-4 px-5 align-middle">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            {doc.uploadedBy.avatarUrl ? (
-                                                <img
-                                                    src={doc.uploadedBy.avatarUrl}
-                                                    alt={doc.uploadedBy.name}
-                                                    className="w-8 h-8 rounded-full object-cover border border-gray-100"
-                                                />
-                                            ) : (
-                                                <div className="w-8 h-8 rounded-full bg-[#fef08a] text-[#854d0e] flex items-center justify-center text-xs font-bold tracking-wider">
-                                                    {doc.uploadedBy.initials || "U"}
-                                                </div>
-                                            )}
+                                            <div className="w-8 h-8 rounded-full bg-[#fef08a] text-[#854d0e] flex items-center justify-center text-xs font-bold tracking-wider">
+                                                {doc.uploaded_by ? doc.uploaded_by.charAt(0) : "U"}
+                                            </div>
                                             <span className="text-gray-800 font-medium text-[15px]">
-                                                {doc.uploadedBy.name}
+                                                {doc.uploaded_by || "Unknown"}
                                             </span>
                                         </div>
 
@@ -191,7 +183,7 @@ export default function DocumentsTab() {
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <button
-                                                    onClick={() => handleActionClick(doc.id, doc.fileName)}
+                                                    onClick={() => handleActionClick(doc.id, doc.file_name)}
                                                     className="text-gray-400 hover:text-gray-700 p-1.5 rounded-md hover:bg-gray-100 transition-colors"
                                                     aria-label="More actions"
                                                 >
@@ -199,7 +191,9 @@ export default function DocumentsTab() {
                                                 </button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-lg border border-gray-100 p-1">
-                                                <DropdownMenuItem onClick={handleDownload} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
+                                                <DropdownMenuItem onClick={() => {
+                                                    if(doc.file_url) window.open(doc.file_url, "_blank");
+                                                }} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
                                                 <Download className="w-4 h-4" />
                                                 <span>Download</span>
                                             </DropdownMenuItem>

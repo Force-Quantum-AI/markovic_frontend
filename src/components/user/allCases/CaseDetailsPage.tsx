@@ -30,19 +30,19 @@ import DeadlinesTab from "./DeadlinesTab";
 import DocumentsTab from "./DocumentsTab";
 import NoteTab from "./NoteTab";
 import AddNewCase from "@/components/modals/AddNewCase";
-import { useGetLeftSideCaseDetailsQuery } from "@/store/features/case/case.api";
+import { useGetLeftSideCaseDetailsQuery, useLazyGetRightSideCaseDetailsQuery } from "@/store/features/case/case.api";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
-function StatusBadge({ status }: { status: CaseStatus }) {
-  const map: Record<CaseStatus, string> = {
+function StatusBadge({ status }: { status: CaseStatus | string }) {
+  const map: Record<string, string> = {
     Active: "bg-green-100 text-green-700",
     "On Appeal": "bg-blue-100 text-blue-700",
     Finished: "bg-gray-100 text-gray-500",
     Pending: "bg-yellow-100 text-yellow-700",
   };
   return (
-    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${map[status]}`}>
+    <span className={`text-[10px] font-semibold px-2 py-0.5 text-center text-nowrap rounded-full ${map[status] || "bg-gray-100 text-gray-500"}`}>
       {status}
     </span>
   );
@@ -75,19 +75,23 @@ const TABS: { key: TabKey; label: string }[] = [
 
 // ─── Lawyer avatars strip ─────────────────────────────────────────────────────
 
-function LawyerAvatarStrip() {
+function LawyerAvatarStrip({ lawyers, caseId, caseName }: { lawyers: any[], caseId: string, caseName: string }) {
   const [addLawyerOpen, setAddLawyerOpen] = useState(false);
   return (
     <>
     <div className="flex items-center gap-1">
-      {DUMMY_CASE.assignedLawyers.map((l, i) => (
+      {lawyers?.map((l: any, i: number) => (
         <div
           key={l.id}
-          title={l.name}
-          className={`w-8 h-8 relative rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold ${l.color}`}
-          style={{ marginLeft: i > 0 ? "-12px" : 0, zIndex: DUMMY_CASE.assignedLawyers.length - i }}
+          title={l.full_name}
+          className={`w-8 h-8 relative rounded-full border-2 border-white flex items-center justify-center bg-[#135576] text-white text-xs font-bold overflow-hidden`}
+          style={{ marginLeft: i > 0 ? "-12px" : 0, zIndex: lawyers.length - i }}
         >
-          <Image src={`/dummy-user.jpg`} alt={l.name} fill className="h-full w-full object-cover rounded-full" />
+          {l.profile_image ? (
+            <img src={l.profile_image.startsWith("http") ? l.profile_image : `https://res.cloudinary.com/dnu0axtez/${l.profile_image}`} alt={l.full_name} className="h-full w-full object-cover" />
+          ) : (
+            <span>{l.full_name?.charAt(0).toUpperCase()}</span>
+          )}
         </div>
       ))}
       <button onClick={() => setAddLawyerOpen(true)} className="w-7 h-7 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-[#135576] hover:bg-[#135576]/5 transition-colors ml-0.5">
@@ -97,7 +101,7 @@ function LawyerAvatarStrip() {
     <AddLawyerModal
         open={addLawyerOpen}
         setOpen={() => setAddLawyerOpen(false)}
-        data={{ caseId: "", caseName: "" }}
+        data={{ caseId: caseId, caseName: caseName }}
       />
       </>
   );
@@ -110,51 +114,34 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
   const [editPersonalOpen, setEditPersonalOpen] = useState(false);
   const [addCaseOpen, setAddCaseOpen] = useState(false);
   const [editNotesOpen, setEditNotesOpen] = useState(false);
-  const [caseFilter, setCaseFilter] = useState<"All" | CaseStatus>("All");
+  const [caseFilter, setCaseFilter] = useState<"All" | CaseStatus | string>("All");
   const [filterOpen, setFilterOpen] = useState(false);
 
-  // using rtk query
+  // RTK Queries
   const { data: caseDataOfLeftSide, isLoading: isLoadingCaseDataOfLeftSide } = useGetLeftSideCaseDetailsQuery(caseId);
+  const [getRightSideCaseDetails, { data: caseDataOfRightSide, isFetching: isFetchingRightSide }] = useLazyGetRightSideCaseDetailsQuery();
 
-  // Local editable client state
-  const [client, setClient] = useState(DUMMY_CLIENT);
-  const [personalForm, setPersonalForm] = useState({
-    phone: client.phone,
-    email: client.email,
-    address: client.address,
-    personalId: client.personalId,
-  });
-  const [notesForm, setNotesForm] = useState(client.notes);
+  const [selectedRightCaseId, setSelectedRightCaseId] = useState<string | null>(null);
 
-  // New case form
-  const [newCaseForm, setNewCaseForm] = useState({ title: "", status: "Active" as CaseStatus });
+  const activeData = (selectedRightCaseId && caseDataOfRightSide) ? caseDataOfRightSide : caseDataOfLeftSide;
+
+  const handleCaseSelect = (id: string) => {
+    setSelectedRightCaseId(id);
+    getRightSideCaseDetails({ leftCaseId: caseId, rightCaseId: id });
+  };
 
   const filteredCases =
     caseFilter === "All"
-      ? client.cases
-      : client.cases.filter((c) => c.status === caseFilter);
+      ? (activeData?.client_cases || [])
+      : (activeData?.client_cases || []).filter((c: any) => c.status_name === caseFilter);
 
-  const handleSavePersonal = () => {
-    setClient((p) => ({ ...p, ...personalForm }));
-    setEditPersonalOpen(false);
-  };
+  if (isLoadingCaseDataOfLeftSide) {
+    return <div className="flex justify-center items-center h-screen text-gray-500">Loading...</div>;
+  }
 
-  const handleSaveNotes = () => {
-    setClient((p) => ({ ...p, notes: notesForm }));
-    setEditNotesOpen(false);
-  };
-
-  const handleAddCase = () => {
-    if (!newCaseForm.title) return;
-    const nc: ClientCase = {
-      id: `case-${Date.now()}`,
-      title: newCaseForm.title,
-      status: newCaseForm.status,
-    };
-    setClient((p) => ({ ...p, cases: [...p.cases, nc] }));
-    setNewCaseForm({ title: "", status: "Active" });
-    setAddCaseOpen(false);
-  };
+  if (!activeData) {
+    return <div className="flex justify-center items-center h-screen text-gray-500">No data found.</div>;
+  }
 
   return (
     <div className="flex flex-col lg:flex-row gap-4 min-h-screen">
@@ -165,11 +152,11 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
         {/* Profile card */}
         <div className=" flex flex-col items-center text-center">
           <Avatar className="w-24 h-24">
-            <AvatarImage src="/dummy-user.jpg" />
-            <AvatarFallback>{client.name}</AvatarFallback>
+            <AvatarImage src={activeData?.client_image?.startsWith("http") ? activeData.client_image : `https://res.cloudinary.com/dnu0axtez/${activeData?.client_image}`} />
+            <AvatarFallback>{activeData?.client_name?.charAt(0)}</AvatarFallback>
           </Avatar>
-          <h2 className="text-lg font-bold text-gray-800 mt-3">{client.name}</h2>
-          <p className="text-sm text-gray-400">{client.company}</p>
+          <h2 className="text-lg font-bold text-gray-800 mt-3">{activeData?.client_name}</h2>
+          <p className="text-sm text-gray-400">Client</p>
         </div>
 
         {/* Personal details */}
@@ -185,16 +172,16 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
           </div>
           <div className="space-y-3">
             {[
-              { Icon: Phone, label: "Number:", value: client.phone },
-              { Icon: Mail, label: "Email:", value: client.email },
-              { Icon: MapPin, label: "Address:", value: client.address },
-              { Icon: IdCard, label: "Personal ID number:", value: client.personalId },
+              { Icon: Phone, label: "Number:", value: activeData?.client_phone },
+              { Icon: Mail, label: "Email:", value: activeData?.client_email },
+              { Icon: MapPin, label: "Address:", value: activeData?.client_address },
+              { Icon: IdCard, label: "Personal ID number:", value: activeData?.personal_id },
             ].map(({ Icon, label, value }) => (
               <div key={label} className="flex items-start gap-2">
                 <Icon className="w-3.5 h-3.5 text-gray-400 mt-0.5 shrink-0" />
                 <div className="flex flex-col min-w-0 w-full">
                   <span className="text-[10px] text-gray-400">{label}</span>
-                  <span className="text-xs text-gray-700 break-all">{value}</span>
+                  <span className="text-xs text-gray-700 break-all">{value || "-"}</span>
                 </div>
               </div>
             ))}
@@ -232,19 +219,20 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
           </div>
 
           <div className="space-y-2 max-h-64 overflow-y-auto pr-0.5">
-            {filteredCases.map((c) => (
+            {filteredCases.map((c: any) => (
               <div
                 key={c.id}
-                className={`flex items-start gap-2 p-2.5 rounded-xl cursor-pointer transition-colors ${c.id === "case-1"
+                onClick={() => handleCaseSelect(c.id)}
+                className={`flex items-start gap-2 p-2.5 rounded-xl cursor-pointer transition-colors ${activeData.id === c.id
                   ? "bg-[#135576]/5 border border-[#135576]/15"
                   : "hover:bg-gray-50 border border-transparent"
                   }`}
               >
                 <Briefcase className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-600 leading-snug line-clamp-2">{c.title}</p>
+                  <p className="text-xs text-gray-600 leading-snug line-clamp-2">{c.case_name}</p>
                 </div>
-                <StatusBadge status={c.status} />
+                <StatusBadge status={c.status_name} />
               </div>
             ))}
           </div>
@@ -263,39 +251,44 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
           <div className="flex items-center justify-between mb-3 border-b border-gray-100 pb-2">
             <h3 className="text-sm font-semibold text-gray-700">Notes</h3>
             <button
-              onClick={() => { setNotesForm(client.notes); setEditNotesOpen(true); }}
+              onClick={() => { setEditNotesOpen(true); }}
               className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
             >
               <SquarePen className="w-3.5 h-3.5 text-gray-400" />
             </button>
           </div>
-          <p className="text-xs text-gray-500 leading-relaxed bg-gray-50 rounded-xl p-2 ">{client.notes}</p>
+          <p className="text-xs text-gray-500 leading-relaxed bg-gray-50 rounded-xl p-2 ">{activeData?.note || "No notes available."}</p>
         </div>
       </aside>
 
       {/* ════════════════════════════════════════════════════════════════
           RIGHT PANEL — Case Info
       ════════════════════════════════════════════════════════════════ */}
-      <main className="flex-1 min-w-0 bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col">
+      <main className="flex-1 min-w-0 bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col relative">
+        {isFetchingRightSide && (
+            <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center">
+              <span className="text-[#135576] font-medium text-lg">Loading...</span>
+            </div>
+        )}
         {/* Case header */}
         <div className="px-6 pt-5 pb-4 border-b border-gray-100">
           <div className="flex items-start justify-between gap-4 mb-3">
             <div className="min-w-0">
               <p className="text-xs text-gray-400 mb-0.5">Case number</p>
-              <p className="text-sm font-semibold text-[#135576]">{DUMMY_CASE.caseNumber}</p>
+              <p className="text-sm font-semibold text-[#135576]">{activeData?.case_number}</p>
             </div>
-            <p className="text-xs text-gray-400 shrink-0">Created on: {DUMMY_CASE.createdAt}</p>
+            <p className="text-xs text-gray-400 shrink-0">Created on: {activeData?.created_at ? new Date(activeData.created_at).toLocaleDateString() : "-"}</p>
           </div>
 
           <h1 className="text-xl md:text-2xl font-bold text-gray-800 leading-snug mb-4">
-            {DUMMY_CASE.title}
+            {activeData?.case_name}
           </h1>
 
           <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Assign lawyers */}
             <div className="">
               <span className="text-xs text-gray-400">Assigned Lawyer</span>
-              <LawyerAvatarStrip />
+              <LawyerAvatarStrip lawyers={activeData?.responsible_lawyers} caseId={activeData?.id} caseName={activeData?.case_name} />
             </div>
 
             {/* Hearing & Deadline dates */}
@@ -305,14 +298,18 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
                   <Calendar className="w-3 h-3" />
                   Hearing:
                 </div>
-                <p className="text-sm font-semibold text-[#135576]">{DUMMY_CASE.hearingDate}</p>
+                <p className="text-sm font-semibold text-[#135576]">
+                  {activeData?.next_hearing?.[0] ? `${activeData.next_hearing[0].day}-${activeData.next_hearing[0].month}-${activeData.next_hearing[0].year}` : "Not set"}
+                </p>
               </div>
               <div>
                 <div className="flex items-center gap-1 text-xs text-gray-500 mb-0.5">
                   <Flag className="w-3 h-3" />
                   Deadline
                 </div>
-                <p className="text-sm font-semibold text-[#135576]">{DUMMY_CASE.deadlineDate}</p>
+                <p className="text-sm font-semibold text-[#135576]">
+                  {activeData?.next_deadline?.[0] ? `${activeData.next_deadline[0].day}-${activeData.next_deadline[0].month}-${activeData.next_deadline[0].year}` : "Not set"}
+                </p>
               </div>
             </div>
           </div>
@@ -338,22 +335,22 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
 
         {/* Tab content */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          {activeTab === "overview" && <CaseOverview caseDetail={DUMMY_CASE} />}
-          {activeTab === "hearings" && <HearingsTab caseId={caseId}/>}
-          {activeTab === "deadlines" && <DeadlinesTab />}
-          {activeTab === "documents" && <DocumentsTab />}
-          {activeTab === "notes" && <NoteTab />}
+          {activeTab === "overview" && <CaseOverview activeData={activeData} />}
+          {activeTab === "hearings" && <HearingsTab caseId={activeData.id} hearings={activeData.hearing_history} nextHearing={activeData.next_hearing} />}
+          {activeTab === "deadlines" && <DeadlinesTab caseId={activeData.id} deadlines={activeData.deadline_history} nextDeadline={activeData.next_deadline} />}
+          {activeTab === "documents" && <DocumentsTab caseId={activeData.id} documents={activeData.documents} />}
+          {activeTab === "notes" && <NoteTab caseId={activeData.id} notes={activeData.notes} />}
         </div>
       </main>
       <EditPersonalModal
         open={editPersonalOpen}
         setOpen={setEditPersonalOpen}
-        data={client}
+        data={{...activeData, name: activeData.client_name, phone: activeData.client_phone, email: activeData.client_email, address: activeData.client_address, personalId: activeData.personal_id}}
       />
       <EditNoteModal
         open={editNotesOpen}
         setOpen={() => { setEditNotesOpen(false); }}
-        data={{ note: client.notes || "" }}
+        data={{ note: activeData?.note || "" }}
       />
       <AddNewCase
             isOpen={addCaseOpen}
