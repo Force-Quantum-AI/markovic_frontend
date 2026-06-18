@@ -45,15 +45,15 @@ export function MetricCard({ icon, value, label, bgColor, iconBgColor }: MetricC
 }
 
 // --- MAIN WRAPPER COMPONENT ---
-export default function DashboardMetrics() {
+export default function DashboardMetrics({ data, isLoading }: { data?: any; isLoading?: boolean }) {
   const router = useRouter()
   
-  // Dummy dataset representing your backend API payloads
+  // Dynamic dataset mapping backend API payload fields
   const statsData = [
     {
       id: "total-cases",
       label: "Total Cases",
-      value: 86,
+      value: data?.total_cases ?? 0,
       icon: <Scale className="w-4 h-4 stroke-[2]" />,
       bgColor: "bg-[#DAE6C9]", // Soft Lime-Green hue
       iconBgColor: "bg-[#edf4e4]"
@@ -61,7 +61,7 @@ export default function DashboardMetrics() {
     {
       id: "active-cases",
       label: "Active Cases",
-      value: 72,
+      value: data?.active_cases ?? 0,
       icon: <Files className="w-4 h-4 stroke-[2]" />,
       bgColor: "bg-[#C8F0DB]", // Soft Mint hue
       iconBgColor: "bg-[#e2f6ec]"
@@ -69,7 +69,7 @@ export default function DashboardMetrics() {
     {
       id: "todays-hearing",
       label: "Todays Hearing",
-      value: 5,
+      value: data?.todays_hearings ?? 0,
       icon: <Gavel className="w-4 h-4 stroke-[2]" />,
       bgColor: "bg-[#D4D4F2]", // Soft Purple hue
       iconBgColor: "bg-[#ebebfe]"
@@ -77,7 +77,7 @@ export default function DashboardMetrics() {
     {
       id: "upcoming-deadlines",
       label: "Upcoming Deadlines",
-      value: 3,
+      value: data?.upcoming_deadlines ?? 0,
       icon: <CalendarDays className="w-4 h-4 stroke-[2]" />,
       bgColor: "bg-[#D6E7ED]", // Soft Ice Blue hue
       iconBgColor: "bg-[#e3f3ff]"
@@ -85,7 +85,7 @@ export default function DashboardMetrics() {
     {
       id: "total-clients",
       label: "Total Clients",
-      value: 7,
+      value: data?.total_clients ?? 0,
       icon: <Users2 className="w-4 h-4 stroke-[2]" />,
       bgColor: "bg-[#E6D1E3]", // Soft Pink hue
       iconBgColor: "bg-[#fbe6f7]"
@@ -93,7 +93,7 @@ export default function DashboardMetrics() {
     {
       id: "case-completed",
       label: "Case Completed",
-      value: 14,
+      value: data?.cases_completed ?? 0,
       icon: <FileCheck2 className="w-4 h-4 stroke-[2]" />,
       bgColor: "bg-[#F2E6D8]", // Soft Cream/Orange hue
       iconBgColor: "bg-[#fff2de]"
@@ -154,16 +154,28 @@ export default function DashboardMetrics() {
 
         {/* Right Aspect: Fully Responsive Metrics Grid */}
         <div className="xl:col-span-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 bg-white p-2 rounded-2xl">
-          {statsData.map((stat) => (
-            <MetricCard
-              key={stat.id}
-              icon={stat.icon}
-              value={stat.value}
-              label={stat.label}
-              bgColor={stat.bgColor}
-              iconBgColor={stat.iconBgColor}
-            />
-          ))}
+          {isLoading ? (
+            Array.from({ length: 6 }).map((_, idx) => (
+              <div key={idx} className="p-5 rounded-2xl border border-gray-100 flex flex-col justify-between min-h-[135px] animate-pulse bg-gray-50">
+                <div className="w-9 h-9 rounded-full bg-gray-200" />
+                <div className="mt-4 space-y-2">
+                  <div className="h-8 bg-gray-200 rounded w-16" />
+                  <div className="h-4 bg-gray-200 rounded w-24" />
+                </div>
+              </div>
+            ))
+          ) : (
+            statsData.map((stat) => (
+              <MetricCard
+                key={stat.id}
+                icon={stat.icon}
+                value={stat.value}
+                label={stat.label}
+                bgColor={stat.bgColor}
+                iconBgColor={stat.iconBgColor}
+              />
+            ))
+          )}
         </div>
 
       </div>

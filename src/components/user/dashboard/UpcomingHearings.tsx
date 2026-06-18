@@ -3,7 +3,6 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { useRouter } from "next/navigation";
-import { useGetAllCasesQuery } from "@/store/features/case/case.api";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // --- TYPES FOR REUSABLE CARD ---
@@ -75,8 +74,7 @@ export const hearingsDataset: HearingCardProps[] = [
 
 
 // --- MAIN GRID MODULE WRAPPER ---
-export default function UpcomingHearings() {
-  const { data: allCases, isLoading: isAllCasesLoading } = useGetAllCasesQuery();
+export default function UpcomingHearings({ data, isLoading }: { data?: any[]; isLoading?: boolean }) {
   const router = useRouter();
   return (
     <section className="w-full max-w-7xl mx-auto p-3 md:p-5 space-y-3 md:space-y-6 bg-white rounded-2xl">
@@ -92,13 +90,13 @@ export default function UpcomingHearings() {
 
       {/* Grid Container Matrix mapping responsive column breakdowns */}
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-        {isAllCasesLoading ? (
+        {isLoading ? (
           <>
             <Skeleton className="aspect-square rounded-lg bg-gray-300" />
             <Skeleton className="aspect-square rounded-lg bg-gray-300" />
             <Skeleton className="aspect-square rounded-lg bg-gray-300" />
           </>
-        ) : allCases?.results?.slice(0, 3).map((card: CaseCardProps, index: number) => (
+        ) : data?.slice(0, 3).map((card: CaseCardProps, index: number) => (
           <CaseCard key={index} {...card} />
         ))}
       </div>

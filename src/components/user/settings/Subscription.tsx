@@ -15,7 +15,6 @@ const featuresList = [
   "Laws & Bylaws Module.",
   "AI Court Practice Search.",
   "Global Search & Archive.",
-  "Full Support."
 ];
 
 const subscriptionPackages = [
