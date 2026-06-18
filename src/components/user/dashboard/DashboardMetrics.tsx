@@ -25,7 +25,7 @@ interface MetricCardProps {
 // --- REUSABLE METRIC CARD COMPONENT ---
 export function MetricCard({ icon, value, label, bgColor, iconBgColor }: MetricCardProps) {
   return (
-    <div className={`p-5 rounded-2xl border border-gray-100 flex flex-col justify-between min-h-[135px] transition-all hover:shadow-md ${bgColor}`}>
+    <div className={`p-5 rounded-2xl border border-gray-100 flex flex-col justify-between min-h-[135px] transition-all hover:shadow-xl hover:-translate-y-1 hover:scale-102 duration-500 ${bgColor}`}>
       {/* Icon Wrapper */}
       <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[#135576] ${iconBgColor}`}>
         {icon}
