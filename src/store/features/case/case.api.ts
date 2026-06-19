@@ -69,6 +69,31 @@ export const caseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["case"],
     }),
+    asignLowerInCase: builder.mutation({
+      query: ({ caseId, email }: {
+        caseId: string,
+        email: string
+      }) => {
+        return {
+          url: `/cases/${caseId}/lawyers/`,
+          method: "POST",
+          body: email,
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
+    deleteAssignedLower: builder.mutation({
+      query: ({ caseId, lawyerId }: {
+        caseId: string,
+        lawyerId: string
+      }) => {
+        return {
+          url: `/cases/${caseId}/lawyers/${lawyerId}/`,
+          method: "DELETE",
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
     createCase: builder.mutation({
       query: (payload: {
         client_image?: File;
@@ -183,6 +208,8 @@ export const {
   // right side 
   useLazyGetRightSideCaseDetailsQuery,
   useUpdateOverviewInfoOfCaseMutation,
+  useAsignLowerInCaseMutation,
+  useDeleteAssignedLowerMutation,
   useCreateCaseMutation,
   // case hearing & deadline
   useAddCaseHearingMutation,

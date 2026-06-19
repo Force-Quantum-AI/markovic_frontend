@@ -14,6 +14,9 @@ import { Input } from "@/components/ui/input";
 import { X, Plus, Search, UserPlus, Users, Mail } from "lucide-react";
 import Image from "next/image";
 import { InputField } from "../shared/InputField";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useAsignLowerInCaseMutation, useDeleteAssignedLowerMutation } from "@/store/features/case/case.api";
+import { toast } from "sonner";
 
 // Types
 interface Lawyer {
@@ -25,12 +28,21 @@ interface Lawyer {
   email?: string;
 }
 
+interface responsible_lawyer {
+  id: string,
+  full_name: string,
+  email: string,
+  professional_role: string,
+  profile_image: string,
+}
+
 interface AddLawyerModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   data?: {
     caseId?: string;
     caseName?: string;
+    responsible_lawyers?: responsible_lawyer[]
   };
 }
 
@@ -48,12 +60,17 @@ const ALL_LAWYERS: Lawyer[] = [
 ];
 
 export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalProps) {
+  const lawers = data?.responsible_lawyers || [];
+
+  const [asignLowerInCase, { isLoading: isAsignLowerInCaseLoading }] = useAsignLowerInCaseMutation()
+  const [deleteAssignedLower, { isLoading: isDeleteAssignedLowerLoading }] = useDeleteAssignedLowerMutation()
+
   const [assignedLawyers, setAssignedLawyers] = useState<Lawyer[]>([
     { id: "l1", name: "Eleanor Pena", initials: "EP", color: "bg-pink-300", email: "eleanor.pena@lawfirm.com" },
     { id: "l2", name: "Cameron Williamson", initials: "CW", color: "bg-gray-400", email: "cameron.w@lawfirm.com" },
     { id: "l3", name: "Darrell Steward", initials: "DS", color: "bg-yellow-400", email: "darrell.steward@lawfirm.com" },
   ]);
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Lawyer[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,14 +83,14 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
     }
 
     setIsLoading(true);
-    
+
     // Simulate API call delay
     const timer = setTimeout(() => {
       const queryLower = searchQuery.toLowerCase();
       const results = ALL_LAWYERS.filter(
         (lawyer) =>
           (lawyer.name.toLowerCase().includes(queryLower) ||
-           lawyer.email?.toLowerCase().includes(queryLower)) &&
+            lawyer.email?.toLowerCase().includes(queryLower)) &&
           !assignedLawyers.some((assigned) => assigned.id === lawyer.id)
       );
       setSearchResults(results);
@@ -91,8 +108,18 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
   };
 
   // Remove lawyer from assigned list
-  const handleRemoveLawyer = (lawyerId: string) => {
-    setAssignedLawyers(assignedLawyers.filter((lawyer) => lawyer.id !== lawyerId));
+  const handleRemoveLawyer = async (lawyerId: string) => {
+    if (!data?.caseId) {
+      toast.info("CaseId not found, Please save case details first!")
+      return;
+    };
+    try {
+      await deleteAssignedLower({ caseId: data?.caseId, lawyerId: lawyerId }).unwrap()
+      toast.success("Lawyer removed successfully!")
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to remove lawyer")
+    }
   };
 
   // Handle add by email (for future backend integration)
@@ -134,10 +161,10 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
           {/* Search Input Section */}
           <div className="space-y-2">
             <InputField
-            icon={<Search className=" w-4 h-4 text-gray-400" />}
-            placeholder="Type email to add your co-worker to this case..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+              icon={<Search className=" w-4 h-4 text-gray-400" />}
+              placeholder="Type email to add your co-worker to this case..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
@@ -204,9 +231,9 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <Users className="w-4 h-4 text-gray-400" />
-                Assigned Lawyers ({assignedLawyers.length})
+                Assigned Lawyers ({data?.responsible_lawyers?.length})
               </p>
-              {assignedLawyers.length > 0 && (
+              {lawers.length > 0 && (
                 <button
                   onClick={() => setAssignedLawyers([])}
                   className="text-xs text-red-500 hover:text-red-600 transition-colors"
@@ -215,25 +242,26 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
                 </button>
               )}
             </div>
-            
-            {assignedLawyers.length > 0 ? (
+
+            {lawers.length > 0 ? (
               <div className="space-y-2 max-h-48 overflow-y-auto">
-                {assignedLawyers.map((lawyer) => (
+                {data?.responsible_lawyers?.map((lawyer) => (
                   <div
                     key={lawyer.id}
                     className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl hover:shadow-sm transition-shadow"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full ${lawyer.color} flex items-center justify-center text-white font-semibold text-sm`}>
-                        {lawyer.initials}
-                      </div>
+                      <Avatar className="w-8 h-8 bg-gray-200">
+                        <AvatarImage src={lawyer?.profile_image?.startsWith("http") ? lawyer?.profile_image : `https://res.cloudinary.com/dnu0axtez/${lawyer?.profile_image}`} />
+                        <AvatarFallback>{lawyer?.full_name?.charAt(0).toUpperCase()}</AvatarFallback>
+                      </Avatar>
                       <div>
-                        <p className="font-medium text-gray-900 text-sm">{lawyer.name}</p>
-                        <p className="text-xs text-gray-400">{lawyer.email}</p>
+                        <p className="font-medium text-gray-900 text-sm">{lawyer?.full_name}</p>
+                        <p className="text-xs text-gray-400">{lawyer?.email}</p>
                       </div>
                     </div>
                     <Button
-                      onClick={() => handleRemoveLawyer(lawyer.id)}
+                      onClick={() => handleRemoveLawyer(lawyer?.id)}
                       variant="ghost"
                       size="sm"
                       className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full"

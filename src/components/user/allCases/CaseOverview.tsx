@@ -176,7 +176,7 @@ export default function CaseOverview({ activeData }: CaseOverviewProps) {
       <AddLawyerModal
         open={addLawyerOpen}
         setOpen={() => setAddLawyerOpen(false)}
-        data={{ caseId: activeData?.id, caseName: activeData?.case_name }}
+        data={{ caseId: activeData?.id, responsible_lawyers: activeData?.responsible_lawyers }}
       />
     </div>
   );
