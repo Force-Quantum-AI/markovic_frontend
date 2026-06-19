@@ -1,5 +1,9 @@
-import { CheckCircle2, Settings } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, Settings, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDeletePackageMutation } from "@/store/features/admin/subscriptions/subscriptions.api";
+import { toast } from "sonner";
+import DeleteConfirmationDialog from "@/components/admin/categories/DeleteConfirmationDialog";
 
 export interface PackageProps {
   id: string;
@@ -12,6 +16,7 @@ export interface PackageProps {
   features: string[];
   actionText: string;
   showIcon?: boolean;
+  isVisible?: boolean;
 }
 
 export default function PackageCard({ 
@@ -21,10 +26,35 @@ export default function PackageCard({
   plan: PackageProps; 
   onUpdate?: (plan: PackageProps) => void;
 }) {
+  const [deletePackage, { isLoading: isDeleting }] = useDeletePackageMutation();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleDelete = async () => {
+    const toastId = toast.loading(`Deleting package "${plan.name}"...`);
+    try {
+      await deletePackage({ id: plan.id }).unwrap();
+      toast.success(`Package "${plan.name}" deleted successfully!`, { id: toastId });
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete package. Please try again.", { id: toastId });
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-[#BEC4D2]/40 p-6 flex flex-col w-[300px] xl:w-[320px] shadow-sm">
       <div className="flex justify-between items-center mb-1">
-        <h3 className="text-base font-semibold text-[#1A2328]">{plan.name}</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-base font-semibold text-[#1A2328]">{plan.name}</h3>
+          {plan.isVisible !== undefined && (
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+              plan.isVisible 
+                ? "bg-[#D0FAE5] text-[#007A55]" 
+                : "bg-gray-100 text-gray-500"
+            }`}>
+              {plan.isVisible ? "Enabled" : "Disabled"}
+            </span>
+          )}
+        </div>
         <span className="text-[13px] font-bold text-[#1A2328]">{plan.devices} Devices</span>
       </div>
       
@@ -51,14 +81,34 @@ export default function PackageCard({
         </ul>
       </div>
 
-      <Button 
-        variant="outline" 
-        onClick={() => onUpdate?.(plan)}
-        className="w-full border-[#135576] text-[#135576] hover:bg-[#135576]/5 hover:text-[#135576] rounded-full font-semibold h-10 mt-auto cursor-pointer"
-      >
-        {plan.showIcon && <Settings className="w-4 h-4 mr-2" />}
-        {plan.actionText}
-      </Button>
+      <div className="flex flex-col gap-3 w-full mt-auto">
+        <Button 
+          variant="outline" 
+          onClick={() => onUpdate?.(plan)}
+          className="w-full border-[#135576] text-[#135576] hover:bg-[#135576]/5 hover:text-[#135576] rounded-full font-semibold h-12 cursor-pointer flex items-center justify-center gap-2"
+        >
+          {plan.showIcon && <Settings className="w-4 h-4" />}
+          <span>{plan.actionText}</span>
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => setIsDeleteDialogOpen(true)}
+          disabled={isDeleting}
+          className="w-full border-[#EF4444] text-[#EF4444] hover:bg-[#EF4444]/5 hover:text-[#EF4444] rounded-full font-semibold h-12 cursor-pointer flex items-center justify-center gap-2"
+        >
+          <Trash2 className="w-4 h-4" />
+          <span>Delete package</span>
+        </Button>
+      </div>
+
+      <DeleteConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="Delete Subscription Package"
+        description={`Are you sure you want to delete the package "${plan.name}"? This action cannot be undone.`}
+        onConfirm={handleDelete}
+        isSubmitting={isDeleting}
+      />
     </div>
   );
 }

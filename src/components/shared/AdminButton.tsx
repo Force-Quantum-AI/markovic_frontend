@@ -52,7 +52,7 @@ export default function AdminButton({
       {/* Content wrapper */}
       <span className="relative z-10 flex items-center justify-center gap-2">
         {icon && <span className="shrink-0">{icon}</span>}
-        <span>{label}</span>
+        <span className="whitespace-nowrap">{label}</span>
       </span>
     </button>
   );

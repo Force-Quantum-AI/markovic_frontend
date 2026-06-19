@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Scale, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,14 +20,20 @@ interface LawCardProps {
   law: Law;
   onEdit?: (law: Law) => void;
   onDelete?: (law: Law) => void;
+  onExportPDF?: (law: Law) => void;
+  onView?: (law: Law) => void;
 }
 
-export default function LawCard({ law, onEdit, onDelete }: LawCardProps) {
-  const handleAction = (action: "edit" | "delete") => {
+export default function LawCard({ law, onEdit, onDelete, onExportPDF, onView }: LawCardProps) {
+  const handleAction = (action: "edit" | "delete" | "export-pdf" | "view") => {
     if (action === "edit" && onEdit) {
       onEdit(law);
     } else if (action === "delete" && onDelete) {
       onDelete(law);
+    } else if (action === "export-pdf" && onExportPDF) {
+      onExportPDF(law);
+    } else if (action === "view" && onView) {
+      onView(law);
     }
   };
 
@@ -63,8 +68,14 @@ export default function LawCard({ law, onEdit, onDelete }: LawCardProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent 
             align="end" 
-            className="w-32 bg-white rounded-2xl shadow-lg border border-[#EFF1F4] p-1.5 font-roboto"
+            className="w-36 bg-white rounded-2xl shadow-lg border border-[#EFF1F4] p-1.5 font-roboto"
           >
+            <DropdownMenuItem 
+              onClick={() => handleAction("view")}
+              className="flex items-center px-4 py-2.5 text-[15px] font-medium text-[#292E38] rounded-xl hover:bg-slate-50 cursor-pointer focus:bg-slate-50 focus:outline-none transition-colors"
+            >
+              View Details
+            </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => handleAction("edit")}
               className="flex items-center px-4 py-2.5 text-[15px] font-medium text-[#292E38] rounded-xl hover:bg-slate-50 cursor-pointer focus:bg-slate-50 focus:outline-none transition-colors"
@@ -72,8 +83,14 @@ export default function LawCard({ law, onEdit, onDelete }: LawCardProps) {
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem 
+              onClick={() => handleAction("export-pdf")}
+              className="flex items-center px-4 py-2.5 text-[15px] font-medium text-[#292E38] rounded-xl hover:bg-slate-50 cursor-pointer focus:bg-slate-50 focus:outline-none transition-colors"
+            >
+              Export
+            </DropdownMenuItem>
+            <DropdownMenuItem 
               onClick={() => handleAction("delete")}
-              className="flex items-center px-4 py-2.5 text-[15px] font-medium text-[#292E38] rounded-xl hover:bg-slate-50 cursor-pointer focus:bg-slate-50 focus:outline-none transition-colors text-slate-800"
+              className="flex items-center px-4 py-2.5 text-[15px] font-medium text-red-600 hover:text-red-700 hover:bg-red-50 focus:text-red-700 focus:bg-red-50 rounded-xl cursor-pointer focus:outline-none transition-colors"
             >
               Delete
             </DropdownMenuItem>

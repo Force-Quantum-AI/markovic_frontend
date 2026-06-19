@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -5,11 +6,10 @@ import Image from "next/image";
 import { Mail, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
 import Link from "next/link";
 import ForgotPasswordModal from "@/components/modals/ForgotPasswordModal";
-import { useAppDispatch } from "@/store/hooks";
 import { useLoginMutation } from "@/store/features/auth/authApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useSelector } from "react-redux";
+import AdminButton from "@/components/shared/AdminButton";
 
 export default function LoginPage() {
   // Form States
@@ -20,7 +20,6 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [login, { isLoading }] = useLoginMutation();
 
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -152,15 +151,13 @@ export default function LoginPage() {
 
               {/* Submit Button */}
               <div className="flex justify-center pt-4">
-                <button
+                <AdminButton
                   type="submit"
                   disabled={isLoading}
-                  onClick={handleSubmit}
-                  className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] disabled:opacity-60 text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm flex items-center justify-center gap-2"
-                >
-                  {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {isLoading ? "Logging in..." : "Log in"}
-                </button>
+                  label={isLoading ? "Logging in..." : "Log in"}
+                  icon={isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
+                  className="w-full sm:w-56"
+                />
               </div>
             </form>
 

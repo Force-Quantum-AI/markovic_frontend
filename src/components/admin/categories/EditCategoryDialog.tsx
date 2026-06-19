@@ -10,9 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import AdminButton from "@/components/shared/AdminButton";
 
-interface AddCategoryDialogProps {
+interface EditCategoryDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultName?: string;
   onSubmit: (name: string) => Promise<boolean>;
   isSubmitting?: boolean;
 }
@@ -21,29 +22,28 @@ type CategoryFormData = {
   name: string;
 };
 
-export default function AddCategoryDialog({
+export default function EditCategoryDialog({
   isOpen,
   onOpenChange,
+  defaultName = "",
   onSubmit,
   isSubmitting = false,
-}: AddCategoryDialogProps) {
+}: EditCategoryDialogProps) {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<CategoryFormData>({
-    defaultValues: {
-      name: "",
+    values: {
+      name: defaultName,
     },
   });
 
-  const handleCreateCategory = async (data: CategoryFormData) => {
+  const handleUpdateCategory = async (data: CategoryFormData) => {
     const name = data.name.trim();
 
     const success = await onSubmit(name);
     if (success) {
-      reset();
       onOpenChange(false);
     }
   };
@@ -61,10 +61,10 @@ export default function AddCategoryDialog({
         </DialogClose>
 
         <DialogTitle className="text-[#101828] font-roboto text-[24px] font-bold text-center mb-6">
-          Add Category
+          Edit Category
         </DialogTitle>
 
-        <form onSubmit={handleSubmit(handleCreateCategory)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleUpdateCategory)} className="space-y-4">
           <div className="space-y-1.5">
             <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">
               Category Name
@@ -98,7 +98,7 @@ export default function AddCategoryDialog({
           <div className="flex justify-end pt-4">
             <AdminButton
               type="submit"
-              label={isSubmitting ? "Saving..." : "Create Category"}
+              label={isSubmitting ? "Saving..." : "Update Category"}
               className="px-7 py-3"
               disabled={isSubmitting}
             />

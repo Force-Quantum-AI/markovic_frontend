@@ -90,21 +90,6 @@ const getDeadlineStr = (deadlines?: any[]) => {
 };
 
 export function CaseCard({
-  id,
-  case_number,
-  case_name,
-  client_name,
-  client_image,
-  category_name,
-  sub_category_name,
-  status_name,
-  court_name,
-  responsible_lawyers,
-  hearings,
-  deadlines,
-  bookmark,
-  created_at,
-
   category,
   clientName,
   clientImage,

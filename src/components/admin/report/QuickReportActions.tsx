@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Download, Users, DollarSign, FileText } from "lucide-react";
 import AdminButton from "@/components/shared/AdminButton";
 import { toast } from "sonner";

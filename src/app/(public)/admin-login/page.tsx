@@ -1,14 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
 import Image from "next/image";
 import { Mail, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
-import Link from "next/link";
-import { useAppDispatch } from "@/store/hooks";
-import { useAdminLoginMutation, useLoginMutation } from "@/store/features/auth/authApi";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useAdminLoginMutation } from "@/store/features/auth/authApi";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useSelector } from "react-redux";
+import AdminButton from "@/components/shared/AdminButton";
 
 export default function AdminLoginPage() {
   // Form States
@@ -18,10 +17,7 @@ export default function AdminLoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [adminLogin, { isLoading }] = useAdminLoginMutation();
-
-  const dispatch = useAppDispatch();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
 
   // Basic validation state to show the green checkmark from login.png
@@ -138,15 +134,13 @@ export default function AdminLoginPage() {
 
               {/* Submit Button */}
               <div className="flex justify-center pt-4">
-                <button
+                <AdminButton
                   type="submit"
                   disabled={isLoading}
-                  onClick={handleSubmit}
-                  className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] disabled:opacity-60 text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm flex items-center justify-center gap-2"
-                >
-                  {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {isLoading ? "Logging in..." : "Log in"}
-                </button>
+                  label={isLoading ? "Logging in..." : "Log in"}
+                  icon={isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
+                  className="w-full sm:w-56"
+                />
               </div>
             </form>
 
