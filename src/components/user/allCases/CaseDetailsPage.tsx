@@ -32,6 +32,7 @@ import NoteTab from "./NoteTab";
 import AddNewCase from "@/components/modals/AddNewCase";
 import { useGetLeftSideCaseDetailsQuery, useLazyGetRightSideCaseDetailsQuery } from "@/store/features/case/case.api";
 import { getImageUrl } from "@/lib/getImageUrl";
+import EditUserMainNote from "@/components/modals/EditUserMainNote";
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -344,7 +345,7 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
           {activeTab === "hearings" && <HearingsTab caseId={activeData.id} hearings={activeData.hearing_history} nextHearing={activeData.next_hearing} />}
           {activeTab === "deadlines" && <DeadlinesTab caseId={activeData.id} deadlines={activeData.deadline_history} nextDeadline={activeData.next_deadline} />}
           {activeTab === "documents" && <DocumentsTab caseId={activeData.id} documents={activeData.documents} />}
-          {activeTab === "notes" && <NoteTab caseId={activeData.id} notes={activeData.notes} />}
+          {activeTab === "notes" && <NoteTab caseId={activeData.id} />}
         </div>
       </main>
       <EditPersonalModal
@@ -361,7 +362,7 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
           avatarUrl: activeData.client_image ? (activeData.client_image.startsWith("http") ? activeData.client_image : `https://res.cloudinary.com/dnu0axtez/${activeData.client_image}`) : undefined
         }}
       />
-      <EditNoteModal
+      <EditUserMainNote
         open={editNotesOpen}
         setOpen={() => { setEditNotesOpen(false); }}
         data={{ note: activeData?.note || "", id: activeData?.id }}
