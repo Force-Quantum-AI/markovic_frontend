@@ -1,4 +1,4 @@
-import { HearingAndDeadlinePageDataParamsType, updateClientProfileInfoType } from "@/types/case.types";
+import { HearingAndDeadlineApiPayloadType, HearingAndDeadlinePageDataParamsType, updateClientProfileInfoType } from "@/types/case.types";
 import { baseApi } from "../../api/baseApi";
 
 export const caseApi = baseApi.injectEndpoints({
@@ -90,6 +90,60 @@ export const caseApi = baseApi.injectEndpoints({
         return {
           url: `/cases/${caseId}/lawyers/${lawyerId}/`,
           method: "DELETE",
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
+    addHearingInCase: builder.mutation({
+      query: ({ caseId, data }: {
+        caseId: string,
+        data: HearingAndDeadlineApiPayloadType
+      }) => {
+        return {
+          url: `/cases/${caseId}/hearings/`,
+          method: "POST",
+          body: data,
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
+    updateHearingInCase: builder.mutation({
+      query: ({ caseId, hearingId, data }: {
+        caseId: string,
+        hearingId: string,
+        data: HearingAndDeadlineApiPayloadType
+      }) => {
+        return {
+          url: `/cases/${caseId}/hearings/${hearingId}/`,
+          method: "PATCH",
+          body: data,
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
+    addDeadlineInCase: builder.mutation({
+      query: ({ caseId, data }: {
+        caseId: string,
+        data: HearingAndDeadlineApiPayloadType
+      }) => {
+        return {
+          url: `/cases/${caseId}/deadlines/`,
+          method: "POST",
+          body: data,
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
+    updateDeadlineInCase: builder.mutation({
+      query: ({ caseId, deadlineId, data }: {
+        caseId: string,
+        deadlineId: string,
+        data: HearingAndDeadlineApiPayloadType
+      }) => {
+        return {
+          url: `/cases/${caseId}/deadlines/${deadlineId}/`,
+          method: "PATCH",
+          body: data,
         }
       },
       invalidatesTags: ["case"],
@@ -210,6 +264,10 @@ export const {
   useUpdateOverviewInfoOfCaseMutation,
   useAsignLowerInCaseMutation,
   useDeleteAssignedLowerMutation,
+  useAddHearingInCaseMutation,
+  useUpdateHearingInCaseMutation,
+  useAddDeadlineInCaseMutation,
+  useUpdateDeadlineInCaseMutation,
   useCreateCaseMutation,
   // case hearing & deadline
   useAddCaseHearingMutation,

@@ -234,7 +234,7 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
                   }`}
               >
                 <Briefcase className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-2/3">
                   <p className="text-xs text-gray-600 leading-snug line-clamp-2">{c.case_name}</p>
                 </div>
                 <StatusBadge status={c.status_name} />

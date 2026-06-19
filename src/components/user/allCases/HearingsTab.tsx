@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Edit2, Calendar } from "lucide-react";
+import { Plus, Edit2, Calendar, TimerOff } from "lucide-react";
 import AddEditHearingModal from "@/components/modals/AddEditHearingModal";
 
 // 1. TypeScript Interface for type safety
@@ -44,7 +44,7 @@ const DUMMY_HEARINGS: Hearing[] = [
   },
 ];
 
-export default function HearingsTab({caseId, hearings = [], nextHearing = []}: {caseId: string, hearings?: any[], nextHearing?: any[]}) {
+export default function HearingsTab({ caseId, hearings = [], nextHearing = [] }: { caseId: string, hearings?: any[], nextHearing?: any[] }) {
   // Local state to handle dynamic additions/interactions in frontend
   const displayHearings = hearings.length > 0 ? hearings : [];
 
@@ -134,8 +134,11 @@ export default function HearingsTab({caseId, hearings = [], nextHearing = []}: {
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-400 border border-dashed rounded-xl">
-              No upcoming hearings scheduled.
+            <div className="flex flex-col items-center justify-center py-8">
+              <TimerOff className="w-16 h-16 text-gray-400" />
+              <div className="text-center  text-gray-400 ">
+                No Upcoming Hearings scheduled.
+              </div>
             </div>
           )}
         </div>
@@ -155,36 +158,45 @@ export default function HearingsTab({caseId, hearings = [], nextHearing = []}: {
         </h2>
         <hr className="border-gray-100 mb-4" />
 
-        <div className="space-y-3">
-          {displayHearings.map((hearing: any) => (
-            <div
-              key={hearing.id}
-              className="border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 hover:border-gray-300 transition-all bg-white"
-            >
-              {/* Date & Time block */}
-              <div className="w-1/3 min-w-[110px]">
-                <div className="text-gray-900 font-medium text-[15px]">
-                  {hearing.day}-{hearing.month}-{hearing.year}
-                </div>
-                <div className="text-gray-500 text-sm mt-0.5">
-                  {hearing.time_from} - {hearing.time_to} {hearing.am_pm}
-                </div>
-              </div>
-
-              {/* Court Location block */}
-              <div className="w-1/2 border-l text-nowrap md:text-wrap border-gray-100 pl-4 text-gray-600 text-sm font-normal">
-                {hearing.reason}
-              </div>
-
-              {/* Status Badge block */}
-              <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm capitalize">
-                <span className={getStatusStyles(hearing.status)}>
-                  {hearing.status}
-                </span>
-              </div>
+        {displayHearings.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8">
+            <TimerOff className="w-16 h-16 text-gray-400" />
+            <div className="text-center text-gray-400 ">
+              No hearings scheduled.
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {displayHearings.map((hearing: any) => (
+              <div
+                key={hearing.id}
+                className="border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 hover:border-gray-300 transition-all bg-white"
+              >
+                {/* Date & Time block */}
+                <div className="w-1/3 min-w-[110px]">
+                  <div className="text-gray-900 font-medium text-[15px]">
+                    {hearing.day}-{hearing.month}-{hearing.year}
+                  </div>
+                  <div className="text-gray-500 text-sm mt-0.5">
+                    {hearing.time_from} - {hearing.time_to} {hearing.am_pm}
+                  </div>
+                </div>
+
+                {/* Court Location block */}
+                <div className="w-1/2 border-l text-nowrap md:text-wrap border-gray-100 pl-4 text-gray-600 text-sm font-normal">
+                  {hearing.reason}
+                </div>
+
+                {/* Status Badge block */}
+                <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm capitalize">
+                  <span className={getStatusStyles(hearing.status)}>
+                    {hearing.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <AddEditHearingModal
         forModal="hearing"

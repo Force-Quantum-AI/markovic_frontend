@@ -87,6 +87,17 @@ export interface HearingAndDeadlinePageDataParamsType{
   page_size?: number;
 }
 
+export interface HearingAndDeadlineApiPayloadType{
+  reason: string,
+  status: string,
+  time_from: string,
+  time_to: string,
+  am_pm: string,
+  day: number,
+  month: number,
+  year: number
+}
+
 export interface CaseDocument {
   id: string;
   name: string;

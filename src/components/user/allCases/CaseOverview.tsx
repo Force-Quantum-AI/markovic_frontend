@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MoreVertical, Trash2, SquarePen } from "lucide-react";
+import { MoreVertical, Trash2, SquarePen, UserX } from "lucide-react";
 import { CaseDetail, Lawyer } from "@/types/case.types";
 import UpdateCaseOverviewModal from "@/components/modals/UpdateCaseOverviewModal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -133,6 +133,14 @@ export default function CaseOverview({ activeData }: CaseOverviewProps) {
           </button>
         </div>
 
+        {lawyers.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8">
+            <UserX className="w-16 h-16 text-gray-400 mb-3" />
+            <div className="text-center text-gray-400 ">
+              No lawyers assigned.
+            </div>
+          </div>
+        ) : (
         <div className="space-y-2">
           {lawyers.map((lawyer: any) => (
             <div
@@ -163,6 +171,7 @@ export default function CaseOverview({ activeData }: CaseOverviewProps) {
             </div>
           ))}
         </div>
+        )}
       </div>
 
       {/* ── Edit Overview Modal ── */}
