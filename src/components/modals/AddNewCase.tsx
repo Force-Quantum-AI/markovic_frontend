@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ChevronDown, X, Camera, Info, Loader2 } from "lucide-react";
 import { useAddCaseDeadlineMutation, useAddCaseHearingMutation, useCreateCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
+import { getImageUrl } from "@/lib/getImageUrl";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
 
@@ -56,6 +57,13 @@ interface AddNewCaseProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: (data: AddNewCaseFormData) => void;
+  clientName?: string;
+  clientId?: string;
+  clientAddress?: string;
+  clientEmail?: string;
+  clientPhoneNumber?: string;
+  clientAvatar?: string;
+  clientNote?: string;
 }
 
 // ─── STEPPER ICONS ───────────────────────────────────────────────────────────
@@ -474,51 +482,6 @@ function ScheduleStep({
   );
 }
 
-// ─── INITIAL SYSTEM FORM DICTIONARY ──────────────────────────────────────────
-
-const defaultFormData: AddNewCaseFormData = {
-  basicInfo: {
-    avatarUrl: "",
-    avatarFile: null,
-    clientName: "",
-    emailAddress: "",
-    phoneNumber: "",
-    personalIdNumber: "",
-    address: "",
-    note: "",
-  },
-  legalDetails: {
-    caseName: "",
-    category: "Civil Litigation",
-    subCategory: "Damages",
-    status: "Active",
-    responsibleLawyers: [],
-    court: "Montenegro suprime Court",
-    caseNumber: "",
-    opposingParties: [],
-  },
-  schedule: {
-    hearing: {
-      reason: "",
-      status: "Upcoming",
-      timeRange: "",
-      period: "AM",
-      date: "1",
-      month: "January",
-      year: "2026",
-    },
-    deadline: {
-      reason: "",
-      status: "Upcoming",
-      timeRange: "",
-      period: "AM",
-      date: "1",
-      month: "January",
-      year: "2026",
-    },
-  },
-};
-
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 // ─── HELPER: Build ISO date string from schedule card data ───────────────────
@@ -533,13 +496,58 @@ function buildDateString(card: DateCardData): string | undefined {
 
 // ─── MAIN MODAL COMPONENT ───────────────────────────────────────────────────
 
-export default function AddNewCase({ isOpen, onClose, onSubmit }: AddNewCaseProps) {
+export default function AddNewCase({ isOpen, onClose, onSubmit,clientName,clientId, clientAddress, clientEmail, clientPhoneNumber, clientAvatar, clientNote }: AddNewCaseProps) {
   const [currentStep, setCurrentStep] = useState(1);
+
+  // ─── INITIAL SYSTEM FORM DICTIONARY ──────────────────────────────────────────
+
+  const defaultFormData: AddNewCaseFormData = {
+    basicInfo: {
+      avatarUrl: clientAvatar ? getImageUrl(clientAvatar) : "",
+      avatarFile: null,
+      clientName: clientName || "",
+      emailAddress: clientEmail || "",
+      phoneNumber: clientPhoneNumber || "",
+      personalIdNumber: clientId || "",
+      address: clientAddress || "",
+      note: clientNote || "",
+    },
+    legalDetails: {
+      caseName: "",
+      category: "Civil Litigation",
+      subCategory: "Damages",
+      status: "Active",
+      responsibleLawyers: [],
+      court: "Montenegro suprime Court",
+      caseNumber: "",
+      opposingParties: [],
+    },
+    schedule: {
+      hearing: {
+        reason: "",
+        status: "Upcoming",
+        timeRange: "",
+        period: "AM",
+        date: "1",
+        month: "January",
+        year: "2026",
+      },
+      deadline: {
+        reason: "",
+        status: "Upcoming",
+        timeRange: "",
+        period: "AM",
+        date: "1",
+        month: "January",
+        year: "2026",
+      },
+    },
+  };
   const [formData, setFormData] = useState<AddNewCaseFormData>(defaultFormData);
 
   const [createCase, { isLoading }] = useCreateCaseMutation();
-  const [addCaseHearing, { isLoading: isHearingLoading }] = useAddCaseHearingMutation();
-  const [addCaseDeadline, { isLoading: isDeadlineLoading }] = useAddCaseDeadlineMutation();
+  const [addCaseHearing] = useAddCaseHearingMutation();
+  const [addCaseDeadline] = useAddCaseDeadlineMutation();
 
   const handleClose = () => {
     onClose();

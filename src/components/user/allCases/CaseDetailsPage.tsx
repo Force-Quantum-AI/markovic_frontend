@@ -144,6 +144,8 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
     return <div className="flex justify-center items-center h-screen text-gray-500">No data found.</div>;
   }
 
+  // const handleAddNewCase = async
+
   return (
     <div className="flex flex-col lg:flex-row gap-4 min-h-screen">
       {/* ════════════════════════════════════════════════════════════════
@@ -366,6 +368,13 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
       <AddNewCase
             isOpen={addCaseOpen}
             onClose={()=> setAddCaseOpen(false)}
+            clientName={activeData?.client_name || ""}
+            clientId={activeData?.personal_id || ""}
+            clientAddress={activeData?.client_address || ""}
+            clientEmail={activeData?.client_email || ""}
+            clientPhoneNumber={activeData?.client_phone || ""}
+            clientAvatar={activeData?.client_image || ""}
+            clientNote={activeData?.note || ""}
             />
     </div>
   );
