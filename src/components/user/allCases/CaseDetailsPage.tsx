@@ -122,6 +122,7 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
   const { data: caseDataOfLeftSide, isLoading: isLoadingCaseDataOfLeftSide } = useGetLeftSideCaseDetailsQuery(caseId);
   const [getRightSideCaseDetails, { data: caseDataOfRightSide, isFetching: isFetchingRightSide }] = useLazyGetRightSideCaseDetailsQuery();
 
+
   const [selectedRightCaseId, setSelectedRightCaseId] = useState<string | null>(null);
 
   const activeData = (selectedRightCaseId && caseDataOfRightSide) ? caseDataOfRightSide : caseDataOfLeftSide;
@@ -363,7 +364,7 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
       <EditNoteModal
         open={editNotesOpen}
         setOpen={() => { setEditNotesOpen(false); }}
-        data={{ note: activeData?.note || "" }}
+        data={{ note: activeData?.note || "", id: activeData?.id }}
       />
       <AddNewCase
             isOpen={addCaseOpen}

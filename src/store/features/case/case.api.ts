@@ -33,6 +33,14 @@ export const caseApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["case"],
     }),
+    updateClientNote: builder.mutation<any, {caseId: string, data: {note: string}}>({
+      query: ({caseId, data}) => ({
+        url: `/cases/${caseId}/update/note/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["case"],
+    }),
     // get case details for right side
     getRightSideCaseDetails: builder.query<any, {leftCaseId: string, rightCaseId: string}>({
       query: ({leftCaseId, rightCaseId}) => ({
@@ -151,6 +159,7 @@ export const {
   // left side 
   useGetLeftSideCaseDetailsQuery,
   useUpdateClientProfileInfoMutation,
+  useUpdateClientNoteMutation,
   // right side 
   useLazyGetRightSideCaseDetailsQuery,
   useCreateCaseMutation,

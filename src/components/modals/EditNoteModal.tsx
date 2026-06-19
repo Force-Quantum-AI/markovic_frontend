@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useUpdateClientNoteMutation } from "@/store/features/case/case.api";
+import { toast } from "sonner";
 
 interface EditNoteModalProps {
   open: boolean;
@@ -24,17 +26,26 @@ interface EditNoteModalProps {
 export default function EditNoteModal({ open, setOpen, data, onSave }: EditNoteModalProps) {
   const [note, setNote] = useState("");
 
+  const [updateClientNote, {isLoading}] = useUpdateClientNoteMutation()
+
   useEffect(() => {
     if (open && data?.note !== undefined) {
       setNote(data.note);
     }
   }, [open, data?.note]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (data?.id) {
-      // Update existing note
+      try {
+        await updateClientNote({caseId: data.id, data: {note: note}}).unwrap();
+        toast.success("Note updated successfully");
+        setOpen(false);
+      } catch (error) {
+        console.log(error)
+        toast.error("Failed to update note");
+      }
     } else {
-      // Save new note
+      // api for Save new note
     }
     if (onSave) {
       onSave(note);
@@ -81,7 +92,7 @@ export default function EditNoteModal({ open, setOpen, data, onSave }: EditNoteM
               onClick={handleSave}
               className="bg-[#135576] hover:bg-[#0e445e] text-white rounded-xl"
             >
-              Update note
+              {isLoading ? "Updating..." : "Update note"}
             </Button>
           ) : (
             <Button
