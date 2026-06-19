@@ -103,7 +103,7 @@ export default function CategoriesPage() {
             id: String(sub.id),
             name: sub.name,
             description: sub.created_at
-              ? `Created ${new Date(sub.created_at).toLocaleDateString()}`
+              ? `Created ${new Date(sub.created_at).toLocaleDateString("en-US", { timeZone: "UTC" })}`
               : "No description available",
             status: "Active" as const,
             cases: 0,
@@ -113,7 +113,7 @@ export default function CategoriesPage() {
           id: String(category.id),
           name: category.name,
           description: category.created_at
-            ? `Created ${new Date(category.created_at).toLocaleDateString()}`
+            ? `Created ${new Date(category.created_at).toLocaleDateString("en-US", { timeZone: "UTC" })}`
             : "No description available",
           status: "Active",
           subcategories: subList,

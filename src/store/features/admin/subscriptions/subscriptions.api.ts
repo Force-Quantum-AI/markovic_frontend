@@ -7,6 +7,7 @@ import {
   SubscriptionPlan,
   UpdatePlanPayload,
   CreateCustomSubscriptionType,
+  SubscriptionRequestResponse,
 } from "./subscriptions.type";
 
 const subscriptionsApi = baseApi.injectEndpoints({
@@ -14,15 +15,6 @@ const subscriptionsApi = baseApi.injectEndpoints({
     createSubscription: build.mutation<any, CreateSubscriptionPlan>({
       query: (data) => ({
         url: "/subscription/plans/",
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["Subscription"],
-    }),
-
-    createCustomSubscription: build.mutation<any, CreateCustomSubscriptionType>({
-      query: (data) => ({
-        url: "/subscription/custom/",
         method: "POST",
         body: data,
       }),
@@ -61,6 +53,36 @@ const subscriptionsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Subscription"],
     }),
+
+    // subscription request api 
+
+    createCustomSubscription: build.mutation<any, CreateCustomSubscriptionType>({
+      query: (data) => ({
+        url: "/subscription/custom/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Subscription"],
+    }),
+
+    getAllSubscriptionRequest: build.query<SubscriptionRequestResponse, void>({
+      query: () => ({
+        url: "/subscription/requests/",
+        method: "GET",
+      }),
+      providesTags: ["Subscription"],
+    }),
+
+    updateSubscriptionRequest: build.mutation<any, { id: number | string; data: { action: "approved" | "decline" } }>({
+      query: ({ id, data }) => ({
+        url: `/subscription/requests/${id}/`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Subscription"],
+    }),
+
+    // ---------------------------
   }),
 });
 
@@ -71,4 +93,6 @@ export const {
   useGetSingleSubscriptionQuery,
   useUpdateSubscriptionMutation,
   useDeletePackageMutation,
+  useGetAllSubscriptionRequestQuery,
+  useUpdateSubscriptionRequestMutation,
 } = subscriptionsApi;

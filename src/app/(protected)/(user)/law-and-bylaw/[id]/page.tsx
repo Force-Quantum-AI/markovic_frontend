@@ -6,8 +6,7 @@ import { useParams } from "next/navigation";
 import { 
   ArrowLeft, 
   Star, 
-  Copy, 
-  Link2, 
+  Copy,  
   Printer, 
   FileText, 
   ChevronDown 

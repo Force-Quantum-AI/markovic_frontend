@@ -85,7 +85,7 @@ export default function CustomSubscriptionDialog({
           Custom Subscription
         </DialogTitle>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full font-roboto overflow-y-auto pr-2 flex-1 custom-scrollbar pt-2 min-h-0">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full font-roboto overflow-y-auto px-1 flex-1 custom-scrollbar pt-2 min-h-0">
             {/* User Email */}
             <div className="space-y-2">
               <label className="block text-[#344054] font-roboto text-[14px] font-medium leading-[20px]">
@@ -104,7 +104,7 @@ export default function CustomSubscriptionDialog({
               <div className="flex items-start gap-1.5 mt-2 text-[#155EEF]">
                 <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span className="font-roboto text-[12px] font-normal leading-[18px]">
-                  Type email to add your co-worker to this case.
+                  Type user email address to provide custom subscription.
                 </span>
               </div>
             </div>

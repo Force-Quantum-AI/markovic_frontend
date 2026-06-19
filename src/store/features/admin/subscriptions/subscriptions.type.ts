@@ -65,3 +65,23 @@ export type CreateCustomSubscriptionType = {
     user_email: string;
     devices: number;
 }
+
+// subscription request type 
+
+export type SubscriptionRequest = {
+  id: number;
+  user_email: string;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  devices_needed: number;
+  message: string;
+  status: "pending" | "approved" | "declined";
+  admin_note: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type SubscriptionRequestResponse = SubscriptionRequest[];
+
+// -----------------------------
