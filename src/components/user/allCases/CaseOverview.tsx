@@ -169,7 +169,8 @@ export default function CaseOverview({ activeData }: CaseOverviewProps) {
       <UpdateCaseOverviewModal
         open={editOpen}
         setOpen={setEditOpen}
-      // data={activeData}
+        data={activeData}
+        caseId={activeData?.id}
       />
 
       <AddLawyerModal

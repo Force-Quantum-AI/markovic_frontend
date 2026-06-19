@@ -1,6 +1,8 @@
 // import { CaseStatusOption } from "@/types/case.types";
 
-// export const CaseStatusOptions: CaseStatusOption[] = [
+import { SelectOptionType } from "@/types/selectOptions";
+
+// export const CaseStatusOptions: SelectOptionType[] = [
 //     { value: "Upcoming", label: "Active" },
 //     { value: "Overdue", label: "On appeal" },
 //     { value: "Completed", label: "In enforcement" },
@@ -11,7 +13,7 @@
 //     { value: "Canceled", label: "Archived" },
 // ]
 
-// export const CaseCategoryOptions: CaseStatusOption[] = [
+// export const CaseCategoryDummyOptions: CaseStatusOption[] = [
 //     { value: "Civil Litigation", label: "Civil Litigation" },
 //     { value: "Criminal Law", label: "Criminal Law" },
 //     { value: "Family Law", label: "Family Law" },
