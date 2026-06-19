@@ -104,3 +104,25 @@ export interface CaseNote {
   content: string;
   createdAt: string;
 }
+
+export interface updateClientProfileInfoType {
+  client_image?: File | null;
+  data: {
+  client_name: string;
+  client_email: string;
+  client_phone: string;
+  client_address: string;
+  };
+}
+
+export interface UserData {
+  avatarUrl?: string; // preview only
+
+  avatarFile?: File | null; // actual file
+
+  name: string;
+  email: string;
+  phone: string;
+  personalId: string;
+  address: string;
+}

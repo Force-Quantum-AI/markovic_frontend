@@ -1,4 +1,4 @@
-import { HearingAndDeadlinePageDataParamsType } from "@/types/case.types";
+import { HearingAndDeadlinePageDataParamsType, updateClientProfileInfoType } from "@/types/case.types";
 import { baseApi } from "../../api/baseApi";
 
 export const caseApi = baseApi.injectEndpoints({
@@ -17,6 +17,21 @@ export const caseApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["case"],
+    }),
+    updateClientProfileInfo: builder.mutation<any, {caseId: string, data: updateClientProfileInfoType}>({
+      query: ({caseId, data}) => {
+        const formData = new FormData();
+        formData.append("data", JSON.stringify(data.data));
+        if (data.client_image) {
+          formData.append("client_image", data.client_image);
+        }
+        return {
+          url: `/cases/${caseId}/update/client/`,
+          method: "PATCH",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["case"],
     }),
     // get case details for right side
     getRightSideCaseDetails: builder.query<any, {leftCaseId: string, rightCaseId: string}>({
@@ -132,7 +147,11 @@ export const caseApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllCasesQuery,
+  // case details page 
+  // left side 
   useGetLeftSideCaseDetailsQuery,
+  useUpdateClientProfileInfoMutation,
+  // right side 
   useLazyGetRightSideCaseDetailsQuery,
   useCreateCaseMutation,
   // case hearing & deadline

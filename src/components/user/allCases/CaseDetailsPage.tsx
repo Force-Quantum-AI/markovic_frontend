@@ -345,7 +345,16 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
       <EditPersonalModal
         open={editPersonalOpen}
         setOpen={setEditPersonalOpen}
-        data={{...activeData, name: activeData.client_name, phone: activeData.client_phone, email: activeData.client_email, address: activeData.client_address, personalId: activeData.personal_id}}
+        caseId={activeData.id}
+        data={{
+          ...activeData,
+          name: activeData.client_name,
+          phone: activeData.client_phone,
+          email: activeData.client_email,
+          address: activeData.client_address,
+          personalId: activeData.personal_id,
+          avatarUrl: activeData.client_image ? (activeData.client_image.startsWith("http") ? activeData.client_image : `https://res.cloudinary.com/dnu0axtez/${activeData.client_image}`) : undefined
+        }}
       />
       <EditNoteModal
         open={editNotesOpen}
