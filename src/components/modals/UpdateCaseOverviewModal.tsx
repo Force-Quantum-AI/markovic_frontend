@@ -11,9 +11,9 @@ import {
 
 import { InputField } from "@/components/shared/InputField";
 import { SelectField } from "../shared/SelectField";
-import { CaseStatusOptions } from "@/data/selectDropdownData";
+import { CaseStatusOptions, NewCaseStatusOptions } from "@/data/selectDropdownData";
 import { TextAreaField } from "../shared/TextAreaField";
-import { useUpdateOverviewInfoOfCaseMutation } from "@/store/features/case/case.api";
+import { useMakeCompleteCaseMutation, useUpdateOverviewInfoOfCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
 
 interface UpdateCaseOverviewModalProps {
@@ -62,7 +62,7 @@ function buildInitialFormData(d: any): OverviewFormData {
     category_name: d?.category_name || "",
     sub_category: d?.sub_category ?? 0,
     sub_category_name: d?.sub_category_name || "",
-    status: d?.status ?? 0,
+    status: d?.status ?? 1,
     status_name: d?.status_name || "",
     court: d?.court ?? 100,
     court_name: d?.court_name || "",
@@ -86,6 +86,7 @@ export default function UpdateCaseOverviewModal({
 
   const [updateOverviewInfoOfCase, { isLoading }] =
     useUpdateOverviewInfoOfCaseMutation();
+  const [makeCompleteCase, { isLoading: isCompleteCaseLoading }] = useMakeCompleteCaseMutation()
 
   useEffect(() => {
     if (data) {
@@ -95,24 +96,34 @@ export default function UpdateCaseOverviewModal({
 
   const handleInputChange =
     (field: keyof OverviewFormData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: e.target.value,
+        }));
+      };
 
   const handleTextAreaChange =
     (field: keyof OverviewFormData) =>
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
-    };
+      (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: e.target.value,
+        }));
+      };
 
   const handleUpdate = async () => {
     try {
+      if (formData.status === 7 || formData.status === 8) {
+        await makeCompleteCase({
+          caseId,
+          description: formData.shortDescription,
+        }).unwrap();
+        toast.success("Case completed successfully.");
+        setOpen(false);
+        return;
+      }
+
       await updateOverviewInfoOfCase({
         caseId,
         data: {
@@ -287,18 +298,18 @@ export default function UpdateCaseOverviewModal({
             {/* Status */}
             <SelectField
               label="Status:"
-              value={formData.status_name}
+              value={formData.status}
               onChange={(value: any) =>
                 setFormData((prev) => ({
                   ...prev,
-                  status_name: value,
+                  status: Number(value),
                 }))
               }
-              options={CaseStatusOptions}
+              options={NewCaseStatusOptions}
             />
 
-            {formData.status_name === "Finished" ||
-            formData.status_name === "Archived" ? (
+            {formData.status === 7 ||
+              formData.status === 8 ? (
               <TextAreaField
                 label="Short description :"
                 placeholder="write short description here..."

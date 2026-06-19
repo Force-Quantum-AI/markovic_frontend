@@ -69,6 +69,19 @@ export const caseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["case"],
     }),
+    makeCompleteCase: builder.mutation({
+      query: ({ caseId, description }: {
+        caseId: string,
+        description: string
+      }) => {
+        return {
+          url: `/cases/${caseId}/close/`,
+          method: "PATCH",
+          body: { description }
+        }
+      },
+      invalidatesTags: ["case"],
+    }),
     asignLowerInCase: builder.mutation({
       query: ({ caseId, email }: {
         caseId: string,
@@ -262,6 +275,7 @@ export const {
   // right side 
   useLazyGetRightSideCaseDetailsQuery,
   useUpdateOverviewInfoOfCaseMutation,
+  useMakeCompleteCaseMutation,
   useAsignLowerInCaseMutation,
   useDeleteAssignedLowerMutation,
   useAddHearingInCaseMutation,

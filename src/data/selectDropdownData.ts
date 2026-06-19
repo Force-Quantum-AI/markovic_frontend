@@ -41,3 +41,15 @@ export const CaseStatusOptions: string[] = [
     "Finished",
     "Archived",
 ];
+
+export const NewCaseStatusOptions: SelectOptionType[] = [
+    { id: 1, name: "Active" },
+    { id: 2, name: "On appeal" },
+    { id: 3, name: "In enforcement" },
+    { id: 4, name: "Before Const. Court" },
+    { id: 5, name: "Before Euro. Court of H.Rights" },
+    { id: 6, name: "On revision" },
+    { id: 7, name: "Finished" },
+    { id: 8, name: "Archived" },
+];
+    
