@@ -1,8 +1,10 @@
 "use client";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { CaseCard } from "@/components/shared/CaseCard";
+import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { useRouter } from "next/navigation";
+import { useGetAllCasesQuery } from "@/store/features/case/case.api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // --- TYPES FOR REUSABLE CARD ---
 export interface HearingCardProps {
@@ -19,61 +21,62 @@ export interface HearingCardProps {
   deadline: string;
 }
 
-  // Dummy dataset replicating image contents precisely
-export  const hearingsDataset: HearingCardProps[] = [
-    {
-      category: "Civil",
-      clientName: "Vazquez Maria Liisana",
-      clientImage: "/dummy-user.jpg",
-      caseDescription: "Vazquez/Lovcen Insurance - damages claim - P 104/24 - basic Vourt Podgorica",
-      status: "Active",
-      court: "Montenegro Law Court",
-      caseNumber: "CS-126097-AGVT",
-      assignedLawyers: [
-        "/dummy-user.jpg",
-        "/dummy-user.jpg",
-        "TD",
-      ],
-      hearingDate: "20 May 2026",
-      deadline: "Not Assign",
-    },
-    {
-      category: "Civil",
-      clientName: "Esther Howard",
-      clientImage: "/dummy-user.jpg",
-      caseDescription: "Vazquez/Lovcen Insurance - damages claim - P 104/24 - basic Vourt Podgorica",
-      status: "On appeal",
-      court: "Montenegro Law Court",
-      caseNumber: "CS-126097-AGVT",
-      assignedLawyers: [
-        "/dummy-user.jpg",
-        "/dummy-user.jpg",
-        "TD",
-      ],
-      hearingDate: "20 May 2026",
-      deadline: "Not Assign",
-    },
-    {
-      category: "Criminal",
-      clientName: "Darlene Robertson",
-      clientImage: "/dummy-user.jpg",
-      caseDescription: "Vazquez/Lovcen Insurance - damages claim - P 104/24 - basic Vourt Podgorica",
-      status: "On revision",
-      court: "Montenegro Law Court",
-      caseNumber: "CS-126097-AGVT",
-      assignedLawyers: [
-        "/dummy-user.jpg",
-        "/dummy-user.jpg",
-        "TD",
-      ],
-      hearingDate: "20 May 2026",
-      deadline: "Not Assign",
-    },
-  ];
+// Dummy dataset replicating image contents precisely
+export const hearingsDataset: HearingCardProps[] = [
+  {
+    category: "Civil",
+    clientName: "Vazquez Maria Liisana",
+    clientImage: "/dummy-user.jpg",
+    caseDescription: "Vazquez/Lovcen Insurance - damages claim - P 104/24 - basic Vourt Podgorica",
+    status: "Active",
+    court: "Montenegro Law Court",
+    caseNumber: "CS-126097-AGVT",
+    assignedLawyers: [
+      "/dummy-user.jpg",
+      "/dummy-user.jpg",
+      "TD",
+    ],
+    hearingDate: "20 May 2026",
+    deadline: "Not Assign",
+  },
+  {
+    category: "Civil",
+    clientName: "Esther Howard",
+    clientImage: "/dummy-user.jpg",
+    caseDescription: "Vazquez/Lovcen Insurance - damages claim - P 104/24 - basic Vourt Podgorica",
+    status: "On appeal",
+    court: "Montenegro Law Court",
+    caseNumber: "CS-126097-AGVT",
+    assignedLawyers: [
+      "/dummy-user.jpg",
+      "/dummy-user.jpg",
+      "TD",
+    ],
+    hearingDate: "20 May 2026",
+    deadline: "Not Assign",
+  },
+  {
+    category: "Criminal",
+    clientName: "Darlene Robertson",
+    clientImage: "/dummy-user.jpg",
+    caseDescription: "Vazquez/Lovcen Insurance - damages claim - P 104/24 - basic Vourt Podgorica",
+    status: "On revision",
+    court: "Montenegro Law Court",
+    caseNumber: "CS-126097-AGVT",
+    assignedLawyers: [
+      "/dummy-user.jpg",
+      "/dummy-user.jpg",
+      "TD",
+    ],
+    hearingDate: "20 May 2026",
+    deadline: "Not Assign",
+  },
+];
 
 
 // --- MAIN GRID MODULE WRAPPER ---
 export default function UpcomingHearings() {
+  const { data: allCases, isLoading: isAllCasesLoading } = useGetAllCasesQuery();
   const router = useRouter();
   return (
     <section className="w-full max-w-7xl mx-auto p-3 md:p-5 space-y-3 md:space-y-6 bg-white rounded-2xl">
@@ -89,20 +92,26 @@ export default function UpcomingHearings() {
 
       {/* Grid Container Matrix mapping responsive column breakdowns */}
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-        {hearingsDataset.map((card, index) => (
+        {isAllCasesLoading ? (
+          <>
+            <Skeleton className="aspect-square rounded-lg bg-gray-300" />
+            <Skeleton className="aspect-square rounded-lg bg-gray-300" />
+            <Skeleton className="aspect-square rounded-lg bg-gray-300" />
+          </>
+        ) : allCases?.results?.slice(0, 3).map((card: CaseCardProps, index: number) => (
           <CaseCard key={index} {...card} />
         ))}
       </div>
 
       {/* Pagination control buttons positioned at the bottom right */}
       <div className="flex items-center justify-end gap-3 pt-2">
-        <button 
+        <button
           aria-label="Previous page"
           className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 shadow-sm"
         >
           <ArrowLeft className="w-4 h-4 stroke-[2]" />
         </button>
-        <button 
+        <button
           aria-label="Next page"
           className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 shadow-sm"
         >

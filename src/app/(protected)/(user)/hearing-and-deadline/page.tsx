@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { InputField } from "@/components/shared/InputField";
 import { SelectField } from "@/components/shared/SelectField";
+import { useGetHearingAndDeadlinePageDataQuery } from "@/store/features/case/case.api";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
@@ -18,9 +19,16 @@ export default function HearingAndDeadlinePage() {
     const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
     const [selectedSubCategory, setSelectedSubCategory] = useState("All");
     const [hearingDate, setHearingDate] = useState({ day: "", month: "", year: "" });
+    const [deadlineDate, setDeadlineDate] = useState({ day: "", month: "", year: "" });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
     const totalPages = 4;
+
+    const { data, isLoading, error } = useGetHearingAndDeadlinePageDataQuery({});
+
+    useEffect(() => {
+        // Here you would typically make an API call to fetch the data based on the filters and pagination changes
+    }, [searchQuery, selectedCategory, selectedSubCategory, hearingDate, deadlineDate, currentPage]);
 
 
     const handlePageChange = (page: number) => {
@@ -182,7 +190,7 @@ export default function HearingAndDeadlinePage() {
 
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
                 <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                    {hearingsDataset.map((card, index) => (
+                    {data?.cases?.results.map((card:any, index: number) => (
                         <CaseCard key={index} {...card} />
                     ))}
                 </div>

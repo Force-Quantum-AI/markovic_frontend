@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import MainButton from "@/components/shared/MainButton";
-import { CaseCard } from "@/components/shared/CaseCard";
+import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "../dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
+import { useGetAllCasesQuery } from "@/store/features/case/case.api";
+import { Skeleton } from "@/components/ui/skeleton";
+import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 
 type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
@@ -13,6 +16,8 @@ const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcem
 const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
 
 export default function AllCasesPage() {
+    const { data: allCases, isLoading: isAllCasesLoading } = useGetAllCasesQuery();
+
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
     const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
@@ -62,9 +67,9 @@ export default function AllCasesPage() {
     return (
         <div className="mx-auto w-full max-w-7xl p-2 md:p-3">
             <PageHeadingTitle
-        title="My Cases"
-        subtitle="All your cases in one place"
-      />
+                title="My Cases"
+                subtitle="All your cases in one place"
+            />
             {/* Search Bar */}
             <div className="mb-6 flex items-center gap-5">
                 <div className="relative grow">
@@ -168,57 +173,62 @@ export default function AllCasesPage() {
                 </div>
 
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
-                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                    {hearingsDataset.map((card, index) => (
-                        <CaseCard key={index} {...card} />
-                    ))}
-                </div>
-            
-
-            {/* Pagination */}
-            <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap">  
-                <p className="text-[#427791] text-xs md:text-base">Showing {1} to {Math.min(currentPage, hearingsDataset.length)} of {hearingsDataset.length} cases</p>
-            {totalPages > 1 && (
-                <div className="flex items-center justify-end gap-2">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === 1
-                                ? "cursor-not-allowed border-gray-200 text-gray-300"
-                                : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
-                            }`}
-                    >
-                       <ChevronLeft className="h-4 w-4" /> Prev 
-                    </button>
-
-                    <div className="flex gap-1">
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                            <button
-                                key={page}
-                                onClick={() => handlePageChange(page)}
-                                className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${currentPage === page
-                                        ? "bg-[#135576] text-white"
-                                        : "text-gray-600 hover:bg-gray-100"
-                                    }`}
-                            >
-                                {page}
-                            </button>
+                {isAllCasesLoading ? (
+                    <CaseCardSkeleton cardNumber={3}/>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
+                        {allCases?.results ? allCases?.results.map((card: CaseCardProps, index: number) => (
+                            <CaseCard key={index} {...card} />
+                        )): allCases.map((card: CaseCardProps, index: number) => (
+                            <CaseCard key={index} {...card} />
                         ))}
                     </div>
+                )}
 
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === totalPages
-                                ? "cursor-not-allowed border-gray-200 text-gray-300"
-                                : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
-                            }`}
-                    >
-                       Next <ChevronRight className="h-4 w-4" />
-                    </button>
+                {/* Pagination */}
+                <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap">
+                    <p className="text-[#427791] text-xs md:text-base">Showing {1} to {Math.min(currentPage, hearingsDataset.length)} of {hearingsDataset.length} cases</p>
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-end gap-2">
+                            <button
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === 1
+                                    ? "cursor-not-allowed border-gray-200 text-gray-300"
+                                    : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
+                                    }`}
+                            >
+                                <ChevronLeft className="h-4 w-4" /> Prev
+                            </button>
+
+                            <div className="flex gap-1">
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                    <button
+                                        key={page}
+                                        onClick={() => handlePageChange(page)}
+                                        className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${currentPage === page
+                                            ? "bg-[#135576] text-white"
+                                            : "text-gray-600 hover:bg-gray-100"
+                                            }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === totalPages
+                                    ? "cursor-not-allowed border-gray-200 text-gray-300"
+                                    : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
+                                    }`}
+                            >
+                                Next <ChevronRight className="h-4 w-4" />
+                            </button>
+                        </div>
+                    )}
                 </div>
-            )}
-            </div>
             </section>
         </div>
     );

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Scale, Star } from "lucide-react";
+import { Loader, Scale, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useToggleBookmarkedLawsMutation } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
 
 export interface LawCardProps {
   id?: string;
@@ -11,17 +13,31 @@ export interface LawCardProps {
   category: string;
   officialGazette: string;
   lastUpdate: string;
+  bookmark?: boolean;
 }
 
 export function LawCard({
-  id="1",
+  id = "1",
   title,
   category,
   officialGazette,
   lastUpdate,
+  bookmark,
 }: LawCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(bookmark || false);
+  const [toggleBookmarkedLaws, { isLoading }] = useToggleBookmarkedLawsMutation();
+
   const navigate = useRouter()
+
+  const handleAddToFavorite = async (e: React.MouseEvent) => {
+    try {
+      await toggleBookmarkedLaws({ id }).unwrap()
+      toast.success(isFavorite ? "Law removed from favorite" : "Law added to favorite")
+    } catch (error) {
+      console.log("error is", error);
+      toast.error("Failed to add case to favorite")
+    }
+  };
 
   return (
     <div
@@ -51,7 +67,7 @@ export function LawCard({
 
         {/* Favorite */}
         <button
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={handleAddToFavorite}
           className="
             flex
             h-10
@@ -65,14 +81,18 @@ export function LawCard({
             z-999
           "
         >
-          <Star
-            className={cn(
-              "h-5 w-5 transition-all",
-              isFavorite
-                ? "fill-yellow-400 text-yellow-400"
-                : "text-slate-500"
-            )}
-          />
+          {isLoading ? (
+            <Loader className="w-4 h-4 animate-spin text-gray-500" />
+          ) : (
+            <Star
+              className={cn(
+                "h-5 w-5 transition-all",
+                isFavorite
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "text-slate-500"
+              )}
+            />
+          )}
         </button>
       </div>
 

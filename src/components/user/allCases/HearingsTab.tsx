@@ -44,7 +44,7 @@ const DUMMY_HEARINGS: Hearing[] = [
   },
 ];
 
-export default function HearingsTab() {
+export default function HearingsTab({caseId}: {caseId: string}) {
   // Local state to handle dynamic additions/interactions in frontend
   const [hearings, setHearings] = useState<Hearing[]>(DUMMY_HEARINGS);
 
@@ -58,7 +58,7 @@ export default function HearingsTab() {
   const [mode, setMode] =
     useState<"add" | "edit">("add");
 
-  const handleAddHearing = () => {
+  const handleAddHearing = async () => {
     setMode("add");
     setSelectedHearing(null);
     setOpenModal(true);

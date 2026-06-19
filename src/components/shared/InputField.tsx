@@ -3,8 +3,9 @@ export function InputField({
     icon, 
     placeholder = 'Search here...', 
     value = '', 
+    inputType = "text",
     onChange 
-}: { label?: string; icon?: React.ReactNode; placeholder: string; value?: string | number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
+}: { label?: string; icon?: React.ReactNode; placeholder: string; value?: string | number; inputType?: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
     return (
         <div className="">
             {label &&
@@ -15,7 +16,7 @@ export function InputField({
             <div className="relative flex items-center gap-2 w-full rounded-full border border-gray-200 bg-gray-100 py-2.5 pl-4 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]">
                 {icon && icon}
                 <input
-                    type="text"
+                    type={inputType}
                     placeholder={placeholder}
                     value={value}
                     onChange={onChange}

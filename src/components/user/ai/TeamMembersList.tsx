@@ -1,56 +1,70 @@
 import React from "react";
 
-// ─── DUMMY DATASET ─────────────────────────────────────────────────────────
+interface Lawyer {
+  id: string;
+  full_name: string;
+  email?: string;
+  professional_role?: string | null;
+  profile_image?: string | null;
+}
 
-const teamMembers = [
-  { id: 1, name: "Sarah Mitchell", role: "Lead Lawyer", initials: "SM", isLead: true },
-  { id: 2, name: "James Chen", role: "Associate Lawyer", initials: "JC", isLead: false },
-  { id: 3, name: "Emily Torres", role: "Paralegal", initials: "ET", isLead: false },
-  { id: 4, name: "Robert Kim", role: "Case Manager", initials: "RK", isLead: false },
-  { id: 5, name: "Lisa Park", role: "Legal Assistant", initials: "LP", isLead: false },
-];
+interface TeamMembersListProps {
+  lawyers?: Lawyer[];
+}
 
-// Helper to assign background colors to initials
-const getInitialsColor = (initials: string) => {
-  const colors: Record<string, string> = {
-    "SM": "bg-slate-700",
-    "JC": "bg-teal-600",
-    "ET": "bg-violet-600",
-    "RK": "bg-red-600",
-    "LP": "bg-orange-600",
-  };
-  return colors[initials] || "bg-gray-400";
+// Helper to get initials from full name
+const getInitials = (name: string): string => {
+  return name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
 };
 
-export default function TeamMembersList() {
+// Helper to assign background colors
+const getInitialsColor = (initials: string, index: number) => {
+  const colors = [
+    "bg-slate-700",
+    "bg-teal-600",
+    "bg-violet-600",
+    "bg-red-600",
+    "bg-orange-600",
+    "bg-pink-600",
+    "bg-cyan-600",
+    "bg-emerald-600",
+  ];
+  return colors[index % colors.length];
+};
+
+export default function TeamMembersList({ lawyers = [] }: TeamMembersListProps) {
   return (
     <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Team Members</h2>
+      <h2 className="text-xl font-bold text-gray-900 mb-6">Responsible Lawyers</h2>
       
       <div className="space-y-6">
-        {teamMembers.map((member) => (
-          <div key={member.id} className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {/* Initials Avatar */}
-              <div className={`w-12 h-12 flex items-center justify-center rounded-full text-white font-bold text-sm ${getInitialsColor(member.initials)}`}>
-                {member.initials}
+        {lawyers && lawyers.length > 0 ? (
+          lawyers.map((lawyer, index) => {
+            const initials = getInitials(lawyer.full_name);
+            return (
+              <div key={lawyer.id} className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  {/* Initials Avatar */}
+                  <div className={`w-12 h-12 flex items-center justify-center rounded-full text-white font-bold text-sm ${getInitialsColor(initials, index)}`}>
+                    {initials}
+                  </div>
+                  
+                  {/* Name and Role */}
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900">{lawyer.full_name}</h3>
+                    <p className="text-xs text-gray-500 font-medium">{lawyer.professional_role || "Lawyer"}</p>
+                  </div>
+                </div>
               </div>
-              
-              {/* Name and Role */}
-              <div>
-                <h3 className="text-sm font-bold text-gray-900">{member.name}</h3>
-                <p className="text-xs text-gray-500 font-medium">{member.role}</p>
-              </div>
-            </div>
-
-            {/* Lead Badge */}
-            {member.isLead && (
-              <span className="px-3 py-1 bg-sky-50 text-sky-600 text-[10px] font-bold uppercase tracking-wider rounded-full">
-                Lead
-              </span>
-            )}
-          </div>
-        ))}
+            );
+          })
+        ) : (
+          <p className="text-sm text-gray-500 text-center py-4">No lawyers assigned</p>
+        )}
       </div>
     </div>
   );

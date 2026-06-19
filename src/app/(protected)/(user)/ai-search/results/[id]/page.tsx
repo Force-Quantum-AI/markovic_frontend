@@ -13,7 +13,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             <div className="col-span-1 xl:col-span-3 space-y-3">
                 <CaseOverview />
                 <AllHearingsTable/>
-                <AllDocumentsTable/>
+                <AllDocumentsTable/>.  
             </div>
             <div className="col-span-1 xl:col-span-2 space-y-3">
                 <CaseHealth/>
