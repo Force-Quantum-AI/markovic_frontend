@@ -98,15 +98,6 @@ export interface HearingAndDeadlineApiPayloadType{
   year: number
 }
 
-export interface CaseDocument {
-  id: string;
-  name: string;
-  type: string;
-  size: string;
-  uploadedBy: string;
-  uploadedAt: string;
-}
-
 export interface CaseNote {
   id: string;
   author: string;
@@ -136,4 +127,31 @@ export interface UserData {
   phone: string;
   personalId: string;
   address: string;
+}
+
+export interface DocumentUploader {
+  id: string;
+  full_name: string;
+  email: string;
+  professional_role?: string;
+}
+
+export interface CaseDocument {
+  id: string;
+  file_url: string;
+  file_name: string;
+  uploaded_by: DocumentUploader;
+  created_at: string;
+}
+
+export interface DownloadDocumentResponse {
+  id: number;
+  file_name: string;
+  download_url: string;
+  uploaded_by: {
+    id: string;
+    full_name: string;
+    email: string;
+  };
+  created_at: string;
 }

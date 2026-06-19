@@ -344,7 +344,7 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
           {activeTab === "overview" && <CaseOverview activeData={activeData} />}
           {activeTab === "hearings" && <HearingsTab caseId={activeData.id} hearings={activeData.hearing_history} nextHearing={activeData.next_hearing} />}
           {activeTab === "deadlines" && <DeadlinesTab caseId={activeData.id} deadlines={activeData.deadline_history} nextDeadline={activeData.next_deadline} />}
-          {activeTab === "documents" && <DocumentsTab caseId={activeData.id} documents={activeData.documents} />}
+          {activeTab === "documents" && <DocumentsTab caseId={activeData.id}/>}
           {activeTab === "notes" && <NoteTab caseId={activeData.id} />}
         </div>
       </main>
