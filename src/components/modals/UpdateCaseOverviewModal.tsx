@@ -13,6 +13,7 @@ import { InputField } from "@/components/shared/InputField";
 import { SelectField } from "../shared/SelectField";
 import { CaseStatusOptions } from "@/data/selectDropdownData";
 import { TextAreaField } from "../shared/TextAreaField";
+import { useUpdateOverviewInfoOfCaseMutation } from "@/store/features/case/case.api";
 
 export interface Lawyer {
   id: string;
@@ -87,6 +88,8 @@ export default function UpdateCaseOverviewModal({
 }: UpdateCaseOverviewModalProps) {
   const [formData, setFormData] =
     useState<CaseDetail>(data);
+
+  const [updateOverviewInfoOfCase, { isLoading }] = useUpdateOverviewInfoOfCaseMutation();
 
   useEffect(() => {
     setFormData(data);
@@ -273,7 +276,7 @@ export default function UpdateCaseOverviewModal({
                   hover:bg-[#0f4762]
                 "
               >
-                Update Now
+                {isLoading ? "Updating..." : "Update Now"}
               </button>
             </div>
           </div>

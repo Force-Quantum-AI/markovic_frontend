@@ -18,8 +18,8 @@ export const caseApi = baseApi.injectEndpoints({
       }),
       providesTags: ["case"],
     }),
-    updateClientProfileInfo: builder.mutation<any, {caseId: string, data: updateClientProfileInfoType}>({
-      query: ({caseId, data}) => {
+    updateClientProfileInfo: builder.mutation<any, { caseId: string, data: updateClientProfileInfoType }>({
+      query: ({ caseId, data }) => {
         const formData = new FormData();
         formData.append("data", JSON.stringify(data.data));
         if (data.client_image) {
@@ -33,8 +33,8 @@ export const caseApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["case"],
     }),
-    updateClientNote: builder.mutation<any, {caseId: string, data: {note: string}}>({
-      query: ({caseId, data}) => ({
+    updateClientNote: builder.mutation<any, { caseId: string, data: { note: string } }>({
+      query: ({ caseId, data }) => ({
         url: `/cases/${caseId}/update/note/`,
         method: "PATCH",
         body: data,
@@ -42,12 +42,32 @@ export const caseApi = baseApi.injectEndpoints({
       invalidatesTags: ["case"],
     }),
     // get case details for right side
-    getRightSideCaseDetails: builder.query<any, {leftCaseId: string, rightCaseId: string}>({
-      query: ({leftCaseId, rightCaseId}) => ({
+    getRightSideCaseDetails: builder.query<any, { leftCaseId: string, rightCaseId: string }>({
+      query: ({ leftCaseId, rightCaseId }) => ({
         url: `/cases/${leftCaseId}/client-case/${rightCaseId}/`,
         method: "GET",
       }),
       providesTags: ["case"],
+    }),
+    updateOverviewInfoOfCase: builder.mutation<any, {
+      caseId: string,
+      data: {
+        client_name: string,
+        case_name: string,
+        category: number,
+        sub_category: number,
+        status: number,
+        court: number,
+        responsible_lawyer_ids: string[],
+        opposing_parties: string[]
+      }
+    }>({
+      query: ({ caseId, data }) => ({
+        url: `/cases/${caseId}/update/overview/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["case"],
     }),
     createCase: builder.mutation({
       query: (payload: {
@@ -85,7 +105,7 @@ export const caseApi = baseApi.injectEndpoints({
     // case hearing & deadline
     addCaseHearing: builder.mutation({
       query: ({ caseId, data }: {
-        caseId: string, 
+        caseId: string,
         data: {
           reason: string,
           status: string,
@@ -107,7 +127,7 @@ export const caseApi = baseApi.injectEndpoints({
     }),
     addCaseDeadline: builder.mutation({
       query: ({ caseId, data }: {
-        caseId: string, 
+        caseId: string,
         data: {
           reason: string,
           status: string,
@@ -136,7 +156,7 @@ export const caseApi = baseApi.injectEndpoints({
       providesTags: ["case"],
     }),
     // bookmarked cases
-    getAllBookmarkedCases: builder.query<any, void>({ 
+    getAllBookmarkedCases: builder.query<any, void>({
       query: () => ({
         url: `/cases/bookmarks/`,
         method: "GET",
@@ -144,11 +164,11 @@ export const caseApi = baseApi.injectEndpoints({
       providesTags: ["case"],
     }),
     toggleBookmarkedCases: builder.mutation({
-        query: ({caseId})=>({
-            url:`/cases/${caseId}/bookmark/`,
-            method: "PATCH"
-        }),
-        invalidatesTags: ["case"]
+      query: ({ caseId }) => ({
+        url: `/cases/${caseId}/bookmark/`,
+        method: "PATCH"
+      }),
+      invalidatesTags: ["case"]
     })
   }),
 });
@@ -162,6 +182,7 @@ export const {
   useUpdateClientNoteMutation,
   // right side 
   useLazyGetRightSideCaseDetailsQuery,
+  useUpdateOverviewInfoOfCaseMutation,
   useCreateCaseMutation,
   // case hearing & deadline
   useAddCaseHearingMutation,

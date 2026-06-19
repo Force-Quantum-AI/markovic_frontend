@@ -100,7 +100,14 @@ export default function CaseOverview({ activeData }: CaseOverviewProps) {
 
         <div>
           <OverviewRow label="Client" value={activeData?.client_name} />
-          <OverviewRow label="Opposing Party" value={activeData?.opposing_parties?.[0]?.test || "N/A"} />
+          <div className="flex flex-col gap-2 py-3 border-b border-gray-100 last:border-0">
+            <span className="text-sm text-gray-400 ">Opposing Party:</span>
+            <div className="flex flex-col items-end">
+              {activeData?.opposing_parties.map((party: string, key: number) => (
+                <span className="text-sm text-gray-800 " key={key}>{key + 1}. {party}</span>
+              ))}
+            </div>
+          </div>
           <OverviewRow label="Court" value={activeData?.court_name} />
           <OverviewRow label="Case Number" value={activeData?.case_number} />
           <OverviewRow label="Category" value={activeData?.category_name} />
