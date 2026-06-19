@@ -77,7 +77,7 @@ export const caseApi = baseApi.injectEndpoints({
         return {
           url: `/cases/${caseId}/lawyers/`,
           method: "POST",
-          body: email,
+          body: {email: email},
         }
       },
       invalidatesTags: ["case"],

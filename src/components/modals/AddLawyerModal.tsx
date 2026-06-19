@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Plus, Search, UserPlus, Users, Mail } from "lucide-react";
+import { X, Plus, Search, UserPlus, Users, Mail, Loader } from "lucide-react";
 import Image from "next/image";
 import { InputField } from "../shared/InputField";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -101,10 +101,25 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
   }, [searchQuery, assignedLawyers]);
 
   // Add lawyer to assigned list
-  const handleAddLawyer = (lawyer: Lawyer) => {
-    setAssignedLawyers([...assignedLawyers, lawyer]);
-    setSearchQuery("");
-    setSearchResults([]);
+  const handleAddLawyer = async (lawyer: Lawyer) => {
+    try {
+      if (!data?.caseId) {
+        toast.info("CaseId not found, Please save case details first!")
+        return;
+      };
+      if (!lawyer.email) {
+        toast.info("Email not found, Please enter a valid email and try again!")
+        return;
+      };
+      await asignLowerInCase({ caseId: data?.caseId, email: lawyer.email }).unwrap()
+      toast.success("Lawyer added successfully!")
+    } catch (error) {
+      console.log(error);
+      toast.error("No verified lawyer found with this email.")
+    } finally {
+      setSearchQuery("");
+      setSearchResults([]);
+    }
   };
 
   // Remove lawyer from assigned list
@@ -192,10 +207,11 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
                     <Button
                       onClick={() => handleAddLawyer(lawyer)}
                       size="sm"
-                      className="h-8 px-3 bg-[#22c55e] hover:bg-[#16a34a] text-white rounded-lg text-xs"
+                      disabled={isAsignLowerInCaseLoading}
+                      className="h-8 px-3 bg-[#22c55e] hover:bg-[#16a34a] text-white rounded-lg text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Plus className="w-3 h-3 mr-1" />
-                      Add
+                      {isAsignLowerInCaseLoading ? <Loader className="w-3 h-3 mr-1 animate-spin" /> : <Plus className="w-3 h-3 mr-1" />}
+                      {isAsignLowerInCaseLoading ? "Adding..." : "Add"}
                     </Button>
                   </div>
                 ))}
@@ -233,7 +249,7 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
                 <Users className="w-4 h-4 text-gray-400" />
                 Assigned Lawyers ({data?.responsible_lawyers?.length})
               </p>
-              {lawers.length > 0 && (
+              {lawers.length > 10 && (
                 <button
                   onClick={() => setAssignedLawyers([])}
                   className="text-xs text-red-500 hover:text-red-600 transition-colors"
@@ -266,7 +282,7 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
                       size="sm"
                       className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full"
                     >
-                      <X className="w-4 h-4" />
+                     {isDeleteAssignedLowerLoading ? <Loader className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
                     </Button>
                   </div>
                 ))}

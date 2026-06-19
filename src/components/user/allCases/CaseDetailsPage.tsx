@@ -102,7 +102,7 @@ function LawyerAvatarStrip({ lawyers, caseId, caseName }: { lawyers: any[], case
     <AddLawyerModal
         open={addLawyerOpen}
         setOpen={() => setAddLawyerOpen(false)}
-        data={{ caseId: caseId, caseName: caseName }}
+        data={{ caseId: caseId, caseName: caseName, responsible_lawyers:lawyers }}
       />
       </>
   );
@@ -293,7 +293,7 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
             {/* Assign lawyers */}
             <div className="">
               <span className="text-xs text-gray-400">Assigned Lawyer</span>
-              <LawyerAvatarStrip lawyers={activeData?.responsible_lawyers} caseId={activeData?.id} caseName={activeData?.case_name} />
+              <LawyerAvatarStrip lawyers={activeData?.responsible_lawyers} caseId={activeData?.id} caseName={activeData?.case_name}  />
             </div>
 
             {/* Hearing & Deadline dates */}
