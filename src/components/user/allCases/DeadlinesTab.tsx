@@ -1,58 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Edit2, Calendar, TimerOff } from "lucide-react";
+import { Plus, Edit2, TimerOff } from "lucide-react";
 import AddEditHearingModal from "@/components/modals/AddEditHearingModal";
 
-// 1. TypeScript Interface for type safety
-interface Deadline {
-  id: string;
-  date: string;
-  time: string;
-  location: string;
-  type: string;
-  status: "Upcoming" | "Held" | "Postponed";
-  daysRemaining?: number;
-}
-
-// 2. Dummy Dataset mimicking future API response
-const DUMMY_DeadlineS: Deadline[] = [
-  {
-    id: "1",
-    date: "22 May 2026",
-    time: "09:00",
-    location: "Basic Court Podgorica",
-    type: "New Deadline",
-    status: "Upcoming",
-    daysRemaining: 3,
-  },
-  {
-    id: "2",
-    date: "10 April 2026",
-    time: "11:30",
-    location: "Basic Court Podgorica",
-    type: "Regular Deadline",
-    status: "Held",
-  },
-  {
-    id: "3",
-    date: "15 March 2026",
-    time: "09:00",
-    location: "Basic Court Podgorica",
-    type: "Review Deadline",
-    status: "Postponed",
-  },
-];
-
-export default function DeadlinesTab({ caseId, deadlines = [], nextDeadline = [] }: { caseId: string, deadlines?: any[], nextDeadline?: any[] }) {
+export default function DeadlinesTab({
+  caseId,
+  deadlines = [],
+  nextDeadline = [],
+}: {
+  caseId: string;
+  deadlines?: any[];
+  nextDeadline?: any[];
+}) {
   const [openModal, setOpenModal] = useState(false);
-  const [selectedDeadline, setSelectedDeadline] =
-    useState<any | null>(null);
-
-  const [mode, setMode] =
-    useState<"add" | "edit">("add");
+  const [selectedDeadline, setSelectedDeadline] = useState<any | null>(null);
+  const [mode, setMode] = useState<"add" | "edit">("add");
 
   const displayDeadlines = deadlines.length > 0 ? deadlines : [];
+
+  // Same caveat as HearingsTab: `nextDeadline[0]` is not guaranteed to be the
+  // same object reference (or even present) inside `displayDeadlines`.
   const upcoming = nextDeadline?.[0] || displayDeadlines.find((h: any) => h.status === "upcoming");
 
   const handleAddDeadline = () => {
@@ -61,19 +29,18 @@ export default function DeadlinesTab({ caseId, deadlines = [], nextDeadline = []
     setOpenModal(true);
   };
 
-  const handleEditDeadline = (id: string) => {
-    const hearing = displayDeadlines.find(
-      (item: any) => item.id === id
-    );
-
-    if (!hearing) return;
-
-    setSelectedDeadline(hearing);
+  /**
+   * Accepts the full deadline object directly instead of looking it up by id
+   * inside `displayDeadlines`. The lookup-based approach silently failed to
+   * open the modal whenever `upcoming` wasn't also present in that array.
+   */
+  const handleEditDeadline = (deadlineItem: any) => {
+    if (!deadlineItem) return;
+    setSelectedDeadline(deadlineItem);
     setMode("edit");
     setOpenModal(true);
   };
 
-  // Helper function for styling status badges dynamically
   const getStatusStyles = (status: string) => {
     switch (status?.toLowerCase()) {
       case "upcoming":
@@ -90,7 +57,6 @@ export default function DeadlinesTab({ caseId, deadlines = [], nextDeadline = []
 
   return (
     <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6">
-
       {/* LEFT COLUMN: Upcoming Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex flex-col justify-between">
         <div>
@@ -117,7 +83,7 @@ export default function DeadlinesTab({ caseId, deadlines = [], nextDeadline = []
 
                 <div className="flex flex-col items-end justify-between h-full space-y-8">
                   <button
-                    onClick={() => handleEditDeadline(upcoming.id)}
+                    onClick={() => handleEditDeadline(upcoming)}
                     className="p-2 text-[#C28203] hover:bg-[#fbe297] rounded-lg transition-colors"
                     aria-label="Edit Deadline"
                   >
@@ -134,9 +100,7 @@ export default function DeadlinesTab({ caseId, deadlines = [], nextDeadline = []
           ) : (
             <div className="flex flex-col items-center justify-center py-8">
               <TimerOff className="w-16 h-16 text-gray-400" />
-              <div className="text-center  text-gray-400 ">
-                No Upcoming Deadlines scheduled.
-              </div>
+              <div className="text-center  text-gray-400 ">No Upcoming Deadlines scheduled.</div>
             </div>
           )}
         </div>
@@ -151,45 +115,45 @@ export default function DeadlinesTab({ caseId, deadlines = [], nextDeadline = []
 
       {/* RIGHT COLUMN: Deadline History Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-        <h2 className="text-[#62728d] font-semibold text-base mb-4">
-          Deadline History:
-        </h2>
+        <h2 className="text-[#62728d] font-semibold text-base mb-4">Deadline History:</h2>
         <hr className="border-gray-100 mb-4" />
 
         {displayDeadlines.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8">
             <TimerOff className="w-16 h-16 text-gray-400" />
-            <div className="text-center text-gray-400 ">
-              No deadlines scheduled.
-            </div>
+            <div className="text-center text-gray-400 ">No deadlines scheduled.</div>
           </div>
         ) : (
           <div className="space-y-3">
-            {displayDeadlines.map((hearing: any) => (
+            {displayDeadlines.map((deadline: any) => (
               <div
-                key={hearing.id}
+                key={deadline.id}
                 className="border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 hover:border-gray-300 transition-all bg-white"
               >
                 {/* Date & Time block */}
                 <div className="w-1/3 min-w-[110px]">
                   <div className="text-gray-900 font-medium text-[15px]">
-                    {hearing.day}-{hearing.month}-{hearing.year}
+                    {deadline.day}-{deadline.month}-{deadline.year}
                   </div>
                   <div className="text-gray-500 text-sm mt-0.5">
-                    {hearing.time_from} - {hearing.time_to} {hearing.am_pm}
+                    {deadline.time_from} - {deadline.time_to} {deadline.am_pm}
                   </div>
                 </div>
 
-                {/* Court Location block */}
+                {/* Reason block */}
                 <div className="w-1/2 border-l text-nowrap md:text-wrap border-gray-100 pl-4 text-gray-600 text-sm font-normal">
-                  {hearing.reason}
+                  {deadline.reason}
                 </div>
 
                 {/* Status Badge block */}
-                <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm capitalize">
-                  <span className={getStatusStyles(hearing.status)}>
-                    {hearing.status}
-                  </span>
+                <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm capitalize flex flex-col items-end gap-2">
+                  <span className={getStatusStyles(deadline.status)}>{deadline.status}</span>
+                  <button
+                    onClick={() => handleEditDeadline(deadline)}
+                    className="p-1.5 text-gray-400 hover:text-[#C28203] transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             ))}
@@ -202,6 +166,7 @@ export default function DeadlinesTab({ caseId, deadlines = [], nextDeadline = []
         setOpen={setOpenModal}
         mode={mode}
         hearing={selectedDeadline}
+        caseId={caseId}
       />
     </div>
   );

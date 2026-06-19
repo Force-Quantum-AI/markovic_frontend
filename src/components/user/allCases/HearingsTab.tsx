@@ -1,82 +1,51 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Edit2, Calendar, TimerOff } from "lucide-react";
+import { Plus, Edit2, TimerOff } from "lucide-react";
 import AddEditHearingModal from "@/components/modals/AddEditHearingModal";
 
-// 1. TypeScript Interface for type safety
-interface Hearing {
-  id: string;
-  date: string;
-  time: string;
-  location: string;
-  type: string;
-  status: "Upcoming" | "Held" | "Postponed";
-  daysRemaining?: number;
-}
-
-// 2. Dummy Dataset mimicking future API response
-const DUMMY_HEARINGS: Hearing[] = [
-  {
-    id: "1",
-    date: "22 May 2026",
-    time: "09:00",
-    location: "Basic Court Podgorica",
-    type: "New hearing",
-    status: "Upcoming",
-    daysRemaining: 3,
-  },
-  {
-    id: "2",
-    date: "10 April 2026",
-    time: "11:30",
-    location: "Basic Court Podgorica",
-    type: "Regular hearing",
-    status: "Held",
-  },
-  {
-    id: "3",
-    date: "15 March 2026",
-    time: "09:00",
-    location: "Basic Court Podgorica",
-    type: "Review hearing",
-    status: "Postponed",
-  },
-];
-
-export default function HearingsTab({ caseId, hearings = [], nextHearing = [] }: { caseId: string, hearings?: any[], nextHearing?: any[] }) {
-  // Local state to handle dynamic additions/interactions in frontend
+export default function HearingsTab({
+  caseId,
+  hearings = [],
+  nextHearing = [],
+}: {
+  caseId: string;
+  hearings?: any[];
+  nextHearing?: any[];
+}) {
   const displayHearings = hearings.length > 0 ? hearings : [];
 
-  // Find the next upcoming hearing dynamically
+  // Find the next upcoming hearing dynamically.
+  // NOTE: `nextHearing[0]` may be a separate object reference from anything in
+  // `displayHearings` (e.g. it comes from a different API field). We must not
+  // require it to also exist inside `displayHearings` in order to edit it —
+  // that was the root cause of the edit modal silently failing to open.
   const upcoming = nextHearing?.[0] || displayHearings.find((h: any) => h.status === "upcoming");
 
   const [openModal, setOpenModal] = useState(false);
-  const [selectedHearing, setSelectedHearing] =
-    useState<Hearing | null>(null);
+  const [selectedHearing, setSelectedHearing] = useState<any | null>(null);
+  const [mode, setMode] = useState<"add" | "edit">("add");
 
-  const [mode, setMode] =
-    useState<"add" | "edit">("add");
-
-  const handleAddHearing = async () => {
+  const handleAddHearing = () => {
     setMode("add");
     setSelectedHearing(null);
     setOpenModal(true);
   };
 
-  const handleEditHearing = (id: string) => {
-    const hearing = displayHearings.find(
-      (item: any) => item.id === id
-    );
-
-    if (!hearing) return;
-
-    setSelectedHearing(hearing);
+  /**
+   * Accepts the full hearing object directly instead of just an id.
+   * Previously this looked the id up inside `displayHearings`, which silently
+   * failed (and never opened the modal) whenever `upcoming` wasn't also
+   * present in that array — e.g. when it's a distinct "next hearing" object
+   * returned separately by the API.
+   */
+  const handleEditHearing = (hearingItem: any) => {
+    if (!hearingItem) return;
+    setSelectedHearing(hearingItem);
     setMode("edit");
     setOpenModal(true);
   };
 
-  // Helper function for styling status badges dynamically
   const getStatusStyles = (status: string) => {
     switch (status?.toLowerCase()) {
       case "upcoming":
@@ -92,7 +61,6 @@ export default function HearingsTab({ caseId, hearings = [], nextHearing = [] }:
 
   return (
     <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6">
-
       {/* LEFT COLUMN: Upcoming Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex flex-col justify-between">
         <div>
@@ -119,7 +87,7 @@ export default function HearingsTab({ caseId, hearings = [], nextHearing = [] }:
 
                 <div className="flex flex-col items-end justify-between h-full space-y-8">
                   <button
-                    onClick={() => handleEditHearing(upcoming.id)}
+                    onClick={() => handleEditHearing(upcoming)}
                     className="p-2 text-teal-600 hover:bg-emerald-100 rounded-lg transition-colors"
                     aria-label="Edit hearing"
                   >
@@ -136,9 +104,7 @@ export default function HearingsTab({ caseId, hearings = [], nextHearing = [] }:
           ) : (
             <div className="flex flex-col items-center justify-center py-8">
               <TimerOff className="w-16 h-16 text-gray-400" />
-              <div className="text-center  text-gray-400 ">
-                No Upcoming Hearings scheduled.
-              </div>
+              <div className="text-center  text-gray-400 ">No Upcoming Hearings scheduled.</div>
             </div>
           )}
         </div>
@@ -153,17 +119,13 @@ export default function HearingsTab({ caseId, hearings = [], nextHearing = [] }:
 
       {/* RIGHT COLUMN: Hearing History Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-        <h2 className="text-[#62728d] font-semibold text-base mb-4">
-          Hearing History:
-        </h2>
+        <h2 className="text-[#62728d] font-semibold text-base mb-4">Hearing History:</h2>
         <hr className="border-gray-100 mb-4" />
 
         {displayHearings.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8">
             <TimerOff className="w-16 h-16 text-gray-400" />
-            <div className="text-center text-gray-400 ">
-              No hearings scheduled.
-            </div>
+            <div className="text-center text-gray-400 ">No hearings scheduled.</div>
           </div>
         ) : (
           <div className="space-y-3">
@@ -188,10 +150,14 @@ export default function HearingsTab({ caseId, hearings = [], nextHearing = [] }:
                 </div>
 
                 {/* Status Badge block */}
-                <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm capitalize">
-                  <span className={getStatusStyles(hearing.status)}>
-                    {hearing.status}
-                  </span>
+                <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm capitalize flex flex-col items-end gap-2">
+                  <span className={getStatusStyles(hearing.status)}>{hearing.status}</span>
+                  <button
+                    onClick={() => handleEditHearing(hearing)}
+                    className="p-1.5 text-gray-400 hover:text-teal-600 transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             ))}
@@ -204,6 +170,7 @@ export default function HearingsTab({ caseId, hearings = [], nextHearing = [] }:
         setOpen={setOpenModal}
         mode={mode}
         hearing={selectedHearing}
+        caseId={caseId}
       />
     </div>
   );
