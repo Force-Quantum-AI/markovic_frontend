@@ -152,7 +152,7 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
         {/* Profile card */}
         <div className=" flex flex-col items-center text-center">
           <Avatar className="w-24 h-24">
-            <AvatarImage src={activeData?.client_image?.startsWith("http") ? activeData.client_image : `https://res.cloudinary.com/dnu0axtez/${activeData?.client_image}`} />
+            <AvatarImage src={activeData?.client_image} />
             <AvatarFallback>{activeData?.client_name?.charAt(0)}</AvatarFallback>
           </Avatar>
           <h2 className="text-lg font-bold text-gray-800 mt-3">{activeData?.client_name}</h2>
