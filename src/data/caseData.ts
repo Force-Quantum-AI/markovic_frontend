@@ -156,8 +156,6 @@ export const DUMMY_DEADLINES: Deadline[] = [
   },
 ];
 
-
-
 export const DUMMY_NOTES: CaseNote[] = [
   {
     id: "n1",
