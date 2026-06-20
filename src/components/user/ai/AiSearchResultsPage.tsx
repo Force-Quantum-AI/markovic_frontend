@@ -343,7 +343,9 @@ export default function AiSearchResultsPage({ query, id }: AiSearchResultsPagePr
     });
   };
 
-  const apiResults: SearchResult[] | undefined = searchDetails?.results?.map((r: any, i: number) => ({
+  const actualDetails = searchDetails?.data || searchDetails;
+  
+  const apiResults: SearchResult[] | undefined = actualDetails?.results?.map((r: any, i: number) => ({
     id: r.case_number || String(i),
     court: r.court,
     caseNumber: r.case_number,
@@ -357,16 +359,16 @@ export default function AiSearchResultsPage({ query, id }: AiSearchResultsPagePr
     saved: savedResults.has(r.case_number || String(i)),
   }));
 
-  const results = apiResults || (id ? [] : DUMMY_RESULTS);
+  const results = apiResults?.length ? apiResults : (id ? [] : DUMMY_RESULTS);
 
-  const meta = searchDetails?.stats ? {
-    totalFound: searchDetails.stats.returned_cases || 0,
-    highestSimilarity: searchDetails.stats.highest_similarity || 0,
-    database: searchDetails.stats.search_type || "Hybrid Search",
-    rankedBy: searchDetails.stats.ranking_basis || "Embedding similarity",
+  const meta = actualDetails?.stats ? {
+    totalFound: actualDetails.stats.returned_cases || 0,
+    highestSimilarity: actualDetails.stats.highest_similarity || 0,
+    database: actualDetails.stats.search_type || "Hybrid Search",
+    rankedBy: actualDetails.stats.ranking_basis || "Embedding similarity",
   } : DUMMY_META;
 
-  const displayQuery = searchDetails?.user_case_scenario || query;
+  const displayQuery = actualDetails?.user_case_scenario || query;
 
   if (isLoading) {
     return (

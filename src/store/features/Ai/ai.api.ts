@@ -1,16 +1,16 @@
-import { baseApi } from "../../api/baseApi";
+import { aiBaseAPI } from "@/store/api/aiBaseApi";
 
-export const aiApi = baseApi.injectEndpoints({
+export const aiApi = aiBaseAPI.injectEndpoints({
     endpoints: (builder) => ({
         aiSearch: builder.mutation<any, {
             user_id: string;
-            user_case_scenario: string;
+            case_scenario: string;
             file?: File | null;
         }>({
             query: (body) => {
                 const formData = new FormData();
                 formData.append("user_id", body.user_id);
-                formData.append("user_case_scenario", body.user_case_scenario);
+                formData.append("case_scenario", body.case_scenario);
                 if (body.file) {
                     formData.append("file", body.file);
                 }

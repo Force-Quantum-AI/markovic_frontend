@@ -249,12 +249,14 @@ export default function AiSearchPage() {
         try {
             const res = await searchApi({
                 user_id: userId,
-                user_case_scenario: msg,
+                case_scenario: msg,
                 file: inputFile
             }).unwrap();
             
-            if (res?.search_history_id) {
-                router.push(`/ai-search/results?id=${res.search_history_id}`);
+            const historyId = res?.search_history_id || res?.data?.search_history_id || res?.id;
+            
+            if (historyId) {
+                router.push(`/ai-search/results?id=${historyId}`);
             } else {
                 router.push(`/ai-search/results?q=${encodeURIComponent(msg)}`);
             }
