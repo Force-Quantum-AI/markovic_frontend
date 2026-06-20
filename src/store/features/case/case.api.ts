@@ -261,7 +261,44 @@ export const caseApi = baseApi.injectEndpoints({
         method: "PATCH"
       }),
       invalidatesTags: ["case"]
-    })
+    }),
+    // for select dropdown options 
+    getCategoryDropdownOptions: builder.query<{
+        id: number,
+        name: string,
+        created_at: string
+    }[], void>({
+      query: () => ({
+        url: `/cases/categories/`,
+        method: "GET",
+      }),
+      providesTags: ["dropdownOptions"],
+    }),
+    getSubCategoryDropdownOptions: builder.query<{
+        id: number,
+        category: number,
+        category_name: string,
+        name: string,
+        created_at: string
+    }[], number>({
+      query: (category: number) => ({
+        url: `/cases/sub-categories/`,
+        method: "GET",
+        params: { category },
+      }),
+      providesTags: ["dropdownOptions"],
+    }),
+    getSelectDropdownOptions: builder.query<{
+        id: number,
+        name: string,
+        created_at: string
+    }[], number>({
+      query: () => ({
+        url: `/cases/statuses/`,
+        method: "GET",
+      }),
+      providesTags: ["dropdownOptions"],
+    }),
   }),
 });
 
@@ -289,5 +326,9 @@ export const {
   useGetHearingAndDeadlinePageDataQuery,
   // bookmarked cases
   useGetAllBookmarkedCasesQuery,
-  useToggleBookmarkedCasesMutation
+  useToggleBookmarkedCasesMutation,
+  // for select dropdown options 
+  useGetCategoryDropdownOptionsQuery,
+  useGetSubCategoryDropdownOptionsQuery,
+  useGetSelectDropdownOptionsQuery,
 } = caseApi;
