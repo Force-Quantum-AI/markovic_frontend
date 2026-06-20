@@ -13,10 +13,12 @@ import {
   Calendar,
   TrendingUp,
   Archive,
+  ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
 import { useGetAiCaseDetailsQuery } from "@/store/features/Ai/ai.api";
 import { useGetProfileInfoQuery } from "@/store/features/profile/profile.api";
+import { useRouter } from "next/navigation";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -333,6 +335,7 @@ export default function AiSearchResultsPage({ query, id }: AiSearchResultsPagePr
   );
 
   const [savedResults, setSavedResults] = useState<Set<string>>(new Set());
+  const router = useRouter();
 
   const handleSave = (resultId: string) => {
     setSavedResults((prev) => {
@@ -383,6 +386,11 @@ export default function AiSearchResultsPage({ query, id }: AiSearchResultsPagePr
 
   return (
     <div className="space-y-4">
+      {/* back button  */}
+      <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+        <ArrowLeft className="w-4 h-4" />
+        Back
+      </button>
       {/* ── Search Complete Banner ── */}
       <div className="bg-white border border-gray-200 rounded-2xl px-5 py-4">
         <div className="flex items-center gap-2 mb-4">

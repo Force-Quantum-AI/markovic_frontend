@@ -135,7 +135,7 @@ function Sidebar({
                     {filtered.map((s) => (
                         <div
                             key={s.id}
-                            className={`group flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer transition-colors ${activeId === s.id
+                            className={`group flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-200 ${activeId === s.id
                                 ? "bg-[#135576]/8 border border-[#135576]/15"
                                 : "hover:bg-gray-50"
                                 }`}
@@ -157,7 +157,7 @@ function Sidebar({
                                     {s.title}
                                 </span>
                             </div>
-                            <button 
+                            {/* <button 
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onDelete?.(s.id);
@@ -165,7 +165,7 @@ function Sidebar({
                                 className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-gray-200"
                             >
                                 <X className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" />
-                            </button>
+                            </button> */}
                         </div>
                     ))}
                 </div>
