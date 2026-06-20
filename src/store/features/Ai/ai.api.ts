@@ -4,13 +4,13 @@ export const aiApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         aiSearch: builder.mutation<any, {
             user_id: string;
-            case_scenario: string;
-            file?: File; // Optional PDF, DOCX/DOC, or text file.
+            user_case_scenario: string;
+            file?: File | null;
         }>({
             query: (body) => {
                 const formData = new FormData();
                 formData.append("user_id", body.user_id);
-                formData.append("case_scenario", body.case_scenario);
+                formData.append("user_case_scenario", body.user_case_scenario);
                 if (body.file) {
                     formData.append("file", body.file);
                 }
@@ -31,8 +31,8 @@ export const aiApi = baseApi.injectEndpoints({
             providesTags: ["aiSearch"],
         }),
         getAiCaseDetails: builder.query<any, {
-            user_id: string,
-            search_history_id: string
+            user_id: string;
+            search_history_id: number;
         }>({
             query: ({ user_id, search_history_id }) => ({
                 url: `/api/ai-cases/search-history/result`,
@@ -42,12 +42,13 @@ export const aiApi = baseApi.injectEndpoints({
             providesTags: ["aiSearch"],
         }),
         deleteAnAiCaseHistory: builder.mutation<any, {
-            case_number: string,
+            user_id: string;
+            search_history_id: number;
         }>({
-            query: ({ case_number }) => ({
+            query: ({ user_id, search_history_id }) => ({
                 url: `/api/ai-cases/delete`,
                 method: 'DELETE',
-                params: { case_number },
+                params: { user_id, search_history_id },
             }),
             invalidatesTags: ["aiSearch"],
         }),
@@ -58,4 +59,5 @@ export const {
     useAiSearchMutation,
     useGetAiSearchHistoryQuery,
     useGetAiCaseDetailsQuery,
+    useDeleteAnAiCaseHistoryMutation
 } = aiApi;
