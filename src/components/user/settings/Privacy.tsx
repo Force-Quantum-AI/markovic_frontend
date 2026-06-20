@@ -12,8 +12,12 @@ import {
 } from "@/store/features/setting/setting.api";
 
 import { useDeleteUserAccountMutation } from "@/store/features/auth/authApi";
+import { useRouter } from "next/navigation";
+import { logout } from "@/store/features/auth/authSlice";
+import { useDispatch } from "react-redux";
+import DeleteModal from "@/components/modals/DeleteModal";
 
-export default function Privacy() {
+export default function Privacy() { 
   const { data: cookiePreferenceData } = useGetCookiePreferenceQuery({});
 
   const [updateCookiePreference] =
@@ -34,6 +38,11 @@ export default function Privacy() {
 
   const [marketingCookies, setMarketingCookies] =
     useState(false);
+
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (cookiePreferenceData) {
@@ -74,8 +83,9 @@ export default function Privacy() {
   const handleDelete = async () => {
     try {
       await deleteUserAccount({}).unwrap();
-
+      dispatch(logout());
       toast.success("Account deleted successfully");
+      router.replace("/login");
     } catch (error) {
       console.log(error);
       toast.error("Failed to delete account");
@@ -231,17 +241,21 @@ export default function Privacy() {
         </div>
 
         <button
-          onClick={handleDelete}
-          disabled={isUserDeleting}
+          onClick={()=> setDeleteModalOpen(true)}
           className="flex items-center gap-2 bg-[#e7000b] hover:bg-[#c2000a] text-white h-[44px] px-5 rounded-[10px] text-sm font-medium w-fit ml-7 mt-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Trash2 size={18} />
-
-          {isUserDeleting
-            ? "Deleting..."
-            : "Delete Account"}
+          Delete Account
         </button>
       </div>
+      <DeleteModal
+        open={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        onConfirm={handleDelete}
+        loading={isUserDeleting}
+        title="Delete Account"
+        description="Are you sure you want to delete your account?"
+      />
     </div>
   );
 }

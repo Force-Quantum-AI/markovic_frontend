@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import SubscriptionModal from "./SubscriptionModal";
 import { toast } from "sonner";
-import { useVerifyOtpMutation } from "@/store/features/auth/authApi";
+import { useLoginMutation, useVerifyOtpMutation } from "@/store/features/auth/authApi";
 
 // Step type definitions
 type ModalStep = "ENTER_OTP" | "SUCCESS" | "ERROR";
@@ -29,6 +29,7 @@ export default function OtpVerificationModal({
   userPassword,
 }: OtpModalProps) {
   const [verifyOtp, { isLoading, isSuccess }] = useVerifyOtpMutation();
+  const [login] = useLoginMutation();
 
   // State Matrix
   const [step, setStep] = useState<ModalStep>("ENTER_OTP");
@@ -142,7 +143,14 @@ export default function OtpVerificationModal({
       setIsVerifying(false);
       setStep("SUCCESS");
       toast.success("OTP verified successfully");
-      setIsSubscriptionModalOpen(true);
+
+      // auto login - after successful otp verification
+      if(userEmail && userPassword) {
+        const res = await login({ email: userEmail, password: userPassword }).unwrap();
+        document.cookie = `accessToken=${res.access}; path=/; SameSite=Lax`;      
+      }
+      
+      await setIsSubscriptionModalOpen(true);
       // Close modal after a short delay. Store timeout id to clear on unmount.
       closeTimerRef.current = window.setTimeout(() => {
         onOpenChange(false);

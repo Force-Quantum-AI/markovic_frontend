@@ -156,48 +156,7 @@ export const DUMMY_DEADLINES: Deadline[] = [
   },
 ];
 
-export const DUMMY_DOCUMENTS: CaseDocument[] = [
-  {
-    id: "doc1",
-    name: "Insurance_Policy_Original.pdf",
-    type: "PDF",
-    size: "2.4 MB",
-    uploadedBy: "Eleanor Pena",
-    uploadedAt: "12 Mar 2026",
-  },
-  {
-    id: "doc2",
-    name: "Medical_Report_Claimant.pdf",
-    type: "PDF",
-    size: "1.1 MB",
-    uploadedBy: "Cameron Williamson",
-    uploadedAt: "18 Mar 2026",
-  },
-  {
-    id: "doc3",
-    name: "Court_Filing_P205_19.docx",
-    type: "DOCX",
-    size: "540 KB",
-    uploadedBy: "Darrell Steward",
-    uploadedAt: "02 Apr 2026",
-  },
-  {
-    id: "doc4",
-    name: "Damage_Assessment_Photos.zip",
-    type: "ZIP",
-    size: "14.7 MB",
-    uploadedBy: "Eleanor Pena",
-    uploadedAt: "20 Apr 2026",
-  },
-  {
-    id: "doc5",
-    name: "Witness_Statement_Signed.pdf",
-    type: "PDF",
-    size: "890 KB",
-    uploadedBy: "Cameron Williamson",
-    uploadedAt: "05 May 2026",
-  },
-];
+
 
 export const DUMMY_NOTES: CaseNote[] = [
   {
