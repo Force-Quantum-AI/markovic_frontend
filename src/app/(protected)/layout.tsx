@@ -1,3 +1,4 @@
+import FcmInitializer from "@/components/FcmInitializer";
 import ProtectedRoute from "../ProtectedRoute";
 
 export default function ProtectedLayout({
@@ -5,5 +6,12 @@ export default function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <ProtectedRoute>{children}</ProtectedRoute>;
+  return (
+    <>
+    <ProtectedRoute>
+      <FcmInitializer />
+      {children}
+      </ProtectedRoute>;
+    </>
+  )
 }

@@ -1,22 +1,27 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-// Dummy dataset for clients
-const clientsData = [
-  { img:"/dummy-user.jpg", name: "Guy Hawkins", cases: 2 },
-  { img:"/dummy-user.jpg", name: "Arlene McCoy", cases: 1 },
-  { img:"/dummy-user.jpg", name: "Cody Fisher", cases: 5 },
-  { img:"/dummy-user.jpg", name: "Brooklyn Simmons", cases: 1 },
-  { img:"/dummy-user.jpg", name: "Jenny Wilson", cases: 8 },
-];
+const resolveImageUrl = (imgUrl: string | null | undefined): string => {
+  if (!imgUrl) return "/dummy-user.jpg";
+  if (imgUrl.includes("http")) {
+    const match = imgUrl.match(/https?:\/\/[^\s]+/);
+    if (match) return match[0];
+  }
+  if (imgUrl.startsWith("/") || imgUrl.startsWith(".")) {
+    return imgUrl;
+  }
+  return `https://res.cloudinary.com/dnu0axtez/image/upload/${imgUrl}`;
+};
 
-export default function MyClients() {
+export default function MyClients({ data, isLoading }: any) {
   const router = useRouter();
+
   // Show only first 5 clients
-  const displayedClients = clientsData.slice(0, 5);
+  const displayedClients = data?.slice(0, 5) || [];
 
   return (
     <div className="w-full rounded-xl bg-white p-5 shadow-sm">
@@ -30,22 +35,35 @@ export default function MyClients() {
 
       {/* Clients List */}
       <div className="divide-y divide-gray-100 bg-gray-100 rounded-2xl px-3">
-        {displayedClients.map((client, idx) => (
-          <div
-            key={idx}
-            className="flex items-center justify-between flex-wrap gap-2 py-3 transition-all "
-          >
-            <div className="flex items-center flex-wrap gap-2">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                    <Image src={client.img} alt={client.name} fill className="object-cover" />
-                  </div>
-              <p className="text-gray-900">{client.name}</p>
-            </div>
-              <p className="text-sm text-green-600">
-                {client.cases} {client.cases === 1 ? "Case" : "Cases"}
-              </p>
+        {isLoading ? (
+          <div className="py-3 space-y-2">
+            <Skeleton className="w-full h-10 rounded-md bg-gray-300" />
+            <Skeleton className="w-full h-10 rounded-md bg-gray-300" />
+            <Skeleton className="w-full h-10 rounded-md bg-gray-300" />
+            <Skeleton className="w-full h-10 rounded-md bg-gray-300" />
+            <Skeleton className="w-full h-10 rounded-md bg-gray-300" />
           </div>
-        ))}
+        ) : displayedClients.map((client: any, idx: number) => {
+          const clientImage = resolveImageUrl(client.client_image);
+          const clientName = client.client_name ?? client.name ?? "Client";
+          const clientCaseCount = client.case_numbers ?? client.total_cases ?? 0;
+          return (
+            <div
+              key={idx}
+              className="flex items-center justify-between flex-wrap gap-2 py-3 transition-all "
+            >
+              <div className="flex items-center flex-wrap gap-2">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                  <Image src={clientImage} alt={clientName} fill className="object-cover" />
+                </div>
+                <p className="text-gray-900">{clientName}</p>
+              </div>
+              <p className="text-sm text-green-600">
+                {clientCaseCount} {clientCaseCount === 1 ? "Case" : "Cases"}
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

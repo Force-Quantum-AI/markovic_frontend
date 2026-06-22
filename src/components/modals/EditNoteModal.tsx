@@ -9,61 +9,108 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { useAddNewNoteInCaseMutation, useUpdateNoteInCaseMutation } from "@/store/features/note/note.api";
 
 interface EditNoteModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  caseId: string;
+  /** Pass an existing note (id/title/content) to edit; omit/undefined to add a new one. */
   data?: {
-    note?: string;
-    id?: string;
+    id?: number;
+    title?: string;
+    content?: string;
   };
-  onSave?: (note: string) => void;
 }
 
-export default function EditNoteModal({ open, setOpen, data, onSave }: EditNoteModalProps) {
-  const [note, setNote] = useState("");
+export default function EditNoteModal({ open, setOpen, caseId, data }: EditNoteModalProps) {
+  const [form, setForm] = useState({ title: "", content: "" });
 
+  const [addNewNoteInCase, { isLoading: isAdding }] = useAddNewNoteInCaseMutation();
+  const [updateNoteInCase, { isLoading: isUpdating }] = useUpdateNoteInCaseMutation();
+
+  const isEditMode = Boolean(data?.id);
+  const isLoading = isAdding || isUpdating;
+
+  // Re-sync form whenever the modal opens (or the target note changes while open).
   useEffect(() => {
-    if (open && data?.note !== undefined) {
-      setNote(data.note);
-    }
-  }, [open, data?.note]);
+    if (!open) return;
+    setForm({
+      title: data?.title ?? "",
+      content: data?.content ?? "",
+    });
+  }, [open, data?.id, data?.title, data?.content]);
 
-  const handleSave = () => {
-    if (data?.id) {
-      // Update existing note
-    } else {
-      // Save new note
+  const handleChange = (key: keyof typeof form, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = async () => {
+    if (!caseId) {
+      toast.error("Case ID is missing.");
+      return;
     }
-    if (onSave) {
-      onSave(note);
+    if (!form.title.trim() || !form.content.trim()) {
+      toast.error("Please fill in both title and note content.");
+      return;
     }
-    setOpen(false);
+
+    const payload = { title: form.title.trim(), content: form.content.trim() };
+
+    try {
+      if (isEditMode && data?.id) {
+        await updateNoteInCase({ caseId, noteId: data.id, payload }).unwrap();
+        toast.success("Note updated successfully");
+      } else {
+        await addNewNoteInCase({ caseId, payload }).unwrap();
+        toast.success("Note added successfully");
+      }
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error(`Failed to ${isEditMode ? "update" : "add"} note.`);
+    }
   };
 
   const handleCancel = () => {
-    setNote(data?.note || "");
+    setForm({
+      title: data?.title ?? "",
+      content: data?.content ?? "",
+    });
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md bg-white rounded-2xl p3-0 overflow-hidden">
+      <DialogContent className="sm:max-w-md bg-white rounded-2xl p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-gray-100">
           <DialogTitle className="text-xl font-bold text-gray-900">
-            Notes
+            {isEditMode ? "Edit Note" : "Add Note"}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-6 py-5">
-          <div className="space-y-3">
+        <div className="px-6 py-5 space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500 ml-1">Title</label>
+            <Input
+              placeholder="Note title..."
+              value={form.title}
+              onChange={(e) => handleChange("title", e.target.value)}
+              className="border-gray-200 rounded-xl focus-visible:border-[#135576] focus-visible:ring-[#135576]/20 text-gray-700 placeholder:text-gray-400"
+              autoFocus
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500 ml-1">Note</label>
             <Textarea
               placeholder="Type here..."
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              className="min-h-[200px] resize-y border-gray-200 rounded-xl focus:border-[#135576] focus:ring-[#135576]/20 p-4 text-gray-700 placeholder:text-gray-400"
-              autoFocus
+              value={form.content}
+              onChange={(e) => handleChange("content", e.target.value)}
+              className="min-h-[180px] resize-y border-gray-200 rounded-xl focus:border-[#135576] focus:ring-[#135576]/20 p-4 text-gray-700 placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -72,25 +119,24 @@ export default function EditNoteModal({ open, setOpen, data, onSave }: EditNoteM
           <Button
             variant="outline"
             onClick={handleCancel}
+            disabled={isLoading}
             className="border-gray-200 text-gray-600 hover:bg-gray-100 rounded-xl"
           >
             Cancel
           </Button>
-          {data?.id ? (
-            <Button
-              onClick={handleSave}
-              className="bg-[#135576] hover:bg-[#0e445e] text-white rounded-xl"
-            >
-              Update note
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSave}
-              className="bg-[#135576] hover:bg-[#0e445e] text-white rounded-xl"
-            >
-              Save note
-            </Button>
-          )}
+          <Button
+            onClick={handleSave}
+            disabled={isLoading}
+            className="bg-[#135576] hover:bg-[#0e445e] text-white rounded-xl disabled:opacity-60"
+          >
+            {isLoading
+              ? isEditMode
+                ? "Updating..."
+                : "Saving..."
+              : isEditMode
+              ? "Update note"
+              : "Save note"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

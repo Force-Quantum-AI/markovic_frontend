@@ -20,6 +20,12 @@ import { AiSearchFilters } from "@/types/ai";
 import AiFilters from "@/components/user/ai/AiFilters";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { 
+    useAiSearchMutation, 
+    useGetAiSearchHistoryQuery, 
+    useDeleteAnAiCaseHistoryMutation 
+} from "@/store/features/Ai/ai.api";
+import { useGetProfileInfoQuery } from "@/store/features/profile/profile.api";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -83,6 +89,7 @@ function Sidebar({
     onNew,
     searchQuery,
     onSearch,
+    onDelete,
 }: {
     sessions: ChatSession[];
     activeId: string;
@@ -90,6 +97,7 @@ function Sidebar({
     onNew: () => void;
     searchQuery: string;
     onSearch: (v: string) => void;
+    onDelete?: (id: string) => void;
 }) {
     const filtered = sessions.filter((s) =>
         s.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -127,13 +135,15 @@ function Sidebar({
                     {filtered.map((s) => (
                         <div
                             key={s.id}
-                            onClick={() => onSelect(s.id)}
-                            className={`group flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer transition-colors ${activeId === s.id
+                            className={`group flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-200 ${activeId === s.id
                                 ? "bg-[#135576]/8 border border-[#135576]/15"
                                 : "hover:bg-gray-50"
                                 }`}
                         >
-                            <div className="flex items-center gap-2 min-w-0">
+                            <div 
+                                onClick={() => onSelect(s.id)}
+                                className="flex items-center gap-2 min-w-0 flex-1"
+                            >
                                 <FileText
                                     className={`w-4 h-4 shrink-0 ${activeId === s.id ? "text-[#135576]" : "text-gray-400"
                                         }`}
@@ -147,9 +157,15 @@ function Sidebar({
                                     {s.title}
                                 </span>
                             </div>
-                            <button className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-gray-200">
-                                <MoreVertical className="w-3.5 h-3.5 text-gray-400" />
-                            </button>
+                            {/* <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDelete?.(s.id);
+                                }}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-gray-200"
+                            >
+                                <X className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" />
+                            </button> */}
                         </div>
                     ))}
                 </div>
@@ -165,9 +181,9 @@ interface AiSearchPageProps {
     setFilters: React.Dispatch<React.SetStateAction<AiSearchFilters>>;
 }
 
-export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps) {
-    const [sessions, setSessions] = useState<ChatSession[]>(DUMMY_SESSIONS);
-    const [activeId, setActiveId] = useState("1");
+export default function AiSearchPage() {
+    const [sessions, setSessions] = useState<ChatSession[]>([]);
+    const [activeId, setActiveId] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [inputValue, setInputValue] = useState("");
     const [inputFile, setInputFile] = useState<File | null>(null);
@@ -178,6 +194,23 @@ export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps)
 
     const router = useRouter();
 
+    const { data: profileInfo } = useGetProfileInfoQuery({});
+    const userId = profileInfo?.id || "";
+
+    const { data: historyData } = useGetAiSearchHistoryQuery({ user_id: userId }, { skip: !userId });
+    const [deleteHistory] = useDeleteAnAiCaseHistoryMutation();
+    const [searchApi, { isLoading }] = useAiSearchMutation();
+
+    useEffect(() => {
+        if (historyData?.search_histories) {
+            const loadedSessions = historyData.search_histories.map((h: any) => ({
+                id: h.search_history_id.toString(),
+                title: h.user_case_scenario,
+            }));
+            setSessions(loadedSessions);
+        }
+    }, [historyData]);
+
     // Auto-resize textarea
     useEffect(() => {
         if (textareaRef.current) {
@@ -187,17 +220,50 @@ export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps)
     }, [inputValue]);
 
     const handleNewChat = () => {
-        const id = String(Date.now());
-        setSessions((prev) => [{ id, title: "New Chat", active: false }, ...prev]);
-        setActiveId(id);
+        setActiveId("");
+        setInputValue("");
+        setInputFile(null);
     };
 
-    const handleSend = (text?: string) => {
-  const msg = (text ?? inputValue).trim();
-  if (!msg) return;
-  setInputValue("");
-  router.push(`/ai-search/results?q=${encodeURIComponent(msg)}`);
-};
+    const handleDelete = async (id: string) => {
+        if (!userId) return;
+        try {
+            await deleteHistory({ user_id: userId, search_history_id: parseInt(id) }).unwrap();
+            setSessions(prev => prev.filter(s => s.id !== id));
+            if (activeId === id) setActiveId("");
+        } catch (e) {
+            console.error("Failed to delete history", e);
+        }
+    };
+
+    const handleSelectSession = (id: string) => {
+        setActiveId(id);
+        router.push(`/ai-search/results?id=${id}`);
+    };
+
+    const handleSend = async (text?: string) => {
+        const msg = (text ?? inputValue).trim();
+        if (!msg || !userId) return;
+        setInputValue("");
+        
+        try {
+            const res = await searchApi({
+                user_id: userId,
+                case_scenario: msg,
+                file: inputFile
+            }).unwrap();
+            
+            const historyId = res?.search_history_id || res?.data?.search_history_id || res?.id;
+            
+            if (historyId) {
+                router.push(`/ai-search/results?id=${historyId}`);
+            } else {
+                router.push(`/ai-search/results?q=${encodeURIComponent(msg)}`);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -213,10 +279,11 @@ export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps)
                 <Sidebar
                     sessions={sessions}
                     activeId={activeId}
-                    onSelect={setActiveId}
+                    onSelect={handleSelectSession}
                     onNew={handleNewChat}
                     searchQuery={searchQuery}
                     onSearch={setSearchQuery}
+                    onDelete={handleDelete}
                 />
             </aside>
 
@@ -318,8 +385,8 @@ export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps)
                                     )}
                                 <button
                                     onClick={() => handleSend()}
-                                    disabled={!inputValue.trim()}
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${inputValue.trim()
+                                    disabled={!inputValue.trim() || isLoading}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${inputValue.trim() && !isLoading
                                         ? "bg-[#135576] hover:bg-[#0d3f59] shadow-sm"
                                         : "bg-gray-300 cursor-not-allowed"
                                         }`}
@@ -354,36 +421,16 @@ export default function AiSearchPage({ filters, setFilters }: AiSearchPageProps)
                         <Sidebar
                             sessions={sessions}
                             activeId={activeId}
-                            onSelect={(id) => { setActiveId(id); setSidebarOpen(false); }}
+                            onSelect={(id) => { handleSelectSession(id); setSidebarOpen(false); }}
                             onNew={() => { handleNewChat(); setSidebarOpen(false); }}
                             searchQuery={searchQuery}
                             onSearch={setSearchQuery}
+                            onDelete={handleDelete}
                         />
                     </div>
                 </div>
             )}
 
-            {/* Filter modal */}
-            {filterOpen && (
-                <div className="lg:hidden fixed inset-0 z-50 flex justify-end">
-                    <div
-                        className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-                        onClick={() => setFilterOpen(false)}
-                    />
-                    <div className="relative w-80 max-w-[90vw] bg-white h-full shadow-2xl p-4 flex flex-col overflow-y-auto">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-sm font-semibold text-gray-700">Filters</span>
-                            <button
-                                onClick={() => setFilterOpen(false)}
-                                className="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center"
-                            >
-                                <X className="w-4 h-4 text-gray-500" />
-                            </button>
-                        </div>
-                        <AiFilters filters={filters} setFilters={setFilters} />
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

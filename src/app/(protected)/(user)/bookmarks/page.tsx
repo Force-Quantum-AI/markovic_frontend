@@ -5,8 +5,6 @@ import { LawCard } from "@/components/shared/LawCard";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import LawCardSkeleton from "@/components/skeletons/LawCardSkeleton";
-import { lawsDataset } from "@/components/user/dashboard/LawsAndBylaws";
-import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
 import { useGetAllBookmarkedCasesQuery } from "@/store/features/case/case.api";
 import { useGetAllBookmarkedLawsQuery } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
 import { useRouter } from "next/navigation";
