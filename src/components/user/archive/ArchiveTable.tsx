@@ -10,13 +10,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import MainButton from "@/components/shared/MainButton";
-import { categoryOptions, statusOptions } from "@/app/(protected)/(user)/hearing-and-deadline/page";
 import { InputField } from "@/components/shared/InputField";
 import { SelectField } from "@/components/shared/SelectField";
 import { useGetAllArchivedCasesQuery, useDeleteArchiveCaseMutation } from "@/store/features/archive/archive.api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+
+const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
+const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
 
 export default function ArchiveTable() {
     const router = useRouter();
