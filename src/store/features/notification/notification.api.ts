@@ -18,10 +18,52 @@ export const notificationApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["notification"],
     }),
+    // for notification modal 
+    registerDeviceToken: builder.mutation({
+      query: (data: { token: string, device_type: string }) => ({
+        url: "/notifications/fcm-token/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["notification"],
+    }),
+    getAllNotifications: builder.query<any, void>({
+      query: () => ({
+        url: "/notifications/",
+        method: "GET",
+      }),
+      providesTags: ["notification"],
+    }),
+    markNotificationAsRead: builder.mutation({
+      query: (id: number) => ({
+        url: `/notifications/${id}/read/`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["notification"],
+    }),
+    markAllNotificationAsRead: builder.mutation({
+      query: () => ({
+        url: `/notifications/read-all/`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["notification"],
+    }),
+    deleteNotification: builder.mutation({
+      query: (id: number) => ({
+        url: `/notifications/${id}/delete/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["notification"],
+    }),
   }),
 });
 
 export const {
   useGetNotificationSettingsQuery,
   useUpdateNotificationSettingsMutation,
+  useRegisterDeviceTokenMutation,
+  useGetAllNotificationsQuery,
+  useMarkNotificationAsReadMutation,
+  useMarkAllNotificationAsReadMutation,
+  useDeleteNotificationMutation,
 } = notificationApi;

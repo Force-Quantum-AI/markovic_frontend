@@ -6,20 +6,22 @@ import MainButton from "@/components/shared/MainButton";
 import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "../dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
-import { useGetAllCasesQuery } from "@/store/features/case/case.api";
+import { useGetAllCasesQuery, useGetCategoryDropdownOptionsQuery } from "@/store/features/case/case.api";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
+import { SelectField } from "@/components/shared/SelectField";
 
-type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
 
 const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
 const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
 
 export default function AllCasesPage() {
     const { data: allCases, isLoading: isAllCasesLoading } = useGetAllCasesQuery();
+    const { data: categoryDropdownOptions } = useGetCategoryDropdownOptionsQuery();
+    
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
-    const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
+    const [selectedCategory, setSelectedCategory] = useState(categoryOptions[0]);
     const [hearingDate, setHearingDate] = useState({ day: "", month: "", year: "" });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
@@ -87,7 +89,7 @@ export default function AllCasesPage() {
             {/* Filters Row */}
             <div className="mb-6 flex flex-wrap  items-end gap-3">
                 {/* Case Status Filter */}
-                <div className="min-w-[200px] w-full md:w-auto">
+                {/* <div className="min-w-[200px] w-full md:w-auto">
                     <label className="mb-1 block text-xs font-medium text-gray-500">
                         Case status
                     </label>
@@ -102,10 +104,16 @@ export default function AllCasesPage() {
                             </option>
                         ))}
                     </select>
-                </div>
+                </div> */}
+                <SelectField
+                label="Case status"
+                value={selectedStatus}
+                onChange={(e:any) => setSelectedStatus(e.target.value)}
+                options={statusOptions}
+                />
 
                 {/* Case Category Filter */}
-                <div className="min-w-[200px] w-full md:w-auto">
+                {/* <div className="min-w-[200px] w-full md:w-auto">
                     <label className="mb-1 block text-xs font-medium text-gray-500">
                         Case category
                     </label>
@@ -120,7 +128,14 @@ export default function AllCasesPage() {
                             </option>
                         ))}
                     </select>
-                </div>
+                </div> */}
+
+                <SelectField
+                label="Case category"
+                value={selectedCategory}
+                onChange={(e:any) => setSelectedCategory(e.target.value)}
+                options={categoryDropdownOptions ? categoryDropdownOptions : []}
+                />
 
                 {/* Hearing Date Filter */}
                 <div>
