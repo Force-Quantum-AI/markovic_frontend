@@ -10,6 +10,16 @@ export const caseApi = baseApi.injectEndpoints({
       }),
       providesTags: ["case"],
     }),
+    getCaseHearingAndDeadlineAllDateForCalendar: builder.query<any, string>({
+      query: (date?: string) => ({
+        url: `/lawyer-dashboard/calendar/`,
+        method: "GET",
+        params: {
+          date: date,
+        }
+      }),
+      providesTags: ["case"],
+    }),
     // get case details for left  side
     getLeftSideCaseDetails: builder.query<any, string>({
       query: (caseId: string) => ({
@@ -304,6 +314,7 @@ export const caseApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllCasesQuery,
+  useGetCaseHearingAndDeadlineAllDateForCalendarQuery,
   // case details page 
   // left side 
   useGetLeftSideCaseDetailsQuery,
