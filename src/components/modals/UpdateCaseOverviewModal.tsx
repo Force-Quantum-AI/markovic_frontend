@@ -298,7 +298,7 @@ export default function UpdateCaseOverviewModal({
             {/* Status */}
             <SelectField
               label="Status:"
-              value={formData.status}
+              value={formData.status?.toString()}
               onChange={(value: any) =>
                 setFormData((prev) => ({
                   ...prev,
