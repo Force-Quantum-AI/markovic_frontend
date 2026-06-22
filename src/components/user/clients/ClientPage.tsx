@@ -95,7 +95,17 @@ export default function ClientPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
-        {statsData.map((stat) => (
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className="p-5 rounded-2xl border border-gray-100 flex flex-col justify-between min-h-[135px] animate-pulse bg-gray-50">
+                <div className="w-9 h-9 rounded-full bg-gray-200" />
+                <div className="mt-4 space-y-2">
+                  <div className="h-8 bg-gray-200 rounded w-16" />
+                  <div className="h-4 bg-gray-200 rounded w-24" />
+                </div>
+              </div>
+            ))
+        ): statsData.map((stat) => (
           <MetricCard
             key={stat.id}
             icon={stat.icon}
