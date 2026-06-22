@@ -54,9 +54,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 ">
       {/* Main Container tailored to max-w-6xl and 70vh */}
-      <div className="w-full max-w-6xl h-auto lg:h-[70vh] min-h-[550px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+      <div className="w-full max-w-6xl h-auto lg:h-[70vh] min-h-[550px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row hover:translate-y-1 transition-all duration-300">
         {/* Left Side: Form Area */}
         <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
           {/* Logo / Brand Header */}
@@ -203,7 +203,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side: Visual Hero Card */}
-        <div className="hidden lg:block w-1/2 p-3 h-full">
+        <div className="hidden lg:block w-1/2 p-3 h-full group">
           <div className="relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-b from-gray-900 to-black flex flex-col justify-end p-8 lg:p-12 text-white">
             {/* Background Image Placeholder */}
             <Image
@@ -211,7 +211,7 @@ export default function LoginPage() {
               alt="Gavel background"
               fill
               priority
-              className="object-cover opacity-40 select-none pointer-events-none"
+              className="object-cover opacity-40 select-none pointer-events-none group-hover:scale-105 transition-all duration-500"
             />
 
             {/* Content overlay matched to login.png */}
