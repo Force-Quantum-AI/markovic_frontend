@@ -11,14 +11,12 @@ import {
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import MainButton from "@/components/shared/MainButton";
 import { InputField } from "@/components/shared/InputField";
-import { SelectField } from "@/components/shared/SelectField";
-import { useGetAllArchivedCasesQuery, useDeleteArchiveCaseMutation } from "@/store/features/archive/archive.api";
+import { SelectField } from "@/components/shared/SelectNewDropdown";
+import { useGetAllArchivedCasesQuery, useDeleteArchiveCaseMutation, IArchiveParams } from "@/store/features/archive/archive.api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
-const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
 
 export default function ArchiveTable() {
     const router = useRouter();
@@ -27,32 +25,52 @@ export default function ArchiveTable() {
     const [year, setYear] = useState<string>("");
     const [court, setCourt] = useState("");
     const [responsible, setResponsible] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
-    const [selectedCategory, setSelectedCategory] = useState("All");
-    const [selectedSubCategory, setSelectedSubCategory] = useState("All");
-
     const [filterName, setFilterName] = useState("");
     const [filterYear, setFilterYear] = useState<string>("");
     const [filterCourt, setFilterCourt] = useState("");
-    const [filterCategory, setFilterCategory] = useState("All");
-    const [filterSubCategory, setFilterSubCategory] = useState("All");
+
+    const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
+    const [selectedSubCategory, setSelectedSubCategory] = useState<number | undefined>();
+
+    const [filterCategory, setFilterCategory] = useState<number | undefined>();
+    const [filterSubCategory, setFilterSubCategory] = useState<number | undefined>();
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
 
-    const { data, isLoading } = useGetAllArchivedCasesQuery({
-        search: filterName || undefined,
-        case_name: filterName || undefined,
-        year: filterYear ? Number(filterYear) : undefined,
-        court: filterCourt || undefined,
-        responsible: responsible || undefined,
-        category: filterCategory === "All" ? undefined : filterCategory,
-        sub_category: filterSubCategory === "All" ? undefined : filterSubCategory,
+    const queryParams: IArchiveParams = {
         page: currentPage,
         page_size: itemsPerPage,
-    });
+    };
 
-    const [deleteArchiveCase, { isLoading: isDeleting }] = useDeleteArchiveCaseMutation();
+    if (filterName) {
+        queryParams.search = filterName;
+        queryParams.case_name = filterName;
+    }
+
+    if (filterYear) {
+        queryParams.year = Number(filterYear);
+    }
+
+    if (filterCourt) {
+        queryParams.court = filterCourt;
+    }
+
+    if (responsible) {
+        queryParams.responsible = responsible;
+    }
+
+    if (filterCategory !== undefined) {
+        queryParams.category = filterCategory.toString();
+    }
+
+    if (filterSubCategory !== undefined) {
+        queryParams.sub_category = filterSubCategory.toString();
+    }
+
+    const { data, isLoading } = useGetAllArchivedCasesQuery(queryParams);
+
+    const [deleteArchiveCase] = useDeleteArchiveCaseMutation();
 
     const totalCount = data?.count || 0;
     const totalPages = Math.ceil(totalCount / itemsPerPage);
@@ -68,8 +86,10 @@ export default function ArchiveTable() {
         setFilterName(name);
         setFilterYear(year);
         setFilterCourt(court);
+
         setFilterCategory(selectedCategory);
         setFilterSubCategory(selectedSubCategory);
+
         setCurrentPage(1);
     };
 
@@ -78,16 +98,16 @@ export default function ArchiveTable() {
         setYear("");
         setCourt("");
         setResponsible("");
-        setSelectedStatus(statusOptions[0]);
-        setSelectedCategory("All");
-        setSelectedSubCategory("All");
 
         setFilterName("");
         setFilterYear("");
         setFilterCourt("");
-        setFilterCategory("All");
-        setFilterSubCategory("All");
         setCurrentPage(1);
+        setSelectedCategory(undefined);
+        setSelectedSubCategory(undefined);
+
+        setFilterCategory(undefined);
+        setFilterSubCategory(undefined);
     };
 
     // Get visible page numbers for pagination
@@ -186,24 +206,37 @@ export default function ArchiveTable() {
                             onChange={(e) => setResponsible(e.target.value)}
                         />
                     </div>
-                    <div className="grow grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <SelectField
+                    <div className="grow grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {/* <SelectField
                             label="Status"
                             options={statusOptions}
                             value={selectedStatus}
                             onChange={(e: any) => setSelectedStatus(e.target.value)}
-                        />
+                        /> */}
                         <SelectField
                             label="Category"
-                            options={categoryOptions}
-                            value={selectedCategory}
-                            onChange={(e: any) => setSelectedCategory(e.target.value)}
+                            type="category"
+                            value={selectedCategory?.toString() || ""}
+                            onChange={(value) => {
+                                setSelectedCategory(
+                                    value ? Number(value) : undefined
+                                );
+
+                                setSelectedSubCategory(undefined);
+                            }}
+                            classes={"w-full h-fit rounded-full border border-gray-200 bg-gray-100 py-2.5 pl-4 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                         />
                         <SelectField
                             label="Sub-category"
-                            options={statusOptions}
-                            value={selectedSubCategory}
-                            onChange={(e: any) => setSelectedSubCategory(e.target.value)}
+                            type="subCategory"
+                            categoryId={selectedCategory}
+                            value={selectedSubCategory?.toString() || ""}
+                            onChange={(value) => {
+                                setSelectedSubCategory(
+                                    value ? Number(value) : undefined
+                                );
+                            }}
+                            classes={"w-full h-fit rounded-full border border-gray-200 bg-gray-100 py-2.5 pl-4 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                         />
                     </div>
                     <div className="flex items-center gap-3">
@@ -253,7 +286,7 @@ export default function ArchiveTable() {
                                 <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                                     {currentItems.map((item: any) => (
                                         <tr key={item.id} className="hover:bg-gray-50/70 transition-colors"
-                                        
+
                                         >
                                             <td className="py-4 px-5">
                                                 <span className="block font-medium text-gray-900">{item.case_name}</span>
@@ -338,10 +371,10 @@ export default function ArchiveTable() {
                                                     <Eye className="w-4 h-4 text-gray-400" />
                                                     <span>View</span>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleRestore(item.id, item.case_name)} className="flex items-center gap-2 px-3 py-2 text-sm text-[#135576] rounded-lg hover:bg-[#135576]/5">
+                                                {/* <DropdownMenuItem onClick={() => handleRestore(item.id, item.case_name)} className="flex items-center gap-2 px-3 py-2 text-sm text-[#135576] rounded-lg hover:bg-[#135576]/5">
                                                     <ArchiveRestore className="w-4 h-4 text-[#135576]" />
                                                     <span>Restore</span>
-                                                </DropdownMenuItem>
+                                                </DropdownMenuItem> */}
                                                 <DropdownMenuItem onClick={() => handleDelete(item.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50">
                                                     <Trash2 className="w-4 h-4 text-red-400" />
                                                     <span>Delete</span>
