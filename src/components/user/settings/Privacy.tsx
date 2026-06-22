@@ -16,34 +16,24 @@ import { useDeleteUserAccountMutation } from "@/store/features/auth/authApi";
 export default function Privacy() {
   const { data: cookiePreferenceData } = useGetCookiePreferenceQuery({});
 
-  const [updateCookiePreference] =
-    useUpdateCookiePreferenceMutation();
+  const [updateCookiePreference] = useUpdateCookiePreferenceMutation();
 
-  const [
-    exportDataFromSettingPage,
-    { isLoading: isDownloading },
-  ] = useExportDataFromSettingPageMutation();
+  const [exportDataFromSettingPage, { isLoading: isDownloading }] =
+    useExportDataFromSettingPageMutation();
 
-  const [
-    deleteUserAccount,
-    { isLoading: isUserDeleting },
-  ] = useDeleteUserAccountMutation();
+  const [deleteUserAccount, { isLoading: isUserDeleting }] =
+    useDeleteUserAccountMutation();
 
-  const [analyticsCookies, setAnalyticsCookies] =
-    useState(false);
+  const [analyticsCookies, setAnalyticsCookies] = useState(false);
 
-  const [marketingCookies, setMarketingCookies] =
-    useState(false);
+  const [marketingCookies, setMarketingCookies] = useState(false);
 
   useEffect(() => {
     if (cookiePreferenceData) {
-      setAnalyticsCookies(
-        cookiePreferenceData.analytics_cookies
-      );
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAnalyticsCookies(cookiePreferenceData.analytics_cookies);
 
-      setMarketingCookies(
-        cookiePreferenceData.marketing_cookies
-      );
+      setMarketingCookies(cookiePreferenceData.marketing_cookies);
     }
   }, [cookiePreferenceData]);
 
@@ -84,7 +74,7 @@ export default function Privacy() {
 
   const handleUpdateCookiePreference = async (
     analytics: boolean,
-    marketing: boolean
+    marketing: boolean,
   ) => {
     try {
       await updateCookiePreference({
@@ -92,14 +82,10 @@ export default function Privacy() {
         marketing_cookies: marketing,
       }).unwrap();
 
-      toast.success(
-        "Cookie preference updated successfully"
-      );
+      toast.success("Cookie preference updated successfully");
     } catch (error) {
       console.log(error);
-      toast.error(
-        "Failed to update cookie preference"
-      );
+      toast.error("Failed to update cookie preference");
     }
   };
 
@@ -113,8 +99,8 @@ export default function Privacy() {
           </h2>
 
           <p className="text-[#4a5565] text-sm leading-[20px]">
-            Download all your data including cases,
-            documents, and account information.
+            Download all your data including cases, documents, and account
+            information.
           </p>
         </div>
 
@@ -125,9 +111,7 @@ export default function Privacy() {
         >
           <Download size={18} />
 
-          {isDownloading
-            ? "Downloading..."
-            : "Download My Data as ZIP"}
+          {isDownloading ? "Downloading..." : "Download My Data as ZIP"}
         </button>
       </div>
 
@@ -150,9 +134,7 @@ export default function Privacy() {
               </span>
             </div>
 
-            <span className="text-[#667085] text-sm">
-              Always On
-            </span>
+            <span className="text-[#667085] text-sm">Always On</span>
           </div>
 
           {/* Analytics Cookies */}
@@ -172,10 +154,7 @@ export default function Privacy() {
               onCheckedChange={async (checked) => {
                 setAnalyticsCookies(checked);
 
-                await handleUpdateCookiePreference(
-                  checked,
-                  marketingCookies
-                );
+                await handleUpdateCookiePreference(checked, marketingCookies);
               }}
               className="data-[state=checked]:bg-[#135576]"
             />
@@ -198,10 +177,7 @@ export default function Privacy() {
               onCheckedChange={async (checked) => {
                 setMarketingCookies(checked);
 
-                await handleUpdateCookiePreference(
-                  analyticsCookies,
-                  checked
-                );
+                await handleUpdateCookiePreference(analyticsCookies, checked);
               }}
               className="data-[state=checked]:bg-[#135576]"
             />
@@ -213,10 +189,7 @@ export default function Privacy() {
       <div className="bg-white border border-[#fda29b] p-6 rounded-2xl flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <AlertCircle
-              className="text-[#d92d20]"
-              size={20}
-            />
+            <AlertCircle className="text-[#d92d20]" size={20} />
 
             <h2 className="text-[#101828] text-lg font-semibold">
               Delete Account
@@ -224,9 +197,8 @@ export default function Privacy() {
           </div>
 
           <p className="text-[#4a5565] text-sm ml-7 mt-[-4px]">
-            Permanently delete your account and all
-            associated data. This action cannot be
-            undone.
+            Permanently delete your account and all associated data. This action
+            cannot be undone.
           </p>
         </div>
 
@@ -237,9 +209,7 @@ export default function Privacy() {
         >
           <Trash2 size={18} />
 
-          {isUserDeleting
-            ? "Deleting..."
-            : "Delete Account"}
+          {isUserDeleting ? "Deleting..." : "Delete Account"}
         </button>
       </div>
     </div>

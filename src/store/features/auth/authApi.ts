@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "../../api/baseApi";
 import { setCredentials, logout as logoutAction } from "./authSlice";
 

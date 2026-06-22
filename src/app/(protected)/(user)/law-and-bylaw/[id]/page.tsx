@@ -6,130 +6,15 @@ import { useParams } from "next/navigation";
 import { 
   ArrowLeft, 
   Star, 
-  Copy,  
+  Copy, 
   Printer, 
   FileText, 
   ChevronDown,
   Scale
 } from "lucide-react";
 import Image from "next/image";
-import { jsPDF } from "jspdf";
-
-// ─── TYPES & INTERFACES ──────────────────────────────────────────────────────
-
-interface Article {
-  id: string;
-  title: string;
-  subtitle?: string;
-  content: string[];
-}
-
-interface Chapter {
-  id: string;
-  title: string;
-  articles: Article[];
-}
-
-interface Section {
-  id: string;
-  title: string;
-  chapters: Chapter[];
-}
-
-interface LawData {
-  id: string;
-  title: string;
-  category: string;
-  source: string;
-  effectiveDate: string;
-  lastAmended: string;
-  sections: Section[];
-}
-
-// ─── MOCK DATA (MATCHING FIGMA AND SCALABLE FOR API REPLACEMENT) ─────────────
-
-const mockLawDataset: Record<string, LawData> = {
-  "obligations": {
-    id: "obligations",
-    title: "Law on Obligations",
-    category: "Civil Law",
-    source: "Official Gazette of Montenegro",
-    effectiveDate: "1 January 2008",
-    lastAmended: "8 Sep, 2020",
-    sections: [
-      {
-        id: "general-part",
-        title: "Part One: General Part",
-        chapters: [
-          {
-            id: "basic-principles",
-            title: "Chapter 1: Basic Principles",
-            articles: [
-              {
-                id: "article-1",
-                title: "Article 1 – Scope of the Law",
-                content: [
-                  "This Law regulates obligatory relations that arise from contracts, causing damage, unjust enrichment, conducting affairs without order, unilateral expression of will, and other legal facts."
-                ]
-              },
-              {
-                id: "article-2",
-                title: "Article 2 – Freedom of Contracting",
-                content: [
-                  "Parties are free to regulate their obligatory relations, within the limits set by law and moral principles."
-                ]
-              },
-              {
-                id: "article-16",
-                title: "Article 16 – Prohibition of Causing Damage",
-                content: [
-                  "Everyone is obliged to refrain from actions by which damage could be caused to another."
-                ]
-              },
-              {
-                id: "article-172",
-                title: "Article 172 – Compensation for Non-Material Damage",
-                subtitle: "(Highly Important)",
-                content: [
-                  "(1) For physical pain, mental suffering, fear, reduced life activities, disfigurement, violation of personal dignity, honor and reputation, as well as other forms of suffering, the injured party is entitled to just compensation.",
-                  "(2) When determining the amount of compensation, the court shall take into account the intensity and duration of the physical and mental pain and suffering, the degree of guilt of the tortfeasor, and all other circumstances of the case.",
-                  "(3) In the case of violation of personality rights, the court may also award compensation in the form of publication of the judgment or correction of the statement."
-                ]
-              },
-              {
-                id: "article-199",
-                title: "Article 199 – Compensation for Non-Material Damage",
-                subtitle: "(Highly Important)",
-                content: [
-                  "(1) For physical pain, mental suffering, fear, reduced life activities, disfigurement, violation of personal dignity, honor and reputation, as well as other forms of suffering, the injured party is entitled to just compensation.",
-                  "(2) When determining the amount of compensation, the court shall take into account the intensity and duration of the physical and mental pain and suffering, the degree of guilt of the tortfeasor, and all other circumstances of the case.",
-                  "(3) In the case of violation of personality rights, the court may also award compensation in the form of publication of the judgment or correction of the statement."
-                ]
-              },
-              {
-                id: "article-200",
-                title: "Article 200 – Liability for Damage",
-                content: [
-                  "The provisions on divided liability and reduction of compensation applicable to material damage shall apply accordingly to non-material damage."
-                ]
-              },
-              {
-                id: "article-206",
-                title: "Article 206 – Joint and Several Liability",
-                content: [
-                  "(1) If several persons cause damage together, they shall be jointly and severally liable.",
-                  "(2) When determining the amount of compensation, the court shall take into account the intensity and duration of the physical and mental pain and suffering, the degree of guilt of the tortfeasor, and all other circumstances of the case."
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-};
-
-// ─── COMPONENT IMPLEMENTATION ────────────────────────────────────────────────
+import { useGetLawBylawDetailsQuery } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LawDetailsPage() {
   const params = useParams();
@@ -184,144 +69,35 @@ export default function LawDetailsPage() {
     window.print();
   };
 
-  const handleExportPDF = () => {
-    const doc = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white rounded-2xl p-4 space-y-6">
+        <Skeleton className="h-10 w-36 rounded-full" />
+        <Skeleton className="h-[300px] w-full rounded-[24px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="h-14 w-full rounded-full" />
+          <Skeleton className="h-14 w-full rounded-full" />
+        </div>
+        <Skeleton className="h-[400px] w-full rounded-[28px]" />
+      </div>
+    );
+  }
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 20;
-    const contentWidth = pageWidth - 2 * margin;
-
-    let y = margin;
-
-    const checkPageBreak = (neededHeight: number) => {
-      if (y + neededHeight > pageHeight - margin) {
-        doc.addPage();
-        y = margin;
-      }
-    };
-
-    // Title
-    doc.setFont("Helvetica", "bold");
-    doc.setFontSize(22);
-    const titleLines = doc.splitTextToSize(lawData.title, contentWidth);
-    const titleHeight = titleLines.length * 8;
-    checkPageBreak(titleHeight + 10);
-    doc.text(titleLines, margin, y);
-    y += titleHeight + 10;
-
-    // Metadata
-    doc.setFont("Helvetica", "normal");
-    doc.setFontSize(10);
-
-    const metadata = [
-      { label: "Source:", value: lawData.source },
-      { label: "Category:", value: lawData.category },
-      { label: "Effective Date:", value: lawData.effectiveDate },
-      { label: "Last Amended:", value: lawData.lastAmended },
-    ];
-
-    metadata.forEach((item) => {
-      if (item.value) {
-        doc.setFont("Helvetica", "bold");
-        const labelText = item.label;
-        const labelWidth = doc.getTextWidth(labelText) + 2;
-
-        doc.setFont("Helvetica", "normal");
-        const valueLines = doc.splitTextToSize(String(item.value), contentWidth - labelWidth);
-        const valHeight = valueLines.length * 5;
-
-        checkPageBreak(valHeight + 4);
-
-        doc.setFont("Helvetica", "bold");
-        doc.setTextColor(80, 80, 80);
-        doc.text(labelText, margin, y);
-
-        doc.setFont("Helvetica", "normal");
-        doc.setTextColor(120, 120, 120);
-        doc.text(valueLines, margin + labelWidth, y);
-
-        y += valHeight + 2;
-      }
-    });
-
-    y += 5;
-
-    // Divider Line
-    checkPageBreak(5);
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.5);
-    doc.line(margin, y, pageWidth - margin, y);
-    y += 10;
-
-    // Sections & Chapters & Articles
-    if (lawData.sections && lawData.sections.length > 0) {
-      lawData.sections.forEach((section) => {
-        doc.setFont("Helvetica", "bold");
-        doc.setFontSize(14);
-        doc.setTextColor(19, 85, 118);
-        
-        const secLines = doc.splitTextToSize(section.title, contentWidth);
-        const secHeight = secLines.length * 6;
-        checkPageBreak(secHeight + 8);
-        doc.text(secLines, margin, y);
-        y += secHeight + 6;
-
-        if (section.chapters && section.chapters.length > 0) {
-          section.chapters.forEach((chapter) => {
-            doc.setFont("Helvetica", "bold");
-            doc.setFontSize(12);
-            doc.setTextColor(60, 60, 60);
-
-            const chapLines = doc.splitTextToSize(chapter.title, contentWidth);
-            const chapHeight = chapLines.length * 5;
-            checkPageBreak(chapHeight + 6);
-            doc.text(chapLines, margin, y);
-            y += chapHeight + 4;
-
-            if (chapter.articles && chapter.articles.length > 0) {
-              chapter.articles.forEach((article) => {
-                doc.setFont("Helvetica", "bold");
-                doc.setFontSize(11);
-                doc.setTextColor(40, 40, 40);
-
-                const artTitle = article.subtitle
-                  ? `${article.title} (${article.subtitle})`
-                  : article.title;
-
-                const artLines = doc.splitTextToSize(artTitle, contentWidth);
-                const artHeight = artLines.length * 5;
-                
-                doc.setFont("Helvetica", "normal");
-                doc.setFontSize(10);
-                doc.setTextColor(80, 80, 80);
-
-                const fullContentStr = article.content.join("\n\n");
-                const descLines = doc.splitTextToSize(fullContentStr, contentWidth);
-                const descHeight = descLines.length * 5;
-
-                checkPageBreak(artHeight + descHeight + 12);
-
-                doc.setFont("Helvetica", "bold");
-                doc.text(artLines, margin, y);
-                y += artHeight + 2;
-
-                doc.setFont("Helvetica", "normal");
-                doc.text(descLines, margin, y);
-                y += descHeight + 8;
-              });
-            }
-          });
-        }
-      });
-    }
-
-    doc.save(`${lawData.title.replace(/\s+/g, "_")}.pdf`);
-  };
+  if (error || !lawDetailsData) {
+    return (
+      <div className="min-h-screen bg-white rounded-2xl p-4 flex flex-col items-center justify-center text-red-500 font-roboto">
+        <Scale className="w-12 h-12 mb-3 opacity-60 text-red-400" />
+        <p className="text-lg font-medium">Failed to load law details</p>
+        <p className="text-sm">Please check the connection or try again later.</p>
+        <Link 
+          href="/law-and-bylaw" 
+          className="mt-4 px-4 py-2 bg-[#135576] text-white rounded-full text-xs font-bold hover:bg-[#135576]/90 transition-all"
+        >
+          Back to Laws & Bylaws
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white rounded-2xl p-1 md:p-4 font-sans selection:bg-[#135576]/10 print:bg-white print:p-0">
@@ -386,8 +162,8 @@ export default function LawDetailsPage() {
               Print
             </button>
 
-            <button 
-              onClick={handleExportPDF}
+            <button
+              onClick={handlePrint}
               className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98"
             >
               <FileText className="w-4 h-4" />

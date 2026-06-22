@@ -23,13 +23,13 @@ export default function ProtectedRoute({
 
   useEffect(() => {
     // Check both Redux state and cookie (cookie is the source of truth set at login)
-    const cookieToken =
-      getCookie("access") || getCookie("accessToken");
+    const cookieToken = getCookie("access") || getCookie("accessToken");
     const token = reduxToken || cookieToken;
 
     if (!token) {
       router.replace("/login");
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setChecked(true);
     }
   }, [reduxToken, router]);

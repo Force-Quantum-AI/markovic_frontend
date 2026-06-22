@@ -2,40 +2,47 @@
 
 import React, { useState } from "react";
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { GraphMetric } from "@/store/features/admin/dashboard/dashboard.type";
 
-const monthlyData = [
-  { name: "Subscription", value: 1180 },
-  { name: "Total Cases", value: 780 },
-  { name: "Archive Cases", value: 980 },
-  { name: "Total User", value: 1350 },
-  { name: "AI Search", value: 1500 },
-  { name: "Total Court", value: 450 },
-  { name: "Storage", value: 1350 },
-];
-
-const yearlyData = [
-  { name: "Subscription", value: 1400 },
-  { name: "Total Cases", value: 920 },
-  { name: "Archive Cases", value: 1150 },
-  { name: "Total User", value: 1520 },
-  { name: "AI Search", value: 1600 },
-  { name: "Total Court", value: 600 },
-  { name: "Storage", value: 1480 },
-];
+interface PlatformOverviewProps {
+  graph?: {
+    monthly: GraphMetric[];
+    yearly: GraphMetric[];
+  };
+}
 
 const colors = [
   "#F3B0A7", // Subscription
   "#F3F0A7", // Total Cases
   "#C8F3A7", // Archive Cases
   "#A7F3E4", // Total User
-  "#A7CAF3", // AI Search
   "#EFA7F3", // Total Court
   "#A7E5F3", // Storage
 ];
 
-export default function PlatformOverview() {
+export default function PlatformOverview({ graph }: PlatformOverviewProps) {
   const [view, setView] = useState<"Monthly" | "Yearly">("Monthly");
-  const data = view === "Monthly" ? monthlyData : yearlyData;
+
+  const activeList = view === "Monthly" ? graph?.monthly : graph?.yearly;
+  const activeItem = activeList && activeList.length > 0 ? activeList[activeList.length - 1] : null;
+
+  const data = activeItem
+    ? [
+        { name: "Subscription", value: activeItem.subscription?.value ?? 0 },
+        { name: "Total Cases", value: activeItem.total_cases?.value ?? 0 },
+        { name: "Archive Cases", value: activeItem.archive_cases?.value ?? 0 },
+        { name: "Total User", value: activeItem.total_users?.value ?? 0 },
+        { name: "Total Court", value: activeItem.total_courts?.value ?? 0 },
+        { name: "Storage", value: activeItem.storage?.value ?? 0 },
+      ]
+    : [
+        { name: "Subscription", value: 0 },
+        { name: "Total Cases", value: 0 },
+        { name: "Archive Cases", value: 0 },
+        { name: "Total User", value: 0 },
+        { name: "Total Court", value: 0 },
+        { name: "Storage", value: 0 },
+      ];
 
   return (
     <div className="w-full h-[520px] bg-white rounded-2xl p-6 border border-gray-100 flex flex-col justify-between">
@@ -46,7 +53,7 @@ export default function PlatformOverview() {
             Total Platform Overview
           </h2>
           <p className="text-[#6A7282] font-inter text-[14px] font-normal leading-[20px]">
-            Monthly activity metrics
+            {view} activity metrics {activeItem ? `(${activeItem.period})` : ""}
           </p>
         </div>
 
@@ -93,8 +100,7 @@ export default function PlatformOverview() {
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#9CA3AF", fontSize: 12, fontFamily: "Inter", fontWeight: 400 }}
-              domain={[0, 1600]}
-              ticks={[0, 400, 800, 1200, 1600]}
+              domain={[0, "auto"]}
             />
             <Tooltip
               cursor={{ fill: "rgba(0, 0, 0, 0.02)" }}

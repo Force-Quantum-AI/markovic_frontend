@@ -13,11 +13,7 @@ interface UserRow {
   role: string;
   phone: string;
   created: string;
-  plan: 
-    | "Basic" 
-    | "Standard" 
-    | "Premium"
-    | "Custom"
+  plan: "Basic" | "Standard" | "Premium" | "Custom";
 }
 
 const initialUsers: UserRow[] = [
@@ -136,22 +132,22 @@ export default function MyUsers() {
       filtered = filtered.filter(
         (u) =>
           u.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-          u.email.toLowerCase().includes(filters.search.toLowerCase())
+          u.email.toLowerCase().includes(filters.search.toLowerCase()),
       );
     }
     if (filters.clientName) {
       filtered = filtered.filter((u) =>
-        u.name.toLowerCase().includes(filters.clientName.toLowerCase())
+        u.name.toLowerCase().includes(filters.clientName.toLowerCase()),
       );
     }
     if (filters.year) {
       filtered = filtered.filter((u) =>
-        u.created.toLowerCase().includes(filters.year.toLowerCase())
+        u.created.toLowerCase().includes(filters.year.toLowerCase()),
       );
     }
     if (filters.subscription && filters.subscription !== "all") {
       filtered = filtered.filter(
-        (u) => u.plan.toLowerCase() === filters.subscription.toLowerCase()
+        (u) => u.plan.toLowerCase() === filters.subscription.toLowerCase(),
       );
     }
     return filtered;

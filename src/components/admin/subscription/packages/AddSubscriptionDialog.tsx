@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { X, Info, ChevronDown, MinusCircle, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
@@ -33,7 +38,8 @@ export default function AddSubscriptionDialog({
   isOpen,
   onOpenChange,
 }: AddSubscriptionDialogProps) {
-  const [createSubscription, { isLoading: isCreating }] = useCreateSubscriptionMutation();
+  const [createSubscription, { isLoading: isCreating }] =
+    useCreateSubscriptionMutation();
 
   const defaultValues: SubscriptionFormValues = {
     name: "",
@@ -94,31 +100,41 @@ export default function AddSubscriptionDialog({
         label: null,
         is_visible: data.enabled,
         features: {
-          unlimited_cases: features.some((f) => f.toLowerCase().includes("unlimited case")),
+          unlimited_cases: features.some((f) =>
+            f.toLowerCase().includes("unlimited case"),
+          ),
           client_calendar_hearing_deadline: features.some(
             (f) =>
               f.toLowerCase().includes("client") ||
               f.toLowerCase().includes("calendar") ||
               f.toLowerCase().includes("hearing") ||
-              f.toLowerCase().includes("deadline")
+              f.toLowerCase().includes("deadline"),
           ),
-          documents_management: features.some((f) => f.toLowerCase().includes("document")),
+          documents_management: features.some((f) =>
+            f.toLowerCase().includes("document"),
+          ),
           laws_bylaws_module: features.some(
-            (f) => f.toLowerCase().includes("laws") || f.toLowerCase().includes("bylaws")
+            (f) =>
+              f.toLowerCase().includes("laws") ||
+              f.toLowerCase().includes("bylaws"),
           ),
           ai_court_practice_search: features.some(
             (f) =>
               f.toLowerCase().includes("ai") ||
               f.toLowerCase().includes("court") ||
-              f.toLowerCase().includes("practice")
+              f.toLowerCase().includes("practice"),
           ),
           global_search_archive: features.some(
-            (f) => f.toLowerCase().includes("global") || f.toLowerCase().includes("archive")
+            (f) =>
+              f.toLowerCase().includes("global") ||
+              f.toLowerCase().includes("archive"),
           ),
         },
       }).unwrap();
 
-      toast.success(`Package "${data.name}" added successfully!`, { id: toastId });
+      toast.success(`Package "${data.name}" added successfully!`, {
+        id: toastId,
+      });
       // Reset form fields
       reset(defaultValues);
       setFeatures([
@@ -166,7 +182,9 @@ export default function AddSubscriptionDialog({
               className="w-full rounded-full border border-[#D1D5DC] bg-white px-5 py-3 h-12 text-[#101828] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
             />
             {errors.name && (
-              <span className="text-[#EF4444] text-[12px] pl-2">{errors.name.message}</span>
+              <span className="text-[#EF4444] text-[12px] pl-2">
+                {errors.name.message}
+              </span>
             )}
             <div className="flex items-center gap-1.5 text-[#3B82F6] cursor-pointer hover:underline text-[13px] font-semibold mt-1">
               <Info className="w-4 h-4 text-[#3B82F6]" />
@@ -182,12 +200,16 @@ export default function AddSubscriptionDialog({
               </label>
               <input
                 type="text"
-                {...register("devices", { required: "Devices count is required!" })}
+                {...register("devices", {
+                  required: "Devices count is required!",
+                })}
                 placeholder="Enter device limit"
                 className="w-full rounded-full border border-[#D1D5DC] bg-white px-5 py-3 h-12 text-[#101828] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
               />
               {errors.devices && (
-                <span className="text-[#EF4444] text-[12px] pl-2">{errors.devices.message}</span>
+                <span className="text-[#EF4444] text-[12px] pl-2">
+                  {errors.devices.message}
+                </span>
               )}
             </div>
             <div className="space-y-1.5 w-full flex flex-col items-start">
@@ -201,7 +223,9 @@ export default function AddSubscriptionDialog({
                 className="w-full rounded-full border border-[#D1D5DC] bg-white px-5 py-3 h-12 text-[#101828] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
               />
               {errors.price && (
-                <span className="text-[#EF4444] text-[12px] pl-2">{errors.price.message}</span>
+                <span className="text-[#EF4444] text-[12px] pl-2">
+                  {errors.price.message}
+                </span>
               )}
             </div>
           </div>

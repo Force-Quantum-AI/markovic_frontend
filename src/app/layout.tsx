@@ -5,13 +5,13 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/lib/Providers";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Actio",
   description: "Legal Research Assistant",
   icons: {
-    icon: '/actioProjectBrandFavLogo.png', 
+    icon: "/actioProjectBrandFavLogo.png",
   },
 };
 

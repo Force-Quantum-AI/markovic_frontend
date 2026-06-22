@@ -2,7 +2,17 @@
 
 import React from "react";
 import Image from "next/image";
-import { Download, Plus, Phone, MoreHorizontal, ArrowLeft, ArrowRight, Layers, UserMinus, Trash2 } from "lucide-react";
+import {
+  Download,
+  Plus,
+  Phone,
+  MoreHorizontal,
+  ArrowLeft,
+  ArrowRight,
+  Layers,
+  UserMinus,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,14 +28,14 @@ interface UserRow {
   role: string;
   phone: string;
   created: string;
-  plan: 
-    | "Basic" 
-    | "Professional" 
-    | "Standard" 
-    | "Premium" 
-    | "Enterprise" 
-    | "Ultimate" 
-    | "Custom" 
+  plan:
+    | "Basic"
+    | "Professional"
+    | "Standard"
+    | "Premium"
+    | "Enterprise"
+    | "Ultimate"
+    | "Custom"
     | "Limited Edition";
 }
 
@@ -54,11 +64,13 @@ const planBadgeStyles: Record<UserRow["plan"], string> = {
   "Limited Edition": "bg-[#F3F4F6] text-[#374151] border border-[#E5E7EB]",
 };
 
-export default function MyUsersTable({ usersList, onAddUser }: MyUsersTableProps) {
+export default function MyUsersTable({
+  usersList,
+  onAddUser,
+}: MyUsersTableProps) {
   const [isAddUserOpen, setIsAddUserOpen] = React.useState(false);
   return (
     <div className="w-full bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-6">
-      
       {/* Table Title + Header Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -93,33 +105,57 @@ export default function MyUsersTable({ usersList, onAddUser }: MyUsersTableProps
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#E8EEF2] text-[#3C4250] text-[14px] font-roboto font-normal leading-[21px] border-b border-[#BEC4D2]">
-                <th className="py-3 px-5 border-r border-[#BEC4D2] font-semibold font-roboto">User name</th>
-                <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">Role</th>
-                <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">Phone Number</th>
-                <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">Account created</th>
-                <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">Subscription</th>
+                <th className="py-3 px-5 border-r border-[#BEC4D2] font-semibold font-roboto">
+                  User name
+                </th>
+                <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">
+                  Role
+                </th>
+                <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">
+                  Phone Number
+                </th>
+                <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">
+                  Account created
+                </th>
+                <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">
+                  Subscription
+                </th>
                 <th className="py-3 px-4 font-semibold font-roboto"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#BEC4D2]/40 text-sm text-gray-700">
               {usersList.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-gray-400 font-roboto">
+                  <td
+                    colSpan={6}
+                    className="py-8 text-center text-gray-400 font-roboto"
+                  >
                     No users found.
                   </td>
                 </tr>
               ) : (
                 usersList.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50/70 transition-colors">
-                    
+                  <tr
+                    key={row.id}
+                    className="hover:bg-gray-50/70 transition-colors"
+                  >
                     {/* User Name + Avatar + Email */}
                     <td className="py-3.5 px-5 border-r border-[#BEC4D2]/40 flex items-center gap-3">
                       <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                        <Image src={row.avatar} alt={row.name} fill className="object-cover" />
+                        <Image
+                          src={row.avatar}
+                          alt={row.name}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
                       <div>
-                        <span className="block font-semibold text-[#101828] font-roboto text-[14px]">{row.name}</span>
-                        <span className="block text-[#475467] font-roboto text-[12px]">{row.email}</span>
+                        <span className="block font-semibold text-[#101828] font-roboto text-[14px]">
+                          {row.name}
+                        </span>
+                        <span className="block text-[#475467] font-roboto text-[12px]">
+                          {row.email}
+                        </span>
                       </div>
                     </td>
 
@@ -143,7 +179,9 @@ export default function MyUsersTable({ usersList, onAddUser }: MyUsersTableProps
 
                     {/* Subscription badge */}
                     <td className="py-3.5 px-4 border-r border-[#BEC4D2]/40">
-                      <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full ${planBadgeStyles[row.plan]}`}>
+                      <span
+                        className={`inline-block text-xs font-semibold px-3 py-1 rounded-full ${planBadgeStyles[row.plan]}`}
+                      >
                         {row.plan}
                       </span>
                     </td>
@@ -156,7 +194,10 @@ export default function MyUsersTable({ usersList, onAddUser }: MyUsersTableProps
                             <MoreHorizontal className="w-5 h-5 text-[#101828]" />
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[210px] bg-white border border-[#E4E7EC] rounded-2xl shadow-xl p-2 z-50">
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-[210px] bg-white border border-[#E4E7EC] rounded-2xl shadow-xl p-2 z-50"
+                        >
                           <DropdownMenuItem className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none">
                             <Layers className="w-[18px] h-[18px] text-[#0F5A7F] shrink-0" />
                             <span>Custom Subscription</span>
@@ -172,7 +213,6 @@ export default function MyUsersTable({ usersList, onAddUser }: MyUsersTableProps
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
-
                   </tr>
                 ))
               )}
@@ -184,25 +224,25 @@ export default function MyUsersTable({ usersList, onAddUser }: MyUsersTableProps
       {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between pt-4 text-sm font-roboto text-[#475467] gap-4">
         <span>Showing 1 to {usersList.length} of 2,847 users</span>
-        
+
         <div className="flex items-center gap-1.5">
           <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer">
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Previous</span>
           </button>
-          
+
           <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#0F5A7F] text-white text-xs font-medium cursor-pointer">
             1
           </button>
-          
+
           <button className="w-8 h-8 flex items-center justify-center rounded-full border border-transparent hover:border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-medium cursor-pointer">
             2
           </button>
-          
+
           <button className="w-8 h-8 flex items-center justify-center rounded-full border border-transparent hover:border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-medium cursor-pointer">
             3
           </button>
-          
+
           <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer">
             <span>Next</span>
             <ArrowRight className="w-3.5 h-3.5" />
