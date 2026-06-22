@@ -3,10 +3,22 @@ import { baseApi } from "../../api/baseApi";
 
 export const caseApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllCases: builder.query<any, void>({
-      query: () => ({
+    getAllCases: builder.query<any, {
+       search?: string;
+      status?: string;
+      category?: number;
+      sub_category?: number;
+      hearing_day?: number;
+      hearing_month?: number;
+      hearing_year?: number;
+      deadline_day?: number;
+      deadline_month?: number;
+      deadline_year?: number;
+    }>({
+      query: (params) => ({
         url: "/cases/",
         method: "GET",
+        params
       }),
       providesTags: ["case"],
     }),

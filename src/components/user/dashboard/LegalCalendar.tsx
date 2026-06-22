@@ -206,7 +206,7 @@ export default function LegalCalendar() {
    * and has more pages, you'll want a "fetch all" or a dedicated
    * /calendar/events/?year=...&month=... endpoint instead.
    */
-  const { data: casesData, isLoading: isCasesLoading } = useGetAllCasesQuery();
+  const { data: casesData, isLoading: isCasesLoading } = useGetAllCasesQuery({});
 
   /**
    * getCaseHearingAndDeadlineAllDateForCalendar — fetches event details for

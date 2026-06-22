@@ -1,4 +1,4 @@
-type SelectOption = string | {
+type SelectOption = string | number | {
   id?: number;
   category?: number;
   category_name?: string;
@@ -19,6 +19,11 @@ export function SelectField({
   value,
   onChange,
 }: SelectFieldProps) {
+  const selectedValue =
+    typeof value === "string" || typeof value === "number"
+      ? value
+      : value?.id;
+
   return (
     <div>
       <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
@@ -26,7 +31,7 @@ export function SelectField({
       </label>
 
       <select
-        value={typeof value === "string" ? value : value?.id}
+        value={selectedValue}
         onChange={(e) => onChange(e.target.value)}
         className="w-full rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
       >
@@ -44,11 +49,11 @@ export function SelectField({
           }
 
           // if option is object
-          return (
-            <option key={option.id} value={option.id}>
-              {option.name}
-            </option>
-          );
+          // return (
+          //   <option key={option.id} value={option.id}>
+          //     {option.name}
+          //   </option>
+          // );
         })}
       </select>
     </div>

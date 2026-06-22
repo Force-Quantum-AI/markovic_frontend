@@ -8,24 +8,43 @@ import { hearingsDataset } from "../dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { useGetAllCasesQuery, useGetCategoryDropdownOptionsQuery } from "@/store/features/case/case.api";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
-import { SelectField } from "@/components/shared/SelectField";
+import { SelectField } from "@/components/shared/SelectNewDropdown";
 
-
-const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
-const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
 
 export default function AllCasesPage() {
-    const { data: allCases, isLoading: isAllCasesLoading } = useGetAllCasesQuery();
-    const { data: categoryDropdownOptions } = useGetCategoryDropdownOptionsQuery();
-    
-
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
-    const [selectedCategory, setSelectedCategory] = useState(categoryOptions[0]);
-    const [hearingDate, setHearingDate] = useState({ day: "", month: "", year: "" });
+    const [selectedStatus, setSelectedStatus] = useState<number>();
+    const [selectedCategory, setSelectedCategory] = useState<number>();
+    const [hearingDate, setHearingDate] = useState<{ day: number | null, month: number | null, year: number | null }>({ day: null, month: null, year: null });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
     const totalPages = 4;
+
+    const { data: categoryOptions } = useGetCategoryDropdownOptionsQuery();
+
+    const allCasesQueryParams: Record<string, unknown> = {
+        search: searchQuery,
+    };
+
+    if (hearingDate.day !== null) {
+        allCasesQueryParams.hearing_day = hearingDate.day;
+    }
+    if (hearingDate.month !== null) {
+        allCasesQueryParams.hearing_month = hearingDate.month;
+    }
+    if (hearingDate.year !== null) {
+        allCasesQueryParams.hearing_year = hearingDate.year;
+    }
+
+    if (selectedStatus !== undefined) {
+        allCasesQueryParams.status = selectedStatus;
+    }
+
+    if (selectedCategory !== undefined) {
+        allCasesQueryParams.category = selectedCategory;
+    }
+
+    const { data: allCases, isLoading: isAllCasesLoading } = useGetAllCasesQuery(allCasesQueryParams);
 
 
     const handlePageChange = (page: number) => {
@@ -80,100 +99,75 @@ export default function AllCasesPage() {
                         placeholder="Search cases, clients, laws, documents..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                        className="w-full rounded-full border border-gray-200 bg-white py-3.5 pl-10 pr-4 shadow-sm text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                     />
                 </div>
-                <MainButton icon={<Search className="h-4 w-4" />} label="Search" onClick={() => setCurrentPage(1)} />
             </div>
 
             {/* Filters Row */}
-            <div className="mb-6 flex flex-wrap  items-end gap-3">
-                {/* Case Status Filter */}
-                {/* <div className="min-w-[200px] w-full md:w-auto">
-                    <label className="mb-1 block text-xs font-medium text-gray-500">
-                        Case status
-                    </label>
-                    <select
-                        value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="w-full rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                    >
-                        {statusOptions.map((status) => (
-                            <option key={status} value={status}>
-                                {status === "All" ? "Choose status..." : status}
-                            </option>
-                        ))}
-                    </select>
-                </div> */}
+            <div className="mb-6 grid grid-cols-2 gap-3">
                 <SelectField
-                label="Case status"
-                value={selectedStatus}
-                onChange={(e:any) => setSelectedStatus(e.target.value)}
-                options={statusOptions}
-                />
-
-                {/* Case Category Filter */}
-                {/* <div className="min-w-[200px] w-full md:w-auto">
-                    <label className="mb-1 block text-xs font-medium text-gray-500">
-                        Case category
-                    </label>
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value as CaseCategory)}
-                        className="w-full rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                    >
-                        {categoryOptions.map((category) => (
-                            <option key={category} value={category}>
-                                {category === "All" ? "Choose category..." : category}
-                            </option>
-                        ))}
-                    </select>
-                </div> */}
+  label="Case status"
+  type="status"
+  value={selectedStatus?.toString() || ""}
+  onChange={(value) =>
+    setSelectedStatus(value ? Number(value) : undefined)
+  }
+/>
 
                 <SelectField
-                label="Case category"
-                value={selectedCategory}
-                onChange={(e:any) => setSelectedCategory(e.target.value)}
-                options={categoryDropdownOptions ? categoryDropdownOptions : []}
+                    label="Case category"
+                    type="category"
+                    value={selectedCategory ? String(selectedCategory) : ""}
+                    onChange={(value) =>
+                        setSelectedCategory(
+                            value ? Number(value) : undefined
+                        )
+                    }
                 />
-
-                {/* Hearing Date Filter */}
-                <div>
-                    <label className="mb-1 block text-xs font-medium text-gray-500">
-                        Hearing date
-                    </label>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            placeholder="DD"
-                            value={hearingDate.day}
-                            onChange={(e) =>
-                                setHearingDate({ ...hearingDate, day: e.target.value })
-                            }
-                            className="w-1/3 md:w-16 rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                            maxLength={2}
-                        />
-                        <input
-                            type="text"
-                            placeholder="MM"
-                            value={hearingDate.month}
-                            onChange={(e) =>
-                                setHearingDate({ ...hearingDate, month: e.target.value })
-                            }
-                            className="w-1/3 md:w-16 rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                            maxLength={2}
-                        />
-                        <input
-                            type="text"
-                            placeholder="YY"
-                            value={hearingDate.year}
-                            onChange={(e) =>
-                                setHearingDate({ ...hearingDate, year: e.target.value })
-                            }
-                            className="w-1/3 md:w-16 rounded-full border border-gray-200 bg-white px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                            maxLength={2}
-                        />
-                    </div>
+            </div>
+            {/* Hearing Date Filter */}
+            <div className="mb-6">
+                <label className="mb-1 block text-xs font-medium text-gray-500">
+                    Hearing date
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input
+                        type="text"
+                        placeholder="DD"
+                        onChange={(e) =>
+                            setHearingDate({
+                                ...hearingDate,
+                                day: e.target.value ? Number(e.target.value) : null,
+                            })
+                        }
+                        className="w-full  shadow-sm rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                        maxLength={2}
+                    />
+                    <input
+                        type="text"
+                        placeholder="MM"
+                        onChange={(e) =>
+                            setHearingDate({
+                                ...hearingDate,
+                                month: e.target.value ? Number(e.target.value) : null,
+                            })
+                        }
+                        className="w-full shadow-sm  rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                        maxLength={2}
+                    />
+                    <input
+                        type="text"
+                        placeholder="YY"
+                        onChange={(e) =>
+                            setHearingDate({
+                                ...hearingDate,
+                                year: e.target.value ? Number(e.target.value) : null,
+                            })
+                        }
+                        className="w-full shadow-sm  rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                        maxLength={2}
+                    />
                 </div>
             </div>
 
@@ -188,12 +182,12 @@ export default function AllCasesPage() {
 
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
                 {isAllCasesLoading ? (
-                    <CaseCardSkeleton cardNumber={3}/>
+                    <CaseCardSkeleton cardNumber={3} />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
                         {allCases?.results ? allCases?.results.map((card: CaseCardProps, index: number) => (
                             <CaseCard key={index} {...card} />
-                        )): allCases.map((card: CaseCardProps, index: number) => (
+                        )) : allCases.map((card: CaseCardProps, index: number) => (
                             <CaseCard key={index} {...card} />
                         ))}
                     </div>
