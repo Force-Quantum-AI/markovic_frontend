@@ -4,9 +4,7 @@ import {
   Camera,
   Check,
   ChevronDown,
-  Loader,
   Loader2,
-  LoaderPinwheel,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
