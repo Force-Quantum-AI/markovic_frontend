@@ -341,7 +341,8 @@ export default function CaseDetailsPage({caseId}: {caseId: string}) {
 
         {/* Tab content */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          {activeTab === "overview" && <CaseOverview activeData={activeData} />}
+          {/* facing issue for this overview */}
+          {activeTab === "overview" && <CaseOverview activeData={activeData} />} 
           {activeTab === "hearings" && <HearingsTab caseId={activeData.id} hearings={activeData.hearing_history} nextHearing={activeData.next_hearing} />}
           {activeTab === "deadlines" && <DeadlinesTab caseId={activeData.id} deadlines={activeData.deadline_history} nextDeadline={activeData.next_deadline} />}
           {activeTab === "documents" && <DocumentsTab caseId={activeData.id}/>}

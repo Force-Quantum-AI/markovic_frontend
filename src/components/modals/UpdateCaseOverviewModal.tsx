@@ -55,6 +55,13 @@ const subcategories = [
 ];
 
 function buildInitialFormData(d: any): OverviewFormData {
+  const normalizeParty = (party: any): string => {
+    if (typeof party === "object" && party !== null) {
+      return party.name || party.test || Object.values(party)[0] || "";
+    }
+    return String(party || "");
+  };
+
   return {
     client_name: d?.client_name || "",
     case_name: d?.case_name || "",
@@ -68,7 +75,7 @@ function buildInitialFormData(d: any): OverviewFormData {
     court_name: d?.court_name || "",
     case_number: d?.case_number || "",
     responsible_lawyer_ids: d?.responsible_lawyers?.map((l: any) => l.id) || [],
-    opposing_parties: d?.opposing_parties || [],
+    opposing_parties: (d?.opposing_parties || []).map(normalizeParty),
     shortDescription: "",
   };
 }
