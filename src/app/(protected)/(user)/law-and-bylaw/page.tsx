@@ -6,13 +6,14 @@ import { LawCard } from "@/components/shared/LawCard";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { useGetAllLawAndBylawQuery } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SelectField } from "@/components/shared/SelectNewDropdown";
 
-const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
+
 
 export default function LawAndByLawPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState(categoryOptions[0]);
+    const [selectedCategory, setSelectedCategory] = useState<number>();
     const [currentPage, setCurrentPage] = useState(1);
     const PAGE_SIZE = 10;
 
@@ -25,18 +26,25 @@ export default function LawAndByLawPage() {
         return () => clearTimeout(handler);
     }, [searchQuery]);
 
-    const { data, isLoading, error } = useGetAllLawAndBylawQuery({
+    const queryParams = {
         page: currentPage,
-        search: debouncedSearch,
-        category: selectedCategory,
-    });
+        ...(debouncedSearch.trim() && {
+            search: debouncedSearch.trim(),
+        }),
+        ...(selectedCategory && {
+            category: selectedCategory,
+        }),
+    };
+
+    const { data, isLoading, error } =
+        useGetAllLawAndBylawQuery(queryParams);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    const handleCategoryChange = (category: string) => {
+    const handleCategoryChange = (category?: number) => {
         setSelectedCategory(category);
         setCurrentPage(1);
     };
@@ -51,7 +59,7 @@ export default function LawAndByLawPage() {
                 title="Laws & By-laws"
                 subtitle="Explore all laws & bylaws here"
             />
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 my-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 items-end gap-3 my-4">
                 <div className="col-span-1 md:col-span-3">
                     <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
                         Search
@@ -67,23 +75,18 @@ export default function LawAndByLawPage() {
                         />
                     </div>
                 </div>
-                {/* Category Filter */}
-                <div className="">
-                    <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                        Filters
-                    </label>
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => handleCategoryChange(e.target.value)}
-                        className="w-full rounded-full border border-gray-200 bg-gray-100 px-3 py-2.5 text-sm text-gray-700 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                    >
-                        {categoryOptions.map((category) => (
-                            <option key={category} value={category}>
-                                {category === "All" ? "Choose category..." : category}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <SelectField
+                    label="Category"
+                    type="category"
+                    value={selectedCategory?.toString() || ""}
+                    onChange={(value) => {
+                        setSelectedCategory(
+                            value ? Number(value) : undefined
+                        );
+                        setCurrentPage(1);
+                    }}
+                    classes={"w-full h-fit rounded-full border border-gray-200 bg-gray-100 py-2.5  px-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
+                />
             </div>
 
             <section className="w-full mx-auto space-y-3 rounded-2xl">
@@ -140,46 +143,46 @@ export default function LawAndByLawPage() {
                         <p className="text-[#427791] text-xs md:text-base">
                             Showing {startItem} to {endItem} of {data.count || 0} laws
                         </p>
-                        
-                            <div className="flex items-center justify-end gap-2">
-                                <button
-                                    onClick={() => handlePageChange(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                    className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === 1
-                                        ? "cursor-not-allowed border-gray-200 text-gray-300"
-                                        : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
-                                        }`}
-                                >
-                                    <ChevronLeft className="h-4 w-4" /> Prev
-                                </button>
 
-                                <div className="flex gap-1">
-                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                        <button
-                                            key={page}
-                                            onClick={() => handlePageChange(page)}
-                                            className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${currentPage === page
-                                                ? "bg-[#135576] text-white"
-                                                : "text-gray-600 hover:bg-gray-100"
-                                                }`}
-                                        >
-                                            {page}
-                                        </button>
-                                    ))}
-                                </div>
+                        <div className="flex items-center justify-end gap-2">
+                            <button
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === 1
+                                    ? "cursor-not-allowed border-gray-200 text-gray-300"
+                                    : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
+                                    }`}
+                            >
+                                <ChevronLeft className="h-4 w-4" /> Prev
+                            </button>
 
-                                <button
-                                    onClick={() => handlePageChange(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
-                                    className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === totalPages
-                                        ? "cursor-not-allowed border-gray-200 text-gray-300"
-                                        : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
-                                        }`}
-                                >
-                                    Next <ChevronRight className="h-4 w-4" />
-                                </button>
+                            <div className="flex gap-1">
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                    <button
+                                        key={page}
+                                        onClick={() => handlePageChange(page)}
+                                        className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${currentPage === page
+                                            ? "bg-[#135576] text-white"
+                                            : "text-gray-600 hover:bg-gray-100"
+                                            }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
                             </div>
-                        
+
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === totalPages
+                                    ? "cursor-not-allowed border-gray-200 text-gray-300"
+                                    : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"
+                                    }`}
+                            >
+                                Next <ChevronRight className="h-4 w-4" />
+                            </button>
+                        </div>
+
                     </div>
                 )}
             </section>

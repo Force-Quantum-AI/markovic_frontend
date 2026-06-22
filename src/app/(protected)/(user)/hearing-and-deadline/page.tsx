@@ -125,7 +125,7 @@ export default function HearingAndDeadlinePage() {
                         setSelectedCategory(Number(value));
                         setSelectedSubCategory(undefined);
                     }}
-                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
+                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                 />
                 <SelectField
                     label="Sub-category"
@@ -137,7 +137,7 @@ export default function HearingAndDeadlinePage() {
                             value ? Number(value) : undefined
                         )
                     }
-                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
+                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3  text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                 />
             </div>
 
