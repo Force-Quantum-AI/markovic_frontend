@@ -340,6 +340,9 @@ export const {
   useToggleBookmarkedCasesMutation,
   // for select dropdown options 
   useGetCategoryDropdownOptionsQuery,
+  useLazyGetCategoryDropdownOptionsQuery,
   useGetSubCategoryDropdownOptionsQuery,
+  useLazyGetSubCategoryDropdownOptionsQuery,
   useGetSelectDropdownOptionsQuery,
+  useLazyGetSelectDropdownOptionsQuery,
 } = caseApi;

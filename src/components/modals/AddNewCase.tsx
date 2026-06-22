@@ -7,6 +7,7 @@ import { ChevronDown, X, Camera, Info, Loader2 } from "lucide-react";
 import { useAddCaseDeadlineMutation, useAddCaseHearingMutation, useCreateCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
 import { getImageUrl } from "@/lib/getImageUrl";
+import { SelectField } from "@/components/shared/SelectNewDropdown";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
 
@@ -240,18 +241,25 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
         <div className="space-y-1.5">
           <FieldLabel>Category:</FieldLabel>
           <div className="relative w-full">
-            <select value={data.category} onChange={(e) => setField("category")(e.target.value)} className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer transition-all shadow-sm pr-10">
-              <option value="Civil Litigation">Civil Litigation</option>
-            </select>
+            <SelectField
+              label="Category"
+              type="category"
+              value={data.category}
+              onChange={setField("category")}
+            />
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
           </div>
         </div>
         <div className="space-y-1.5">
           <FieldLabel>Sub-Category:</FieldLabel>
           <div className="relative w-full">
-            <select value={data.subCategory} onChange={(e) => setField("subCategory")(e.target.value)} className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer transition-all shadow-sm pr-10">
-              <option value="Damages">Damages</option>
-            </select>
+            <SelectField
+              label="Sub Category"
+              type="subCategory"
+              categoryId={data.category ? Number(data.category) : undefined}
+              value={data.subCategory}
+              onChange={setField("subCategory")}
+            />
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
           </div>
         </div>
@@ -260,9 +268,12 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
       <div className="space-y-1.5">
         <FieldLabel>Status:</FieldLabel>
         <div className="relative w-full">
-          <select value={data.status} onChange={(e) => setField("status")(e.target.value)} className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-400 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer transition-all shadow-sm pr-10">
-            <option value="Active">Active</option>
-          </select>
+          <SelectField
+            label="Status"
+            type="status"
+            value={data.status}
+            onChange={setField("status")}
+          />
           <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
         </div>
       </div>
@@ -514,9 +525,9 @@ export default function AddNewCase({ isOpen, onClose, onSubmit,clientName,client
     },
     legalDetails: {
       caseName: "",
-      category: "Civil Litigation",
-      subCategory: "Damages",
-      status: "Active",
+      category: "",
+      subCategory: "",
+      status: "",
       responsibleLawyers: [],
       court: "Montenegro suprime Court",
       caseNumber: "",
@@ -592,6 +603,15 @@ export default function AddNewCase({ isOpen, onClose, onSubmit,clientName,client
     // Optional legal details
     if (formData.legalDetails.caseName.trim()) {
       apiData.case_name = formData.legalDetails.caseName.trim();
+    }
+    if (formData.legalDetails.category) {
+      apiData.category = Number(formData.legalDetails.category);
+    }
+    if (formData.legalDetails.subCategory) {
+      apiData.sub_category = Number(formData.legalDetails.subCategory);
+    }
+    if (formData.legalDetails.status) {
+      apiData.status = Number(formData.legalDetails.status);
     }
     if (formData.legalDetails.responsibleLawyers.length > 0) {
       apiData.responsible_lawyer_ids = formData.legalDetails.responsibleLawyers;
