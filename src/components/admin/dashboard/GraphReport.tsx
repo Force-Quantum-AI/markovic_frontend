@@ -3,15 +3,35 @@
 import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-const data = [
-  { name: "Civil", value: 4200, color: "#3B82F6" },
-  { name: "Criminal", value: 3100, color: "#8B5CF6" },
-  { name: "Family", value: 2500, color: "#EC4899" },
-  { name: "Corporate", value: 1900, color: "#10B981" },
-  { name: "Other", value: 783, color: "#F59E0B" },
-];
+interface GraphReportProps {
+  totalCasesBreakdown?: Record<string, number | string>;
+}
 
-export default function GraphReport() {
+export default function GraphReport({ totalCasesBreakdown }: GraphReportProps) {
+  const breakdown = totalCasesBreakdown || {};
+  const totalCasesValue = breakdown.total !== undefined ? String(breakdown.total) : "0";
+
+  const categoriesData = Object.entries(breakdown)
+    .filter(([key]) => key !== "total")
+    .map(([key, val], idx) => {
+      const name = key
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      const value = typeof val === "string" ? parseFloat(val) : Number(val);
+      const color = ["#3B82F6", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"][idx % 5];
+      return { name, value, color };
+    });
+
+  const finalData = categoriesData.length > 0 ? categoriesData : [
+    { name: "Civil", value: 0, color: "#3B82F6" },
+    { name: "Criminal", value: 0, color: "#8B5CF6" },
+    { name: "Family", value: 0, color: "#EC4899" },
+    { name: "Corporate", value: 0, color: "#10B981" },
+    { name: "Other", value: 0, color: "#F59E0B" },
+  ];
+  const finalTotal = categoriesData.length > 0 ? totalCasesValue : "0";
+
   return (
     <div className="w-full h-[520px] bg-white rounded-2xl p-6 border border-gray-100 flex flex-col justify-between">
       {/* Header */}
@@ -28,13 +48,13 @@ export default function GraphReport() {
       <div className="relative w-full h-[270px] flex items-center justify-center my-4">
         {/* Center label */}
         <div className="absolute flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold text-gray-900 font-inter">12.5K</span>
+          <span className="text-2xl font-bold text-gray-900 font-inter">{finalTotal}</span>
         </div>
 
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={data}
+              data={finalData}
               cx="50%"
               cy="50%"
               innerRadius={65}
@@ -42,7 +62,7 @@ export default function GraphReport() {
               paddingAngle={3}
               dataKey="value"
             >
-              {data.map((entry, index) => (
+              {finalData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
@@ -52,7 +72,7 @@ export default function GraphReport() {
 
       {/* Custom Legend */}
       <div className="space-y-2.5 pt-2 border-t border-gray-50">
-        {data.map((item) => (
+        {finalData.map((item) => (
           <div key={item.name} className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">
               <span

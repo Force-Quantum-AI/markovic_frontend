@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function MyUsersMetrics() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-      <div 
+      <div
         style={{ height: "142px" }}
         className="relative flex w-full p-6 justify-between items-center rounded-[24px] border border-[#BEDBFF] bg-gradient-to-br from-[#DBEAFE] to-[#EFF6FF] shadow-sm hover:shadow-md transition-all overflow-hidden"
       >
@@ -23,7 +23,7 @@ export default function MyUsersMetrics() {
             </span>
           </div>
         </div>
-        
+
         {/* Card Bg image graphic */}
         <Image
           src="/admin-images/my-users/avg-case.png"
@@ -35,7 +35,7 @@ export default function MyUsersMetrics() {
       </div>
 
       {/* Card 2: Active Users */}
-      <div 
+      <div
         style={{ height: "142px" }}
         className="relative flex w-full p-6 justify-between items-center rounded-[24px] border border-[#A4F4CF] bg-gradient-to-br from-[#D0FAE5] to-[#ECFDF5] shadow-sm hover:shadow-md transition-all overflow-hidden"
       >
@@ -54,7 +54,7 @@ export default function MyUsersMetrics() {
             </span>
           </div>
         </div>
-        
+
         {/* Card Bg image graphic */}
         <Image
           src="/admin-images/my-users/platform.png"
@@ -66,7 +66,7 @@ export default function MyUsersMetrics() {
       </div>
 
       {/* Card 3: New Today */}
-      <div 
+      <div
         style={{ height: "142px" }}
         className="relative flex w-full p-6 justify-between items-center rounded-[24px] border border-[#FEE685] bg-gradient-to-br from-[#FEF3C6] to-[#FFFBEB] shadow-sm hover:shadow-md transition-all overflow-hidden"
       >
@@ -85,7 +85,7 @@ export default function MyUsersMetrics() {
             </span>
           </div>
         </div>
-        
+
         {/* Card Bg image graphic */}
         <Image
           src="/admin-images/my-users/response.png"

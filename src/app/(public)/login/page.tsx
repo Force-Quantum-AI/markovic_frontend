@@ -23,7 +23,8 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] =
+    useState(false);
 
   // Basic validation state to show the green checkmark from login.png
   const isEmailValid = email.includes("@") && email.includes(".");
@@ -56,22 +57,26 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       {/* Main Container tailored to max-w-6xl and 70vh */}
       <div className="w-full max-w-6xl h-auto lg:h-[70vh] min-h-[550px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
-
         {/* Left Side: Form Area */}
         <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
-
           {/* Logo / Brand Header */}
           <div className="flex items-center gap-2 text-[#135576]">
             <div className="p-1.5 border-2 border-[#135576] rounded-full flex items-center justify-center">
               <Scale className="w-5 h-5 stroke-[2.5]" />
             </div>
-            <span className="font-semibold text-xl tracking-tight">Case Solver</span>
+            <span className="font-semibold text-xl tracking-tight">
+              Case Solver
+            </span>
           </div>
 
           {/* Form Content */}
           <div className="my-auto py-6 max-w-md w-full mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">Welcome Back</h1>
-            <p className="text-sm text-gray-500 mb-8">Sign in to your Law Office System</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+              Welcome Back
+            </h1>
+            <p className="text-sm text-gray-500 mb-8">
+              Sign in to your Law Office System
+            </p>
 
             {errorMsg && (
               <div className="mb-5 text-sm text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -155,7 +160,11 @@ export default function LoginPage() {
                   type="submit"
                   disabled={isLoading}
                   label={isLoading ? "Logging in..." : "Log in"}
-                  icon={isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
+                  icon={
+                    isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : undefined
+                  }
                   className="w-full sm:w-56"
                 />
               </div>
@@ -164,7 +173,10 @@ export default function LoginPage() {
             {/* Registration Prompt */}
             <p className="text-center text-xs text-gray-400 mt-6">
               Don&apos;t have an account?{" "}
-              <Link href="/register" className="text-[#135576] font-bold hover:underline">
+              <Link
+                href="/register"
+                className="text-[#135576] font-bold hover:underline"
+              >
                 Register
               </Link>
             </p>
@@ -173,20 +185,26 @@ export default function LoginPage() {
           {/* Footer Agreement */}
           <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
             By logging in, you agree to our{" "}
-            <a href="#terms" className="underline hover:text-gray-600 font-medium">
+            <a
+              href="#terms"
+              className="underline hover:text-gray-600 font-medium"
+            >
               Terms of services
             </a>{" "}
             and{" "}
-            <a href="#privacy" className="underline hover:text-gray-600 font-medium">
+            <a
+              href="#privacy"
+              className="underline hover:text-gray-600 font-medium"
+            >
               Privacy Policy
-            </a>.
+            </a>
+            .
           </div>
         </div>
 
         {/* Right Side: Visual Hero Card */}
         <div className="hidden lg:block w-1/2 p-3 h-full">
           <div className="relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-b from-gray-900 to-black flex flex-col justify-end p-8 lg:p-12 text-white">
-
             {/* Background Image Placeholder */}
             <Image
               src="/lawImg1.jpg"
@@ -202,18 +220,20 @@ export default function LoginPage() {
                 Fast. Simple. Built for Lawyers.
               </h2>
               <p className="text-sm lg:text-base text-gray-300 font-light italic leading-relaxed">
-                Created by lawyers, for lawyers. Quick case creation, smart calendar,
-                powerful AI court practice search, and clean organization — all in one place.
+                Created by lawyers, for lawyers. Quick case creation, smart
+                calendar, powerful AI court practice search, and clean
+                organization — all in one place.
               </p>
 
               <div className="pt-4 border-t border-white/20">
-                <p className="text-base font-semibold tracking-wide">Markovic Aleksa</p>
+                <p className="text-base font-semibold tracking-wide">
+                  Markovic Aleksa
+                </p>
                 <p className="text-xs text-gray-400">Founder of Case Solver</p>
               </div>
             </div>
           </div>
         </div>
-
       </div>
       <ForgotPasswordModal
         isOpen={isForgotPasswordModalOpen}

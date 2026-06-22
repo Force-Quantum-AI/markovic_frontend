@@ -1,13 +1,24 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { Camera, Check, ChevronDown, Loader, Loader2, LoaderPinwheel } from "lucide-react";
+import {
+  Camera,
+  Check,
+  ChevronDown,
+  Loader,
+  Loader2,
+  LoaderPinwheel,
+} from "lucide-react";
 import { toast } from "sonner";
-import { useGetProfileInfoQuery, useUpdateProfileInfoMutation } from "@/store/features/profile/profile.api";
+import {
+  useGetProfileInfoQuery,
+  useUpdateProfileInfoMutation,
+} from "@/store/features/profile/profile.api";
 
 export default function Account() {
-  const { data: profileInfo, isLoading: isLoadingProfileInfo } = useGetProfileInfoQuery({});
-  const [updateProfileInfo, { isLoading: isLoadingUpdateProfileInfo }] = useUpdateProfileInfoMutation()
-
+  const { data: profileInfo, isLoading: isLoadingProfileInfo } =
+    useGetProfileInfoQuery({});
+  const [updateProfileInfo, { isLoading: isLoadingUpdateProfileInfo }] =
+    useUpdateProfileInfoMutation();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,16 +27,22 @@ export default function Account() {
   const [barAssociationNumber, setBarAssociationNumber] = useState("");
 
   // Using a placeholder image similar to the design
-  const [avatarUrl, setAvatarUrl] = useState("https://images.unsplash.com/vector-1742875355318-00d715aec3e8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  const [avatarUrl, setAvatarUrl] = useState(
+    "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFullName(profileInfo?.full_name || "");
     setEmail(profileInfo?.email || "");
     setPhoneNumber(profileInfo?.number || "");
     setProfessionalRole(profileInfo?.professional_role || "");
     setBarAssociationNumber(profileInfo?.bar_association_number || "");
-    setAvatarUrl(profileInfo?.profile_image || "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0 ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+    setAvatarUrl(
+      profileInfo?.profile_image ||
+        "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0 ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    );
   }, [profileInfo]);
 
   const handleSave = async () => {
@@ -36,7 +53,7 @@ export default function Account() {
           number: phoneNumber,
           professional_role: professionalRole,
           bar_association_number: barAssociationNumber,
-          two_factor_enabled : profileInfo?.two_factor_enabled
+          two_factor_enabled: profileInfo?.two_factor_enabled,
         },
         profile_image: avatarUrl,
       });
@@ -63,11 +80,15 @@ export default function Account() {
   return (
     <div className="w-full">
       <div className="bg-white border border-[#e8eef2] p-6 rounded-2xl flex flex-col gap-4 w-full">
-        <h2 className="text-[#101828] text-xl font-semibold leading-7 mb-2">Account Information</h2>
+        <h2 className="text-[#101828] text-xl font-semibold leading-7 mb-2">
+          Account Information
+        </h2>
 
         {/* Profile Photo Section */}
         <div className="flex flex-col gap-4 mb-2">
-          <label className="text-[#364153] text-sm font-medium">Profile Photo</label>
+          <label className="text-[#364153] text-sm font-medium">
+            Profile Photo
+          </label>
           <div className="flex items-center gap-7">
             <div className="relative w-24 h-24 rounded-full">
               {isLoadingProfileInfo ? (
@@ -107,7 +128,9 @@ export default function Account() {
           {/* Row 1: Full Name & Email */}
           <div className="flex gap-4 w-full">
             <div className="flex flex-col gap-2 flex-1">
-              <label className="text-[#364153] text-sm font-medium">Full Name</label>
+              <label className="text-[#364153] text-sm font-medium">
+                Full Name
+              </label>
               <input
                 type="text"
                 value={fullName}
@@ -116,7 +139,9 @@ export default function Account() {
               />
             </div>
             <div className="flex flex-col gap-2 flex-1">
-              <label className="text-[#364153] text-sm font-medium">Email Address</label>
+              <label className="text-[#364153] text-sm font-medium">
+                Email Address
+              </label>
               <div className="relative w-full h-[50px]">
                 <input
                   type="email"
@@ -135,7 +160,9 @@ export default function Account() {
           {/* Row 2: Phone Number & Professional Role */}
           <div className="flex gap-4 w-full">
             <div className="flex flex-col gap-2 flex-1">
-              <label className="text-[#364153] text-sm font-medium">Phone Number</label>
+              <label className="text-[#364153] text-sm font-medium">
+                Phone Number
+              </label>
               <input
                 type="text"
                 value={phoneNumber}
@@ -144,7 +171,9 @@ export default function Account() {
               />
             </div>
             <div className="flex flex-col gap-2 flex-1">
-              <label className="text-[#364153] text-sm font-medium">Professional Role</label>
+              <label className="text-[#364153] text-sm font-medium">
+                Professional Role
+              </label>
               <div className="relative w-full h-[50px]">
                 <select
                   value={professionalRole}
@@ -157,7 +186,10 @@ export default function Account() {
                   <option value="paralegal">Paralegal</option>
                   <option value="judge">Judge</option>
                 </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
+                <ChevronDown
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                  size={20}
+                />
               </div>
             </div>
           </div>
@@ -165,7 +197,9 @@ export default function Account() {
           {/* Row 3: Bar Association Number */}
           <div className="flex w-full">
             <div className="flex flex-col gap-2 flex-1">
-              <label className="text-[#364153] text-sm font-medium">Bar Association Number</label>
+              <label className="text-[#364153] text-sm font-medium">
+                Bar Association Number
+              </label>
               <input
                 type="text"
                 value={barAssociationNumber}
@@ -183,7 +217,11 @@ export default function Account() {
             disabled={isLoadingUpdateProfileInfo}
             className="bg-[#135576] hover:bg-[#0f435c] text-white text-base font-medium py-3 px-8 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoadingUpdateProfileInfo ? <Loader2 className="animate-spin w-5 h-5" /> : "Save changes"}
+            {isLoadingUpdateProfileInfo ? (
+              <Loader2 className="animate-spin w-5 h-5" />
+            ) : (
+              "Save changes"
+            )}
           </button>
         </div>
       </div>

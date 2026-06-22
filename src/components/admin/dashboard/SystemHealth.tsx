@@ -3,12 +3,47 @@
 import React from "react";
 import { Activity, CheckCircle } from "lucide-react";
 
-export default function SystemHealth() {
+interface SystemHealthProps {
+  systemHealth?: {
+    api_server: { label: string; value: number; unit: string };
+    database: { label: string; value: number; unit: string };
+    ai_service: { label: string; value: number; unit: string };
+    storage: { label: string; value: number; unit: string };
+  };
+}
+
+export default function SystemHealth({ systemHealth }: SystemHealthProps) {
+  const getProgressColor = (value: number) => {
+    if (value >= 90) return "bg-emerald-500";
+    if (value >= 10) return "bg-amber-500";
+    return "bg-red-500";
+  };
+
   const metrics = [
-    { name: "API Server", score: "99.9%", val: 99.9, color: "bg-emerald-500" },
-    { name: "Database", score: "98.8%", val: 98.8, color: "bg-emerald-500" },
-    { name: "AI Service", score: "95.7%", val: 95.7, color: "bg-emerald-500" },
-    { name: "Storage", score: "96.5%", val: 96.5, color: "bg-amber-500" },
+    {
+      name: systemHealth?.api_server?.label ?? "API Server",
+      score: systemHealth?.api_server ? `${systemHealth.api_server.value}${systemHealth.api_server.unit}` : "0%",
+      val: systemHealth?.api_server?.value ?? 0,
+      color: getProgressColor(systemHealth?.api_server?.value ?? 0),
+    },
+    {
+      name: systemHealth?.database?.label ?? "Database",
+      score: systemHealth?.database ? `${systemHealth.database.value}${systemHealth.database.unit}` : "0%",
+      val: systemHealth?.database?.value ?? 0,
+      color: getProgressColor(systemHealth?.database?.value ?? 0),
+    },
+    {
+      name: systemHealth?.ai_service?.label ?? "AI Service",
+      score: systemHealth?.ai_service ? `${systemHealth.ai_service.value}${systemHealth.ai_service.unit}` : "0%",
+      val: systemHealth?.ai_service?.value ?? 0,
+      color: getProgressColor(systemHealth?.ai_service?.value ?? 0),
+    },
+    {
+      name: systemHealth?.storage?.label ?? "Storage",
+      score: systemHealth?.storage ? `${systemHealth.storage.value}${systemHealth.storage.unit}` : "0%",
+      val: systemHealth?.storage?.value ?? 0,
+      color: getProgressColor(systemHealth?.storage?.value ?? 0),
+    },
   ];
 
   return (

@@ -3,11 +3,23 @@
 import Image from "next/image";
 import { Users, Sparkles, FolderOpen, DollarSign, ArrowUpRight } from "lucide-react";
 
-export default function AdminMetrics() {
+interface AdminMetricsProps {
+  overview?: {
+    total_users: number;
+    ai_search: number;
+    archive: number;
+    cases: number;
+    total_earning: number;
+  };
+}
+
+export default function AdminMetrics({ overview }: AdminMetricsProps) {
+  console.log("overview", overview);
+
   const cards = [
     {
       title: "Total Users",
-      value: "2,847",
+      value: overview?.total_users?.toLocaleString() ?? "0",
       trend: "+8% this month",
       icon: <Users className="w-4 h-4" />,
       border: "border-[#029CA8]",
@@ -21,7 +33,7 @@ export default function AdminMetrics() {
     },
     {
       title: "AI Search",
-      value: "156",
+      value: overview?.ai_search?.toLocaleString() ?? "0",
       trend: "+12% this month",
       icon: <Sparkles className="w-4 h-4" />,
       border: "border-[#02A841]",
@@ -35,7 +47,7 @@ export default function AdminMetrics() {
     },
     {
       title: "Archive Cases",
-      value: "12.6K",
+      value: overview?.archive?.toLocaleString() ?? "0",
       trend: "+15% this month",
       icon: <FolderOpen className="w-4 h-4" />,
       border: "border-[#909404]",
@@ -49,7 +61,7 @@ export default function AdminMetrics() {
     },
     {
       title: "Total Earning",
-      value: "47.6K",
+      value: overview?.total_earning !== undefined ? `$${overview.total_earning.toLocaleString()}` : "$0",
       trend: "+15% this month",
       icon: <DollarSign className="w-4 h-4" />,
       border: "border-[#6502A8]",
