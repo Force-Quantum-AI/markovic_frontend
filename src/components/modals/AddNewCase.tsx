@@ -353,6 +353,7 @@ function ScheduleCard({
   const days = Array.from({ length: 31 }, (_, i) => String(i + 1));
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const years = ["2024", "2025", "2026", "2027", "2028"];
+  
 
   return (
     <div className="w-full border border-gray-200 rounded-[24px] p-5 md:p-6 bg-white space-y-4 shadow-sm">
@@ -507,7 +508,7 @@ function buildDateString(card: DateCardData): string | undefined {
 
 // ─── MAIN MODAL COMPONENT ───────────────────────────────────────────────────
 
-export default function AddNewCase({ isOpen, onClose, onSubmit,clientName,clientId, clientAddress, clientEmail, clientPhoneNumber, clientAvatar, clientNote }: AddNewCaseProps) {
+export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clientId, clientAddress, clientEmail, clientPhoneNumber, clientAvatar, clientNote }: AddNewCaseProps) {
   const [currentStep, setCurrentStep] = useState(1);
 
   // ─── INITIAL SYSTEM FORM DICTIONARY ──────────────────────────────────────────
