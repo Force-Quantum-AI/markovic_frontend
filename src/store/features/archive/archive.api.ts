@@ -1,6 +1,6 @@
 import { baseApi } from "../../api/baseApi";
 
-interface IArchiveParams {
+export interface IArchiveParams {
   search?: string,
   case_name?: string,
   year?: number,

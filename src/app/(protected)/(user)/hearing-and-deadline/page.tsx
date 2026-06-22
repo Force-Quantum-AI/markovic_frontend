@@ -9,6 +9,7 @@ import { InputField } from "@/components/shared/InputField";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { useGetHearingAndDeadlinePageDataQuery } from "@/store/features/case/case.api";
 import { HearingAndDeadlinePageDataParamsType } from "@/types/case.types";
+import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 
 export default function HearingAndDeadlinePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -56,7 +57,7 @@ export default function HearingAndDeadlinePage() {
         currentPage,
     ]);
 
-    const { data, isLoading, error } =
+    const { data, isLoading } =
         useGetHearingAndDeadlinePageDataQuery(queryParams);
 
     useEffect(() => {
@@ -124,7 +125,7 @@ export default function HearingAndDeadlinePage() {
                         setSelectedCategory(Number(value));
                         setSelectedSubCategory(undefined);
                     }}
-                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
+                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                 />
                 <SelectField
                     label="Sub-category"
@@ -136,7 +137,7 @@ export default function HearingAndDeadlinePage() {
                             value ? Number(value) : undefined
                         )
                     }
-                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
+                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3  text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                 />
             </div>
 
@@ -254,15 +255,18 @@ export default function HearingAndDeadlinePage() {
                 </div>
 
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
-                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                    {data?.cases?.results.map((card: any, index: number) => (
-                        <CaseCard key={index} {...card} />
-                    ))}
-                </div>
-
+                {isLoading ? (
+                    <CaseCardSkeleton cardNumber={3} />
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
+                        {data?.cases?.results.map((card: any, index: number) => (
+                            <CaseCard key={index} {...card} />
+                        ))}
+                    </div>
+                )}
 
                 {/* Pagination */}
-                <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap">
+                <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap hidden">
                     <p className="text-[#427791] text-xs md:text-base">Showing {1} to {Math.min(currentPage, hearingsDataset.length)} of {hearingsDataset.length} cases</p>
                     {totalPages > 1 && (
                         <div className="flex items-center justify-end gap-2">
