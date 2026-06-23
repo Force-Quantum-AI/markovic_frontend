@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { CheckCircle2, XCircle, Loader2, ArrowRight, RefreshCw } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, RefreshCw } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import SubscriptionModal from "./SubscriptionModal";
 import { toast } from "sonner";
 import { useLoginMutation, useVerifyOtpMutation } from "@/store/features/auth/authApi";
 
@@ -20,6 +19,7 @@ interface OtpModalProps {
   onOpenChange: (open: boolean) => void;
   userEmail?: string;
   userPassword?: string;
+  onVerificationSuccess?: () => void;
 }
 
 export default function OtpVerificationModal({
@@ -27,6 +27,7 @@ export default function OtpVerificationModal({
   onOpenChange,
   userEmail = "marko@markoviclaw.me",
   userPassword,
+  onVerificationSuccess,
 }: OtpModalProps) {
   const [verifyOtp, { isLoading, isSuccess }] = useVerifyOtpMutation();
   const [login] = useLoginMutation();
@@ -36,7 +37,6 @@ export default function OtpVerificationModal({
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState<number>(299); // 4:59 in seconds
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
-  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -149,12 +149,13 @@ export default function OtpVerificationModal({
         const res = await login({ email: userEmail, password: userPassword }).unwrap();
         document.cookie = `accessToken=${res.access}; path=/; SameSite=Lax`;      
       }
-      
-      await setIsSubscriptionModalOpen(true);
-      // Close modal after a short delay. Store timeout id to clear on unmount.
+
+      // Close OTP modal first, then notify parent to open subscription modal
+      onOpenChange(false);
+      // Small delay to let the OTP modal fully unmount before opening subscription
       closeTimerRef.current = window.setTimeout(() => {
-        onOpenChange(false);
-      }, 2000);
+        onVerificationSuccess?.();
+      }, 300);
     } catch (error) {
       console.log("error is : ", error);
       toast.error("OTP verification failed, Please try again later.");
@@ -323,16 +324,10 @@ export default function OtpVerificationModal({
   };
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl! w-[92vw] sm:w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 shadow-2xl border-none">
-          {renderModalContent()}
-        </DialogContent>
-      </Dialog>
-      <SubscriptionModal
-        isOpen={isSubscriptionModalOpen}
-        onClose={() => setIsSubscriptionModalOpen(false)}
-      />
-    </>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl! w-[92vw] sm:w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 shadow-2xl border-none">
+        {renderModalContent()}
+      </DialogContent>
+    </Dialog>
   );
 }

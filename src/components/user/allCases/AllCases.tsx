@@ -9,6 +9,7 @@ import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { useGetAllCasesQuery, useGetCategoryDropdownOptionsQuery } from "@/store/features/case/case.api";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
+import { NoContent } from "@/components/shared/NoContent";
 
 
 export default function AllCasesPage() {
@@ -107,13 +108,13 @@ export default function AllCasesPage() {
             {/* Filters Row */}
             <div className="mb-6 grid grid-cols-2 gap-3">
                 <SelectField
-  label="Case status"
-  type="status"
-  value={selectedStatus?.toString() || ""}
-  onChange={(value) =>
-    setSelectedStatus(value ? Number(value) : undefined)
-  }
-/>
+                    label="Case status"
+                    type="status"
+                    value={selectedStatus?.toString() || ""}
+                    onChange={(value) =>
+                        setSelectedStatus(value ? Number(value) : undefined)
+                    }
+                />
 
                 <SelectField
                     label="Case category"
@@ -183,6 +184,8 @@ export default function AllCasesPage() {
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
                 {isAllCasesLoading ? (
                     <CaseCardSkeleton cardNumber={3} />
+                ) : allCases.results.length===0 ? (
+                    <NoContent message="No cases yet"/>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
                         {allCases?.results ? allCases?.results.map((card: CaseCardProps, index: number) => (
@@ -194,7 +197,7 @@ export default function AllCasesPage() {
                 )}
 
                 {/* Pagination */}
-                <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap">
+                {/* <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap">
                     <p className="text-[#427791] text-xs md:text-base">Showing {1} to {Math.min(currentPage, hearingsDataset.length)} of {hearingsDataset.length} cases</p>
                     {totalPages > 1 && (
                         <div className="flex items-center justify-end gap-2">
@@ -236,7 +239,7 @@ export default function AllCasesPage() {
                             </button>
                         </div>
                     )}
-                </div>
+                </div> */}
             </section>
         </div>
     );

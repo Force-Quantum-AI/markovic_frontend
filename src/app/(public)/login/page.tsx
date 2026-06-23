@@ -32,6 +32,8 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
+
+    console.log("my env is:",process.env.NEXT_PUBLIC_API_URL);
     try {
       const res = await login({ email, password }).unwrap();
 

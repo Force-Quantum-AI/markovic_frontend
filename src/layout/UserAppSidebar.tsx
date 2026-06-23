@@ -82,7 +82,7 @@ export function UserAppSidebar() {
 
   return (
     <Sidebar
-      className="border-r bg-white p-2"
+      className="border-r border-gray-200 bg-white p-2"
       collapsible="offcanvas"
     >
       <SidebarHeader className=" bg-white">

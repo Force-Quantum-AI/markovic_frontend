@@ -2,6 +2,7 @@
 
 import { CaseCard } from "@/components/shared/CaseCard";
 import { LawCard } from "@/components/shared/LawCard";
+import { NoContent } from "@/components/shared/NoContent";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import LawCardSkeleton from "@/components/skeletons/LawCardSkeleton";
@@ -10,8 +11,8 @@ import { useGetAllBookmarkedLawsQuery } from "@/store/features/lawAndBylaw/lawAn
 import { useState } from "react";
 
 export default function Page() {
-    const {data: bookmarkedCases, isLoading: isBookmarkedCasesLoading} = useGetAllBookmarkedCasesQuery();
-    const {data: bookmarkedLaws, isLoading: isBookmarkedLawsLoading} = useGetAllBookmarkedLawsQuery();
+    const { data: bookmarkedCases, isLoading: isBookmarkedCasesLoading } = useGetAllBookmarkedCasesQuery();
+    const { data: bookmarkedLaws, isLoading: isBookmarkedLawsLoading } = useGetAllBookmarkedLawsQuery();
     const [activeBtn, setActiveBtn] = useState("cases");
 
     return (
@@ -32,22 +33,27 @@ export default function Page() {
                         Clear all
                     </button> */}
                 </div>
+
                 <div>
                     {activeBtn === "cases" ? (
-                        isBookmarkedCasesLoading?(
-                            <CaseCardSkeleton/>
-                        ): (
-                        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                            {bookmarkedCases?.map((card: { id: string; [key: string]: unknown }, index: number) => (
-                                <CaseCard key={index} {...card} />
-                            ))}
-                        </div>
+                        isBookmarkedCasesLoading ? (
+                            <CaseCardSkeleton />
+                        ) : bookmarkedCases?.length === 0 ? (
+                            <NoContent />
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
+                                {bookmarkedCases?.map((card: { id: string;[key: string]: unknown }, index: number) => (
+                                    <CaseCard key={index} {...card} />
+                                ))}
+                            </div>
                         )
                     ) : (
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
-                            {isBookmarkedLawsLoading?(
-                                <LawCardSkeleton/>
-                            ): bookmarkedLaws?.map((law: { title: string; category_name: string; official_gazette: string; last_updated: string; bookmark: boolean }, index: number) => (
+                            {isBookmarkedLawsLoading ? (
+                                <LawCardSkeleton />
+                            ) : bookmarkedLaws?.length === 0 ? (
+                                <NoContent />
+                            ) : bookmarkedLaws?.map((law: { title: string; category_name: string; official_gazette: string; last_updated: string; bookmark: boolean }, index: number) => (
                                 <LawCard
                                     key={index}
                                     title={law.title}

@@ -10,6 +10,7 @@ import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { useGetHearingAndDeadlinePageDataQuery } from "@/store/features/case/case.api";
 import { HearingAndDeadlinePageDataParamsType } from "@/types/case.types";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
+import { NoContent } from "@/components/shared/NoContent";
 
 export default function HearingAndDeadlinePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -221,6 +222,8 @@ export default function HearingAndDeadlinePage() {
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
                 {isLoading ? (
                     <CaseCardSkeleton cardNumber={3} />
+                ) : data?.cases?.results.length === 0 ? (
+                    <NoContent message="No hearing and deadline yet" />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
                         {data?.cases?.results.map((card: { id: string; [key: string]: unknown }, index: number) => (
