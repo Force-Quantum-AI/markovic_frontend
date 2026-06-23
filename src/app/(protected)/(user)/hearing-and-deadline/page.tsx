@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
@@ -60,46 +60,10 @@ export default function HearingAndDeadlinePage() {
     const { data, isLoading } =
         useGetHearingAndDeadlinePageDataQuery(queryParams);
 
-    useEffect(() => {
-        // Here you would typically make an API call to fetch the data based on the filters and pagination changes
-    }, [searchQuery, selectedCategory, selectedSubCategory, hearingDate, deadlineDate, currentPage]);
-
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-    // Status badge color mapping
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case "Active":
-                return "bg-green-100 text-green-700";
-            case "On appeal":
-                return "bg-yellow-100 text-yellow-700";
-            case "On revision":
-                return "bg-orange-100 text-orange-700";
-            case "Closed":
-                return "bg-gray-100 text-gray-700";
-            default:
-                return "bg-gray-100 text-gray-700";
-        }
-    };
-
-    // Category badge color
-    const getCategoryColor = (category: string) => {
-        switch (category) {
-            case "Civil":
-                return "bg-blue-100 text-[#135576]";
-            case "Criminal":
-                return "bg-red-100 text-red-700";
-            case "Commercial":
-                return "bg-purple-100 text-purple-700";
-            case "Probate":
-                return "bg-emerald-100 text-emerald-700";
-            default:
-                return "bg-gray-100 text-gray-700";
-        }
     };
 
     return (
@@ -259,7 +223,7 @@ export default function HearingAndDeadlinePage() {
                     <CaseCardSkeleton cardNumber={3} />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                        {data?.cases?.results.map((card: any, index: number) => (
+                        {data?.cases?.results.map((card: { id: string; [key: string]: unknown }, index: number) => (
                             <CaseCard key={index} {...card} />
                         ))}
                     </div>

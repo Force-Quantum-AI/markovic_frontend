@@ -38,8 +38,7 @@ export interface GroupedPlan {
 }
 
 // ─── Current subscription ───────────────────────────────────────────────────
-
-export type SubscriptionStatus = "trial" | "active" | "expired" | "cancelled" | "pending";
+export type SubscriptionStatus = "trial" | "active" | "expired" | "cancelled";
 
 export interface CurrentSubscription {
   id: number;

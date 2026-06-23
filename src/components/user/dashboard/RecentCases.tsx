@@ -135,7 +135,8 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
               ))
             ) : (
               cases.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50/70 transition-colors">
+                <tr key={row.id} className="hover:bg-gray-50/70 transition-colors" 
+                onClick={()=> router.push(`my-cases/${row.id}`)}>
                   {/* Client column */}
                   <td className="py-4 px-5 flex items-center gap-3">
                     <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">

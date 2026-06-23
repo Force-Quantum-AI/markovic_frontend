@@ -7,11 +7,9 @@ import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import LawCardSkeleton from "@/components/skeletons/LawCardSkeleton";
 import { useGetAllBookmarkedCasesQuery } from "@/store/features/case/case.api";
 import { useGetAllBookmarkedLawsQuery } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Page() {
-    const navigate = useRouter()
     const {data: bookmarkedCases, isLoading: isBookmarkedCasesLoading} = useGetAllBookmarkedCasesQuery();
     const {data: bookmarkedLaws, isLoading: isBookmarkedLawsLoading} = useGetAllBookmarkedLawsQuery();
     const [activeBtn, setActiveBtn] = useState("cases");
@@ -40,7 +38,7 @@ export default function Page() {
                             <CaseCardSkeleton/>
                         ): (
                         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                            {bookmarkedCases?.map((card : any, index : number) => (
+                            {bookmarkedCases?.map((card: { id: string; [key: string]: unknown }, index: number) => (
                                 <CaseCard key={index} {...card} />
                             ))}
                         </div>
@@ -49,7 +47,7 @@ export default function Page() {
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
                             {isBookmarkedLawsLoading?(
                                 <LawCardSkeleton/>
-                            ): bookmarkedLaws?.map((law:any, index:number) => (
+                            ): bookmarkedLaws?.map((law: { title: string; category_name: string; official_gazette: string; last_updated: string; bookmark: boolean }, index: number) => (
                                 <LawCard
                                     key={index}
                                     title={law.title}
