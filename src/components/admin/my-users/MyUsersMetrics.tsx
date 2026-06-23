@@ -1,9 +1,22 @@
 import { Users, UserCheck, Clock, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 
-export default function MyUsersMetrics() {
+interface MyUsersMetricsProps {
+  stats?: {
+    total_users: number;
+    active_users: number;
+    new_today: number;
+  };
+}
+
+export default function MyUsersMetrics({ stats }: MyUsersMetricsProps) {
+  const activeRate = stats?.total_users 
+    ? ((stats.active_users / stats.total_users) * 100).toFixed(1) 
+    : "100";
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+      {/* Card 1: Total Users */}
       <div
         style={{ height: "142px" }}
         className="relative flex w-full p-6 justify-between items-center rounded-[24px] border border-[#BEDBFF] bg-gradient-to-br from-[#DBEAFE] to-[#EFF6FF] shadow-sm hover:shadow-md transition-all overflow-hidden"
@@ -15,7 +28,7 @@ export default function MyUsersMetrics() {
           </div>
           <div className="space-y-1">
             <span className="block text-[#1C398E] font-roboto text-[30px] font-bold leading-[36px]">
-              2,847
+              {stats?.total_users?.toLocaleString() ?? "0"}
             </span>
             <span className="flex items-center gap-1 text-[#1447E6] font-roboto text-[14px] font-normal leading-[20px]">
               <ArrowUpRight className="w-4 h-4" />
@@ -46,11 +59,11 @@ export default function MyUsersMetrics() {
           </div>
           <div className="space-y-1">
             <span className="block text-[#004F3B] font-roboto text-[30px] font-bold leading-[36px]">
-              2,642
+              {stats?.active_users?.toLocaleString() ?? "0"}
             </span>
             <span className="flex items-center gap-1 text-[#007A55] font-roboto text-[14px] font-normal leading-[20px]">
               <ArrowUpRight className="w-4 h-4" />
-              <span>92.8% active rate</span>
+              <span>{activeRate}% active rate</span>
             </span>
           </div>
         </div>
@@ -77,7 +90,7 @@ export default function MyUsersMetrics() {
           </div>
           <div className="space-y-1">
             <span className="block text-[#7B3306] font-roboto text-[30px] font-bold leading-[36px]">
-              24
+              {stats?.new_today?.toLocaleString() ?? "0"}
             </span>
             <span className="flex items-center gap-1 text-[#BB4D00] font-roboto text-[14px] font-normal leading-[20px]">
               <ArrowUpRight className="w-4 h-4" />

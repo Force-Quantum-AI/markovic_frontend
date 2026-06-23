@@ -9,9 +9,8 @@ import {
 } from "@/store/features/notification/notification.api";
 
 export default function Notification() {
-  const { data, isLoading } = useGetNotificationSettingsQuery();
-  const [updateNotificationSettings, { isLoading: isUpdating }] =
-    useUpdateNotificationSettingsMutation();
+  const { data} = useGetNotificationSettingsQuery();
+  const [ updateNotificationSettings ] = useUpdateNotificationSettingsMutation();
 
   const [upcomingHearing, setUpcomingHearing] = useState(false);
   const [caseDeadline, setCaseDeadline] = useState(false);

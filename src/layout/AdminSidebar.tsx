@@ -12,7 +12,7 @@ import {
   Archive,
   SlidersHorizontal,
   CreditCard,
-  ChartColumn,
+  // ChartColumn,
   Gavel,
   LayoutGrid,
 } from "lucide-react";
@@ -55,11 +55,11 @@ const navItems: NavItem[] = [
       { title: "Requests", href: "/admin/subscription/requests" },
     ],
   },
-  {
-    title: "Report",
-    href: "/admin/report",
-    icon: ChartColumn,
-  },
+  // {
+  //   title: "Report",
+  //   href: "/admin/report",
+  //   icon: ChartColumn,
+  // },
   {
     title: "Laws Database",
     href: "/admin/law-database",

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import {
   Download,
   Plus,
@@ -28,15 +27,7 @@ interface UserRow {
   role: string;
   phone: string;
   created: string;
-  plan:
-    | "Basic"
-    | "Professional"
-    | "Standard"
-    | "Premium"
-    | "Enterprise"
-    | "Ultimate"
-    | "Custom"
-    | "Limited Edition";
+  plan: "Basic" | "Standard" | "Premium";
 }
 
 import AddUserDialog from "./AddUserDialog";
@@ -51,22 +42,25 @@ interface MyUsersTableProps {
     phone: string;
     role: string;
   }) => void;
+  totalCount?: number;
+  currentPage?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
 }
 
 const planBadgeStyles: Record<UserRow["plan"], string> = {
-  Basic: "bg-[#DBEAFE] text-[#1447E6] border border-[#1447E6]/20",
-  Professional: "bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD]",
+  Basic:    "bg-[#DBEAFE] text-[#1447E6] border border-[#1447E6]/20",
   Standard: "bg-[#E8D5FF] text-[#7314E6] border border-[#7314E6]/20",
-  Premium: "bg-[#FFF3E0] text-[#E69514] border border-[#E69514]/20",
-  Enterprise: "bg-[#E0F2FE] text-[#0284C7] border border-[#BAE6FD]",
-  Ultimate: "bg-[#F3E8FF] text-[#6B21A8] border border-[#E9D5FF]",
-  Custom: "bg-[#EFF1F4] text-[#667085] border border-[#667085]/20",
-  "Limited Edition": "bg-[#F3F4F6] text-[#374151] border border-[#E5E7EB]",
+  Premium:  "bg-[#FFF3E0] text-[#E69514] border border-[#E69514]/20",
 };
 
 export default function MyUsersTable({
   usersList,
   onAddUser,
+  totalCount = 0,
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange,
 }: MyUsersTableProps) {
   const [isAddUserOpen, setIsAddUserOpen] = React.useState(false);
   return (
@@ -142,11 +136,10 @@ export default function MyUsersTable({
                     {/* User Name + Avatar + Email */}
                     <td className="py-3.5 px-5 border-r border-[#BEC4D2]/40 flex items-center gap-3">
                       <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                        <Image
+                        <img
                           src={row.avatar}
                           alt={row.name}
-                          fill
-                          className="object-cover"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                       <div>
@@ -223,31 +216,46 @@ export default function MyUsersTable({
 
       {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between pt-4 text-sm font-roboto text-[#475467] gap-4">
-        <span>Showing 1 to {usersList.length} of 2,847 users</span>
+        <span>
+          Showing {usersList.length > 0 ? (currentPage - 1) * (usersList.length > 0 ? Math.ceil(totalCount / totalPages) : 10) + 1 : 0} to{" "}
+          {Math.min(currentPage * (usersList.length > 0 ? Math.ceil(totalCount / totalPages) : 10), totalCount)} of {totalCount} users
+        </span>
 
-        <div className="flex items-center gap-1.5">
-          <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Previous</span>
-          </button>
+        {totalPages > 1 && onPageChange && (
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Previous</span>
+            </button>
 
-          <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#0F5A7F] text-white text-xs font-medium cursor-pointer">
-            1
-          </button>
+            {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => onPageChange(p)}
+                className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium cursor-pointer transition-all ${
+                  currentPage === p
+                    ? "bg-[#0F5A7F] text-white"
+                    : "border border-transparent hover:border-gray-200 hover:bg-gray-50 text-gray-700"
+                }`}
+              >
+                {p}
+              </button>
+            ))}
 
-          <button className="w-8 h-8 flex items-center justify-center rounded-full border border-transparent hover:border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-medium cursor-pointer">
-            2
-          </button>
-
-          <button className="w-8 h-8 flex items-center justify-center rounded-full border border-transparent hover:border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-medium cursor-pointer">
-            3
-          </button>
-
-          <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer">
-            <span>Next</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
+            <button
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span>Next</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       </div>
       {onAddUser && (
         <AddUserDialog
