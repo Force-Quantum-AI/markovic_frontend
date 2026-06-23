@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { CheckCircle2, Loader2, ShieldCheck, Clock } from "lucide-react";
+import { CheckCircle2, Loader2, ShieldCheck, Clock, ArrowLeft, ChevronLeft } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { toast } from "sonner";
 import ContactSupportModal from "@/components/modals/ContactSupportModal";
 import { BillingSession, GroupedPlan, SubscriptionPlan } from "@/types/subscription.client";
 import { useGetAllSubscriptionListQuery, useGetClientCurrentSubscriptionQuery, usePurchaseSubscriptionPlanMutation } from "@/store/features/subscription/subscription.client.api";
+import { usePathname, useRouter } from "next/navigation";
 
 // ─── Feature label mapping ──────────────────────────────────────────────────
 // Maps the boolean feature flags from the API into the human-readable labels
@@ -152,6 +153,8 @@ export default function Subscription() {
   const [billingCycle, setBillingCycle] = useState<BillingSession>("yearly");
   const [isContactSupportOpen, setIsContactSupportOpen] = useState(false);
   const [purchasingPlanId, setPurchasingPlanId] = useState<number | null>(null);
+  const router = useRouter();
+  const path = usePathname();
 
   const { data: plans, isLoading: isLoadingPlans, isError: isPlansError } =
     useGetAllSubscriptionListQuery();
@@ -181,6 +184,13 @@ export default function Subscription() {
 
   return (
     <div className="p-2 md:p-4 border rounded-2xl">
+      {path.includes("/subscription") && (
+        <div className="absolute top-4 left-4">
+        <button onClick={()=>router.back()} className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer">
+          <ChevronLeft /> Back
+        </button>
+      </div>
+      )}
       <div className="min-h-full flex items-center justify-center">
         <div className="relative w-full max-w-6xl rounded-2xl md:rounded-[24px] flex flex-col">
           {/* Scrollable Content */}

@@ -172,7 +172,7 @@ export default function UserLayout({
           {children}
         </main>
       </SidebarInset>
-      <SubscriptionEndModal open={isModalOpen} onOpenChange={() => setIsModalOpen(false)} onClick={() => {router.push("/subscriptions")}}/>
+      <SubscriptionEndModal open={isModalOpen} onOpenChange={() => setIsModalOpen(false)} onClick={() => {router.push("/subscription")}}/>
     </SidebarProvider>
   );
 }

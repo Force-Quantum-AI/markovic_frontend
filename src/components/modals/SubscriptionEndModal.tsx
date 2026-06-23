@@ -76,8 +76,7 @@ export default function SubscriptionEndModal({
                             <Button
                                 onClick={onClick}
                                 className="w-full rounded-xl py-6 text-base font-semibold
-                bg-gradient-to-r from-amber-400 to-yellow-500
-                hover:from-amber-500 hover:to-yellow-600
+                bg-amber-400 hover:bg-amber-500 cursor-pointer hover:text-white
                 text-black shadow-xl transition-all duration-300 hover:scale-[1.02]"
                             >
                                 Upgrade Now
