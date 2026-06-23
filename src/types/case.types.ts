@@ -87,13 +87,15 @@ export interface HearingAndDeadlinePageDataParamsType{
   page_size?: number;
 }
 
-export interface CaseDocument {
-  id: string;
-  name: string;
-  type: string;
-  size: string;
-  uploadedBy: string;
-  uploadedAt: string;
+export interface HearingAndDeadlineApiPayloadType{
+  reason: string,
+  status: string,
+  time_from: string,
+  time_to: string,
+  am_pm: string,
+  day: number,
+  month: number,
+  year: number
 }
 
 export interface CaseNote {
@@ -103,4 +105,53 @@ export interface CaseNote {
   authorColor: string;
   content: string;
   createdAt: string;
+}
+
+export interface updateClientProfileInfoType {
+  client_image?: File | null;
+  data: {
+  client_name: string;
+  client_email: string;
+  client_phone: string;
+  client_address: string;
+  };
+}
+
+export interface UserData {
+  avatarUrl?: string; // preview only
+
+  avatarFile?: File | null; // actual file
+
+  name: string;
+  email: string;
+  phone: string;
+  personalId: string;
+  address: string;
+}
+
+export interface DocumentUploader {
+  id: string;
+  full_name: string;
+  email: string;
+  professional_role?: string;
+}
+
+export interface CaseDocument {
+  id: string;
+  file_url: string;
+  file_name: string;
+  uploaded_by: DocumentUploader;
+  created_at: string;
+}
+
+export interface DownloadDocumentResponse {
+  id: number;
+  file_name: string;
+  download_url: string;
+  uploaded_by: {
+    id: string;
+    full_name: string;
+    email: string;
+  };
+  created_at: string;
 }

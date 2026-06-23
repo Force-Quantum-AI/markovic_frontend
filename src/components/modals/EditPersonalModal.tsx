@@ -9,29 +9,26 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
-
 import { InputField } from "@/components/shared/InputField";
-
-interface UserData {
-  avatarUrl?: string;
-  name: string;
-  email: string;
-  phone: string;
-  personalId: string;
-  address: string;
-}
+import { useUpdateClientProfileInfoMutation } from "@/store/features/case/case.api";
+import { updateClientProfileInfoType, UserData } from "@/types/case.types";
+import { toast } from "sonner";
 
 interface PersonalDetailsModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   data?: UserData;
+  caseId: string;
 }
 
 export default function EditPersonalModal({
   open,
   setOpen,
+  caseId,
   data,
 }: PersonalDetailsModalProps) {
+  const [updateClientProfileInfo, { isLoading }] = useUpdateClientProfileInfoMutation()
+
   const [formData, setFormData] = useState<UserData>({
     avatarUrl: "",
     name: "",
@@ -49,35 +46,56 @@ export default function EditPersonalModal({
 
   const handleInputChange =
     (field: keyof UserData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: e.target.value,
+        }));
+      };
 
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
+
     const file = e.target.files?.[0];
 
     if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
+    const preview = URL.createObjectURL(file);
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      avatarUrl: imageUrl,
+
+      avatarUrl: preview,
+
+      avatarFile: file,
     }));
   };
 
-  const handleUpdate = () => {
-    console.log("Updated Data:", formData);
+  const handleUpdate = async () => {
 
-    // later API integration
-    // await updateProfile(formData)
+    const updatedData: updateClientProfileInfoType = {
 
-    setOpen(false);
+      client_image: formData.avatarFile || null,
+
+      data: {
+        client_name: formData.name,
+        client_email: formData.email,
+        client_phone: formData.phone,
+        client_address: formData.address,
+      },
+    };
+    try {
+      await updateClientProfileInfo({
+        caseId,
+        data: updatedData,
+      }).unwrap();
+      toast.success("Client profile info updated successfully");
+      setOpen(false);
+    } catch (error) {
+      toast.error("Failed to update client profile info")
+    }
+
   };
 
   return (
@@ -236,6 +254,7 @@ export default function EditPersonalModal({
             <div className="mt-8 flex justify-end">
               <button
                 onClick={handleUpdate}
+                disabled={isLoading}
                 className="
                   rounded-full
                   bg-[#135576]
@@ -246,9 +265,11 @@ export default function EditPersonalModal({
                   text-white
                   transition-all
                   hover:bg-[#0f4762]
+                  disabled:opacity-50
+                  disabled:cursor-not-allowed
                 "
               >
-                Update Now
+                {isLoading ? "Updating..." : "Update Now"}
               </button>
             </div>
           </div>

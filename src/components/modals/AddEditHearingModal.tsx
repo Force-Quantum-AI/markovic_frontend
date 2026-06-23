@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, Loader } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Dialog,
@@ -10,105 +11,158 @@ import {
 } from "@/components/ui/dialog";
 
 import { InputField } from "@/components/shared/InputField";
-
-export interface Hearing {
-  id: string;
-  date: string;
-  time: string;
-  location: string;
-  type: string;
-  status: "Upcoming" | "Held" | "Postponed";
-  daysRemaining?: number;
-}
+import {
+  useAddHearingInCaseMutation,
+  useUpdateHearingInCaseMutation,
+  useAddDeadlineInCaseMutation,
+  useUpdateDeadlineInCaseMutation,
+} from "@/store/features/case/case.api";
 
 interface HearingModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-
   mode?: "add" | "edit";
-
-  hearing?: Hearing | null;
-
+  hearing?: any | null;
   forModal?: "hearing" | "deadline";
+  caseId: string;
 }
 
 export interface HearingFormData {
   reason: string;
   status: string;
-  time: string;
+  time_from: string;
+  time_to: string;
   period: string;
   date: string;
   month: string;
   year: string;
 }
 
+const DEFAULT_FORM: HearingFormData = {
+  reason: "",
+  status: "Upcoming",
+  time_from: "",
+  time_to: "",
+  period: "AM",
+  date: String(new Date().getDate()),
+  month: String(new Date().getMonth() + 1),
+  year: String(new Date().getFullYear()),
+};
+
+/** Builds form state from a raw hearing/deadline API object, with safe fallbacks. */
+function buildFormFromHearing(hearing: any): HearingFormData {
+  return {
+    reason: hearing?.reason ?? hearing?.type ?? "",
+    status: hearing?.status ?? "Upcoming",
+    time_from: hearing?.time_from ?? "",
+    time_to: hearing?.time_to ?? "",
+    period: hearing?.am_pm ?? "AM",
+    // Use `!= null` (not truthy check) so day/month/year of 0 wouldn't be wrongly discarded.
+    date: hearing?.day != null ? String(hearing.day) : String(new Date().getDate()),
+    month: hearing?.month != null ? String(hearing.month) : String(new Date().getMonth() + 1),
+    year: hearing?.year != null ? String(hearing.year) : String(new Date().getFullYear()),
+  };
+}
+
 export default function AddEditHearingModal({
-  forModal="hearing",
+  forModal = "hearing",
   open,
   setOpen,
   mode = "add",
-  hearing
+  hearing,
+  caseId,
 }: HearingModalProps) {
-  const [formData, setFormData] = useState<HearingFormData>({
-    reason: "",
-    status: "Upcoming",
-    time: "",
-    period: "AM",
-    date: "",
-    month: "May",
-    year: "2026",
-  });
+  const [addHearing, { isLoading: isAddingHearing }] = useAddHearingInCaseMutation();
+  const [updateHearing, { isLoading: isUpdatingHearing }] = useUpdateHearingInCaseMutation();
+  const [addDeadline, { isLoading: isAddingDeadline }] = useAddDeadlineInCaseMutation();
+  const [updateDeadline, { isLoading: isUpdatingDeadline }] = useUpdateDeadlineInCaseMutation();
 
+  const [formData, setFormData] = useState<HearingFormData>(DEFAULT_FORM);
+
+  // Re-sync form data whenever the modal opens, or the target item / mode changes
+  // while it's open. Keying off `open` ensures stale data from a previous edit
+  // session can't leak into a freshly opened "add" form (and vice versa).
   useEffect(() => {
-    if (hearing && mode === "edit") {
-      setFormData({
-        reason: hearing.type,
-        status: hearing.status,
-        time: hearing.time,
-        period: "AM",
-        date: "22",
-        month: "May",
-        year: "2026",
-      });
-    } else {
-      setFormData({
-        reason: "",
-        status: "Upcoming",
-        time: "",
-        period: "AM",
-        date: "",
-        month: "May",
-        year: "2026",
-      });
-    }
-  }, [hearing, mode]);
+    if (!open) return;
 
-  const handleChange = (
-    key: keyof HearingFormData,
-    value: string
-  ) => {
+    if (mode === "edit" && hearing) {
+      setFormData(buildFormFromHearing(hearing));
+    } else {
+      setFormData(DEFAULT_FORM);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, mode, hearing?.id]);
+
+  const handleChange = (key: keyof HearingFormData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [key]: value,
     }));
   };
 
-  const handleSubmit = () => {
-    if (mode === "add") {
-      if (forModal === "hearing") {
-        
-      }else{
-        
-      }
-    } else {
-      if (forModal === "hearing") {
-        
-      }else{
-        
-      }
+  const isLoading =
+    isAddingHearing || isUpdatingHearing || isAddingDeadline || isUpdatingDeadline;
+
+  const handleSubmit = async () => {
+    if (!caseId) {
+      toast.error("Case ID is missing.");
+      return;
     }
-    setOpen(false);
+
+    const payload = {
+      reason: formData.reason,
+      status: formData.status,
+      time_from: formData.time_from,
+      time_to: formData.time_to,
+      am_pm: formData.period,
+      day: Number(formData.date),
+      month: Number(formData.month),
+      year: Number(formData.year),
+    };
+
+    try {
+      if (mode === "add") {
+        if (forModal === "hearing") {
+          await addHearing({ caseId, data: payload }).unwrap();
+          toast.success("Hearing added successfully!");
+        } else {
+          await addDeadline({ caseId, data: payload }).unwrap();
+          toast.success("Deadline added successfully!");
+        }
+      } else {
+        if (!hearing?.id) {
+          toast.error("Item ID is missing for update.");
+          return;
+        }
+        if (forModal === "hearing") {
+          await updateHearing({ caseId, hearingId: hearing.id, data: payload }).unwrap();
+          toast.success("Hearing updated successfully!");
+        } else {
+          await updateDeadline({ caseId, deadlineId: hearing.id, data: payload }).unwrap();
+          toast.success("Deadline updated successfully!");
+        }
+      }
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error(`Failed to ${mode} ${forModal}.`);
+    }
   };
+
+  const months = [
+    { value: "1", label: "January" },
+    { value: "2", label: "February" },
+    { value: "3", label: "March" },
+    { value: "4", label: "April" },
+    { value: "5", label: "May" },
+    { value: "6", label: "June" },
+    { value: "7", label: "July" },
+    { value: "8", label: "August" },
+    { value: "9", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -125,7 +179,7 @@ export default function AddEditHearingModal({
         "
       >
         <DialogTitle className="sr-only">
-          Hearing Modal
+          {mode === "edit" ? "Edit" : "Add"} {forModal}
         </DialogTitle>
 
         <div className="relative bg-white px-6 md:px-10 py-8 md:py-10">
@@ -133,12 +187,13 @@ export default function AddEditHearingModal({
           <button
             onClick={() => setOpen(false)}
             className="absolute right-6 top-6"
+            disabled={isLoading}
           >
             <X className="h-6 w-6 text-gray-600" />
           </button>
 
           {/* Heading */}
-          <h2 className="text-center text-3xl font-bold text-[#111827] mb-10">
+          <h2 className="text-center text-3xl font-bold text-[#111827] mb-10 capitalize">
             {mode === "edit" ? "Edit" : "Add"} {forModal}
           </h2>
 
@@ -150,9 +205,7 @@ export default function AddEditHearingModal({
                 label="Reason:"
                 placeholder="Reason"
                 value={formData.reason}
-                onChange={(e) =>
-                  handleChange("reason", e.target.value)
-                }
+                onChange={(e) => handleChange("reason", e.target.value)}
               />
 
               <div>
@@ -162,9 +215,7 @@ export default function AddEditHearingModal({
 
                 <select
                   value={formData.status}
-                  onChange={(e) =>
-                    handleChange("status", e.target.value)
-                  }
+                  onChange={(e) => handleChange("status", e.target.value)}
                   className="
                     w-full
                     rounded-full
@@ -179,22 +230,27 @@ export default function AddEditHearingModal({
                     focus:ring-[#135576]
                   "
                 >
-                  <option>Upcoming</option>
-                  <option>Held</option>
-                  <option>Postponed</option>
+                  <option value="Upcoming">Upcoming</option>
+                  <option value="Held">Held</option>
+                  <option value="Postponed">Postponed</option>
+                  <option value="Extended">Extended</option>
                 </select>
               </div>
             </div>
 
             {/* Row 2 */}
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               <InputField
-                label="Time:"
-                placeholder="9:30 - 10:00"
-                value={formData.time}
-                onChange={(e) =>
-                  handleChange("time", e.target.value)
-                }
+                label="Time From:"
+                placeholder="09:00"
+                value={formData.time_from}
+                onChange={(e) => handleChange("time_from", e.target.value)}
+              />
+              <InputField
+                label="Time To:"
+                placeholder="10:00"
+                value={formData.time_to}
+                onChange={(e) => handleChange("time_to", e.target.value)}
               />
 
               <div>
@@ -204,9 +260,7 @@ export default function AddEditHearingModal({
 
                 <select
                   value={formData.period}
-                  onChange={(e) =>
-                    handleChange("period", e.target.value)
-                  }
+                  onChange={(e) => handleChange("period", e.target.value)}
                   className="
                     w-full
                     rounded-full
@@ -221,8 +275,8 @@ export default function AddEditHearingModal({
                     focus:ring-[#135576]
                   "
                 >
-                  <option>AM</option>
-                  <option>PM</option>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
                 </select>
               </div>
             </div>
@@ -236,9 +290,7 @@ export default function AddEditHearingModal({
 
                 <select
                   value={formData.date}
-                  onChange={(e) =>
-                    handleChange("date", e.target.value)
-                  }
+                  onChange={(e) => handleChange("date", e.target.value)}
                   className="
                     w-full
                     rounded-full
@@ -251,7 +303,7 @@ export default function AddEditHearingModal({
                   "
                 >
                   {Array.from({ length: 31 }).map((_, i) => (
-                    <option key={i + 1}>
+                    <option key={i + 1} value={String(i + 1)}>
                       {i + 1}
                     </option>
                   ))}
@@ -265,9 +317,7 @@ export default function AddEditHearingModal({
 
                 <select
                   value={formData.month}
-                  onChange={(e) =>
-                    handleChange("month", e.target.value)
-                  }
+                  onChange={(e) => handleChange("month", e.target.value)}
                   className="
                     w-full
                     rounded-full
@@ -279,22 +329,9 @@ export default function AddEditHearingModal({
                     text-sm
                   "
                 >
-                  {[
-                    "January",
-                    "February",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
-                    "August",
-                    "September",
-                    "October",
-                    "November",
-                    "December",
-                  ].map((month) => (
-                    <option key={month}>
-                      {month}
+                  {months.map((m) => (
+                    <option key={m.value} value={m.value}>
+                      {m.label}
                     </option>
                   ))}
                 </select>
@@ -304,9 +341,8 @@ export default function AddEditHearingModal({
                 label="Year:"
                 placeholder="2026"
                 value={formData.year}
-                onChange={(e) =>
-                  handleChange("year", e.target.value)
-                }
+                inputType="number"
+                onChange={(e) => handleChange("year", e.target.value)}
               />
             </div>
 
@@ -314,7 +350,9 @@ export default function AddEditHearingModal({
             <div className="flex justify-center pt-6">
               <button
                 onClick={handleSubmit}
+                disabled={isLoading}
                 className="
+                  flex items-center justify-center gap-2
                   rounded-full
                   bg-[#135576]
                   px-10
@@ -323,9 +361,13 @@ export default function AddEditHearingModal({
                   font-semibold
                   hover:bg-[#0f4964]
                   transition
+                  disabled:opacity-50 disabled:cursor-not-allowed
                 "
               >
-                {mode === "edit"
+                {isLoading && <Loader className="w-4 h-4 animate-spin" />}
+                {isLoading
+                  ? "Saving..."
+                  : mode === "edit"
                   ? "Update Now"
                   : `Add ${forModal}`}
               </button>

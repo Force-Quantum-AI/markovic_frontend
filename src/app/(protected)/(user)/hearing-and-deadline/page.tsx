@@ -1,30 +1,64 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { CaseCard } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "@/components/user/dashboard/UpcomingHearings";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { InputField } from "@/components/shared/InputField";
-import { SelectField } from "@/components/shared/SelectField";
+import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { useGetHearingAndDeadlinePageDataQuery } from "@/store/features/case/case.api";
-
-type CaseCategory = "All" | "Civil" | "Criminal" | "Commercial" | "Probate";
-
-export const statusOptions = ["All", "Active", "On appeal", "On revision", "In enforcement", "Finished", "Archived", "Before Const. Court", "Before Euro. Court of H.Rights"];
-export const categoryOptions = ["All", "Civil", "Criminal", "Family", "Property", "Insurance", "Labour", "Tax"];
+import { HearingAndDeadlinePageDataParamsType } from "@/types/case.types";
+import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 
 export default function HearingAndDeadlinePage() {
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState<CaseCategory>("All");
-    const [selectedSubCategory, setSelectedSubCategory] = useState("All");
-    const [hearingDate, setHearingDate] = useState({ day: "", month: "", year: "" });
-    const [deadlineDate, setDeadlineDate] = useState({ day: "", month: "", year: "" });
+    const [selectedCategory, setSelectedCategory] = useState<number>();
+    const [selectedSubCategory, setSelectedSubCategory] = useState<number>();
+    const [hearingDate, setHearingDate] = useState<{ day: number | null; month: number | null; year: number | null }>({ day: null, month: null, year: null });
+    const [deadlineDate, setDeadlineDate] = useState<{ day: number | null; month: number | null; year: number | null }>({ day: null, month: null, year: null });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
     const totalPages = 4;
 
-    const { data, isLoading, error } = useGetHearingAndDeadlinePageDataQuery({});
+    const queryParams = useMemo(() => {
+        const params: HearingAndDeadlinePageDataParamsType = {
+            page: currentPage,
+            page_size: itemsPerPage,
+        };
+
+        if (searchQuery.trim()) {
+            params.search = searchQuery.trim();
+        }
+
+        if (selectedCategory) {
+            params.category = selectedCategory;
+        }
+
+        if (selectedSubCategory) {
+            params.sub_category = selectedSubCategory;
+        }
+
+        if (hearingDate.day) params.hearing_day = Number(hearingDate.day);
+        if (hearingDate.month) params.hearing_month = Number(hearingDate.month);
+        if (hearingDate.year) params.hearing_year = Number(hearingDate.year);
+
+        if (deadlineDate.day) params.deadline_day = Number(deadlineDate.day);
+        if (deadlineDate.month) params.deadline_month = Number(deadlineDate.month);
+        if (deadlineDate.year) params.deadline_year = Number(deadlineDate.year);
+
+        return params;
+    }, [
+        searchQuery,
+        selectedCategory,
+        selectedSubCategory,
+        hearingDate,
+        deadlineDate,
+        currentPage,
+    ]);
+
+    const { data, isLoading } =
+        useGetHearingAndDeadlinePageDataQuery(queryParams);
 
     useEffect(() => {
         // Here you would typically make an API call to fetch the data based on the filters and pagination changes
@@ -74,109 +108,141 @@ export default function HearingAndDeadlinePage() {
                 title="Hearings & Deadlines"
                 subtitle="Schedule and details for all court proceedings"
             />
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-4 items-end gap-3">
                 <div className="col-span-1 md:col-span-2">
-                <InputField
-                label="Search"
-                placeholder="Search cases, clients, laws, documents..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                icon={<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />}
-                />
+                    <InputField
+                        label="Search"
+                        placeholder="Search cases, clients, laws, documents..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
                 <SelectField
                     label="Category"
-                    options={categoryOptions}
-                    value={selectedCategory}
-                    onChange={(e:any) => setSelectedCategory(e.target.value as CaseCategory)}
+                    type="category"
+                    value={selectedCategory?.toString() || ""}
+                    onChange={(value) => {
+                        setSelectedCategory(Number(value));
+                        setSelectedSubCategory(undefined);
+                    }}
+                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                 />
                 <SelectField
                     label="Sub-category"
-                    options={categoryOptions}
-                    value={selectedSubCategory}
-                    onChange={(e:any) => setSelectedSubCategory(e.target.value)}
+                    type="subCategory"
+                    categoryId={selectedCategory}
+                    value={selectedSubCategory?.toString() || ""}
+                    onChange={(value) =>
+                        setSelectedSubCategory(
+                            value ? Number(value) : undefined
+                        )
+                    }
+                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3  text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                 />
             </div>
 
-            {/* Filters Row */}
             <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-3">
                 {/* Hearing Date Filter */}
                 <div>
                     <label className="mb-1 block text-xs font-medium text-gray-500">
                         Hearing date
                     </label>
+
                     <div className="grid grid-cols-3 gap-1 xl:gap-2">
                         <input
                             type="text"
                             placeholder="DD"
-                            value={hearingDate.day}
+                            value={hearingDate.day ?? ""}
                             onChange={(e) =>
-                                setHearingDate({ ...hearingDate, day: e.target.value })
+                                setHearingDate({
+                                    ...hearingDate,
+                                    day: e.target.value ? Number(e.target.value) : null,
+                                })
                             }
                             className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
+
                         <input
                             type="text"
                             placeholder="MM"
-                            value={hearingDate.month}
+                            value={hearingDate.month ?? ""}
                             onChange={(e) =>
-                                setHearingDate({ ...hearingDate, month: e.target.value })
+                                setHearingDate({
+                                    ...hearingDate,
+                                    month: e.target.value ? Number(e.target.value) : null,
+                                })
                             }
                             className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
+
                         <input
                             type="text"
-                            placeholder="YY"
-                            value={hearingDate.year}
+                            placeholder="YYYY"
+                            value={hearingDate.year ?? ""}
                             onChange={(e) =>
-                                setHearingDate({ ...hearingDate, year: e.target.value })
+                                setHearingDate({
+                                    ...hearingDate,
+                                    year: e.target.value ? Number(e.target.value) : null,
+                                })
                             }
                             className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                            maxLength={2}
+                            maxLength={4}
                         />
                     </div>
                 </div>
+
                 {/* Deadline Filter */}
                 <div>
                     <label className="mb-1 block text-xs font-medium text-gray-500">
                         Deadline
                     </label>
+
                     <div className="grid grid-cols-3 gap-1 xl:gap-2">
                         <input
                             type="text"
                             placeholder="DD"
-                            value={hearingDate.day}
+                            value={deadlineDate.day ?? ""}
                             onChange={(e) =>
-                                setHearingDate({ ...hearingDate, day: e.target.value })
+                                setDeadlineDate({
+                                    ...deadlineDate,
+                                    day: e.target.value ? Number(e.target.value) : null,
+                                })
                             }
                             className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
+
                         <input
                             type="text"
                             placeholder="MM"
-                            value={hearingDate.month}
+                            value={deadlineDate.month ?? ""}
                             onChange={(e) =>
-                                setHearingDate({ ...hearingDate, month: e.target.value })
+                                setDeadlineDate({
+                                    ...deadlineDate,
+                                    month: e.target.value ? Number(e.target.value) : null,
+                                })
                             }
                             className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
                             maxLength={2}
                         />
+
                         <input
                             type="text"
-                            placeholder="YY"
-                            value={hearingDate.year}
+                            placeholder="YYYY"
+                            value={deadlineDate.year ?? ""}
                             onChange={(e) =>
-                                setHearingDate({ ...hearingDate, year: e.target.value })
+                                setDeadlineDate({
+                                    ...deadlineDate,
+                                    year: e.target.value ? Number(e.target.value) : null,
+                                })
                             }
                             className="rounded-full border border-gray-200 bg-gray-100 px-2 py-2 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                            maxLength={2}
+                            maxLength={4}
                         />
                     </div>
                 </div>
-
             </div>
 
 
@@ -189,15 +255,18 @@ export default function HearingAndDeadlinePage() {
                 </div>
 
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
-                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
-                    {data?.cases?.results.map((card:any, index: number) => (
-                        <CaseCard key={index} {...card} />
-                    ))}
-                </div>
-
+                {isLoading ? (
+                    <CaseCardSkeleton cardNumber={3} />
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
+                        {data?.cases?.results.map((card: any, index: number) => (
+                            <CaseCard key={index} {...card} />
+                        ))}
+                    </div>
+                )}
 
                 {/* Pagination */}
-                <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap">
+                <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap hidden">
                     <p className="text-[#427791] text-xs md:text-base">Showing {1} to {Math.min(currentPage, hearingsDataset.length)} of {hearingsDataset.length} cases</p>
                     {totalPages > 1 && (
                         <div className="flex items-center justify-end gap-2">

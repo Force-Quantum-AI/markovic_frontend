@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { MoreHorizontal, Eye, Trash2 } from "lucide-react";
 import {
@@ -20,55 +20,48 @@ interface CaseItem {
   caseName: string;
   caseNumber: string;
   hearingDate: string;
-  status: "Active" | "In enforcement" | "Archived" | "On revision";
+  status: string;
 }
 
-export default function RecentCases() {
+const resolveImageUrl = (imgUrl: string | null | undefined): string => {
+  if (!imgUrl) return "/dummy-user.jpg";
+  if (imgUrl.includes("http")) {
+    const match = imgUrl.match(/https?:\/\/[^\s]+/);
+    if (match) return match[0];
+  }
+  if (imgUrl.startsWith("/") || imgUrl.startsWith(".")) {
+    return imgUrl;
+  }
+  return `https://res.cloudinary.com/dnu0axtez/image/upload/${imgUrl}`;
+};
+
+const getHearingDateStr = (nextHearing?: any) => {
+  if (!nextHearing) return "Not Assign";
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthStr = months[nextHearing.month - 1] || nextHearing.month;
+  return `${nextHearing.day} ${monthStr} ${nextHearing.year}`;
+};
+
+export default function RecentCases({ data, isLoading }: { data?: any[]; isLoading?: boolean }) {
   const router = useRouter();
 
-  // Dummy dataset exactly mimicking the UI image specifications
-  const [cases, setCases] = useState<CaseItem[]>([
-    {
-      id: "1",
-      clientName: "Kristin Watson",
-      clientEmail: "kristinwatson@gmail.com",
-      clientAvatar: "/dummy-user.jpg",
-      caseName: "kristin/Lovcen Insurance - damages claim - PI .",
-      caseNumber: "CS-126097-AGVT",
-      hearingDate: "12 Jun 2026",
-      status: "Active",
-    },
-    {
-      id: "2",
-      clientName: "Esther Howard",
-      clientEmail: "kenzi.lawson@gmail.com",
-      clientAvatar: "/dummy-user.jpg",
-      caseName: "mike/Delta Airlines - customer service complaint - PI.",
-      caseNumber: "CS-126097-AGVT",
-      hearingDate: "15 Jul 2026",
-      status: "In enforcement",
-    },
-    {
-      id: "3",
-      clientName: "Savannah Nguyen",
-      clientEmail: "jackson.graham@gmail.com",
-      clientAvatar: "/dummy-user.jpg",
-      caseName: "sarah/HealthPlus - medical malpractice - PI.",
-      caseNumber: "CS-126097-AGVT",
-      hearingDate: "22 Aug 2026",
-      status: "Archived",
-    },
-    {
-      id: "4",
-      clientName: "John Kollings",
-      clientEmail: "sara.cruz@example.com",
-      clientAvatar: "/dummy-user.jpg",
-      caseName: "anna/Foodies Inc - product liability case - PI.",
-      caseNumber: "CS-126097-AGVT",
-      hearingDate: "05 Mar 2027",
-      status: "On revision",
-    },
-  ]);
+  const [cases, setCases] = useState<CaseItem[]>([]);
+
+  useEffect(() => {
+    if (data) {
+      const mapped = data.map((item: any) => ({
+        id: item.id,
+        clientName: item.client_name ?? "Client",
+        clientEmail: item.client_email ?? "",
+        clientAvatar: resolveImageUrl(item.client_image),
+        caseName: item.case_name ?? "",
+        caseNumber: item.case_number ?? "",
+        hearingDate: getHearingDateStr(item.next_hearing),
+        status: item.status_name ?? "Active",
+      }));
+      setCases(mapped);
+    }
+  }, [data]);
 
   // Status Styling Dictionary
   const statusStyles = {
@@ -110,125 +103,171 @@ export default function RecentCases() {
               <th className="py-3.5 px-4">Case Name</th>
               <th className="py-3.5 px-4">Case Number</th>
               <th className="py-3.5 px-4">Hearing</th>
-              <th className="py-3.5 px-4">Status</th>
-              <th className="py-3.5 px-5 text-right"></th>
+              <th className="py-3.5 px-4 w-28">Status</th>
+              {/* <th className="py-3.5 px-5 text-right"></th> */}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
-            {cases.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50/70 transition-colors">
-                {/* Client column */}
-                <td className="py-4 px-5 flex items-center gap-3">
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                    <Image src={row.clientAvatar} alt={row.clientName} fill className="object-cover" />
-                  </div>
-                  <div>
-                    <span className="block font-bold text-gray-900">{row.clientName}</span>
-                    <span className="block text-xs text-gray-400 font-light">{row.clientEmail}</span>
-                  </div>
-                </td>
-                
-                {/* Case details columns */}
-                <td className="py-4 px-4 max-w-xs truncate font-medium text-gray-700">{row.caseName}</td>
-                <td className="py-4 px-4 text-gray-500 font-mono text-xs">{row.caseNumber}</td>
-                <td className="py-4 px-4 font-medium text-gray-600">{row.hearingDate}</td>
-                
-                {/* Status pill element */}
-                <td className="py-4 px-4">
-                  <span className={`inline-block text-xs font-semibold px-3 py-0.5 rounded-full border ${statusStyles[row.status]}`}>
-                    {row.status}
-                  </span>
-                </td>
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, idx) => (
+                <tr key={idx} className="animate-pulse">
+                  <td className="py-4 px-5 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gray-200" />
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-24" />
+                      <div className="h-3 bg-gray-200 rounded w-32" />
+                    </div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="h-4 bg-gray-200 rounded w-40" />
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="h-4 bg-gray-200 rounded w-24" />
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="h-4 bg-gray-200 rounded w-20" />
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="h-6 bg-gray-200 rounded-full w-16" />
+                  </td>
+                  {/* <td className="py-4 px-5"></td> */}
+                </tr>
+              ))
+            ) : (
+              cases.map((row) => (
+                <tr key={row.id} className="hover:bg-gray-50/70 transition-colors">
+                  {/* Client column */}
+                  <td className="py-4 px-5 flex items-center gap-3">
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                      <Image src={row.clientAvatar} alt={row.clientName} fill className="object-cover" />
+                    </div>
+                    <div>
+                      <span className="block font-bold text-gray-900">{row.clientName}</span>
+                      <span className="block text-xs text-gray-400 font-light">{row.clientEmail}</span>
+                    </div>
+                  </td>
+                  
+                  {/* Case details columns */}
+                  <td className="py-4 px-4 max-w-xs truncate font-medium text-gray-700">{row.caseName}</td>
+                  <td className="py-4 px-4 text-gray-500 font-mono text-xs">{row.caseNumber}</td>
+                  <td className="py-4 px-4 font-medium text-gray-600">{row.hearingDate}</td>
+                  
+                  {/* Status pill element */}
+                  <td className="py-4 px-4">
+                    <span className={`inline-block text-xs font-semibold px-3 py-0.5 rounded-full border ${statusStyles[row.status as keyof typeof statusStyles] || "bg-[#f3f4f6] text-gray-600 border-gray-200"}`}>
+                      {row.status}
+                    </span>
+                  </td>
 
-                {/* Actions interactive trigger */}
-                <td className="py-4 px-5 text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all focus:outline-none">
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-lg border border-gray-100 p-1">
-                      <DropdownMenuItem onClick={() => handleView(row.id, row.clientName)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
-                        <Eye className="w-4 h-4 text-gray-400" />
-                        <span>View</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(row.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors focus:bg-red-50 focus:outline-none">
-                        <Trash2 className="w-4 h-4 text-red-400" />
-                        <span>Delete</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
-              </tr>
-            ))}
+                  {/* Actions interactive trigger */}
+                  {/* <td className="py-4 px-5 text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all focus:outline-none">
+                          <MoreHorizontal className="w-5 h-5" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-lg border border-gray-100 p-1">
+                        <DropdownMenuItem onClick={() => handleView(row.id, row.clientName)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus:bg-gray-50 focus:outline-none">
+                          <Eye className="w-4 h-4 text-gray-400" />
+                          <span>View</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(row.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors focus:bg-red-50 focus:outline-none">
+                          <Trash2 className="w-4 h-4 text-red-400" />
+                          <span>Delete</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td> */}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
       {/* --- MOBILE RESPONSIVE CARD CONTAINER --- */}
       <div className="block lg:hidden space-y-4">
-        {cases.map((row) => (
-          <div key={row.id} className="w-full bg-white border border-gray-200 rounded-2xl p-4 shadow-sm relative space-y-3">
-            {/* Row 1: Profile and Actions */}
-            <div className="flex items-start justify-between">
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, idx) => (
+            <div key={idx} className="w-full bg-white border border-gray-200 rounded-2xl p-4 shadow-sm space-y-3 animate-pulse">
               <div className="flex items-center gap-3">
-                <div className="relative w-11 h-11 rounded-full overflow-hidden bg-gray-100">
-                  <Image src={row.clientAvatar} alt={row.clientName} fill className="object-cover" />
+                <div className="w-11 h-11 rounded-full bg-gray-200" />
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 bg-gray-200 rounded w-1/3" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                </div>
+              </div>
+              <div className="h-4 bg-gray-200 rounded w-3/4" />
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
+              </div>
+            </div>
+          ))
+        ) : (
+          cases.map((row) => (
+            <div key={row.id} className="w-full bg-white border border-gray-200 rounded-2xl p-4 shadow-sm relative space-y-3">
+              {/* Row 1: Profile and Actions */}
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="relative w-11 h-11 rounded-full overflow-hidden bg-gray-100">
+                    <Image src={row.clientAvatar} alt={row.clientName} fill className="object-cover" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-base">{row.clientName}</h4>
+                    <span className="text-xs text-gray-400 block break-all">{row.clientEmail}</span>
+                  </div>
+                </div>
+
+                {/* Shadcn Dropdown for Mobile Card */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="p-1.5 rounded-full border border-gray-100 bg-gray-50 text-gray-400 focus:outline-none">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-32 bg-white rounded-xl shadow-md border p-1">
+                    <DropdownMenuItem onClick={() => handleView(row.id, row.clientName)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50">
+                      <Eye className="w-4 h-4 text-gray-400" />
+                      <span>View</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDelete(row.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50">
+                      <Trash2 className="w-4 h-4 text-red-400" />
+                      <span>Delete</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Row 2: Case Meta Details */}
+              <div className="space-y-1 pt-1">
+                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Case description</span>
+                <p className="text-xs font-semibold text-gray-700 leading-normal line-clamp-2">{row.caseName}</p>
+              </div>
+
+              {/* Row 3: Grid Footer Info */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-50 text-xs">
+                <div>
+                  <span className="text-gray-400 block text-[10px]">Case Number</span>
+                  <span className="font-mono text-gray-600">{row.caseNumber}</span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 text-base">{row.clientName}</h4>
-                  <span className="text-xs text-gray-400 block break-all">{row.clientEmail}</span>
+                  <span className="text-gray-400 block text-[10px]">Hearing Date</span>
+                  <span className="font-medium text-gray-700">{row.hearingDate}</span>
                 </div>
               </div>
 
-              {/* Shadcn Dropdown for Mobile Card */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="p-1.5 rounded-full border border-gray-100 bg-gray-50 text-gray-400 focus:outline-none">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-32 bg-white rounded-xl shadow-md border p-1">
-                  <DropdownMenuItem onClick={() => handleView(row.id, row.clientName)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50">
-                    <Eye className="w-4 h-4 text-gray-400" />
-                    <span>View</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleDelete(row.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50">
-                    <Trash2 className="w-4 h-4 text-red-400" />
-                    <span>Delete</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            {/* Row 2: Case Meta Details */}
-            <div className="space-y-1 pt-1">
-              <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Case description</span>
-              <p className="text-xs font-semibold text-gray-700 leading-normal line-clamp-2">{row.caseName}</p>
-            </div>
-
-            {/* Row 3: Grid Footer Info */}
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-50 text-xs">
-              <div>
-                <span className="text-gray-400 block text-[10px]">Case Number</span>
-                <span className="font-mono text-gray-600">{row.caseNumber}</span>
-              </div>
-              <div>
-                <span className="text-gray-400 block text-[10px]">Hearing Date</span>
-                <span className="font-medium text-gray-700">{row.hearingDate}</span>
+              {/* Row 4: Status Indicator Badge placement */}
+              <div className="pt-1 flex justify-between items-center">
+                <span className="text-[10px] text-gray-400">Current Status</span>
+                <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${statusStyles[row.status as keyof typeof statusStyles] || "bg-[#f3f4f6] text-gray-600 border-gray-200"}`}>
+                  {row.status}
+                </span>
               </div>
             </div>
-
-            {/* Row 4: Status Indicator Badge placement */}
-            <div className="pt-1 flex justify-between items-center">
-              <span className="text-[10px] text-gray-400">Current Status</span>
-              <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${statusStyles[row.status]}`}>
-                {row.status}
-              </span>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

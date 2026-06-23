@@ -13,8 +13,12 @@ import {
   Calendar,
   TrendingUp,
   Archive,
+  ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
+import { useGetAiCaseDetailsQuery } from "@/store/features/Ai/ai.api";
+import { useGetProfileInfoQuery } from "@/store/features/profile/profile.api";
+import { useRouter } from "next/navigation";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -318,29 +322,83 @@ function ResultCard({
 
 interface AiSearchResultsPageProps {
   query: string;
+  id?: string;
 }
 
-export default function AiSearchResultsPage({ query }: AiSearchResultsPageProps) {
-  const [results, setResults] = useState<SearchResult[]>(DUMMY_RESULTS);
+export default function AiSearchResultsPage({ query, id }: AiSearchResultsPageProps) {
+  const { data: profileInfo } = useGetProfileInfoQuery({});
+  const userId = profileInfo?.id || "";
 
-  const handleSave = (id: string) => {
-    setResults((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, saved: !r.saved } : r))
-    );
+  const { data: searchDetails, isLoading } = useGetAiCaseDetailsQuery(
+    { user_id: userId, search_history_id: Number(id) },
+    { skip: !id || !userId }
+  );
+
+  const [savedResults, setSavedResults] = useState<Set<string>>(new Set());
+  const router = useRouter();
+
+  const handleSave = (resultId: string) => {
+    setSavedResults((prev) => {
+      const next = new Set(prev);
+      if (next.has(resultId)) next.delete(resultId);
+      else next.add(resultId);
+      return next;
+    });
   };
 
-  const meta = DUMMY_META;
+  const actualDetails = searchDetails?.data || searchDetails;
+  
+  const apiResults: SearchResult[] | undefined = actualDetails?.results?.map((r: any, i: number) => ({
+    id: r.case_number || String(i),
+    court: r.court,
+    caseNumber: r.case_number,
+    date: r.date,
+    similarity: r.similarity,
+    shortSummary: r.summary,
+    whyRelevant: r.why_this_decision_is_relevant,
+    similarities: r.similarities || [],
+    differences: r.differences || [],
+    excerpt: r.important_excerpt,
+    saved: savedResults.has(r.case_number || String(i)),
+  }));
+
+  const results = apiResults?.length ? apiResults : (id ? [] : DUMMY_RESULTS);
+
+  const meta = actualDetails?.stats ? {
+    totalFound: actualDetails.stats.returned_cases || 0,
+    highestSimilarity: actualDetails.stats.highest_similarity || 0,
+    database: actualDetails.stats.search_type || "Hybrid Search",
+    rankedBy: actualDetails.stats.ranking_basis || "Embedding similarity",
+  } : DUMMY_META;
+
+  const displayQuery = actualDetails?.user_case_scenario || query;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-12 bg-white rounded-2xl border border-gray-200">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-[#135576]/30 border-t-[#135576] rounded-full animate-spin" />
+          <p className="text-sm font-medium text-gray-600">Analyzing case scenario...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
+      {/* back button  */}
+      <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+        <ArrowLeft className="w-4 h-4" />
+        Back
+      </button>
       {/* ── Search Complete Banner ── */}
       <div className="bg-white border border-gray-200 rounded-2xl px-5 py-4">
         <div className="flex items-center gap-2 mb-4">
           <CheckCircle2 className="w-4 h-4 text-green-600" />
           <span className="text-sm font-semibold text-gray-700">Search Complete</span>
-          {query && (
+          {displayQuery && (
             <span className="ml-1 text-xs text-gray-400 truncate max-w-xs">
-              — &ldquo;{query}&rdquo;
+              — &ldquo;{displayQuery}&rdquo;
             </span>
           )}
         </div>

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 interface CaseOverviewProps {
   client_name?: string;
-  opposing_parties?: Array<{ [key: string]: string }>;
+  opposing_parties?: Array<string | { [key: string]: string }>;
   court_name?: string;
   case_number?: string;
   category_name?: string;
@@ -44,7 +44,16 @@ export default function CaseOverview({
       {/* Information Grid */}
       <div className="space-y-8">
         <InfoRow label="Client:" value={client_name} />
-        <InfoRow label="Opposing Party:" value={opposing_parties && opposing_parties.length > 0 ? Object.values(opposing_parties[0])[0] : "N/A"} />
+        <InfoRow
+          label="Opposing Party:"
+          value={
+            opposing_parties && opposing_parties.length > 0
+              ? (typeof opposing_parties[0] === "object" && opposing_parties[0] !== null
+                ? (opposing_parties[0].name || opposing_parties[0].test || Object.values(opposing_parties[0])[0] || "N/A")
+                : String(opposing_parties[0]))
+              : "N/A"
+          }
+        />
         <InfoRow label="Court:" value={court_name} />
         <InfoRow label="Case Number:" value={case_number} />
         <InfoRow label="Category:" value={category_name} />
