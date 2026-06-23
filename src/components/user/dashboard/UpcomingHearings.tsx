@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ClockAlert } from "lucide-react";
 import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -104,6 +104,13 @@ export default function UpcomingHearings({ data, isLoading }: { data?: any[]; is
       {/* Grid Container Matrix mapping responsive column breakdowns */}
       {isLoading ? (
           <CaseCardSkeleton/>
+        ) : data?.length===0 ? (
+          <div className="text-center text-gray-500 bg-gray-100 rounded-2xl py-6 flex flex-col justify-center items-center">
+            <div className="p-3 mb-2 rounded-full bg-gray-200">
+              <ClockAlert className="text-gray-500" />
+            </div>
+            No upcoming hearings
+            </div>
         ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
         {data?.slice(min, max).map((card: CaseCardProps, index: number) => (
@@ -113,6 +120,7 @@ export default function UpcomingHearings({ data, isLoading }: { data?: any[]; is
       )}
 
       {/* Pagination control buttons positioned at the bottom right */}
+      {data?.length!==0 && (
       <div className={`${data?.length && data?.length<=3 ? "hidden": ""} flex items-center justify-end gap-3 pt-2`}>
         <button
           aria-label="Previous page"
@@ -130,6 +138,7 @@ export default function UpcomingHearings({ data, isLoading }: { data?: any[]; is
           <ArrowRight className="w-4 h-4 stroke-[2]" />
         </button>
       </div>
+      )} 
     </section>
   );
 }
