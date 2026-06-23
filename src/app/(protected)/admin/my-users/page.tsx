@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import MyUsersMetrics from "@/components/admin/my-users/MyUsersMetrics";
 import MyUsersFilters from "@/components/admin/my-users/MyUsersFilters";
 import MyUsersTable from "@/components/admin/my-users/MyUsersTable";
-import { useGetAllUsersQuery } from "@/store/features/admin/my-users/my-users.api";
+import DeleteConfirmationDialog from "@/components/admin/categories/DeleteConfirmationDialog";
+import {
+  useGetAllUsersQuery,
+  useDeleteUserMutation,
+} from "@/store/features/admin/my-users/my-users.api";
 import { User } from "@/store/features/admin/my-users/my-users.type";
 
 type PlanType = "Basic" | "Standard" | "Premium";
@@ -63,6 +68,9 @@ export default function MyUsers() {
     year: "",
   });
 
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteUserId, setDeleteUserId] = useState<string | number | null>(null);
+
   const queryParams = {
     page,
     search: filters.search || undefined,
@@ -73,6 +81,7 @@ export default function MyUsers() {
   };
 
   const { data: usersData, isLoading, isFetching } = useGetAllUsersQuery(queryParams);
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
   const handleFilter = (newFilters: {
     search: string;
@@ -97,6 +106,22 @@ export default function MyUsers() {
     alert("Adding user — implementation pending API mutation mapping.");
   };
 
+  const handleDeleteUserClick = (id: string | number) => {
+    setDeleteUserId(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteUserId) return;
+    try {
+      await deleteUser({ id: deleteUserId }).unwrap();
+      toast.success("User deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+      toast.error("Failed to delete user. Please try again.");
+    }
+  };
+
   const showLoader = isLoading || isFetching;
 
   return (
@@ -116,12 +141,25 @@ export default function MyUsers() {
         <MyUsersTable
           usersList={mappedUsers}
           onAddUser={handleAddUser}
+          onDeleteUser={handleDeleteUserClick}
           totalCount={usersData?.count || 0}
           currentPage={page}
           totalPages={usersData?.total_pages || 1}
           onPageChange={setPage}
         />
       )}
+
+      {/* Reusable Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="Delete User"
+        description="Are you sure you want to delete this user? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        isSubmitting={isDeleting}
+      />
     </div>
   );
 }
+
+

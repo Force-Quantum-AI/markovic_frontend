@@ -87,34 +87,26 @@ export default function DayView({
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs flex flex-col h-[750px]">
-      
       {/* Week Navigation Selector Bar */}
       <div className="flex items-center border-b border-gray-100 shrink-0">
         {/* Spacer matching time column width */}
         <div className="w-20 md:w-24 shrink-0 border-r border-[#F3F4F6]" />
         {/* Day names aligned with event grid */}
-        <div className="flex-grow flex justify-between items-center py-3 px-4 md:px-8">
+        <div className="flex-grow flex justify-center items-center py-3 px-4 md:px-8">
           {weekDays.map((day, idx) => {
             const isActive = day.toDateString() === currentDate.toDateString();
+            if (!isActive) return null;
             const dayName = DAYS_OF_WEEK_SHORT[idx];
-            
+
             return (
               <button
                 key={idx}
                 onClick={() => onSelectDate(day)}
-                style={
-                  isActive
-                    ? {
-                        borderRadius: "96px",
-                        background: "#515A6B",
-                      }
-                    : {}
-                }
-                className={`text-xs md:text-sm font-semibold tracking-wide transition-all cursor-pointer ${
-                  isActive
-                    ? "text-white px-8 py-2 font-bold shadow-xs scale-105"
-                    : "text-gray-500 hover:text-gray-800 px-3 py-2"
-                }`}
+                style={{
+                  borderRadius: "96px",
+                  background: "#515A6B",
+                }}
+                className="text-xs md:text-sm font-bold tracking-wide transition-all cursor-pointer text-white px-8 py-2 shadow-xs scale-105"
               >
                 {dayName}
               </button>
@@ -128,8 +120,10 @@ export default function DayView({
         ref={scrollContainerRef}
         className="flex-grow overflow-y-auto no-scrollbar relative flex border-b border-gray-200"
       >
-        <div className="relative w-full" style={{ height: `${containerHeight}px` }}>
-          
+        <div
+          className="relative w-full"
+          style={{ height: `${containerHeight}px` }}
+        >
           {/* Horizontal Grid lines going all the way from left to right */}
           <div className="absolute inset-0 pointer-events-none flex flex-col">
             {gridLines.map((hour) => (
@@ -146,7 +140,6 @@ export default function DayView({
 
           {/* Grid columns layer */}
           <div className="flex h-full w-full relative">
-            
             {/* Time Column (overlayed on top of grid lines) */}
             <div className="w-20 md:w-24 shrink-0 select-none z-10 border-r border-[#F3F4F6]">
               {hours.map((hour) => {
@@ -167,7 +160,9 @@ export default function DayView({
                     className="flex flex-col items-center justify-center text-center"
                   >
                     <span>{displayHour}:00</span>
-                    <span className="text-[10px] text-gray-400 font-semibold tracking-wide uppercase leading-none mt-0.5">{ampm}</span>
+                    <span className="text-[10px] text-gray-400 font-semibold tracking-wide uppercase leading-none mt-0.5">
+                      {ampm}
+                    </span>
                   </div>
                 );
               })}
@@ -186,7 +181,7 @@ export default function DayView({
               {timedTasks.map((task) => {
                 const { top, height } = getTaskPosition(task);
                 const isHearing = task.type === "hearing";
-                
+
                 const cardTop = top + 6;
                 const cardHeight = height - 12;
 
@@ -214,7 +209,8 @@ export default function DayView({
                         {task.title}
                       </span>
                       <span className="text-[10px] md:text-xs opacity-90 font-medium leading-none mt-1">
-                        {formatTime12h(task.startTime)} - {formatTime12h(task.endTime)}
+                        {formatTime12h(task.startTime)} -{" "}
+                        {formatTime12h(task.endTime)}
                       </span>
                     </div>
                     {task.description && (
@@ -226,7 +222,6 @@ export default function DayView({
                 );
               })}
             </div>
-
           </div>
         </div>
       </div>
@@ -239,18 +234,18 @@ export default function DayView({
         <div className="flex flex-wrap gap-2 px-1 min-h-[40px]">
           {allDayTasks.length > 0 ? (
             allDayTasks.map((task) => {
-              const isSpecificGrayTask = 
-                task.title === "Organize and Facilitate Meetings" || 
+              const isSpecificGrayTask =
+                task.title === "Organize and Facilitate Meetings" ||
                 task.title === "Conduct Legal Research";
-              
+
               const isHearing = task.type === "hearing";
-              
+
               const bg = isSpecificGrayTask
                 ? "#EFF1F4"
                 : isHearing
-                ? "#268808"
-                : "#BA8800";
-              
+                  ? "#268808"
+                  : "#BA8800";
+
               const textColor = isSpecificGrayTask ? "#475569" : "#FFFFFF";
 
               return (
@@ -271,11 +266,12 @@ export default function DayView({
               );
             })
           ) : (
-            <span className="text-xs text-gray-400 italic py-1">No all-day tasks scheduled</span>
+            <span className="text-xs text-gray-400 italic py-1">
+              No all-day tasks scheduled
+            </span>
           )}
         </div>
       </div>
-
     </div>
   );
 }

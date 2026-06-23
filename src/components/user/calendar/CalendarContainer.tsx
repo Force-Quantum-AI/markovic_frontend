@@ -135,6 +135,7 @@ export default function CalendarContainer() {
             currentDate={currentDate}
             tasks={tasks}
             onSelectTask={handleSelectTask}
+            onSelectDate={handleSelectDate}
             onCreateTaskOnDateTime={handleCreateTaskOnDateTime}
           />
         )}

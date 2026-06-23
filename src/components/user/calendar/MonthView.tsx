@@ -60,7 +60,9 @@ export default function MonthView({
     });
   }
 
-  const remainingCells = 42 - days.length;
+  const totalNeeded = paddingDaysCount + currentMonthLimit;
+  const cellsCount = totalNeeded <= 35 ? 35 : 42;
+  const remainingCells = cellsCount - days.length;
   for (let i = 1; i <= remainingCells; i++) {
     days.push({
       dayNumber: i,
@@ -93,39 +95,45 @@ export default function MonthView({
   };
 
   const handleDayClick = (date: Date, e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest(".task-pill") || (e.target as HTMLElement).closest(".more-link")) {
+    if (
+      (e.target as HTMLElement).closest(".task-pill") ||
+      (e.target as HTMLElement).closest(".more-link")
+    ) {
       return;
     }
     onCreateTaskOnDate(date);
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs">
-      <div className="grid grid-cols-7 border-b border-gray-100 bg-gray-50/50">
+    <div className="bg-transparent border-none shadow-none">
+      <div className="grid grid-cols-7 gap-3 bg-transparent mb-2">
         {DAYS_OF_WEEK_SHORT.map((day) => (
           <div
             key={day}
-            className="py-3 text-center text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider"
+            className="py-3 text-center text-xs md:text-sm font-semibold text-gray-400 uppercase tracking-wider"
           >
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 grid-rows-6">
+      <div className="grid grid-cols-7 gap-3">
         {days.map((item, index) => {
-          const dayTasks = getTasksForDay(item.date);
-          const isToday = item.date.toDateString() === new Date().toDateString();
           const isSelectedMonth = item.isCurrentMonth;
-          const displayTasks = dayTasks.slice(0, 2);
-          const remainingCount = dayTasks.length - 2;
+          const dayTasks = isSelectedMonth ? getTasksForDay(item.date) : [];
+          const isToday =
+            item.date.toDateString() === new Date().toDateString();
+          const displayTasks = dayTasks.slice(0, 1);
+          const remainingCount = dayTasks.length > 1 ? dayTasks.length - 1 : 0;
 
           return (
             <div
               key={index}
               onClick={(e) => handleDayClick(item.date, e)}
-              className={`min-h-[110px] md:min-h-[135px] flex flex-col p-1.5 border-r border-b border-gray-100 last:border-r-0 hover:bg-gray-50/40 transition-colors cursor-pointer relative ${
-                !isSelectedMonth ? "bg-gray-50/30 text-gray-300" : "text-gray-700"
+              className={`min-h-[110px] md:min-h-[135px] flex flex-col p-3 transition-all cursor-pointer relative ${
+                !isSelectedMonth
+                  ? "bg-transparent border border-transparent text-gray-300"
+                  : "bg-white border border-gray-100 rounded-2xl shadow-[0_1.5px_4px_rgba(0,0,0,0.02)] text-gray-700 hover:shadow-xs hover:border-gray-200"
               }`}
             >
               <div className="flex items-center justify-between mb-1.5 px-0.5">
@@ -134,8 +142,8 @@ export default function MonthView({
                     isToday
                       ? "bg-[#135576] text-white"
                       : isSelectedMonth
-                      ? "text-gray-800"
-                      : "text-gray-400"
+                        ? "text-gray-800"
+                        : "text-gray-400"
                   }`}
                 >
                   {item.dayNumber}
@@ -153,13 +161,11 @@ export default function MonthView({
                         borderRadius: "8px",
                         background: isHearing ? "#268808" : "#BA8800",
                       }}
-                      className="task-pill w-full text-left text-[10px] md:text-xs font-semibold px-2 py-1 text-white truncate transition-all hover:scale-[1.01] hover:brightness-95 cursor-pointer block border-none"
+                      className="task-pill w-full text-left text-[10px] md:text-xs font-bold px-3 py-1.5 text-white truncate transition-all hover:scale-[1.01] hover:brightness-95 cursor-pointer block border-none"
                     >
-                      {task.allDay ? (
-                        task.title
-                      ) : (
-                        `${formatTime12h(task.startTime)} - ${task.title}`
-                      )}
+                      {task.allDay
+                        ? task.title
+                        : `${formatTime12h(task.startTime)} - ${task.title}`}
                     </button>
                   );
                 })}
@@ -170,7 +176,7 @@ export default function MonthView({
                       e.stopPropagation();
                       setSelectedDayTasks({ date: item.date, tasks: dayTasks });
                     }}
-                    className="more-link text-left text-[10px] md:text-xs font-semibold text-gray-500 hover:text-[#135576] hover:underline px-2 py-0.5 mt-0.5 transition-colors cursor-pointer"
+                    className="more-link text-left text-[10px] md:text-xs font-bold text-gray-400 hover:text-gray-600 px-3 py-0.5 mt-0.5 transition-colors cursor-pointer bg-transparent border-none"
                   >
                     +{remainingCount} more
                   </button>
@@ -189,7 +195,8 @@ export default function MonthView({
           <DialogContent className="sm:max-w-sm border-gray-100 max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-base font-semibold text-gray-800">
-                Tasks for {selectedDayTasks.date.toLocaleDateString("en-US", {
+                Tasks for{" "}
+                {selectedDayTasks.date.toLocaleDateString("en-US", {
                   weekday: "long",
                   day: "numeric",
                   month: "long",
@@ -214,7 +221,9 @@ export default function MonthView({
                     }}
                     className="text-left p-2.5 text-white font-semibold transition-all hover:brightness-95 cursor-pointer flex justify-between items-center border-none"
                   >
-                    <span className="truncate text-xs md:text-sm">{task.title}</span>
+                    <span className="truncate text-xs md:text-sm">
+                      {task.title}
+                    </span>
                     <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-md font-medium shrink-0">
                       {task.allDay
                         ? "All Day"
