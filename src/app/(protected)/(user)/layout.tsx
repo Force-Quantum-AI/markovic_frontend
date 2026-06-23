@@ -1,7 +1,7 @@
 
 "use client";
 
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/sidebar";
 
 import { UserAppSidebar } from "@/layout/UserAppSidebar";
-import AdminNotificationDropdown from "@/components/shared/AdminNotificationDropdown";
 import { useAppDispatch } from "@/store/hooks";
 import { logout } from "@/store/features/auth/authSlice";
 import { useLogoutUserMutation } from "@/store/features/auth/authApi";
@@ -36,6 +35,7 @@ import { PlanActiveNotifier } from "@/components/user/PlanActiveNotifier";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import SubscriptionEndModal from "@/components/modals/SubscriptionEndModal";
+import NotificationDropdown from "@/components/shared/NotificationDropdown";
 
 export default function UserLayout({
   children,
@@ -92,7 +92,7 @@ export default function UserLayout({
       <UserAppSidebar />
 
       <SidebarInset>
-        <header className="sticky top-0 z-50 flex h-16 xl:h-20 shrink-0 items-center bg-white px-4">
+        <header className="sticky top-0 z-50 flex h-16 xl:h-20 shrink-0 items-center bg-white  px-4">
           {/* Show only on mobile and tablet (below lg) */}
           <div className="flex xl:hidden items-center">
             <SidebarTrigger />
@@ -103,16 +103,16 @@ export default function UserLayout({
             />
           </div>
 
-          <div className="flex flex-1 items-center justify-end lg:justify-between">
+          <div className="flex flex-1 items-center justify-end ">
             {/* search  */}
-            <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 border bg-gray-100 rounded-full">
+            {/* <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 bg-gray-100 rounded-full">
               <Search className="h-5 w-5 text-black/60" />
-              <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs" type="text" placeholder="Search cases, clients, laws, documents..." />
-            </div>
+              <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs text-black" type="text" placeholder="Search cases, clients, laws, documents..." />
+            </div> */}
 
             <div className="flex items-center gap-5">
               {/* Notification */}
-              <AdminNotificationDropdown/>
+              <NotificationDropdown/>
 
               {/* User Dropdown */}
               <DropdownMenu>
@@ -137,7 +137,7 @@ export default function UserLayout({
                         {profileInfo?.full_name ? profileInfo?.full_name : "Mr/Mrs User"}
                       </p>
 
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground text-gray-400">
                         {profileInfo?.email ? profileInfo?.email : "me@gmail.com"}
                       </p>
                     </div>
@@ -147,7 +147,7 @@ export default function UserLayout({
                   )}
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="bg-white text-black">
                   <DropdownMenuItem  onClick={() => router.push("/settings")}>
                     Profile
                   </DropdownMenuItem>
@@ -167,7 +167,7 @@ export default function UserLayout({
           </div>
         </header>
 
-        <main className="flex-1 p-2 md:p-3 xl:p-4 bg-slate-50">
+        <main className="flex-1 p-2 md:p-3 xl:p-4 bg-slate-50 text-black">
           {myCurrentSubscription?.status ==="trial" && <PlanActiveNotifier/>}
           {children}
         </main>

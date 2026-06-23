@@ -7,6 +7,8 @@ export interface Task {
   endTime?: string; // HH:MM
   allDay: boolean;
   description?: string;
+  isApiEvent?: boolean;
+  caseId?: string | null;
 }
 
 export type CalendarView = "day" | "week" | "month";

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import { useState } from "react";
+import { NoContent } from "@/components/shared/NoContent";
 
 // --- TYPES FOR REUSABLE CARD ---
 export interface HearingCardProps {
@@ -105,12 +106,7 @@ export default function UpcomingHearings({ data, isLoading }: { data?: any[]; is
       {isLoading ? (
           <CaseCardSkeleton/>
         ) : data?.length===0 ? (
-          <div className="text-center text-gray-500 bg-gray-100 rounded-2xl py-6 flex flex-col justify-center items-center">
-            <div className="p-3 mb-2 rounded-full bg-gray-200">
-              <ClockAlert className="text-gray-500" />
-            </div>
-            No upcoming hearings
-            </div>
+          <NoContent message="No upcoming hearings" icon={<ClockAlert className="text-gray-500" />} />
         ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
         {data?.slice(min, max).map((card: CaseCardProps, index: number) => (

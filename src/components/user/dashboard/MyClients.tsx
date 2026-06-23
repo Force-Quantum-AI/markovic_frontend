@@ -1,7 +1,8 @@
 "use client";
 
+import { NoContent } from "@/components/shared/NoContent";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, UserX } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -43,7 +44,9 @@ export default function MyClients({ data, isLoading }: any) {
             <Skeleton className="w-full h-10 rounded-md bg-gray-300" />
             <Skeleton className="w-full h-10 rounded-md bg-gray-300" />
           </div>
-        ) : displayedClients.map((client: any, idx: number) => {
+        ) : data?.length===0 ? (
+        <NoContent message="No Clients yet" icon={<UserX className="text-gray-500" />} />
+      ):  displayedClients.map((client: any, idx: number) => {
           const clientImage = resolveImageUrl(client.client_image);
           const clientName = client.client_name ?? client.name ?? "Client";
           const clientCaseCount = client.case_numbers ?? client.total_cases ?? 0;
