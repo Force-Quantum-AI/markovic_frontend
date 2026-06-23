@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { X, User, Mail, Phone, Landmark } from "lucide-react";
 import Image from "next/image";
 import { useContactForCustomSubscriptionMutation } from "@/store/features/subscription/subscription.client.api";
