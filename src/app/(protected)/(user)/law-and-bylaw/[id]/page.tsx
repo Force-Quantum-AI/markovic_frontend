@@ -38,7 +38,7 @@ export default function LawDetailsPage() {
   }, [sections, selectedSectionId]);
 
   const currentSection = useMemo(() => {
-    return sections.find((s: any) => s.id.toString() === selectedSectionId) || sections[0];
+    return sections.find((s: { id: number; title: string; articles: { id: number; title: string; description?: string }[] }) => s.id.toString() === selectedSectionId) || sections[0];
   }, [sections, selectedSectionId]);
 
   const articles = currentSection?.articles || [];
@@ -48,13 +48,13 @@ export default function LawDetailsPage() {
     if (selectedArticleId === "all") {
       return articles;
     }
-    return articles.filter((art: any) => art.id.toString() === selectedArticleId);
+    return articles.filter((art: { id: number; title: string; description?: string }) => art.id.toString() === selectedArticleId);
   }, [articles, selectedArticleId]);
 
   // Copy Entire Text content utilities function
   const handleCopyFullText = () => {
     if (displayedArticles.length === 0) return;
-    const rawTextContent = displayedArticles.map((art: any) => 
+    const rawTextContent = displayedArticles.map((art: { id: number; title: string; description?: string }) => 
       `${art.title}\n${art.description || ""}`
     ).join("\n\n");
 
@@ -208,7 +208,7 @@ export default function LawDetailsPage() {
                 }}
                 className="w-full px-5 py-4 border border-gray-200/80 rounded-full text-sm font-semibold text-gray-800 bg-gray-100 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer shadow-sm pr-12 transition-all"
               >
-                {sections.map((sec: any) => (
+                {sections.map((sec: { id: number; title: string }) => (
                   <option key={sec.id} value={sec.id.toString()}>{sec.title}</option>
                 ))}
               </select>
@@ -226,7 +226,7 @@ export default function LawDetailsPage() {
                 className="w-full px-5 py-4 border border-gray-200/80 rounded-full text-sm font-semibold text-gray-800 bg-gray-100 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer shadow-sm pr-12 transition-all"
               >
                 <option value="all">All Articles</option>
-                {articles.map((art: any) => (
+                {articles.map((art: { id: number; title: string }) => (
                   <option key={art.id} value={art.id.toString()}>{art.title}</option>
                 ))}
               </select>
@@ -245,7 +245,7 @@ export default function LawDetailsPage() {
               No matching articles found in this section.
             </div>
           ) : (
-            displayedArticles.map((article: any, idx: number) => (
+            displayedArticles.map((article: { id: number; title: string; description?: string }, idx: number) => (
               <div 
                 key={article.id} 
                 className={`space-y-3.5 pb-8 ${

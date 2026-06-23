@@ -227,7 +227,7 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
 function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange: (d: LegalDetailsData) => void }) {
   const [lawyerInput, setLawyerInput] = useState("");
   const [opposingInput, setOpposingInput] = useState("");
-  const setField = (key: keyof LegalDetailsData) => (v: any) => onChange({ ...data, [key]: v });
+  const setField = (key: keyof LegalDetailsData) => (v: string | string[]) => onChange({ ...data, [key]: v });
 
   return (
     <div className="w-full space-y-5">
@@ -583,7 +583,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
     }
 
     // Build API payload
-    const apiData: Record<string, any> = {
+    const apiData: Record<string, string | number | string[] | undefined> = {
       client_name: formData.basicInfo.clientName.trim(),
     };
 
@@ -636,7 +636,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
     try {
       const res = await createCase({
         client_image: formData.basicInfo.avatarFile || undefined,
-        data: apiData as any,
+        data: apiData as Record<string, string | number | string[] | undefined>,
       }).unwrap();
 
       toast.success("Case created successfully!");
@@ -645,10 +645,10 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
       }
       onSubmit?.(formData);
       handleClose();
-    } catch (error: any) {
-      console.log("error iss:", error);
-
-      const message = error?.data?.message || error?.data?.detail || "Failed to create case. Please try again.";
+    } catch (err: unknown) {
+      console.log("error iss:", err);
+      const e = err as { data?: { message?: string; detail?: string } };
+      const message = e?.data?.message || e?.data?.detail || "Failed to create case. Please try again.";
       toast.error(message);
     }
   };
@@ -689,7 +689,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
       setTimeout(() => {
         toast.success("Hearing and deadline added successfully!");
       }, 1000);
-    } catch (error) {
+    } catch {
       setTimeout(() => {
         toast.error("Please enter hearing and deadline from case details page for this case.");
       }, 1000);

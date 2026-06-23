@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import AllDocumentsTable from "@/components/user/ai/AllDocumentsTable";
 import AllHearingsTable from "@/components/user/ai/AllHearingsTable";
 import { CalendarDate } from "@/components/user/ai/CalendarDate";
