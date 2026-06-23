@@ -58,9 +58,8 @@ function NotificationRow({
 
   return (
     <div
-      className={`relative flex items-start gap-3 rounded-2xl p-3 transition group ${
-        !item.is_read ? "bg-slate-100" : "hover:bg-slate-50"
-      }`}
+      className={`relative flex items-start gap-3 rounded-2xl p-3 transition group ${!item.is_read ? "bg-slate-100" : "hover:bg-slate-50"
+        }`}
     >
       {/* Avatar */}
       <div className="relative h-10 md:h-12 w-10 md:w-12 shrink-0">
@@ -157,7 +156,7 @@ export default function NotificationDropdown() {
   const displayed = useMemo(
     () =>
       activeTab === "unread"
-        ? notifications.filter((n:any) => !n.is_read)
+        ? notifications.filter((n: any) => !n.is_read)
         : notifications,
     [activeTab, notifications]
   );
@@ -193,14 +192,18 @@ export default function NotificationDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="size-5" />
-          {unreadCount > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#135576] text-[10px] font-medium text-white">
-              {unreadCount > 99 ? "99+" : unreadCount}
-            </span>
-          )}
-        </Button>
+        <div className="bg-gray-100 rounded-full p-1">
+          <div className="bg-white rounded-full">
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="size-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#135576] text-[10px] font-medium text-white">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </Button>
+          </div>
+        </div>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -215,9 +218,8 @@ export default function NotificationDropdown() {
             {/* Tab: All */}
             <button
               onClick={() => setActiveTab("all")}
-              className={`rounded-xl px-4 py-2 text-[10px] md:text-sm font-medium transition ${
-                activeTab === "all" ? "bg-slate-100 text-black" : "text-slate-500"
-              }`}
+              className={`rounded-xl px-4 py-2 text-[10px] md:text-sm font-medium transition ${activeTab === "all" ? "bg-slate-100 text-black" : "text-slate-500"
+                }`}
             >
               All
             </button>
@@ -225,9 +227,8 @@ export default function NotificationDropdown() {
             {/* Tab: Unread */}
             <button
               onClick={() => setActiveTab("unread")}
-              className={`rounded-xl px-4 py-2 text-[10px] md:text-sm font-medium transition ${
-                activeTab === "unread" ? "bg-slate-100 text-black" : "text-slate-500"
-              }`}
+              className={`rounded-xl px-4 py-2 text-[10px] md:text-sm font-medium transition ${activeTab === "unread" ? "bg-slate-100 text-black" : "text-slate-500"
+                }`}
             >
               Unread
               {unreadCount > 0 && (
