@@ -132,6 +132,7 @@ export default function LawAndByLawPage() {
                                 category={law.category_name}
                                 officialGazette={law.official_gazette}
                                 lastUpdate={law.last_updated}
+                                bookmark={law.bookmark}
                             />
                         ))}
                     </div>
