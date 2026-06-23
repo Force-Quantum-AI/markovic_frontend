@@ -36,6 +36,7 @@ import { PlanActiveNotifier } from "@/components/user/PlanActiveNotifier";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import SubscriptionEndModal from "@/components/modals/SubscriptionEndModal";
+import NotificationDropdown from "@/components/shared/NotificationDropdown";
 
 export default function UserLayout({
   children,
@@ -103,16 +104,16 @@ export default function UserLayout({
             />
           </div>
 
-          <div className="flex flex-1 items-center justify-end lg:justify-between">
+          <div className="flex flex-1 items-center justify-end ">
             {/* search  */}
-            <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 bg-gray-100 rounded-full">
+            {/* <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 bg-gray-100 rounded-full">
               <Search className="h-5 w-5 text-black/60" />
               <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs text-black" type="text" placeholder="Search cases, clients, laws, documents..." />
-            </div>
+            </div> */}
 
             <div className="flex items-center gap-5">
               {/* Notification */}
-              <AdminNotificationDropdown/>
+              <NotificationDropdown/>
 
               {/* User Dropdown */}
               <DropdownMenu>
