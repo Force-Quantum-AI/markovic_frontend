@@ -14,9 +14,6 @@ const subscriptionSlice = createSlice({
   name: "subscriptionState",
   initialState,
   reducers: {
-    // Manual setter — handy for optimistic updates or for the success page
-    // to push a freshly-verified status into the slice immediately, without
-    // waiting for a refetch of `getClientCurrentSubscription`.
     setCurrentSubscription: (state, action: PayloadAction<CurrentSubscription | null>) => {
       state.current = action.payload;
     },
@@ -25,10 +22,6 @@ const subscriptionSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Whenever the `getClientCurrentSubscription` query resolves anywhere in
-    // the app, mirror its payload into this slice automatically. This keeps
-    // the slice as a read-mostly cache that other components can subscribe
-    // to via `useSelector` without importing the RTK Query hook themselves.
     builder.addMatcher(
       subscriptionApi.endpoints.getClientCurrentSubscription.matchFulfilled,
       (state, action) => {
