@@ -1,11 +1,12 @@
 "use client";
 
 import { LawCard } from "@/components/shared/LawCard";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Scale } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import LawCardSkeleton from "@/components/skeletons/LawCardSkeleton";
 import { useState } from "react";
+import { NoContent } from "@/components/shared/NoContent";
 
 export const lawsDataset = [
   {
@@ -65,7 +66,9 @@ export default function LawsAndBylaws({ data, isLoading }: { data?: any[]; isLoa
       {/* Grid Container Matrix - responsive columns */}
       {isLoading ? (
         <LawCardSkeleton />
-      ) : (
+      ) : data?.length===0 ? (
+        <NoContent message="No Laws & Bylaws yet" icon={<Scale className="text-gray-500" />} />
+      ): (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
           {data?.slice(min, max).map((law, index) => (
             <LawCard

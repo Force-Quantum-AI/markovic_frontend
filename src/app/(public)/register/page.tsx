@@ -24,6 +24,7 @@ export default function RegisterPage() {
 
   // Modal State Management
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
   // api 
   const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
@@ -283,8 +284,15 @@ export default function RegisterPage() {
         onOpenChange={setIsOtpModalOpen}
         userEmail={email}
         userPassword={password}
+        onVerificationSuccess={() => setIsSubscriptionModalOpen(true)}
       />
-      
+
+      {isSubscriptionModalOpen && (
+        <SubscriptionModal
+          isOpen={isSubscriptionModalOpen}
+          onClose={() => setIsSubscriptionModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

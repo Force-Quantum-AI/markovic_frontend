@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { MoreHorizontal, Eye, Trash2 } from "lucide-react";
+import { MoreHorizontal, Eye, Trash2, FileText, FileXCorner } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { NoContent } from "@/components/shared/NoContent";
 
 // --- TYPES & INTERFACES ---
 interface CaseItem {
@@ -95,6 +96,9 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
       </div>
 
       {/* --- DESKTOP TABLE VIEW (Visible md and up) --- */}
+      {data?.length===0 ? (
+        <NoContent message="No Recent cases" icon={<FileXCorner className="text-gray-500" />} />
+      ):(
       <div className="hidden lg:block w-full overflow-x-auto border border-gray-200 rounded-2xl bg-white shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -186,6 +190,7 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
           </tbody>
         </table>
       </div>
+      )}
 
       {/* --- MOBILE RESPONSIVE CARD CONTAINER --- */}
       <div className="block lg:hidden space-y-4">
