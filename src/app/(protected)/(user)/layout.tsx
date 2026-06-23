@@ -29,6 +29,13 @@ import { useRouter } from "next/navigation";
 import { useGetProfileInfoQuery } from "@/store/features/profile/profile.api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useGetClientCurrentSubscriptionQuery } from "@/store/features/subscription/subscription.client.api";
+import { useEffect, useState } from "react";
+import { setCurrentSubscription } from "@/store/features/subscription/subscription.slice";
+import { PlanActiveNotifier } from "@/components/user/PlanActiveNotifier";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import SubscriptionEndModal from "@/components/modals/SubscriptionEndModal";
 
 export default function UserLayout({
   children,
@@ -36,15 +43,31 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   const { data: profileInfo, isLoading: isLoadingProfileInfo } = useGetProfileInfoQuery({});
-
-  const router = useRouter();
-  const dispatch = useAppDispatch();
+  const {data : currentSubscription} = useGetClientCurrentSubscriptionQuery();
   const [logoutUser] = useLogoutUserMutation();
 
-  const handleSearch = (value: string) => {
-    // api will cal after 5 second when user type something in search bar 
-    // and also show loading in search bar
-    
+  const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  
+  useEffect(()=>{
+    if (currentSubscription) {
+      dispatch(setCurrentSubscription(currentSubscription));
+    }
+  },[currentSubscription])
+
+  const myCurrentSubscription = useSelector((state: RootState) => state.subscriptionState.current);
+
+  useEffect(() => {
+    if(!myCurrentSubscription){
+      return;
+    }
+    if (myCurrentSubscription.status !== "trial" && myCurrentSubscription.status !== "active") {
+      setIsModalOpen(true);
+    }
+  }, [myCurrentSubscription]);
+
+  const handleSearch = (value: string) => { 
     setTimeout(() => {
       toast.info("This feature will be implement later!")
     }, 2000); 
@@ -145,9 +168,11 @@ export default function UserLayout({
         </header>
 
         <main className="flex-1 p-2 md:p-3 xl:p-4 bg-slate-50">
+          {myCurrentSubscription?.status ==="trial" && <PlanActiveNotifier/>}
           {children}
         </main>
       </SidebarInset>
+      <SubscriptionEndModal open={isModalOpen} onOpenChange={() => setIsModalOpen(false)} onClick={() => {router.push("/subscriptions")}}/>
     </SidebarProvider>
   );
 }
