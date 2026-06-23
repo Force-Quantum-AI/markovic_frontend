@@ -583,8 +583,24 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
     }
 
     // Build API payload
-    const apiData: Record<string, string | number | string[] | undefined> = {
+    const apiData = {
       client_name: formData.basicInfo.clientName.trim(),
+      case_name: formData.legalDetails.caseName.trim(),
+    } as {
+      client_name: string;
+      client_email?: string;
+      client_phone?: string;
+      client_address?: string;
+      note?: string;
+      case_name: string;
+      category?: number;
+      sub_category?: number;
+      status?: number;
+      court?: number;
+      responsible_lawyer_ids?: string[];
+      opposing_parties?: string[];
+      hearing_date?: string;
+      deadline_date?: string;
     };
 
     // Optional basic info fields
@@ -636,7 +652,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
     try {
       const res = await createCase({
         client_image: formData.basicInfo.avatarFile || undefined,
-        data: apiData as Record<string, string | number | string[] | undefined>,
+        data: apiData,
       }).unwrap();
 
       toast.success("Case created successfully!");
