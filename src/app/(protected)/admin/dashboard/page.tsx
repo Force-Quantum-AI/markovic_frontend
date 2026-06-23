@@ -5,17 +5,15 @@ import PlatformOverview from "@/components/admin/dashboard/PlatformOverview";
 import GraphReport from "@/components/admin/dashboard/GraphReport";
 import QuickActions from "@/components/admin/dashboard/QuickActions";
 import SystemHealth from "@/components/admin/dashboard/SystemHealth";
-import MyUsersTable from "@/components/admin/dashboard/MyUsersTable";
 import ArchiveCasesTable from "@/components/admin/dashboard/ArchiveCasesTable";
-import { useGetAdminDashboardArchieveCaseQuery, useGetAdminDashboardDetailsQuery, useGetAdminDashboardMyUsersQuery } from "@/store/features/admin/dashboard/dashboard.api";
+import { useGetAdminDashboardArchieveCaseQuery, useGetAdminDashboardDetailsQuery } from "@/store/features/admin/dashboard/dashboard.api";
+import { useGetAllUsersQuery } from "@/store/features/admin/my-users/my-users.api";
+import MyUsersDashboardTable from "@/components/admin/dashboard/MyUsersDashboardTable";
 
 export default function Dashboard() {
   const { data, isLoading } = useGetAdminDashboardDetailsQuery(undefined);
-  console.log("all dashboard data", data);
   const {data: archiveData, isLoading: archiveLoading} = useGetAdminDashboardArchieveCaseQuery(undefined);
-  console.log("all archieve data", archiveData);
-  const {data: usersData, isLoading: usersLoading} = useGetAdminDashboardMyUsersQuery(undefined);
-  console.log("all users data", usersData);
+  const {data: usersData, isLoading: usersLoading} = useGetAllUsersQuery(undefined);
   
   if (isLoading) {
     return (
@@ -44,8 +42,8 @@ export default function Dashboard() {
           </div>
 
           {/* Tables */}
-          <MyUsersTable usersData={usersData} isLoading={usersLoading} />
-          <ArchiveCasesTable archiveData={archiveData} isLoading={archiveLoading} />
+          <MyUsersDashboardTable usersData={usersData} isLoading={usersLoading} />
+          <ArchiveCasesTable archiveData={archiveData} isLoading={archiveLoading} isDashboard={true} />
         </div>
 
         {/* Right Column: 1/4 width on desktop */}

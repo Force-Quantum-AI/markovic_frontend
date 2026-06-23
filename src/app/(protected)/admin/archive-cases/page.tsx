@@ -11,8 +11,17 @@ import {
 } from "@/components/ui/select";
 import AdminButton from "@/components/shared/AdminButton";
 import ArchiveCasesTable from "@/components/admin/dashboard/ArchiveCasesTable";
+import { useGetArchiveCasesListQuery } from "@/store/features/admin/archive-cases/archive.api";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllSubCategoriesQuery,
+} from "@/store/features/admin/category-subcategory/category.api";
+import { useGetAllCaseStatusesQuery } from "@/store/features/admin/global/global.api";
 
 export default function ArchiveCasesPage() {
+  const [page, setPage] = useState(1);
+
+  // Input states
   const [searchVal, setSearchVal] = useState("");
   const [clientVal, setClientVal] = useState("");
   const [yearVal, setYearVal] = useState("");
@@ -22,7 +31,45 @@ export default function ArchiveCasesPage() {
   const [subcategoryVal, setSubcategoryVal] = useState("");
   const [statusVal, setStatusVal] = useState("");
 
+  // Applied filter state to trigger query only on Apply/Reset button clicks
+  const [appliedFilters, setAppliedFilters] = useState({
+    search: "",
+    client: "",
+    year: "",
+    court: "",
+    lawyer: "",
+    category: "",
+    subcategory: "",
+    status: "",
+  });
+
+  const queryParams = {
+    page,
+    search: appliedFilters.search || undefined,
+    category: appliedFilters.category || undefined,
+    court: appliedFilters.court || undefined,
+    status: appliedFilters.status || undefined,
+    "day / month / year": appliedFilters.year || undefined,
+  };
+
+  // Queries for dynamic filters and case data
+  const { data: archiveData, isLoading, isFetching } = useGetArchiveCasesListQuery(queryParams);
+  const { data: categories } = useGetAllCategoriesQuery();
+  const { data: subcategories } = useGetAllSubCategoriesQuery();
+  const { data: statuses } = useGetAllCaseStatusesQuery();
+
   const handleApplyFilter = () => {
+    setAppliedFilters({
+      search: searchVal,
+      client: clientVal,
+      year: yearVal,
+      court: courtVal,
+      lawyer: lawyerVal,
+      category: categoryVal,
+      subcategory: subcategoryVal,
+      status: statusVal,
+    });
+    setPage(1);
   };
 
   const handleResetFilter = () => {
@@ -34,7 +81,20 @@ export default function ArchiveCasesPage() {
     setCategoryVal("");
     setSubcategoryVal("");
     setStatusVal("");
+    setAppliedFilters({
+      search: "",
+      client: "",
+      year: "",
+      court: "",
+      lawyer: "",
+      category: "",
+      subcategory: "",
+      status: "",
+    });
+    setPage(1);
   };
+
+  const showLoader = isLoading || isFetching;
 
   return (
     <div className="w-full space-y-6 font-roboto">
@@ -118,16 +178,18 @@ export default function ArchiveCasesPage() {
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
                 Category
               </label>
-              <Select value={categoryVal || undefined} onValueChange={(val) => setCategoryVal(val === "all" ? "" : val)}>
+              <Select value={categoryVal || "all"} onValueChange={(val) => setCategoryVal(val === "all" ? "" : val)}>
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all data-placeholder:text-[#161A20]/60 flex items-center justify-between">
-                  <SelectValue placeholder="Choose status..." />
+                  <SelectValue placeholder="Choose category..." />
                   <ChevronDown className="w-5 h-5 shrink-0 text-[#9CA6BB]" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#161A20] font-roboto min-w-[var(--radix-select-trigger-width)]">
                   <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">All Category</SelectItem>
-                  <SelectItem value="Case" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Case</SelectItem>
-                  <SelectItem value="Law Record" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Law Record</SelectItem>
-                  <SelectItem value="AI Search" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">AI Search</SelectItem>
+                  {categories?.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.name} className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -136,19 +198,18 @@ export default function ArchiveCasesPage() {
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
                 Sub category
               </label>
-              <Select value={subcategoryVal || undefined} onValueChange={(val) => setSubcategoryVal(val === "all" ? "" : val)}>
+              <Select value={subcategoryVal || "all"} onValueChange={(val) => setSubcategoryVal(val === "all" ? "" : val)}>
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all data-placeholder:text-[#161A20]/60 flex items-center justify-between">
-                  <SelectValue placeholder="Choose status..." />
+                  <SelectValue placeholder="Choose sub category..." />
                   <ChevronDown className="w-5 h-5 shrink-0 text-[#9CA6BB]" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#161A20] font-roboto min-w-[var(--radix-select-trigger-width)]">
                   <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">All Subcategory</SelectItem>
-                  <SelectItem value="Property Dispute" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Property Dispute</SelectItem>
-                  <SelectItem value="Contract Dispute" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Contract Dispute</SelectItem>
-                  <SelectItem value="Employment Dispute" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Employment Dispute</SelectItem>
-                  <SelectItem value="Family Dispute" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Family Dispute</SelectItem>
-                  <SelectItem value="Commercial Dispute" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Commercial Dispute</SelectItem>
-                  <SelectItem value="Criminal Dispute" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Criminal Dispute</SelectItem>
+                  {subcategories?.map((sub) => (
+                    <SelectItem key={sub.id} value={sub.name} className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">
+                      {sub.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -157,14 +218,18 @@ export default function ArchiveCasesPage() {
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
                 Status
               </label>
-              <Select value={statusVal || undefined} onValueChange={(val) => setStatusVal(val === "all" ? "" : val)}>
+              <Select value={statusVal || "all"} onValueChange={(val) => setStatusVal(val === "all" ? "" : val)}>
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all data-placeholder:text-[#161A20]/60 flex items-center justify-between">
                   <SelectValue placeholder="Choose status..." />
                   <ChevronDown className="w-5 h-5 shrink-0 text-[#9CA6BB]" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#161A20] font-roboto min-w-[var(--radix-select-trigger-width)]">
                   <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">All Status</SelectItem>
-                  <SelectItem value="Archived" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">Archived</SelectItem>
+                  {statuses?.map((st) => (
+                    <SelectItem key={st.id} value={st.name} className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">
+                      {st.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -186,7 +251,19 @@ export default function ArchiveCasesPage() {
         </div>
       </div>
       <div>
-        <ArchiveCasesTable/>
+        {showLoader ? (
+          <div className="w-full bg-white rounded-3xl p-10 border border-gray-100 flex flex-col justify-center items-center min-h-[300px]">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#135576]"></div>
+          </div>
+        ) : (
+          <ArchiveCasesTable
+            archiveData={archiveData}
+            currentPage={page}
+            totalPages={archiveData?.total_pages || 1}
+            onPageChange={setPage}
+            isDashboard={false}
+          />
+        )}
       </div>
     </div>
   );

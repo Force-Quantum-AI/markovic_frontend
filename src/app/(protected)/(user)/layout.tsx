@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bell, ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { UserAppSidebar } from "@/layout/UserAppSidebar";
-import NotificationDropdown from "@/components/shared/NotificationDropdown";
+import AdminNotificationDropdown from "@/components/shared/AdminNotificationDropdown";
 import { useAppDispatch } from "@/store/hooks";
 import { logout } from "@/store/features/auth/authSlice";
 import { useLogoutUserMutation } from "@/store/features/auth/authApi";
@@ -112,7 +112,7 @@ export default function UserLayout({
 
             <div className="flex items-center gap-5">
               {/* Notification */}
-              <NotificationDropdown/>
+              <AdminNotificationDropdown/>
 
               {/* User Dropdown */}
               <DropdownMenu>
