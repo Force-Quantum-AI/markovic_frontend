@@ -70,7 +70,7 @@ export default function UserLayout({
 
   const handleSearch = (value: string) => { 
     setTimeout(() => {
-      toast.info("This feature will be implement later!")
+      toast.info("No result found.")
     }, 2000); 
   };
 
@@ -104,12 +104,12 @@ export default function UserLayout({
             />
           </div>
 
-          <div className="flex flex-1 items-center justify-end ">
+          <div className="flex flex-1 items-center justify-end md:justify-between">
             {/* search  */}
-            {/* <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 bg-gray-100 rounded-full">
+            <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 bg-gray-100 rounded-full">
               <Search className="h-5 w-5 text-black/60" />
               <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs text-black" type="text" placeholder="Search cases, clients, laws, documents..." />
-            </div> */}
+            </div>
 
             <div className="flex items-center gap-5">
               {/* Notification */}

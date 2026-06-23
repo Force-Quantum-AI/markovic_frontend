@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   Archive,
@@ -79,6 +79,7 @@ const navItems = [
 
 export function UserAppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <Sidebar
@@ -86,7 +87,7 @@ export function UserAppSidebar() {
       collapsible="offcanvas"
     >
       <SidebarHeader className=" bg-white">
-        <div className="flex items-center gap-3 px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+        <div onClick={()=> router.push("/")} className="flex items-center gap-3 px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <Image
             src="/brandLogo.png"
             alt="logo"
