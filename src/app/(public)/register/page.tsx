@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { User, Mail, Phone, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
+import { User, Mail, Phone, Lock, Eye, EyeOff, CheckCircle2, Scale, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import OtpVerificationModal from "@/components/modals/OtpVerificationModal";
 import SubscriptionModal from "@/components/modals/SubscriptionModal";
 import { useRegisterUserMutation } from "@/store/features/auth/authApi";
+import AdminButton from "@/components/shared/AdminButton";
 
 export default function RegisterPage() {
   // Form States
@@ -69,7 +70,7 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       {/* Container: constrained to max-w-6xl and 70vh */}
-      <div className="w-full max-w-6xl h-auto md:h-[70vh] min-h-[600px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+      <div className="w-full max-w-6xl h-auto md:h-[70vh] min-h-[600px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row hover:translate-y-1 transition-all duration-300">
 
         {/* Left Side: Form Controls */}
         <div className="w-full md:w-7/12 lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
@@ -199,13 +200,24 @@ export default function RegisterPage() {
 
               {/* Submit CTA Button */}
               <div className="flex justify-center pt-4">
-                <button
+                {/* <button
                   type="submit"
                   disabled={isLoading}
                   className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? "Registering..." : "Register"}
-                </button>
+                </button> */}
+                <AdminButton
+                  type="submit"
+                  disabled={isLoading}
+                  label={isLoading ? "Registering..." : "Register"}
+                  icon={
+                    isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : undefined
+                  }
+                  className="w-full sm:w-56"
+                />
               </div>
             </form>
 
@@ -232,7 +244,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Right Side: Visual Banner Component */}
-        <div className="hidden md:block w-1/2 md:w-5/12 lg:w-1/2 p-3 h-full">
+        <div className="hidden md:block w-1/2 md:w-5/12 lg:w-1/2 p-3 h-full group">
           <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#181d20] flex flex-col justify-end p-8 lg:p-12 text-white">
 
             {/* Background Image Setup mimicking Lady Justice theme */}
@@ -241,7 +253,7 @@ export default function RegisterPage() {
               alt="Lady Justice statue banner"
               fill
               priority
-              className="object-cover opacity-35 mix-blend-luminosity select-none pointer-events-none"
+              className="object-cover opacity-35 mix-blend-luminosity select-none pointer-events-none group-hover:scale-105 transition-all duration-500"
             />
 
             {/* Dark gradient overlay to preserve readable text contrast */}

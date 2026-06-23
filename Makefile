@@ -36,3 +36,14 @@ git:
 	git commit -m "$(cm)"
 	git log -1 --graph --oneline
 	git push origin main
+
+
+
+cm_ahsan ?= Update code
+
+git-ahsan:
+	git	add .
+	git status
+	git	commit -m "$(cm_ahsan)"
+	git log -1 --graph --oneline
+	git push origin ahsan

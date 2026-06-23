@@ -38,6 +38,7 @@ export default function Page() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+      
       <div className="col-span-2 lg:col-span-3 space-y-5">
         {/* header  */}
         <section className="flex items-center justify-center md:justify-between flex-wrap gap-5 md:gap-3">

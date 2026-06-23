@@ -10,23 +10,26 @@ import {
   Printer, 
   FileText, 
   ChevronDown,
-  Scale
+  Scale,
+  Loader
 } from "lucide-react";
 import Image from "next/image";
-import { useGetLawBylawDetailsQuery } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
+import { useGetLawBylawDetailsQuery, useToggleBookmarkedLawsMutation } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 export default function LawDetailsPage() {
   const params = useParams();
   const lawId = (params?.id as string) || "";
   
   const { data: lawDetailsData, isLoading, error } = useGetLawBylawDetailsQuery({ id: lawId });
+  const [isFavorite, setIsFavorite] = useState(lawDetailsData?.bookmark || false);
+    const [toggleBookmarkedLaws, { isLoading : isToggoling}] = useToggleBookmarkedLawsMutation();
 
   // States for interactive UI filters and copy feedback
   const [selectedSectionId, setSelectedSectionId] = useState("");
   const [selectedArticleId, setSelectedArticleId] = useState("all");
   const [copiedText, setCopiedText] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
 
   const sections = lawDetailsData?.sections || [];
 
@@ -67,6 +70,17 @@ export default function LawDetailsPage() {
   // Inline dynamic browser text execution layout print string
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleAddToFavorite = async (e: React.MouseEvent) => {
+    try {
+      await toggleBookmarkedLaws({ id: lawId }).unwrap()
+      toast.success(isFavorite ? "Law removed from favorite" : "Law added to favorite")
+      setIsFavorite(!isFavorite)
+    } catch (error) {
+      console.log("error is", error);
+      toast.error("Failed to add case to favorite")
+    }
   };
 
   if (isLoading) {
@@ -185,10 +199,14 @@ export default function LawDetailsPage() {
 
           {/* Absolute Top-Right Star Favorite Layout Overlay Toggle Option */}
           <button 
-            onClick={() => setIsFavorite(!isFavorite)}
+            onClick={handleAddToFavorite}
             className="absolute top-6 right-6 p-2 rounded-full bg-white/10 border border-white/10 hover:bg-white/20 text-white transition-all print:hidden"
           >
+            {isToggoling ? (
+            <Loader className="w-4 h-4 animate-spin text-white" />
+          ) : (
             <Star className={`w-5 h-5 ${isFavorite || lawDetailsData.bookmark ? "fill-amber-400 stroke-amber-400" : ""}`} />
+          )}
           </button>
         </div>
 
