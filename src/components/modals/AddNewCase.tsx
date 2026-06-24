@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ChevronDown, X, Camera, Info, Loader2 } from "lucide-react";
+import { ChevronDown, X, Camera, Info, Loader2, Loader, Cross } from "lucide-react";
 import { useAddCaseDeadlineMutation, useAddCaseHearingMutation, useCreateCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
 import { getImageUrl } from "@/lib/getImageUrl";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
+import { useGetAllUsersQuery } from "@/store/features/admin/my-users/my-users.api";
+import { useGetAllClientsQuery, useLazyGetAllClientsQuery } from "@/store/features/profile/profile.api";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
 
@@ -158,11 +160,56 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
   const fileInputRef = useRef<HTMLInputElement>(null);
   const setField = (key: keyof BasicInfoData) => (v: string) => onChange({ ...data, [key]: v });
 
+  const [clientSearch, setClientSearch] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const [
+    triggerGetClients,
+    { data: clientData, isLoading: isClientLoading }
+  ] = useLazyGetAllClientsQuery();
+
+  const clients = clientData?.clients?.results || [];
+
+  const handleClientSearch = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setClientSearch(value);
+    setField("clientName")(value);
+    if (value.trim().length >= 2) {
+      setShowDropdown(true);
+
+      try {
+        await triggerGetClients({
+          search: value,
+          page: 1,
+          page_size: 5,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setShowDropdown(false);
+    }
+  };
+
+  const handleSelectClient = (client: any) => {
+    onChange({
+      ...data,
+      clientName: client.client_name,
+      emailAddress: client.email,
+      phoneNumber: client.phone_number,
+      avatarUrl: client.client_image || "",
+    });
+    setClientSearch(client.client_name);
+    setShowDropdown(false);
+  };
+
   return (
     <div className="w-full space-y-6">
       <h3 className="text-lg font-bold text-gray-900 tracking-tight">Basic information</h3>
       <div className="flex items-center gap-4 pt-1">
-        <div className="relative w-24 h-24 rounded-full bg-[#d9d9d9] flex-shrink-0 overflow-hidden flex items-center justify-center border border-gray-100 shadow-inner">
+        <div className="relative w-24 h-24 rounded-full bg-[#d9d9d9] shrink-0 overflow-hidden flex items-center justify-center border border-gray-100 shadow-inner">
           {data.avatarUrl ? (
             <Image src={data.avatarUrl} alt="Preview avatar" fill className="object-cover" />
           ) : (
@@ -183,13 +230,63 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-1.5 w-full">
-          <FieldLabel>Client name <span className="text-red-500">*</span></FieldLabel>
-          <input type="text" value={data.clientName} onChange={(e) => setField("clientName")(e.target.value)} placeholder="Markovic Aleksa" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
+        <div className="space-y-1.5 relative">
+
+          <FieldLabel>
+            Client name <span className="text-red-500">*</span>
+          </FieldLabel>
+
+          <input
+            type="text"
+            value={data.clientName}
+            onChange={handleClientSearch}
+            placeholder="Markovic Aleksa"
+            className="w-full px-5 py-3.5 border border-gray-200 rounded-full"
+          />
+
+          {
+            showDropdown && (
+
+              <div className="absolute z-50 top-full left-0 mt-2 w-full rounded-xl border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto">
+
+                {
+                  isClientLoading ? (
+                    <div className="px-4 py-4 flex items-center gap-3 text-gray-500">
+                      <Loader className="w-4 h-4 animate-spin" />
+                      Loading...
+                    </div>
+                  ) : clients.length > 0 ? (
+                    clients.map((client: any) => (
+                      <button
+                        key={client.email}
+                        type="button"
+                        onClick={() => handleSelectClient(client)}
+                        className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b last:border-b-0"
+                      >
+                        <p className="font-semibold">
+                          {client.client_name}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {client.email}
+                        </p>
+                      </button>
+                    ))
+
+                  ) : (
+                    <div onClick={() => setShowDropdown(false)} className="px-4 py-4 text-sm text-gray-500 flex items-center justify-between">
+                      No existing client found, you can create by this name. <X className="w-5 h-5 hover:cursor-pointer hover:bg-gray-200 rounded-md p-1" onClick={() => setShowDropdown(false)} />
+                    </div>
+                  )
+                }
+              </div>
+            )
+          }
+
           <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5">
             <Info className="w-3.5 h-3.5 shrink-0" />
             <span>You have to add a name to create a case.</span>
           </div>
+
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -228,6 +325,8 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
   const [lawyerInput, setLawyerInput] = useState("");
   const [opposingInput, setOpposingInput] = useState("");
   const setField = (key: keyof LegalDetailsData) => (v: string | string[]) => onChange({ ...data, [key]: v });
+
+  // const {data: allLawyers, isLoading: allLawyersLoading} = useGetAllUsersQuery()
 
   return (
     <div className="w-full space-y-5">
@@ -353,7 +452,7 @@ function ScheduleCard({
   const days = Array.from({ length: 31 }, (_, i) => String(i + 1));
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const years = ["2024", "2025", "2026", "2027", "2028"];
-  
+
 
   return (
     <div className="w-full border border-gray-200 rounded-[24px] p-5 md:p-6 bg-white space-y-4 shadow-sm">
@@ -726,7 +825,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
         <div className="flex-1 overflow-y-auto pr-1 py-4 space-y-6 my-2 scrollbar-thin">
           <Stepper current={currentStep} />
 
-          <div className="w-full h-[1px] bg-gray-100" />
+          <div className="w-full h-px bg-gray-100" />
 
           {/* Steps Conditional Controller Container */}
           <div className="px-1 md:px-4">

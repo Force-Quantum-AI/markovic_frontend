@@ -47,6 +47,35 @@ export const lawAndBylawApi = baseApi.injectEndpoints({
         method: "PATCH"
       }),
       invalidatesTags: ["lawAndBylaw"]
+    }),
+    getAutomaticLawAndBylaw: builder.query<any, {search?: string, category?: number}>({
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+        if (params) {
+          if (params.search) {
+            queryParams.append("search", params.search);
+          }
+          if (params.category) {
+            queryParams.append(
+              "category",
+              params.category.toString()
+            );
+          }
+        }
+        return {
+          url: `/laws/rss/`,
+          method: "GET",
+          params: queryParams,
+        };
+      },
+      providesTags: ["lawAndBylaw"],
+    }),
+    syncAutomaticLawAndBylaw: builder.mutation({
+      query: () => ({
+        url: `/laws/rss/sync/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["lawAndBylaw"]
     })
   }),
 });
@@ -55,5 +84,7 @@ export const {
   useGetAllLawAndBylawQuery,
   useGetLawBylawDetailsQuery,
   useGetAllBookmarkedLawsQuery,
-  useToggleBookmarkedLawsMutation
+  useToggleBookmarkedLawsMutation,
+  useGetAutomaticLawAndBylawQuery,
+  useSyncAutomaticLawAndBylawMutation
 } = lawAndBylawApi;
