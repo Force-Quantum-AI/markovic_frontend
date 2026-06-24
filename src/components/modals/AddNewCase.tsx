@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ChevronDown, X, Camera, Info, Loader2, Loader } from "lucide-react";
+import { ChevronDown, X, Camera, Info, Loader2, Loader, Cross } from "lucide-react";
 import { useAddCaseDeadlineMutation, useAddCaseHearingMutation, useCreateCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
 import { getImageUrl } from "@/lib/getImageUrl";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { useGetAllUsersQuery } from "@/store/features/admin/my-users/my-users.api";
-import { useGetAllClientsQuery } from "@/store/features/profile/profile.api";
+import { useGetAllClientsQuery, useLazyGetAllClientsQuery } from "@/store/features/profile/profile.api";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
 
@@ -161,18 +161,49 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
   const setField = (key: keyof BasicInfoData) => (v: string) => onChange({ ...data, [key]: v });
 
   const [clientSearch, setClientSearch] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const { data: clientData, isLoading: isClientLoading } = useGetAllClientsQuery(
-    clientSearch.length > 1
-      ? {
-        search: clientSearch,
-        page: 1,
-        page_size: 5,
-      }
-      : undefined
-  );
+  const [
+    triggerGetClients,
+    { data: clientData, isLoading: isClientLoading }
+  ] = useLazyGetAllClientsQuery();
 
   const clients = clientData?.clients?.results || [];
+
+  const handleClientSearch = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setClientSearch(value);
+    setField("clientName")(value);
+    if (value.trim().length >= 2) {
+      setShowDropdown(true);
+
+      try {
+        await triggerGetClients({
+          search: value,
+          page: 1,
+          page_size: 5,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setShowDropdown(false);
+    }
+  };
+
+  const handleSelectClient = (client: any) => {
+    onChange({
+      ...data,
+      clientName: client.client_name,
+      emailAddress: client.email,
+      phoneNumber: client.phone_number,
+      avatarUrl: client.client_image || "",
+    });
+    setClientSearch(client.client_name);
+    setShowDropdown(false);
+  };
 
   return (
     <div className="w-full space-y-6">
@@ -208,85 +239,46 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
           <input
             type="text"
             value={data.clientName}
-            onChange={(e) => {
-
-              const value = e.target.value;
-
-              setClientSearch(value);
-
-              setField("clientName")(value);
-
-            }}
+            onChange={handleClientSearch}
             placeholder="Markovic Aleksa"
             className="w-full px-5 py-3.5 border border-gray-200 rounded-full"
           />
 
           {
-            clientSearch &&
-            clients.length > 0 && (
+            showDropdown && (
 
-              <div className="absolute z-50 top-full mt-2 w-full rounded-xl border bg-white shadow-lg overflow-hidden">
+              <div className="absolute z-50 top-full left-0 mt-2 w-full rounded-xl border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto">
 
                 {
                   isClientLoading ? (
-                    <div className="text-gray-500 flex items-center gap-3"><Loader className="animate-spin" />Loading...</div>
-                  ) :
+                    <div className="px-4 py-4 flex items-center gap-3 text-gray-500">
+                      <Loader className="w-4 h-4 animate-spin" />
+                      Loading...
+                    </div>
+                  ) : clients.length > 0 ? (
                     clients.map((client: any) => (
-
                       <button
                         key={client.email}
                         type="button"
-                        className="w-full px-4 py-3 text-left hover:bg-gray-100"
-                        onClick={() => {
-
-                          onChange({
-
-                            ...data,
-
-                            clientName: client.client_name,
-
-                            emailAddress: client.email,
-
-                            phoneNumber: client.phone_number,
-
-                            avatarUrl: client.client_image || "",
-
-                            // API doesn't provide these
-                            personalIdNumber:
-                              data.personalIdNumber,
-
-                            address:
-                              data.address,
-
-                            note:
-                              data.note,
-                          });
-
-                          setClientSearch("");
-
-                        }}
+                        onClick={() => handleSelectClient(client)}
+                        className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b last:border-b-0"
                       >
-
                         <p className="font-semibold">
-
                           {client.client_name}
-
                         </p>
-
-                        <p className="text-xs text-gray-500">
-
+                        <p className="text-sm text-gray-500">
                           {client.email}
-
                         </p>
-
                       </button>
-
                     ))
 
+                  ) : (
+                    <div onClick={() => setShowDropdown(false)} className="px-4 py-4 text-sm text-gray-500 flex items-center justify-between">
+                      No existing client found, you can create by this name. <X className="w-5 h-5 hover:cursor-pointer hover:bg-gray-200 rounded-md p-1" onClick={() => setShowDropdown(false)} />
+                    </div>
+                  )
                 }
-
               </div>
-
             )
           }
 
