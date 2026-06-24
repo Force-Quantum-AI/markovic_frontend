@@ -185,11 +185,11 @@ export default function Subscription() {
   return (
     <div className="p-2 md:p-4 border rounded-2xl">
       {path.includes("/subscription") && (
-        <div className="absolute top-4 left-4">
-        <button onClick={()=>router.back()} className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer">
-          <ChevronLeft /> Back
-        </button>
-      </div>
+        <div className="absolute top-4 left-4 z-999">
+          <button onClick={() => router.back()} className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer">
+            <ChevronLeft /> Back
+          </button>
+        </div>
       )}
       <div className="min-h-full flex items-center justify-center">
         <div className="relative w-full max-w-6xl rounded-2xl md:rounded-[24px] flex flex-col">
@@ -326,9 +326,8 @@ function PricingCard({
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl transition-all duration-300 ${
-        isPopular ? "bg-[#135576] shadow-xl md:-translate-y-4" : "bg-white shadow-sm border border-slate-200"
-      }`}
+      className={`relative flex flex-col rounded-2xl transition-all duration-300 ${isPopular ? "bg-[#135576] shadow-xl md:-translate-y-4" : "bg-white shadow-sm border border-slate-200"
+        }`}
     >
       {/* Most Popular Badge */}
       {isPopular && (
@@ -339,9 +338,8 @@ function PricingCard({
 
       {/* Card Content Wrapper */}
       <div
-        className={`flex flex-col h-full rounded-2xl ${
-          isPopular ? "bg-white mt-10 border-x border-b border-[#135576]" : ""
-        }`}
+        className={`flex flex-col h-full rounded-2xl ${isPopular ? "bg-white mt-10 border-x border-b border-[#135576]" : ""
+          }`}
       >
         <div className="p-6 md:p-8 flex-grow">
           <div className="flex items-center gap-2 mb-4">
@@ -394,11 +392,10 @@ function PricingCard({
           <button
             onClick={() => onPurchase(activeVariant)}
             disabled={!activeVariant || isPurchasing || isCurrentPlan}
-            className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all mb-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-              isPopular
+            className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all mb-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${isPopular
                 ? "bg-[#135576] text-white hover:bg-[#104663]"
                 : "bg-white text-[#135576] border border-[#135576] hover:bg-[#135576]/5"
-            }`}
+              }`}
           >
             {purchasingThisPlan && <Loader2 className="w-4 h-4 animate-spin" />}
             {isCurrentPlan ? "Active Plan" : purchasingThisPlan ? "Redirecting..." : "Purchase"}

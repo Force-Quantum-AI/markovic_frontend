@@ -3,11 +3,13 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ChevronDown, X, Camera, Info, Loader2 } from "lucide-react";
+import { ChevronDown, X, Camera, Info, Loader2, Loader } from "lucide-react";
 import { useAddCaseDeadlineMutation, useAddCaseHearingMutation, useCreateCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
 import { getImageUrl } from "@/lib/getImageUrl";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
+import { useGetAllUsersQuery } from "@/store/features/admin/my-users/my-users.api";
+import { useGetAllClientsQuery } from "@/store/features/profile/profile.api";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
 
@@ -158,6 +160,20 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
   const fileInputRef = useRef<HTMLInputElement>(null);
   const setField = (key: keyof BasicInfoData) => (v: string) => onChange({ ...data, [key]: v });
 
+  const [clientSearch, setClientSearch] = useState("");
+
+  const { data: clientData, isLoading: isClientLoading } = useGetAllClientsQuery(
+    clientSearch.length > 1
+      ? {
+        search: clientSearch,
+        page: 1,
+        page_size: 5,
+      }
+      : undefined
+  );
+
+  const clients = clientData?.clients?.results || [];
+
   return (
     <div className="w-full space-y-6">
       <h3 className="text-lg font-bold text-gray-900 tracking-tight">Basic information</h3>
@@ -183,13 +199,102 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-1.5 w-full">
-          <FieldLabel>Client name <span className="text-red-500">*</span></FieldLabel>
-          <input type="text" value={data.clientName} onChange={(e) => setField("clientName")(e.target.value)} placeholder="Markovic Aleksa" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
+        <div className="space-y-1.5 relative">
+
+          <FieldLabel>
+            Client name <span className="text-red-500">*</span>
+          </FieldLabel>
+
+          <input
+            type="text"
+            value={data.clientName}
+            onChange={(e) => {
+
+              const value = e.target.value;
+
+              setClientSearch(value);
+
+              setField("clientName")(value);
+
+            }}
+            placeholder="Markovic Aleksa"
+            className="w-full px-5 py-3.5 border border-gray-200 rounded-full"
+          />
+
+          {
+            clientSearch &&
+            clients.length > 0 && (
+
+              <div className="absolute z-50 top-full mt-2 w-full rounded-xl border bg-white shadow-lg overflow-hidden">
+
+                {
+                  isClientLoading ? (
+                    <div className="text-gray-500 flex items-center gap-3"><Loader className="animate-spin" />Loading...</div>
+                  ) :
+                    clients.map((client: any) => (
+
+                      <button
+                        key={client.email}
+                        type="button"
+                        className="w-full px-4 py-3 text-left hover:bg-gray-100"
+                        onClick={() => {
+
+                          onChange({
+
+                            ...data,
+
+                            clientName: client.client_name,
+
+                            emailAddress: client.email,
+
+                            phoneNumber: client.phone_number,
+
+                            avatarUrl: client.client_image || "",
+
+                            // API doesn't provide these
+                            personalIdNumber:
+                              data.personalIdNumber,
+
+                            address:
+                              data.address,
+
+                            note:
+                              data.note,
+                          });
+
+                          setClientSearch("");
+
+                        }}
+                      >
+
+                        <p className="font-semibold">
+
+                          {client.client_name}
+
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+
+                          {client.email}
+
+                        </p>
+
+                      </button>
+
+                    ))
+
+                }
+
+              </div>
+
+            )
+          }
+
           <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5">
             <Info className="w-3.5 h-3.5 shrink-0" />
             <span>You have to add a name to create a case.</span>
           </div>
+
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -228,6 +333,8 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
   const [lawyerInput, setLawyerInput] = useState("");
   const [opposingInput, setOpposingInput] = useState("");
   const setField = (key: keyof LegalDetailsData) => (v: string | string[]) => onChange({ ...data, [key]: v });
+
+  // const {data: allLawyers, isLoading: allLawyersLoading} = useGetAllUsersQuery()
 
   return (
     <div className="w-full space-y-5">
@@ -353,7 +460,7 @@ function ScheduleCard({
   const days = Array.from({ length: 31 }, (_, i) => String(i + 1));
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const years = ["2024", "2025", "2026", "2027", "2028"];
-  
+
 
   return (
     <div className="w-full border border-gray-200 rounded-[24px] p-5 md:p-6 bg-white space-y-4 shadow-sm">

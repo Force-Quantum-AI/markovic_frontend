@@ -41,5 +41,6 @@ export const profileApi = baseApi.injectEndpoints({
 export const {
   useGetProfileInfoQuery,
   useUpdateProfileInfoMutation,
-  useGetAllClientsQuery
+  useGetAllClientsQuery,
+  useLazyGetAllClientsQuery
 } = profileApi;
