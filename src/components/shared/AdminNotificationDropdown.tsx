@@ -111,7 +111,7 @@ export default function AdminNotificationDropdown() {
                     {notification.sender_name || "System"}
                   </p>
 
-                  <p className="mt-1 text-[11px] md:text-sm text-slate-600 leading-relaxed break-words">
+                  <p className="mt-1 text-[11px] md:text-sm text-slate-600 leading-relaxed wrap-break-word">
                     {notification.body}
                   </p>
                 </div>

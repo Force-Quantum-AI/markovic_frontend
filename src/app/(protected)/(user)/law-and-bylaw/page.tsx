@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { Search, ChevronLeft, ChevronRight, Scale } from "lucide-react";
 import { LawCard } from "@/components/shared/LawCard";
 import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
-import { useGetAllLawAndBylawQuery } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
+import { useGetAllLawAndBylawQuery, useGetAutomaticLawAndBylawQuery, useSyncAutomaticLawAndBylawMutation } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
+import { AutoLawCard } from "@/components/shared/AutoLawCard";
 
 
 
@@ -16,6 +17,7 @@ export default function LawAndByLawPage() {
     const [selectedCategory, setSelectedCategory] = useState<number>();
     const [currentPage, setCurrentPage] = useState(1);
     const PAGE_SIZE = 10;
+    const [activeBtn, setActiveBtn] = useState<('ManualLawBylaw' | 'AutoLawBylaw')>("AutoLawBylaw");
 
     // Debounce search query
     useEffect(() => {
@@ -26,7 +28,7 @@ export default function LawAndByLawPage() {
         return () => clearTimeout(handler);
     }, [searchQuery]);
 
-    const queryParams = {
+    const manualQueryParams = {
         page: currentPage,
         ...(debouncedSearch.trim() && {
             search: debouncedSearch.trim(),
@@ -36,8 +38,41 @@ export default function LawAndByLawPage() {
         }),
     };
 
-    const { data, isLoading, error } =
-        useGetAllLawAndBylawQuery(queryParams);
+    const autoQueryParams = {
+        ...(debouncedSearch.trim() && {
+            search: debouncedSearch.trim(),
+        }),
+        ...(selectedCategory && {
+            category: selectedCategory,
+        }),
+    };
+
+    const [syncAutomaticLawAndBylaw] = useSyncAutomaticLawAndBylawMutation();
+    
+    const { data, isLoading: isManualLoading, error: manualError } = useGetAllLawAndBylawQuery(manualQueryParams, {
+        skip: activeBtn !== "ManualLawBylaw",
+    });
+    
+    const { data: autoLawBylawData, isLoading: isAutoLawBylawLoading, error: autoError } = useGetAutomaticLawAndBylawQuery(autoQueryParams, {
+        skip: activeBtn !== "AutoLawBylaw",
+    });
+
+    const isLoading = activeBtn === "AutoLawBylaw" ? isAutoLawBylawLoading : isManualLoading;
+    const error = activeBtn === "AutoLawBylaw" ? autoError : manualError;
+    const hasData = activeBtn === "AutoLawBylaw"
+        ? (autoLawBylawData && autoLawBylawData.length > 0)
+        : (data?.results && data.results.length > 0);
+    
+    const handleSynce = async () => {
+        try {
+            await syncAutomaticLawAndBylaw({});
+        } catch (error) {
+            console.error("Error syncing automatic law and bylaw", error);
+        }
+    }
+    useEffect(()=>{
+        handleSynce()
+    },[])
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -55,10 +90,22 @@ export default function LawAndByLawPage() {
 
     return (
         <div className="mx-auto w-full p-2 md:p-3 bg-white rounded-2xl">
-            <PageHeadingTitle
-                title="Laws & By-laws"
-                subtitle="Explore all laws & bylaws here"
-            />
+            <div className="flex items-center justify-between">
+                <PageHeadingTitle
+                    title="Laws & By-laws"
+                    subtitle="Explore all laws & bylaws here"
+                />
+                <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-3">
+                    <div className="w-full md:w-auto flex flex-col md:flex-row items-center justify-center gap-3">
+                        <button
+                            onClick={() => setActiveBtn("AutoLawBylaw")}
+                            className={`${activeBtn === "AutoLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>Official Source</button>
+                        <button
+                            onClick={() => setActiveBtn("ManualLawBylaw")}
+                            className={`${activeBtn === "ManualLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>Admin Added</button>
+                    </div>
+                </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-4 items-end gap-3 my-4">
                 <div className="col-span-1 md:col-span-3">
                     <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
@@ -92,8 +139,8 @@ export default function LawAndByLawPage() {
             <section className="w-full mx-auto space-y-3 rounded-2xl">
                 {/* Top Header Controls Block */}
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg md:text-xl text-gray-900 tracking-tight">
-                        All Laws
+                    <h3 className="text-xs md:text-sm text-gray-400 tracking-tight">
+                        Showing {activeBtn === "AutoLawBylaw" ? autoLawBylawData?.length : data?.results?.length} results
                     </h3>
                 </div>
 
@@ -116,7 +163,7 @@ export default function LawAndByLawPage() {
                         <p className="text-lg font-medium">Failed to load laws & bylaws</p>
                         <p className="text-sm">Please try again later.</p>
                     </div>
-                ) : !data?.results || data.results.length === 0 ? (
+                ) : !hasData ? (
                     <div className="flex flex-col items-center justify-center py-16 text-slate-400 font-roboto">
                         <Scale className="w-12 h-12 mb-3 opacity-60 text-slate-400" />
                         <p className="text-lg font-medium">No laws found matching your search</p>
@@ -124,22 +171,36 @@ export default function LawAndByLawPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
-                        {data.results.map((law: any, index: number) => (
-                            <LawCard
-                                key={law.id || index}
-                                id={law.id?.toString()}
-                                title={law.title}
-                                category={law.category_name}
-                                officialGazette={law.official_gazette}
-                                lastUpdate={law.last_updated}
-                                bookmark={law.bookmark}
-                            />
-                        ))}
+                        {activeBtn === "AutoLawBylaw" ?
+                            autoLawBylawData && autoLawBylawData.map((law: any, index: number) => (
+                                <AutoLawCard
+                                    key={law.id}
+                                    id={law.id}
+                                    title={law.title}
+                                    summary={law.summary}
+                                    source_url={law.source_url}
+                                    category={law.category}
+                                    published_at={law.published_at}
+                                    updated_at={law.updated_at}
+                                />
+                            ))
+                            :
+                            data.results.map((law: any, index: number) => (
+                                <LawCard
+                                    key={law.id || index}
+                                    id={law.id?.toString()}
+                                    title={law.title}
+                                    category={law.category_name}
+                                    officialGazette={law.official_gazette}
+                                    lastUpdate={law.last_updated}
+                                    bookmark={law.bookmark}
+                                />
+                            ))}
                     </div>
                 )}
 
                 {/* Pagination */}
-                {!isLoading && !error && data?.results?.length > 0 && (
+                {activeBtn!=="AutoLawBylaw" && !isLoading && !error && data?.results?.length > 0 && (
                     <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap pt-4">
                         <p className="text-[#427791] text-xs md:text-base">
                             Showing {startItem} to {endItem} of {data.count || 0} laws
