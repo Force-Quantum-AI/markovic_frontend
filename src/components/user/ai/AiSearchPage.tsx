@@ -15,6 +15,7 @@ import {
     X,
     FileText,
     File,
+    Loader2,
 } from "lucide-react";
 import { AiSearchFilters } from "@/types/ai";
 import AiFilters from "@/components/user/ai/AiFilters";
@@ -273,7 +274,7 @@ export default function AiSearchPage() {
     };
 
     return (
-        <div className="flex gap-3 h-[calc(100vh-80px)] min-h-[600px]">
+        <div className="flex gap-3 h-[calc(85vh-80px)] min-h-[600px]">
             {/* ── Desktop Sidebar ── */}
             <aside className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 bg-white border border-gray-200 rounded-xl p-3 overflow-hidden">
                 <Sidebar
@@ -288,7 +289,7 @@ export default function AiSearchPage() {
             </aside>
 
             {/* ── Main Content ── */}
-            <div className="flex-1 flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden min-w-0">
+            <div className="sticky top-0 left-0 flex-1 flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden min-w-0">
                 {/* Mobile top bar */}
                 <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-gray-100">
                     <button
@@ -299,13 +300,7 @@ export default function AiSearchPage() {
                         History
                     </button>
                     <span className="text-sm font-semibold text-[#135576]">AI Search</span>
-                    <button
-                        onClick={() => { setFilterOpen(true); setSidebarOpen(false); }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-                    >
-                        <SlidersHorizontal className="w-4 h-4" />
-                        Filters
-                    </button>
+ 
                 </div>
 
                 {/* Welcome area */}
@@ -343,7 +338,7 @@ export default function AiSearchPage() {
                     </div>
                             
                     {/* Input box */}
-                    <div className="px-4 pb-4">
+                    <div className="px-4 pb-4 ">
                         <div className="max-w-2xl mx-auto w-full border border-gray-200 rounded-2xl bg-gray-50 overflow-hidden focus-within:ring-2 focus-within:ring-[#135576]/20 focus-within:border-[#135576] transition-all">
                             <textarea
                                 ref={textareaRef}
@@ -391,7 +386,9 @@ export default function AiSearchPage() {
                                         : "bg-gray-300 cursor-not-allowed"
                                         }`}
                                 >
-                                    <ArrowUp className="w-4 h-4 text-white" />
+                                    {isLoading ? <Loader2 className="w-4 h-4 text-white animate-spin" />
+                                        : <ArrowUp className="w-4 h-4 text-white" />
+                                    }
                                 </button>
                             </div>
                         </div>

@@ -68,7 +68,7 @@ export default function UsersTable({
       router.push(`/my-cases/${user.id}`);
       return;
     }
-    alert(`Viewing client details for: ${user.client_name}`);
+    alert(`user.id not in the api response.`);
   };
 
   const handleDelete = (clientName: string) => {
@@ -98,7 +98,7 @@ export default function UsersTable({
                   <th className="py-3.5 px-4">Email</th>
                   <th className="py-3.5 px-4">Created Date</th>
                   <th className="py-3.5 px-4">Total Cases</th>
-                  <th className="py-3.5 px-5 text-right">Actions</th>
+                  {/* <th className="py-3.5 px-5 text-right">Actions</th> */}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
@@ -124,7 +124,7 @@ export default function UsersTable({
                         {user.total_cases}
                       </span>
                     </td>
-                    <td className="py-4 px-5 text-right">
+                    {/* <td className="py-4 px-5 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all focus:outline-none">
@@ -142,7 +142,7 @@ export default function UsersTable({
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

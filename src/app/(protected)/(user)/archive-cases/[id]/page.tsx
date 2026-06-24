@@ -7,6 +7,7 @@ import CaseHealth from "@/components/user/ai/CaseHealth";
 import CaseOverview from "@/components/user/ai/CaseOverview";
 import TeamMembersList from "@/components/user/ai/TeamMembersList";
 import { useGetArchiveCaseDetailsQuery } from "@/store/features/archive/archive.api";
+import { Loader } from "lucide-react";
 import { useParams } from "next/navigation";
 
 export default function Page() {
@@ -17,7 +18,7 @@ export default function Page() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <p className="text-gray-500">Loading case details...</p>
+                <Loader className="animate-spin" size={32} />
             </div>
         );
     }
