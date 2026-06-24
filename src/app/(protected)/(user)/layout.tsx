@@ -138,7 +138,7 @@ export default function UserLayout({
                         {profileInfo?.full_name ? profileInfo?.full_name : "Mr/Mrs User"}
                       </p>
 
-                      <p className="text-xs text-muted-foreground text-gray-400">
+                      <p className="text-xs text-gray-400">
                         {profileInfo?.email ? profileInfo?.email : "me@gmail.com"}
                       </p>
                     </div>

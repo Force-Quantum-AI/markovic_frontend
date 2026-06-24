@@ -209,7 +209,7 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
     <div className="w-full space-y-6">
       <h3 className="text-lg font-bold text-gray-900 tracking-tight">Basic information</h3>
       <div className="flex items-center gap-4 pt-1">
-        <div className="relative w-24 h-24 rounded-full bg-[#d9d9d9] flex-shrink-0 overflow-hidden flex items-center justify-center border border-gray-100 shadow-inner">
+        <div className="relative w-24 h-24 rounded-full bg-[#d9d9d9] shrink-0 overflow-hidden flex items-center justify-center border border-gray-100 shadow-inner">
           {data.avatarUrl ? (
             <Image src={data.avatarUrl} alt="Preview avatar" fill className="object-cover" />
           ) : (
@@ -825,7 +825,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
         <div className="flex-1 overflow-y-auto pr-1 py-4 space-y-6 my-2 scrollbar-thin">
           <Stepper current={currentStep} />
 
-          <div className="w-full h-[1px] bg-gray-100" />
+          <div className="w-full h-px bg-gray-100" />
 
           {/* Steps Conditional Controller Container */}
           <div className="px-1 md:px-4">

@@ -4,7 +4,7 @@ import { LoaderPinwheel, Sparkles } from "lucide-react";
 
 export default function Loading() {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white z-50">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-linear-to-b from-gray-50 to-white z-50">
       
       <div className="relative flex flex-col items-center max-w-lg text-center px-6">
         
@@ -29,7 +29,7 @@ export default function Loading() {
         
         {/* Animated Progress Track */}
         <div className="w-48 h-1 bg-gray-100 rounded-full overflow-hidden relative mb-3">
-          <div className="absolute inset-y-0 bg-gradient-to-r from-[#0c5174] to-emerald-400 w-1/2 rounded-full animate-[loading-bar_1.8s_ease-in-out_infinite]" />
+          <div className="absolute inset-y-0 bg-linear-to-r from-[#0c5174] to-emerald-400 w-1/2 rounded-full animate-[loading-bar_1.8s_ease-in-out_infinite]" />
         </div>
 
       </div>

@@ -341,7 +341,7 @@ function PricingCard({
         className={`flex flex-col h-full rounded-2xl ${isPopular ? "bg-white mt-10 border-x border-b border-[#135576]" : ""
           }`}
       >
-        <div className="p-6 md:p-8 flex-grow">
+        <div className="p-6 md:p-8 grow">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-xl font-semibold text-slate-900 capitalize">{pkg.name}</h3>
             {isCurrentPlan && (
