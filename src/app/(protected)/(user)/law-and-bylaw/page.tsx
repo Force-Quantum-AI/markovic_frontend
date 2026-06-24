@@ -28,7 +28,7 @@ export default function LawAndByLawPage() {
         return () => clearTimeout(handler);
     }, [searchQuery]);
 
-    const queryParams = {
+    const manualQueryParams = {
         page: currentPage,
         ...(debouncedSearch.trim() && {
             search: debouncedSearch.trim(),
@@ -38,10 +38,30 @@ export default function LawAndByLawPage() {
         }),
     };
 
+    const autoQueryParams = {
+        ...(debouncedSearch.trim() && {
+            search: debouncedSearch.trim(),
+        }),
+        ...(selectedCategory && {
+            category: selectedCategory,
+        }),
+    };
+
     const [syncAutomaticLawAndBylaw] = useSyncAutomaticLawAndBylawMutation();
-    const { data, isLoading, error } = useGetAllLawAndBylawQuery(queryParams);
-    const { data : autoLawBylawData, isLoading : isAutoLawBylawLoading} = useGetAutomaticLawAndBylawQuery(queryParams);
     
+    const { data, isLoading: isManualLoading, error: manualError } = useGetAllLawAndBylawQuery(manualQueryParams, {
+        skip: activeBtn !== "ManualLawBylaw",
+    });
+    
+    const { data: autoLawBylawData, isLoading: isAutoLawBylawLoading, error: autoError } = useGetAutomaticLawAndBylawQuery(autoQueryParams, {
+        skip: activeBtn !== "AutoLawBylaw",
+    });
+
+    const isLoading = activeBtn === "AutoLawBylaw" ? isAutoLawBylawLoading : isManualLoading;
+    const error = activeBtn === "AutoLawBylaw" ? autoError : manualError;
+    const hasData = activeBtn === "AutoLawBylaw"
+        ? (autoLawBylawData && autoLawBylawData.length > 0)
+        : (data?.results && data.results.length > 0);
     
     const handleSynce = async () => {
         try {
@@ -79,10 +99,10 @@ export default function LawAndByLawPage() {
                     <div className="w-full md:w-auto flex flex-col md:flex-row items-center justify-center gap-3">
                         <button
                             onClick={() => setActiveBtn("AutoLawBylaw")}
-                            className={`${activeBtn === "AutoLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>Automatic</button>
+                            className={`${activeBtn === "AutoLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>Official Source</button>
                         <button
                             onClick={() => setActiveBtn("ManualLawBylaw")}
-                            className={`${activeBtn === "ManualLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>Manual</button>
+                            className={`${activeBtn === "ManualLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>Admin Added</button>
                     </div>
                 </div>
             </div>
@@ -119,8 +139,8 @@ export default function LawAndByLawPage() {
             <section className="w-full mx-auto space-y-3 rounded-2xl">
                 {/* Top Header Controls Block */}
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg md:text-xl text-gray-900 tracking-tight">
-                        All Laws
+                    <h3 className="text-xs md:text-sm text-gray-400 tracking-tight">
+                        Showing {activeBtn === "AutoLawBylaw" ? autoLawBylawData?.length : data?.results?.length} results
                     </h3>
                 </div>
 
@@ -143,7 +163,7 @@ export default function LawAndByLawPage() {
                         <p className="text-lg font-medium">Failed to load laws & bylaws</p>
                         <p className="text-sm">Please try again later.</p>
                     </div>
-                ) : !data?.results || data.results.length === 0 ? (
+                ) : !hasData ? (
                     <div className="flex flex-col items-center justify-center py-16 text-slate-400 font-roboto">
                         <Scale className="w-12 h-12 mb-3 opacity-60 text-slate-400" />
                         <p className="text-lg font-medium">No laws found matching your search</p>

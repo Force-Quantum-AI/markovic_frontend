@@ -15,7 +15,6 @@ export interface LawCardProps {
   category: string;
   published_at: string;
   updated_at: string;
-  bookmark?: boolean;
 }
 
 export function AutoLawCard({
@@ -26,10 +25,9 @@ export function AutoLawCard({
   category,
   published_at,
   updated_at,
-  bookmark,
 }: LawCardProps) {
-  const [isFavorite, setIsFavorite] = useState(bookmark || false);
-  const [toggleBookmarkedLaws, { isLoading }] = useToggleBookmarkedLawsMutation();
+//   const [isFavorite, setIsFavorite] = useState(bookmark || false);
+//   const [toggleBookmarkedLaws, { isLoading }] = useToggleBookmarkedLawsMutation();
   const navigate = useRouter();
 
   // Helper: Strips HTML formatting safely for the text snippet
@@ -51,21 +49,20 @@ export function AutoLawCard({
     }
   };
 
-  const handleAddToFavorite = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card navigation trigger
-    try {
-      await toggleBookmarkedLaws({ id }).unwrap();
-      toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
-      setIsFavorite(!isFavorite);
-    } catch (error) {
-      console.error("Error toggling bookmark status:", error);
-      toast.error("Failed to update favorite status");
-    }
-  };
+//   const handleAddToFavorite = async (e: React.MouseEvent) => {
+//     e.stopPropagation(); // Prevent card navigation trigger
+//     try {
+//       await toggleBookmarkedLaws({ id }).unwrap();
+//       toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
+//       setIsFavorite(!isFavorite);
+//     } catch (error) {
+//       console.error("Error toggling bookmark status:", error);
+//       toast.error("Failed to update favorite status");
+//     }
+//   };
 
   return (
     <div
-      onClick={() => navigate.push(`/law-and-bylaw/${id}`)}
       className="
         group
         relative
@@ -91,7 +88,7 @@ export function AutoLawCard({
         </div>
 
         {/* Favorite Bookmark Button */}
-        <button
+        {/* <button
           onClick={handleAddToFavorite}
           className="
             flex
@@ -118,7 +115,7 @@ export function AutoLawCard({
               )}
             />
           )}
-        </button>
+        </button> */}
       </div>
 
       {/* Main Body Contents */}
