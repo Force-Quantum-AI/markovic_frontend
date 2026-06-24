@@ -14,6 +14,7 @@ import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { TextAreaField } from "../shared/TextAreaField";
 import { useMakeCompleteCaseMutation, useUpdateOverviewInfoOfCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
+import RichTextArea from "../shared/RichTextArea";
 
 interface UpdateCaseOverviewModalProps {
   open: boolean;
@@ -315,11 +316,22 @@ export default function UpdateCaseOverviewModal({
 
             {formData.status === 7 ||
               formData.status === 8 ? (
-              <TextAreaField
-                label="Short description :"
-                placeholder="write short description here..."
+              // <TextAreaField
+              //   label="Short description :"
+              //   placeholder="write short description here..."
+              //   value={formData.shortDescription}
+              //   onChange={handleTextAreaChange("shortDescription")}
+              // />
+              <RichTextArea
+                label="Short Description :"
+                placeholder="Write short description here..."
                 value={formData.shortDescription}
-                onChange={handleTextAreaChange("shortDescription")}
+                onChange={(html) =>
+                  setFormData(prev => ({
+                    ...prev,
+                    shortDescription: html,
+                  }))
+                }
               />
             ) : null}
 

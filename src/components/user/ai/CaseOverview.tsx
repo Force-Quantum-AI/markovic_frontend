@@ -79,9 +79,9 @@ export default function CaseOverview({
         </h3>
         <p className="text-[14px] text-[#4B5563]">{closing_description}</p>
     </div>
-    <div className="mt-12">
+    {/* <div className="mt-12">
         <div className="space-y-8 text-[14px] leading-[32px] text-[#4B5563]">
-          {/* Legal Representation */}
+         
           <div>
             <h4 className="font-semibold text-[#4B5563]">
               Legal Representation
@@ -124,7 +124,7 @@ export default function CaseOverview({
             </div>
           </div>
 
-          {/* Evidence */}
+  
           <div>
             <h4 className="font-semibold text-[#4B5563]">
               Key Evidence Submitted
@@ -210,7 +210,7 @@ export default function CaseOverview({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
