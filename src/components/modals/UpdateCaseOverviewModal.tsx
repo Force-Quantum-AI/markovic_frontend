@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/dialog";
 
 import { InputField } from "@/components/shared/InputField";
-import { SelectField } from "../shared/SelectField";
-import { CaseStatusOptions, NewCaseStatusOptions } from "@/data/selectDropdownData";
+import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { TextAreaField } from "../shared/TextAreaField";
 import { useMakeCompleteCaseMutation, useUpdateOverviewInfoOfCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
+import RichTextArea from "../shared/RichTextArea";
 
 interface UpdateCaseOverviewModalProps {
   open: boolean;
@@ -40,19 +40,7 @@ interface OverviewFormData {
   shortDescription: string;
 }
 
-const categories = [
-  "Civil Litigation",
-  "Criminal Law",
-  "Family Law",
-  "Corporate Law",
-];
 
-const subcategories = [
-  "Traffic Accident Damages",
-  "Insurance Claim",
-  "Contract Dispute",
-  "Property Issue",
-];
 
 function buildInitialFormData(d: any): OverviewFormData {
   const normalizeParty = (party: any): string => {
@@ -182,7 +170,7 @@ export default function UpdateCaseOverviewModal({
             Update case overview
           </h2>
 
-          <div className="mt-10 space-y-5">
+          <div className="mt-10 space-y-5 overflow-y-auto h-[80vh]">
             {/* Client Name */}
             <InputField
               label="Client name:"
@@ -278,50 +266,72 @@ export default function UpdateCaseOverviewModal({
 
             {/* Category + Subcategory */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <SelectField
-                label="Category:"
-                value={formData.category_name}
-                onChange={(value: any) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    category_name: value,
-                  }))
-                }
-                options={categories}
-              />
-              <SelectField
-                label="Subcategory:"
-                value={formData.sub_category_name}
-                onChange={(value: any) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    sub_category_name: value,
-                  }))
-                }
-                options={subcategories}
-              />
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category:</label>
+                <SelectField
+                  label="Category"
+                  type="category"
+                  value={formData.category ? String(formData.category) : ""}
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      category: Number(value),
+                      sub_category: 0,
+                    }))
+                  }
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory:</label>
+                <SelectField
+                  label="Sub Category"
+                  type="subCategory"
+                  categoryId={formData.category ? formData.category : undefined}
+                  value={formData.sub_category ? String(formData.sub_category) : ""}
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      sub_category: Number(value),
+                    }))
+                  }
+                />
+              </div>
             </div>
 
             {/* Status */}
-            <SelectField
-              label="Status:"
-              value={formData.status?.toString()}
-              onChange={(value: any) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  status: Number(value),
-                }))
-              }
-              options={NewCaseStatusOptions}
-            />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+              <SelectField
+                label="Status"
+                type="status"
+                value={formData.status ? String(formData.status) : ""}
+                onChange={(value) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    status: Number(value),
+                  }))
+                }
+              />
+            </div>
 
             {formData.status === 7 ||
               formData.status === 8 ? (
-              <TextAreaField
-                label="Short description :"
-                placeholder="write short description here..."
+              // <TextAreaField
+              //   label="Short description :"
+              //   placeholder="write short description here..."
+              //   value={formData.shortDescription}
+              //   onChange={handleTextAreaChange("shortDescription")}
+              // />
+              <RichTextArea
+                label="Short Description :"
+                placeholder="Write short description here..."
                 value={formData.shortDescription}
-                onChange={handleTextAreaChange("shortDescription")}
+                onChange={(html) =>
+                  setFormData(prev => ({
+                    ...prev,
+                    shortDescription: html,
+                  }))
+                }
               />
             ) : null}
 
