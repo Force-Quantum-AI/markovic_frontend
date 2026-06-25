@@ -89,7 +89,7 @@ export interface HearingAndDeadlinePageDataParamsType{
 
 export interface HearingAndDeadlineApiPayloadType{
   reason: string,
-  status: string,
+  status: number | string,
   time_from: string,
   time_to: string,
   am_pm: string,
