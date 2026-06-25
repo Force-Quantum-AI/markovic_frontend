@@ -148,17 +148,17 @@ export function AutoLawCard({
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()} // Stop modal push trigger
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#135576] hover:underline"
+            className="rounded-full
+              bg-[#E5E7EB]
+              px-3
+              py-1 border border-amber-200 inline-flex items-center gap-1.5 text-xs font-semibold text-[#135576] hover:underline"
           >
             Izvor <ExternalLink className="w-3 h-3" />
           </a>
 
           <span
             className="
-              rounded-full
-              bg-[#E5E7EB]
-              px-3
-              py-1
+              
               text-xs
               font-semibold
               text-[#374151]
