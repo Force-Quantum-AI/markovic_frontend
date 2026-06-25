@@ -170,7 +170,7 @@ export default function UpdateCaseOverviewModal({
             Update case overview
           </h2>
 
-          <div className="mt-10 space-y-5">
+          <div className="mt-10 space-y-5 overflow-y-auto h-[80vh]">
             {/* Client Name */}
             <InputField
               label="Client name:"

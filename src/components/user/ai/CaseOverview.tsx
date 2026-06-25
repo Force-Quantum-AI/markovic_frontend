@@ -23,13 +23,8 @@ export default function CaseOverview({
   status_name = "N/A",
   closing_description = "No description available"
 }: CaseOverviewProps) {
-  const router = useRouter()
   return (
     <div className="w-full rounded-[30px] bg-white p-7 relative">
-      <button onClick={()=>router.back()} className="absolute -top-3 left-4 bg-gray-100 px-3 py-1 rounded-2xl cursor-pointer transition-all hover:bg-gray-400 text-[#1F2937]/50 text-xs md:text-sm flex items-center gap-1">
-        <ArrowLeftIcon className="w-3 h-3" />
-         Back
-      </button>
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-xl lg:text-2xl font-semibold text-[#1F2937]">

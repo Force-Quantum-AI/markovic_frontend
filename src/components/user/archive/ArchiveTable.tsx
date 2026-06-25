@@ -329,10 +329,10 @@ export default function ArchiveTable() {
                                                             <Eye className="w-4 h-4 text-gray-400" />
                                                             <span>View</span>
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => handleRestore(item.id, item.case_name)} className="flex items-center gap-2 px-3 py-2 text-sm text-[#135576] rounded-lg hover:bg-[#135576]/5 cursor-pointer transition-colors">
+                                                        {/* <DropdownMenuItem onClick={() => handleRestore(item.id, item.case_name)} className="flex items-center gap-2 px-3 py-2 text-sm text-[#135576] rounded-lg hover:bg-[#135576]/5 cursor-pointer transition-colors">
                                                             <ArchiveRestore className="w-4 h-4 text-[#135576]" />
                                                             <span>Restore</span>
-                                                        </DropdownMenuItem>
+                                                        </DropdownMenuItem> */}
                                                         <DropdownMenuItem onClick={() => handleDelete(item.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
                                                             <Trash2 className="w-4 h-4 text-red-400" />
                                                             <span>Delete</span>
