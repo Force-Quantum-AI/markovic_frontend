@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Loader } from "lucide-react";
+import { X, Loader, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -17,6 +17,7 @@ import {
   useAddDeadlineInCaseMutation,
   useUpdateDeadlineInCaseMutation,
 } from "@/store/features/case/case.api";
+import { SelectField } from "../shared/SelectNewDropdown";
 
 interface HearingModalProps {
   open: boolean;
@@ -29,7 +30,7 @@ interface HearingModalProps {
 
 export interface HearingFormData {
   reason: string;
-  status: string;
+  status: number;
   time_from: string;
   time_to: string;
   period: string;
@@ -40,7 +41,7 @@ export interface HearingFormData {
 
 const DEFAULT_FORM: HearingFormData = {
   reason: "",
-  status: "Upcoming",
+  status: 1,
   time_from: "",
   time_to: "",
   period: "AM",
@@ -53,7 +54,7 @@ const DEFAULT_FORM: HearingFormData = {
 function buildFormFromHearing(hearing: any): HearingFormData {
   return {
     reason: hearing?.reason ?? hearing?.type ?? "",
-    status: hearing?.status ?? "Upcoming",
+    status: (hearing?.status != null && !isNaN(Number(hearing.status))) ? Number(hearing.status) : 1,
     time_from: hearing?.time_from ?? "",
     time_to: hearing?.time_to ?? "",
     period: hearing?.am_pm ?? "AM",
@@ -93,7 +94,7 @@ export default function AddEditHearingModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, mode, hearing?.id]);
 
-  const handleChange = (key: keyof HearingFormData, value: string) => {
+  const handleChange = (key: keyof HearingFormData, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [key]: value,
@@ -208,33 +209,20 @@ export default function AddEditHearingModal({
                 onChange={(e) => handleChange("reason", e.target.value)}
               />
 
-              <div>
+              <div className="space-y-1.5">
                 <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
                   Status:
                 </label>
-
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleChange("status", e.target.value)}
-                  className="
-                    w-full
-                    rounded-full
-                    border
-                    border-gray-200
-                    bg-gray-100
-                    px-4
-                    py-2.5
-                    text-sm
-                    focus:outline-none
-                    focus:ring-1
-                    focus:ring-[#135576]
+                <div className="relative w-full">
+                  <SelectField
+                    label="Status"
+                    type="status"
+                    value={formData.status ? String(formData.status) : ""}
+                    onChange={(value) => handleChange("status", Number(value))}
+                    classes="w-full rounded-full border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#135576]
                   "
-                >
-                  <option value="Upcoming">Upcoming</option>
-                  <option value="Held">Held</option>
-                  <option value="Postponed">Postponed</option>
-                  <option value="Extended">Extended</option>
-                </select>
+                  />
+                </div>
               </div>
             </div>
 
@@ -368,8 +356,8 @@ export default function AddEditHearingModal({
                 {isLoading
                   ? "Saving..."
                   : mode === "edit"
-                  ? "Update Now"
-                  : `Add ${forModal}`}
+                    ? "Update Now"
+                    : `Add ${forModal}`}
               </button>
             </div>
           </div>
