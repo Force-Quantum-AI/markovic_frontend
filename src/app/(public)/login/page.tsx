@@ -38,6 +38,7 @@ export default function LoginPage() {
       const res = await login({ email, password }).unwrap();
 
       document.cookie = `accessToken=${res.access}; path=/; SameSite=Lax`;
+      document.cookie = `role=${res.role}; path=/; SameSite=Lax`;
 
       // Redirect to the originally requested page or dashboard
       const callbackUrl = searchParams.get("callbackUrl") || "/";
