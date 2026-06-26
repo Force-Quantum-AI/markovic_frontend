@@ -16,6 +16,23 @@
   "logout": "Odjava",
   "subscription": "Pretplata",
 
+  "good_morning":"Dobro jutro",
+  "good_afternoon":"Dobar dan",
+  "good_evening":"Dobra veče",
+  "add_new_case":"Dodaj novi predmet",
+  "upcoming_hearings":"Predstojeća ročišta",
+
+  "total_cases":"Ukupan broj predmeta",
+  "active_cases":"Aktivni predmeti",
+  "todays_hearing":"Današnja ročišta",
+  "upcoming_deadlines":"Predstojeći rokovi",
+  "total_clients":"Ukupan broj klijenata",
+  "case_completed":"Završeni predmeti",
+  "explore_now":"Istraži sada",
+  "ai_court_practice":"AI Sudska praksa",
+  "go_to_full_ai_search":"Idi na punu AI pretragu",
+  
+
   "add": "Dodaj",
   "create": "Kreiraj",
   "edit": "Uredi",
@@ -37,6 +54,9 @@
   "continue": "Nastavi",
   "submit": "Pošalji",
   "confirm": "Potvrdi",
+  "both": "Oba",
+  "no_result":"Nema rezultata",
+  "my": "Moji",
 
   "case_number": "Broj predmeta",
   "case_title": "Naziv predmeta",
@@ -85,6 +105,7 @@
   "add_deadline": "Dodaj rok",
   "edit_deadline": "Uredi rok",
   "upcoming_deadline": "Predstojeći rok",
+  "recent_cases": "Poslednji Predmeti",
 
   "document": "Dokument",
   "document_name": "Naziv dokumenta",
@@ -107,6 +128,8 @@
   "search_by_client": "Pretraži po klijentu",
   "search_by_case": "Pretraži po predmetu",
   "search_by_court": "Pretraži po sudu",
+  "client": "Klijent",
+  "status": "Status",
 
   "archived_cases": "Arhivirani predmeti",
   "restore": "Vrati",

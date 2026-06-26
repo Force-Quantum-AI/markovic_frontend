@@ -96,10 +96,10 @@ export default function UpcomingHearings({ data, isLoading }: { data?: any[]; is
       {/* Top Header Controls Block */}
       <div className="flex items-center justify-between">
         <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
-          {t("Search")}
+          {t("upcoming_hearings")}
         </h3>
         <button onClick={() => router.push("/hearing-and-deadline")} className="text-sm font-semibold text-[#135576] hover:underline transition-all">
-          View All
+          {t("view_all")}
         </button>
       </div>
 
