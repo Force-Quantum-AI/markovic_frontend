@@ -9,8 +9,11 @@ import OtpVerificationModal from "@/components/modals/OtpVerificationModal";
 import SubscriptionModal from "@/components/modals/SubscriptionModal";
 import { useRegisterUserMutation } from "@/store/features/auth/authApi";
 import AdminButton from "@/components/shared/AdminButton";
+import { useTranslation } from "react-i18next";
 
 export default function RegisterPage() {
+  const { t } = useTranslation("auth");
+
   // Form States
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -86,15 +89,15 @@ export default function RegisterPage() {
 
           {/* Form Content */}
           <div className="my-auto py-4 w-full">
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">Create Your Account</h1>
-            <p className="text-sm text-gray-400 mb-6">Get started with your law office management system</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">{t("create_account")}</h1>
+            <p className="text-sm text-gray-400 mb-6">{t("get_started_sub")}</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
 
               {/* Full Name Input (Full Width row) */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#8a94a6] block">
-                  Full Name:
+                  {t("full_name_label")}
                 </label>
                 <div className="relative flex items-center">
                   <User className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -102,7 +105,7 @@ export default function RegisterPage() {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Enter your full name"
+                    placeholder={t("full_name_placeholder")}
                     className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all text-gray-700"
                     required
                   />
@@ -113,7 +116,7 @@ export default function RegisterPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-[#8a94a6] block">
-                    Email address:
+                    {t("email_label")}
                   </label>
                   <div className="relative flex items-center">
                     <Mail className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -121,7 +124,7 @@ export default function RegisterPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@email.com"
+                      placeholder={t("email_placeholder")}
                       className="w-full pl-12 pr-12 py-3 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all text-gray-700"
                       required
                     />
@@ -133,7 +136,7 @@ export default function RegisterPage() {
 
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-[#8a94a6] block">
-                    Phone Number:
+                    {t("phone_label")}
                   </label>
                   <div className="relative flex items-center">
                     <Phone className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -152,7 +155,7 @@ export default function RegisterPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-[#8a94a6] block">
-                    Password:
+                    {t("password_label")}
                   </label>
                   <div className="relative flex items-center">
                     <Lock className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -160,7 +163,7 @@ export default function RegisterPage() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter password"
+                      placeholder={t("password_placeholder_short")}
                       className="w-full pl-12 pr-12 py-3 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all text-gray-700 tracking-wider"
                       required
                     />
@@ -176,7 +179,7 @@ export default function RegisterPage() {
 
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-[#8a94a6] block">
-                    Confirm Password:
+                    {t("confirm_password_label")}
                   </label>
                   <div className="relative flex items-center">
                     <Lock className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -184,7 +187,7 @@ export default function RegisterPage() {
                       type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm password"
+                      placeholder={t("confirm_password_placeholder")}
                       className="w-full pl-12 pr-12 py-3 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all text-gray-700 tracking-wider"
                       required
                     />
@@ -201,17 +204,10 @@ export default function RegisterPage() {
 
               {/* Submit CTA Button */}
               <div className="flex justify-center pt-4">
-                {/* <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full sm:w-56 bg-[#135576] hover:bg-[#0f445f] text-white font-medium py-3 px-6 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? "Registering..." : "Register"}
-                </button> */}
                 <AdminButton
                   type="submit"
                   disabled={isLoading}
-                  label={isLoading ? "Registering..." : "Register"}
+                  label={isLoading ? t("registering") : t("register_cta")}
                   icon={
                     isLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -224,22 +220,22 @@ export default function RegisterPage() {
 
             {/* Redirection link back to login page */}
             <p className="text-center text-xs text-gray-400 mt-6">
-              I have an account?{" "}
+              {t("already_have_account")}{" "}
               <Link href="/login" className="text-[#135576] font-bold hover:underline ml-1">
-                Log in
+                {t("log_in")}
               </Link>
             </p>
           </div>
 
           {/* Legal Footer Context */}
           <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
-            By logging in, you agree to our{" "}
+            {t("by_logging_in")}{" "}
             <a href="#terms" className="underline hover:text-gray-600 font-medium">
-              Terms of services
+              {t("terms_of_services")}
             </a>{" "}
-            and{" "}
+            {t("and")}{" "}
             <a href="#privacy" className="underline hover:text-gray-600 font-medium">
-              Privacy Policy
+              {t("privacy_policy")}
             </a>.
           </div>
         </div>
@@ -263,16 +259,15 @@ export default function RegisterPage() {
             {/* Card Content Overlay matching original specs */}
             <div className="relative z-10 space-y-4 max-w-md">
               <h2 className="text-2xl lg:text-3xl 2xl:text-4xl font-bold leading-tight tracking-tight">
-                Fast. Simple. Built for Lawyers.
+                {t("hero_title")}
               </h2>
               <p className="text-sm lg:text-base text-gray-300 font-light italic leading-relaxed">
-                Created by lawyers, for lawyers. Quick case creation, smart calendar,
-                powerful AI court practice search, and clean organization — all in one place.
+                {t("hero_description")}
               </p>
 
               <div className="pt-4 border-t border-white/20">
                 <p className="text-base font-semibold tracking-wide">Markovic Aleksa</p>
-                <p className="text-xs text-gray-400">Founder of Case Solver</p>
+                <p className="text-xs text-gray-400">{t("hero_founder_title")}</p>
               </div>
             </div>
           </div>

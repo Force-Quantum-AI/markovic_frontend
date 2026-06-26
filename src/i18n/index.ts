@@ -5,7 +5,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 
 import enCommon from "./locales/en/common.json";
 import meCommon from "./locales/me/common.json";
-
+import enAuth from "./locales/en/auth.json";
+import meAuth from "./locales/me/auth.json";
 import enSidebar from "./locales/en/sideAndTopBar.json";
 import meSidebar from "./locales/me/sideAndTopBar.json";
 
@@ -17,10 +18,12 @@ i18n
         en: {
             common: enCommon,
             sideAndTopBar: enSidebar,
+            auth: enAuth,
         },
         me: {
             common: meCommon,
             sideAndTopBar: meSidebar,
+            auth: meAuth,
         },
     },
 
