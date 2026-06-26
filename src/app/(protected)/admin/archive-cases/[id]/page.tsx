@@ -1,25 +1,63 @@
-import AllDocumentsTable from "@/components/user/ai/AllDocumentsTable";
-import AllHearingsTable from "@/components/user/ai/AllHearingsTable";
-import { CalendarDate } from "@/components/user/ai/CalendarDate";
-import CaseHealth from "@/components/user/ai/CaseHealth";
-import CaseOverview from "@/components/user/ai/CaseOverview";
-import TeamMembersList from "@/components/user/ai/TeamMembersList";
+"use client";
 
-export default async function ArchieveCaseDetails ({params}: {params: Promise<{id: string}>}) {
-    const {id} = await params;
-    console.log(id);
+import AdminAllDocumentsTable from "@/components/admin/archive-cases/AdminAllDocumentsTable";
+import AdminAllHearingsTable from "@/components/admin/archive-cases/AdminAllHearingsTable";
+import { AdminCalendarDate } from "@/components/admin/archive-cases/AdminCalendarDate";
+import AdminCaseHealth from "@/components/admin/archive-cases/AdminCaseHealth";
+import AdminCaseOverview from "@/components/admin/archive-cases/AdminCaseOverview";
+import AdminTeamMembersList from "@/components/admin/archive-cases/AdminTeamMembersList";
+import { useGetArchiveCasesDetailsQuery } from "@/store/features/admin/archive-cases/archive.api";
+import { useParams } from "next/navigation";
+
+export default function ArchieveCaseDetails() {
+  const params = useParams();
+  const id = params?.id as string;
+  const { data, isLoading, error } = useGetArchiveCasesDetailsQuery({ id }, { skip: !id });
+
+  if (isLoading) {
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-3">
-            <div className="col-span-1 xl:col-span-3 space-y-3">
-                <CaseOverview />
-                <AllHearingsTable />
-                <AllDocumentsTable />
-            </div>
-            <div className="col-span-1 xl:col-span-2 space-y-3">
-                <CaseHealth />
-                <CalendarDate/>
-                <TeamMembersList/>
-            </div>
-        </div>
-    )
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p className="text-gray-500">Loading case details...</p>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p className="text-red-500">Failed to load case details. Please try again.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 xl:grid-cols-5 gap-3">
+      <div className="col-span-1 xl:col-span-3 space-y-3">
+        <AdminCaseOverview
+          client_name={data.client_name}
+          opposing_parties={data.opposing_parties}
+          court_name={data.court_name}
+          case_number={data.case_number}
+          category_name={data.category_name}
+          sub_category_name={data.sub_category_name}
+          status_name={data.status_name}
+          closing_description={data.closing_description}
+        />
+        <AdminAllHearingsTable hearings={data.hearing_history} />
+        <AdminAllDocumentsTable documents={data.documents} />
+      </div>
+      <div className="col-span-1 xl:col-span-2 space-y-3">
+        <AdminCaseHealth
+          case_name={data.case_name}
+          case_number={data.case_number}
+          status_name={data.status_name}
+          total_hearings={data.total_hearings}
+          total_deadlines={data.total_deadlines}
+          case_age_days={data.case_age_days}
+        />
+        <AdminCalendarDate />
+        <AdminTeamMembersList lawyers={data.responsible_lawyers} />
+      </div>
+    </div>
+  );
 }
