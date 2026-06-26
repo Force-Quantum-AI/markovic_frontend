@@ -7,7 +7,7 @@ import Image from "next/image";
 import { toast } from "sonner";
 import ContactSupportModal from "@/components/modals/ContactSupportModal";
 import { BillingSession, GroupedPlan, SubscriptionPlan } from "@/types/subscription.client";
-import { useGetAllSubscriptionListQuery, useGetClientCurrentSubscriptionQuery, usePurchaseSubscriptionPlanMutation } from "@/store/features/subscription/subscription.client.api";
+import { useGetAllSubscriptionListQuery, useGetClientCurrentSubscriptionQuery, usePurchaseSubscriptionPlanMutation, useCancelSubscriptionMutation } from "@/store/features/subscription/subscription.client.api";
 import { usePathname, useRouter } from "next/navigation";
 
 // ─── Feature label mapping ──────────────────────────────────────────────────
@@ -153,6 +153,7 @@ export default function Subscription() {
   const [billingCycle, setBillingCycle] = useState<BillingSession>("yearly");
   const [isContactSupportOpen, setIsContactSupportOpen] = useState(false);
   const [purchasingPlanId, setPurchasingPlanId] = useState<number | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
   const router = useRouter();
   const path = usePathname();
 
@@ -160,6 +161,7 @@ export default function Subscription() {
     useGetAllSubscriptionListQuery();
   const { data: currentSubscription } = useGetClientCurrentSubscriptionQuery();
   const [purchaseSubscriptionPlan] = usePurchaseSubscriptionPlanMutation();
+  const [cancelSubscription] = useCancelSubscriptionMutation();
 
   const groupedPlans = useMemo(() => groupPlans(plans ?? []), [plans]);
 
@@ -181,6 +183,22 @@ export default function Subscription() {
       console.error(error);
       toast.error("Failed to start checkout. Please try again.");
       setPurchasingPlanId(null);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (isCancelling) return;
+    setIsCancelling(true);
+    try {
+      // transaction_id is empty for active-subscription cancels;
+      // the backend identifies the subscription via the auth token.
+      await cancelSubscription("").unwrap();
+      toast.success("Subscription cancelled successfully.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to cancel subscription. Please try again.");
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -264,12 +282,15 @@ export default function Subscription() {
                     pkg={pkg}
                     billingCycle={billingCycle}
                     currentPlanName={currentSubscription?.plan?.name}
+                    currentPlanSession={currentSubscription?.plan?.session}
                     isPurchasing={purchasingPlanId !== null}
                     purchasingThisPlan={
                       purchasingPlanId !== null &&
                       (pkg.monthly?.id === purchasingPlanId || pkg.yearly?.id === purchasingPlanId)
                     }
                     onPurchase={handlePurchase}
+                    onCancel={handleCancel}
+                    isCancelling={isCancelling}
                   />
                 ))}
               </div>
@@ -310,21 +331,30 @@ function PricingCard({
   pkg,
   billingCycle,
   currentPlanName,
+  currentPlanSession,
   isPurchasing,
   purchasingThisPlan,
   onPurchase,
+  onCancel,
+  isCancelling,
 }: {
   pkg: GroupedPlan;
   billingCycle: BillingSession;
   currentPlanName?: string | null;
+  currentPlanSession?: BillingSession | null;
   isPurchasing: boolean;
   purchasingThisPlan: boolean;
   onPurchase: (plan: SubscriptionPlan | null) => void;
+  onCancel: () => void;
+  isCancelling: boolean;
 }) {
   const isYearly = billingCycle === "yearly";
   const activeVariant = isYearly ? pkg.yearly : pkg.monthly;
   const isPopular = pkg.recommended;
-  const isCurrentPlan = currentPlanName?.toLowerCase() === pkg.name.toLowerCase();
+  // Only mark as current plan when both name AND billing session match the active tab
+  const isCurrentPlan =
+    currentPlanName?.toLowerCase() === pkg.name.toLowerCase() &&
+    currentPlanSession === billingCycle;
 
   return (
     <div
@@ -391,17 +421,28 @@ function PricingCard({
 
         {/* CTA Section */}
         <div className="p-6 pt-0 mt-auto text-center">
-          <button
-            onClick={() => onPurchase(activeVariant)}
-            disabled={!activeVariant || isPurchasing || isCurrentPlan}
-            className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all mb-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${isPopular
-                ? "bg-[#135576] text-white hover:bg-[#104663]"
-                : "bg-white text-[#135576] border border-[#135576] hover:bg-[#135576]/5"
-              }`}
-          >
-            {purchasingThisPlan && <Loader2 className="w-4 h-4 animate-spin" />}
-            {isCurrentPlan ? "Active Plan" : purchasingThisPlan ? "Redirecting..." : "Purchase"}
-          </button>
+          {isCurrentPlan ? (
+            <button
+              onClick={onCancel}
+              disabled={isCancelling}
+              className="w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all mb-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+            >
+              {isCancelling && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isCancelling ? "Cancelling..." : "Cancel Subscription"}
+            </button>
+          ) : (
+            <button
+              onClick={() => onPurchase(activeVariant)}
+              disabled={!activeVariant || isPurchasing}
+              className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all mb-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${isPopular
+                  ? "bg-[#135576] text-white hover:bg-[#104663]"
+                  : "bg-white text-[#135576] border border-[#135576] hover:bg-[#135576]/5"
+                }`}
+            >
+              {purchasingThisPlan && <Loader2 className="w-4 h-4 animate-spin" />}
+              {purchasingThisPlan ? "Redirecting..." : "Purchase"}
+            </button>
+          )}
           <p className="text-slate-400 text-xs font-medium">Free Trial - 7 Days</p>
         </div>
       </div>
