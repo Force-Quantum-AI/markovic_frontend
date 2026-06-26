@@ -23,63 +23,67 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { useTranslation } from "react-i18next";
 
-const navItems = [
-  {
-    title: "Dashboard",
-    href: "/",
-    icon: Grid2x2Check,
-  },
-  {
-    title: "Bookmarks",
-    href: "/bookmarks",
-    icon: Star,
-  },
-  {
-    title: "My Cases",
-    href: "/my-cases",
-    icon: Scale,
-  },
-  {
-    title: "My Clients",
-    href: "/my-clients",
-    icon: Users,
-  },
-  {
-    title: "Calendar",
-    href: "/calendar",
-    icon: Calendar,
-  },
-  {
-    title: "Hearing & Deadline",
-    href: "/hearing-and-deadline",
-    icon: Gavel,
-  },
-  {
-    title: "Law & Bylaw",
-    href: "/law-and-bylaw",
-    icon: ScrollText,
-  },
-  {
-    title: "Archive Cases",
-    href: "/archive-cases",
-    icon: Archive,
-  },
-  {
-    title: "AI Court Practice Search",
-    href: "/ai-search",
-    icon: Bot,
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: SlidersHorizontal,
-  },
-];
+
 
 export function UserAppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useTranslation("sideAndTopBar");
+
+  const navItems = [
+  {
+    title: t("Dashboard"),
+    href: "/",
+    icon: Grid2x2Check,
+  },
+  {
+    title: t("Bookmarks"),
+    href: "/bookmarks",
+    icon: Star,
+  },
+  {
+    title: t("My Cases"),
+    href: "/my-cases",
+    icon: Scale,
+  },
+  {
+    title: t("My Clients"),
+    href: "/my-clients",
+    icon: Users,
+  },
+  {
+    title: t("Calendar"),
+    href: "/calendar",
+    icon: Calendar,
+  },
+  {
+    title: t("Hearing & Deadline"),
+    href: "/hearing-and-deadline",
+    icon: Gavel,
+  },
+  {
+    title: t("Law & Bylaw"),
+    href: "/law-and-bylaw",
+    icon: ScrollText,
+  },
+  {
+    title: t("Archive Cases"),
+    href: "/archive-cases",
+    icon: Archive,
+  },
+  {
+    title: t("AI Court Practice Search"),
+    href: "/ai-search",
+    icon: Bot,
+  },
+  {
+    title: t("Settings"),
+    href: "/settings",
+    icon: SlidersHorizontal,
+  },
+];
 
   return (
     <Sidebar

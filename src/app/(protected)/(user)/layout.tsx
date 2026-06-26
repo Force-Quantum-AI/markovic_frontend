@@ -1,7 +1,7 @@
 
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -36,6 +36,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import SubscriptionEndModal from "@/components/modals/SubscriptionEndModal";
 import NotificationDropdown from "@/components/shared/NotificationDropdown";
+import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 export default function UserLayout({
   children,
@@ -49,6 +51,7 @@ export default function UserLayout({
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const {t} = useTranslation("common")
   
   useEffect(()=>{
     if (currentSubscription) {
@@ -112,6 +115,7 @@ export default function UserLayout({
             </div>
 
             <div className="flex items-center gap-5">
+              <LanguageSwitcher />
               {/* Notification */}
               <NotificationDropdown/>
 
@@ -150,17 +154,17 @@ export default function UserLayout({
 
                 <DropdownMenuContent align="end" className="bg-white text-black">
                   <DropdownMenuItem  onClick={() => router.push("/settings")}>
-                    Profile
+                    {t("profile")}
                   </DropdownMenuItem>
 
                   <DropdownMenuItem  onClick={() => router.push("/settings")}>
-                    Settings
+                    {t("settings")}
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
                     onClick={handleLogout}
                     className="text-red-500">
-                    Logout
+                    {t("logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
