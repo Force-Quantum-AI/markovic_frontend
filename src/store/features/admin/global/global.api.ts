@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { baseApi } from "@/store/api/baseApi";
 import { CaseStatusResponse } from "./global.type";
 

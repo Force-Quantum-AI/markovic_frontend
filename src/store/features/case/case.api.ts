@@ -40,6 +40,7 @@ export const caseApi = baseApi.injectEndpoints({
       }),
       providesTags: ["case"],
     }),
+
     updateClientProfileInfo: builder.mutation<any, { caseId: string, data: updateClientProfileInfoType }>({
       query: ({ caseId, data }) => {
         const formData = new FormData();
@@ -327,6 +328,7 @@ export const caseApi = baseApi.injectEndpoints({
 export const {
   useGetAllCasesQuery,
   useGetCaseHearingAndDeadlineAllDateForCalendarQuery,
+
   // case details page 
   // left side 
   useGetLeftSideCaseDetailsQuery,

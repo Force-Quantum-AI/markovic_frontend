@@ -20,7 +20,14 @@ const adminUsersApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Auth", "Profile"],
     }),
+    deleteUser: build.mutation<any, { id: string | number }>({
+      query: ({ id }) => ({
+        url: `/admin-dashboard/users/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Auth", "Profile"],
+    }),
   }),
 });
 
-export const { useGetAllUsersQuery } = adminUsersApi;
+export const { useGetAllUsersQuery, useDeleteUserMutation } = adminUsersApi;
