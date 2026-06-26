@@ -1,30 +1,48 @@
 "use client";
 
-import { useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { CheckCircle2, XCircle, Loader2, Clock } from "lucide-react";
-import { useGetPaymentVerifiedQuery } from "@/store/features/subscription/subscription.client.api";
+import { useIsPaymentVerifiedMutation } from "@/store/features/subscription/subscription.client.api";
+import { PaymentVerificationResponse } from "@/types/subscription.client";
 
 export default function SubscriptionSuccessPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+  const [transactionId, setTransactionId] = useState<string | null>(null);
+  const [verification, setVerification] = useState<PaymentVerificationResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
-  const {
-    data: verification,
-    isLoading,
-    isError,
-  } = useGetPaymentVerifiedQuery(sessionId ?? "", { skip: !sessionId });
+  const [isPaymentVerified] = useIsPaymentVerifiedMutation();
 
-  // If no session_id is present at all, this route was hit directly without
-  // going through Stripe — bounce back to the subscription page.
   useEffect(() => {
-    if (!sessionId) {
-      router.replace("/subscription");
-    }
-  }, [sessionId, router]);
+    const txnId = localStorage.getItem("paddle_transaction_id");
 
-  if (!sessionId) return null;
+    if (!txnId) {
+      // No transaction ID found — redirect back to subscription page
+      router.replace("/subscription");
+      return;
+    }
+
+    setTransactionId(txnId);
+
+    isPaymentVerified(txnId)
+      .unwrap()
+      .then((data) => {
+        setVerification(data);
+        // Clear the stored transaction_id after successful verification
+        localStorage.removeItem("paddle_transaction_id");
+      })
+      .catch(() => {
+        setIsError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!transactionId && !isLoading) return null;
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-4">

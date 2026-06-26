@@ -44,7 +44,7 @@ export interface CurrentSubscription {
   id: number;
   user_email: string;
   user_name: string;
-  plan: string | null;
+  plan: SubscriptionPlan | null;
   status: SubscriptionStatus;
   trial_start: string | null;
   trial_end: string | null;
@@ -56,6 +56,9 @@ export interface CurrentSubscription {
 
 export interface CheckoutResponse {
   checkout_url: string;
+  transaction_id: string;
+  client_side_token: string;
+  price_id: string;
 }
 
 export interface PaymentVerificationResponse {

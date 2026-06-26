@@ -123,7 +123,7 @@ function CurrentSubscriptionBanner() {
       <div className="mb-8 flex items-center justify-center gap-2.5 bg-green-50 border border-green-200 text-green-700 text-sm font-medium rounded-xl px-4 py-3 max-w-xl mx-auto">
         <ShieldCheck className="w-4 h-4 shrink-0" />
         <span>
-          You&apos;re subscribed to the <strong className="capitalize">{subscription.plan}</strong> plan
+          You&apos;re subscribed to the <strong className="capitalize">{subscription.plan?.name}</strong> plan
           {subscription.expires_at && (
             <> — renews {new Date(subscription.expires_at).toLocaleDateString()}</>
           )}
@@ -172,7 +172,9 @@ export default function Subscription() {
     setPurchasingPlanId(plan.id);
     try {
       const result = await purchaseSubscriptionPlan(plan.id).unwrap();
-      // Stripe Checkout is hosted on an external domain, so we do a full
+      // Store transaction_id so success/cancel pages can send it to the API
+      localStorage.setItem("paddle_transaction_id", result.transaction_id);
+      // Paddle Checkout is hosted on an external domain, so we do a full
       // browser navigation rather than a Next.js client-side route push.
       window.location.href = result.checkout_url;
     } catch (error) {
@@ -261,7 +263,7 @@ export default function Subscription() {
                     key={pkg.name}
                     pkg={pkg}
                     billingCycle={billingCycle}
-                    currentPlanName={currentSubscription?.plan}
+                    currentPlanName={currentSubscription?.plan?.name}
                     isPurchasing={purchasingPlanId !== null}
                     purchasingThisPlan={
                       purchasingPlanId !== null &&
