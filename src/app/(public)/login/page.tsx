@@ -11,8 +11,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import AdminButton from "@/components/shared/AdminButton";
 import { useTranslation } from "react-i18next";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setClientSideLanguage } from "@/store/features/language/language.client.slice";
+import i18n from "@/i18n";
+import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 
 export default function LoginPage() {
+  const dispatch = useAppDispatch();
+  const language = useAppSelector((state) => state.clientLanguage.language);
+
+  const handleChange = (value: string) => {
+    dispatch(setClientSideLanguage(value));
+    i18n.changeLanguage(value);
+  };
   const { t } = useTranslation("auth");
 
   // Form States
@@ -190,6 +201,7 @@ export default function LoginPage() {
           </div>
 
           {/* Footer Agreement */}
+          <div className="mx-auto">
           <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
             {t("by_logging_in")}{" "}
             <a
@@ -206,6 +218,10 @@ export default function LoginPage() {
               {t("privacy_policy")}
             </a>
             .
+          </div>
+          <div className="text-center text-[10px] xl:text-xs text-gray-400 mt-1">
+            Language : <span onClick={() => handleChange("en")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2 ">EN</span> | <span onClick={() => handleChange("me")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2">ME</span>
+          </div>
           </div>
         </div>
 
