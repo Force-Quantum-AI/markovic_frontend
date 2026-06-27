@@ -81,7 +81,6 @@ export function LawCard({
             bg-[#ECEFF1]
             transition-all
             hover:bg-[#dfe6ea]
-            z-999
           "
         >
           {isLoading ? (

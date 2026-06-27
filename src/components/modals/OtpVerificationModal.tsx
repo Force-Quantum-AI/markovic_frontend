@@ -244,14 +244,6 @@ export default function OtpVerificationModal({
               )}
             </button>
 
-            <button
-              type="button"
-              onClick={() => onOpenChange(false)}
-              className="text-xs font-semibold text-gray-400 hover:text-gray-600 mt-5 transition-colors"
-            >
-              {t("skip_for_now")}
-            </button>
-
             {/* Agreement Terms Block */}
             <div className="text-center text-[10px] text-gray-400 mt-12 border-t border-gray-100 pt-4 w-full">
               {t("by_logging_in")}{" "}

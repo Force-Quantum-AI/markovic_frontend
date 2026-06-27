@@ -171,7 +171,7 @@ export function CaseCard({
       <button
         disabled={isLoading}
         onClick={handleAddToFavorite}
-        className="absolute top-5 right-5 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm z-10 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+        className="absolute top-5 right-5 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm  cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isLoading ? (
           <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
