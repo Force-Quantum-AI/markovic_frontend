@@ -5,6 +5,13 @@ RUN npm ci
 
 FROM node:20-alpine AS builder
 WORKDIR /app
+
+# Build-time env vars — NEXT_PUBLIC_ must be baked in at build time
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_ADMIN_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_ADMIN_API_URL=$NEXT_PUBLIC_ADMIN_API_URL
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build

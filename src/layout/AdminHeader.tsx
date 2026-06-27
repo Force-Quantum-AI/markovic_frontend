@@ -89,11 +89,11 @@ export default function AdminHeader() {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 Profile
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
 
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/admin/system-settings")} className="cursor-pointer">
                 Settings
               </DropdownMenuItem>
 

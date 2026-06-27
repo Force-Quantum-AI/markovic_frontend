@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/sidebar";
 
 import { UserAppSidebar } from "@/layout/UserAppSidebar";
-import AdminNotificationDropdown from "@/components/shared/AdminNotificationDropdown";
 import { useAppDispatch } from "@/store/hooks";
 import { logout } from "@/store/features/auth/authSlice";
 import { useLogoutUserMutation } from "@/store/features/auth/authApi";
@@ -113,7 +112,7 @@ export default function UserLayout({
             </div>
 
             <div className="flex items-center gap-5">
-              
+
               {/* Notification */}
               <NotificationDropdown/>
 

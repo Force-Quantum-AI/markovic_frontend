@@ -13,10 +13,28 @@ interface CalendarToolbarProps {
 }
 
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
-const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAYS_OF_WEEK = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 export default function CalendarToolbar({
   currentDate,
@@ -30,7 +48,10 @@ export default function CalendarToolbar({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node)
+      ) {
         setShowDatePicker(false);
       }
     }
@@ -94,7 +115,6 @@ export default function CalendarToolbar({
 
   return (
     <div className="relative flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-3 bg-white border border-gray-200 rounded-xl shadow-xs">
-      
       {/* Left section: Date text + navigation */}
       <div className="flex items-center flex-wrap gap-2.5">
         <div className="relative" ref={popoverRef}>
@@ -130,7 +150,10 @@ export default function CalendarToolbar({
 
               <div className="grid grid-cols-7 gap-1 text-center mb-1">
                 {miniWeekdays.map((wd) => (
-                  <span key={wd} className="text-[10px] font-semibold text-gray-400 uppercase">
+                  <span
+                    key={wd}
+                    className="text-[10px] font-semibold text-gray-400 uppercase"
+                  >
                     {wd}
                   </span>
                 ))}
@@ -138,8 +161,10 @@ export default function CalendarToolbar({
 
               <div className="grid grid-cols-7 gap-0.5">
                 {miniDays.map((item, idx) => {
-                  const isToday = item.date.toDateString() === new Date().toDateString();
-                  const isSelected = item.date.toDateString() === currentDate.toDateString();
+                  const isToday =
+                    item.date.toDateString() === new Date().toDateString();
+                  const isSelected =
+                    item.date.toDateString() === currentDate.toDateString();
                   const isCurrentMonth = item.monthOffset === 0;
 
                   return (
@@ -150,10 +175,10 @@ export default function CalendarToolbar({
                         isSelected
                           ? "bg-[#135576] text-white font-bold"
                           : isToday
-                          ? "border border-[#135576] text-[#135576] font-semibold"
-                          : isCurrentMonth
-                          ? "text-gray-800 hover:bg-gray-100"
-                          : "text-gray-300 hover:bg-gray-50"
+                            ? "border border-[#135576] text-[#135576] font-semibold"
+                            : isCurrentMonth
+                              ? "text-gray-800 hover:bg-gray-100"
+                              : "text-gray-300 hover:bg-gray-50"
                       }`}
                     >
                       {item.day}
@@ -214,7 +239,7 @@ export default function CalendarToolbar({
         </div>
       </div>
 
-      <div 
+      <div
         style={{
           borderRadius: "10px",
           background: "#F3F4F6",
@@ -231,7 +256,7 @@ export default function CalendarToolbar({
               style={{
                 borderRadius: "6px",
                 background: isActive ? "#FFF" : "transparent",
-                boxShadow: isActive 
+                boxShadow: isActive
                   ? "0 1.287px 3.86px 0 rgba(0, 0, 0, 0.10), 0 1.287px 2.573px -1.287px rgba(0, 0, 0, 0.10)"
                   : "none",
                 color: isActive ? "#101828" : "#667085",
@@ -246,7 +271,6 @@ export default function CalendarToolbar({
           );
         })}
       </div>
-
     </div>
   );
 }

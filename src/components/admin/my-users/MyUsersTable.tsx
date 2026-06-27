@@ -42,6 +42,7 @@ interface MyUsersTableProps {
     phone: string;
     role: string;
   }) => void;
+  onDeleteUser?: (id: string | number) => void;
   totalCount?: number;
   currentPage?: number;
   totalPages?: number;
@@ -57,6 +58,7 @@ const planBadgeStyles: Record<UserRow["plan"], string> = {
 export default function MyUsersTable({
   usersList,
   onAddUser,
+  onDeleteUser,
   totalCount = 0,
   currentPage = 1,
   totalPages = 1,
@@ -199,7 +201,10 @@ export default function MyUsersTable({
                             <UserMinus className="w-[18px] h-[18px] text-[#D97706] shrink-0" />
                             <span>Suspend</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none">
+                          <DropdownMenuItem
+                            onClick={() => onDeleteUser && onDeleteUser(row.id)}
+                            className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none"
+                          >
                             <Trash2 className="w-[18px] h-[18px] text-[#F04438] shrink-0" />
                             <span>Delete</span>
                           </DropdownMenuItem>

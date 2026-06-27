@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/store/api/baseApi";
-import { ArchiveCasesQueryParams, ArchiveCasesResponse } from "./archive.type";
+import { ArchiveCasesQueryParams, ArchiveCasesResponse, CaseDetailsResponse } from "./archive.type";
 
 const adminArchiveApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -9,6 +9,13 @@ const adminArchiveApi = baseApi.injectEndpoints({
         url: "/admin-dashboard/archive-cases/",
         method: "GET",
         params: params || undefined,
+      }),
+      providesTags: ["archive"],
+    }),
+    getArchiveCasesDetails: build.query<CaseDetailsResponse, {id: string}>({
+      query: ({id}) => ({
+        url: `/admin-dashboard/archive-cases/${id}/`,
+        method: "GET",
       }),
       providesTags: ["archive"],
     }),
@@ -22,4 +29,4 @@ const adminArchiveApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetArchiveCasesListQuery, useDeleteArchiveCaseMutation } = adminArchiveApi;
+export const { useGetArchiveCasesListQuery, useGetArchiveCasesDetailsQuery, useDeleteArchiveCaseMutation } = adminArchiveApi;
