@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Plus, Search, UserPlus, Users, Mail, Loader } from "lucide-react";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import { InputField } from "../shared/InputField";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useAsignLowerInCaseMutation, useDeleteAssignedLowerMutation } from "@/store/features/case/case.api";
@@ -60,6 +61,7 @@ const ALL_LAWYERS: Lawyer[] = [
 ];
 
 export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalProps) {
+  const { t } = useTranslation("modals");
   const lawers = data?.responsible_lawyers || [];
 
   const [asignLowerInCase, { isLoading: isAsignLowerInCaseLoading }] = useAsignLowerInCaseMutation()
@@ -104,18 +106,18 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
   const handleAddLawyer = async (lawyer: Lawyer) => {
     try {
       if (!data?.caseId) {
-        toast.info("CaseId not found, Please save case details first!")
+        toast.info(t("addLawyer.caseIdNotFound"))
         return;
       };
       if (!lawyer.email) {
-        toast.info("Email not found, Please enter a valid email and try again!")
+        toast.info(t("addLawyer.emailNotFound"))
         return;
       };
       await asignLowerInCase({ caseId: data?.caseId, email: lawyer.email }).unwrap()
-      toast.success("Lawyer added successfully!")
+      toast.success(t("addLawyer.lawyerAddSuccess"))
     } catch (error) {
       console.log(error);
-      toast.error("No verified lawyer found with this email.")
+      toast.error(t("addLawyer.lawyerNotFound"))
     } finally {
       setSearchQuery("");
       setSearchResults([]);
@@ -125,15 +127,15 @@ export default function AddLawyerModal({ open, setOpen, data }: AddLawyerModalPr
   // Remove lawyer from assigned list
   const handleRemoveLawyer = async (lawyerId: string) => {
     if (!data?.caseId) {
-      toast.info("CaseId not found, Please save case details first!")
+      toast.info(t("addLawyer.caseIdNotFound"))
       return;
     };
     try {
       await deleteAssignedLower({ caseId: data?.caseId, lawyerId: lawyerId }).unwrap()
-      toast.success("Lawyer removed successfully!")
+      toast.success(t("addLawyer.lawyerRemoveSuccess"))
     } catch (error) {
       console.log(error);
-      toast.error("Failed to remove lawyer")
+      toast.error(t("addLawyer.lawyerRemoveFailed"))
     }
   };
 

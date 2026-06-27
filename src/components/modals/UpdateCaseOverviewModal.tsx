@@ -15,6 +15,7 @@ import { TextAreaField } from "../shared/TextAreaField";
 import { useMakeCompleteCaseMutation, useUpdateOverviewInfoOfCaseMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
 import RichTextArea from "../shared/RichTextArea";
+import { useTranslation } from "react-i18next";
 
 interface UpdateCaseOverviewModalProps {
   open: boolean;
@@ -74,6 +75,7 @@ export default function UpdateCaseOverviewModal({
   data,
   caseId,
 }: UpdateCaseOverviewModalProps) {
+  const { t } = useTranslation("modals");
   const [formData, setFormData] = useState<OverviewFormData>(
     buildInitialFormData(data)
   );
@@ -114,7 +116,7 @@ export default function UpdateCaseOverviewModal({
           caseId,
           description: formData.shortDescription,
         }).unwrap();
-        toast.success("Case completed successfully.");
+        toast.success(t("updateCaseOverview.completedSuccess"));
         setOpen(false);
         return;
       }
@@ -132,11 +134,11 @@ export default function UpdateCaseOverviewModal({
           opposing_parties: formData.opposing_parties,
         },
       }).unwrap();
-      toast.success("Case overview updated successfully");
+      toast.success(t("updateCaseOverview.updateSuccess"));
       setOpen(false);
     } catch (error) {
       console.log(error);
-      toast.error("Failed to update case overview");
+      toast.error(t("updateCaseOverview.updateFailed"));
     }
   };
 
@@ -153,7 +155,7 @@ export default function UpdateCaseOverviewModal({
         "
       >
         <DialogTitle className="hidden">
-          Update Case Overview
+          {t("updateCaseOverview.title")}
         </DialogTitle>
 
         <div className="relative bg-white px-6 py-8 md:px-8 md:py-10">
@@ -167,22 +169,22 @@ export default function UpdateCaseOverviewModal({
 
           {/* Heading */}
           <h2 className="text-center text-[24px] font-semibold text-[#111827]">
-            Update case overview
+            {t("updateCaseOverview.title")}
           </h2>
 
           <div className="mt-10 space-y-5 overflow-y-auto h-[80vh]">
             {/* Client Name */}
             <InputField
-              label="Client name:"
-              placeholder="Client Name"
+              label={t("updateCaseOverview.clientName")}
+              placeholder={t("updateCaseOverview.clientNamePlaceholder")}
               value={formData.client_name}
               onChange={handleInputChange("client_name")}
             />
 
             {/* Case Name */}
             <InputField
-              label="Case Name:"
-              placeholder="Case Name"
+              label={t("updateCaseOverview.caseName")}
+              placeholder={t("updateCaseOverview.caseNamePlaceholder")}
               value={formData.case_name}
               onChange={handleInputChange("case_name")}
             />
@@ -190,7 +192,7 @@ export default function UpdateCaseOverviewModal({
             {/* Opposing Parties (tag input) */}
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Opposing Parties:
+                {t("updateCaseOverview.opposingParties")}
               </label>
               <input
                 type="text"
@@ -215,7 +217,7 @@ export default function UpdateCaseOverviewModal({
                     setOpposingInput("");
                   }
                 }}
-                placeholder="Type name and press Enter to add"
+                placeholder={t("updateCaseOverview.opposingPartiesPlaceholder")}
                 className="w-full rounded-full border border-gray-200 bg-white px-5 py-3 text-sm text-gray-900 outline-none transition-all focus:border-[#135576] focus:ring-2 focus:ring-[#135576]/20"
               />
               {formData.opposing_parties.length > 0 && (
@@ -249,16 +251,16 @@ export default function UpdateCaseOverviewModal({
             {/* Court + Case Number */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <InputField
-                label="Court:"
-                placeholder="Court"
+                label={t("updateCaseOverview.court")}
+                placeholder={t("updateCaseOverview.courtPlaceholder")}
                 inputType="number"
                 value={formData.court}
                 onChange={handleInputChange("court")}
               />
 
               <InputField
-                label="Case Number:"
-                placeholder="Case Number"
+                label={t("updateCaseOverview.caseNumber")}
+                placeholder={t("updateCaseOverview.caseNumberPlaceholder")}
                 value={formData.case_number}
                 onChange={handleInputChange("case_number")}
               />
@@ -267,9 +269,9 @@ export default function UpdateCaseOverviewModal({
             {/* Category + Subcategory */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category:</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("updateCaseOverview.category")}</label>
                 <SelectField
-                  label="Category"
+                  label={t("updateCaseOverview.category")}
                   type="category"
                   value={formData.category ? String(formData.category) : ""}
                   onChange={(value) =>
@@ -282,9 +284,9 @@ export default function UpdateCaseOverviewModal({
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory:</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("updateCaseOverview.subcategory")}</label>
                 <SelectField
-                  label="Sub Category"
+                  label={t("updateCaseOverview.subcategory")}
                   type="subCategory"
                   categoryId={formData.category ? formData.category : undefined}
                   value={formData.sub_category ? String(formData.sub_category) : ""}
@@ -300,9 +302,9 @@ export default function UpdateCaseOverviewModal({
 
             {/* Status */}
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("updateCaseOverview.status")}</label>
               <SelectField
-                label="Status"
+                label={t("updateCaseOverview.status")}
                 type="status"
                 value={formData.status ? String(formData.status) : ""}
                 onChange={(value) =>
@@ -323,8 +325,8 @@ export default function UpdateCaseOverviewModal({
               //   onChange={handleTextAreaChange("shortDescription")}
               // />
               <RichTextArea
-                label="Short Description :"
-                placeholder="Write short description here..."
+                label={t("updateCaseOverview.shortDescription")}
+                placeholder={t("updateCaseOverview.shortDescriptionPlaceholder")}
                 value={formData.shortDescription}
                 onChange={(html) =>
                   setFormData(prev => ({
@@ -354,7 +356,7 @@ export default function UpdateCaseOverviewModal({
                   disabled:cursor-not-allowed
                 "
               >
-                {isLoading ? "Updating..." : "Update Now"}
+                {isLoading ? t("updateCaseOverview.updatingButton") : t("updateCaseOverview.updateButton")}
               </button>
             </div>
           </div>

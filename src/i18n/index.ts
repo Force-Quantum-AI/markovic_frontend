@@ -9,6 +9,8 @@ import enAuth from "./locales/en/auth.json";
 import meAuth from "./locales/me/auth.json";
 import enSidebar from "./locales/en/sideAndTopBar.json";
 import meSidebar from "./locales/me/sideAndTopBar.json";
+import enModals from "./locales/en/modals.json";
+import meModals from "./locales/me/modals.json";
 
 i18n
 .use(LanguageDetector)
@@ -19,11 +21,13 @@ i18n
             common: enCommon,
             sideAndTopBar: enSidebar,
             auth: enAuth,
+            modals: enModals,
         },
         me: {
             common: meCommon,
             sideAndTopBar: meSidebar,
             auth: meAuth,
+            modals: meModals,
         },
     },
 
