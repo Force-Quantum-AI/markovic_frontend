@@ -5,7 +5,7 @@ import type { RootState } from "@/store/store";
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://54.242.229.4:9001/api",
     credentials: "include",
 
     prepareHeaders: (
