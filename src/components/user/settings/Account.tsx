@@ -11,8 +11,10 @@ import {
   useGetProfileInfoQuery,
   useUpdateProfileInfoMutation,
 } from "@/store/features/profile/profile.api";
+import { useTranslation } from "react-i18next";
 
 export default function Account() {
+  const {t} = useTranslation("common");
   const { data: profileInfo, isLoading: isLoadingProfileInfo } =
     useGetProfileInfoQuery({});
   const [updateProfileInfo, { isLoading: isLoadingUpdateProfileInfo }] =
@@ -79,13 +81,13 @@ export default function Account() {
     <div className="w-full">
       <div className="bg-white border border-[#e8eef2] p-6 rounded-2xl flex flex-col gap-4 w-full">
         <h2 className="text-[#101828] text-xl font-semibold leading-7 mb-2">
-          Account Information
+          {t("account_information")}
         </h2>
 
         {/* Profile Photo Section */}
         <div className="flex flex-col gap-4 mb-2">
           <label className="text-[#364153] text-sm font-medium">
-            Profile Photo
+            {t("profile_photo")}
           </label>
           <div className="flex items-center gap-7">
             <div className="relative w-24 h-24 rounded-full">
@@ -110,7 +112,7 @@ export default function Account() {
               onClick={handleChangePhoto}
               className="border border-[#d1d5dc] h-[42px] px-6 rounded-[10px] text-[#364153] text-base font-medium hover:bg-gray-50 transition-colors"
             >
-              Change Photo
+              {t("change_photo")}
             </button>
             <input
               type="file"
@@ -127,7 +129,7 @@ export default function Account() {
           <div className="flex gap-4 w-full">
             <div className="flex flex-col gap-2 flex-1">
               <label className="text-[#364153] text-sm font-medium">
-                Full Name
+                {t("full_name")}
               </label>
               <input
                 type="text"
@@ -138,7 +140,7 @@ export default function Account() {
             </div>
             <div className="flex flex-col gap-2 flex-1">
               <label className="text-[#364153] text-sm font-medium">
-                Email Address
+                {t("email_address")}
               </label>
               <div className="relative w-full h-[50px]">
                 <input
@@ -149,7 +151,7 @@ export default function Account() {
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#ecfdf5] text-[#007a55] text-xs font-medium px-2 py-1 rounded flex items-center gap-1 pointer-events-none">
                   <Check size={12} strokeWidth={3} />
-                  Verified
+                  {t("verified")}
                 </div>
               </div>
             </div>
@@ -159,7 +161,7 @@ export default function Account() {
           <div className="flex gap-4 w-full">
             <div className="flex flex-col gap-2 flex-1">
               <label className="text-[#364153] text-sm font-medium">
-                Phone Number
+                {t("phone_number")}
               </label>
               <input
                 type="text"
@@ -170,7 +172,7 @@ export default function Account() {
             </div>
             <div className="flex flex-col gap-2 flex-1">
               <label className="text-[#364153] text-sm font-medium">
-                Professional Role
+                {t("professional_role")}
               </label>
               <div className="relative w-full h-[50px]">
                 <select
@@ -178,11 +180,11 @@ export default function Account() {
                   onChange={(e) => setProfessionalRole(e.target.value)}
                   className="w-full h-full bg-white border border-[#d1d5dc] rounded-[10px] px-4 text-[#101828] text-base focus:outline-none focus:border-[#135576] appearance-none cursor-pointer"
                 >
-                  <option value="">Choose role...</option>
-                  <option value="lawyer">Lawyer</option>
-                  <option value="attorney">Attorney</option>
-                  <option value="paralegal">Paralegal</option>
-                  <option value="judge">Judge</option>
+                  <option value="">{t("choose_role")}</option>
+                  <option value="lawyer">{t("lawyer")}</option>
+                  <option value="attorney">{t("attorney")}</option>
+                  <option value="paralegal">{t("paralegal")}</option>
+                  <option value="judge">{t("judge")}</option>
                 </select>
                 <ChevronDown
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
@@ -196,7 +198,7 @@ export default function Account() {
           <div className="flex w-full">
             <div className="flex flex-col gap-2 flex-1">
               <label className="text-[#364153] text-sm font-medium">
-                Bar Association Number
+                {t("bar_association_number")}
               </label>
               <input
                 type="text"
@@ -218,7 +220,7 @@ export default function Account() {
             {isLoadingUpdateProfileInfo ? (
               <Loader2 className="animate-spin w-5 h-5" />
             ) : (
-              "Save changes"
+              t("save_changes")
             )}
           </button>
         </div>

@@ -8,39 +8,43 @@ import Account from "./Account";
 import Notification from "./Notification";
 import Privacy from "./Privacy";
 import Subscription from "./Subscription";
-const tabs: Tab[] = [
+import { useTranslation } from "react-i18next";
+
+export default function SettingPage() {
+    const {t} = useTranslation("common");
+
+    const tabs: Tab[] = [
     {
         value: "account",
-        label: "Account",
+        label: t("account"),
         icon: <User className="text-lg" />,
     },
     {
         value: "password",
-        label: "Security & Password",
+        label: t("security_password"),
         icon: <Lock className="text-lg" />,
     },
     {
         value: "notifications",
-        label: "Notifications",
+        label: t("notifications"),
         icon: <Bell className="text-lg" />,
     },
     {
         value: "subscription",
-        label: "Subscription & Billing",
+        label: t("subscription_billing"),
         icon: <Dock className="text-lg" />,
     },
     {
         value: "language",
-        label: "Language & Region",
+        label: t("language_region"),
         icon: <Globe className="text-lg" />,
     },
     {
         value: "privacy",
-        label: "Privacy",
+        label: t("privacy"),
         icon: <Shield className="text-lg" />,
     },
 ]
-export default function SettingPage() {
     return (
         <div className="bg-white rounded-2xl p-3">
             <Tabs

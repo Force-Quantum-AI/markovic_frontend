@@ -47,7 +47,7 @@ export default function LoginPage() {
     e.preventDefault();
     setErrorMsg("");
 
-    console.log("my env is:",process.env.NEXT_PUBLIC_API_URL);
+    console.log("my env is:", process.env.NEXT_PUBLIC_API_URL);
     try {
       const res = await login({ email, password }).unwrap();
 
@@ -77,13 +77,13 @@ export default function LoginPage() {
         {/* Left Side: Form Area */}
         <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
           {/* Logo / Brand Header */}
-          <div className="flex items-center gap-2 text-[#135576]">
-            <div className="p-1.5 border-2 border-[#135576] rounded-full flex items-center justify-center">
-              <Scale className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <span className="font-semibold text-xl tracking-tight">
-              Case Solver
-            </span>
+          <div className="relative">
+            <Image
+              src="/brandLogo.png"
+              alt="logo"
+              width={148}
+              height={42}
+            />
           </div>
 
           {/* Form Content */}
@@ -202,26 +202,26 @@ export default function LoginPage() {
 
           {/* Footer Agreement */}
           <div className="mx-auto">
-          <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
-            {t("by_logging_in")}{" "}
-            <a
-              href="#terms"
-              className="underline hover:text-gray-600 font-medium"
-            >
-              {t("terms_of_services")}
-            </a>{" "}
-            {t("and")}{" "}
-            <a
-              href="#privacy"
-              className="underline hover:text-gray-600 font-medium"
-            >
-              {t("privacy_policy")}
-            </a>
-            .
-          </div>
-          <div className="text-center text-[10px] xl:text-xs text-gray-400 mt-1">
-            Language : <span onClick={() => handleChange("en")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2 ">EN</span> | <span onClick={() => handleChange("me")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2">ME</span>
-          </div>
+            <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
+              {t("by_logging_in")}{" "}
+              <a
+                href="#terms"
+                className="underline hover:text-gray-600 font-medium"
+              >
+                {t("terms_of_services")}
+              </a>{" "}
+              {t("and")}{" "}
+              <a
+                href="#privacy"
+                className="underline hover:text-gray-600 font-medium"
+              >
+                {t("privacy_policy")}
+              </a>
+              .
+            </div>
+            <div className="text-center text-[10px] xl:text-xs text-gray-400 mt-1">
+              Language : <span onClick={() => handleChange("en")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2 ">EN</span> | <span onClick={() => handleChange("me")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2">ME</span>
+            </div>
           </div>
         </div>
 

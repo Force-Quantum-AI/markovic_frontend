@@ -7,6 +7,7 @@ import {
   useGetNotificationSettingsQuery,
   useUpdateNotificationSettingsMutation,
 } from "@/store/features/notification/notification.api";
+import { useTranslation } from "react-i18next";
 
 export default function Notification() {
   const { data} = useGetNotificationSettingsQuery();
@@ -17,6 +18,8 @@ export default function Notification() {
   const [lawDatabase, setLawDatabase] = useState(false);
   const [systemAnnouncements, setSystemAnnouncements] = useState(false);
   const [reminderTiming, setReminderTiming] = useState("24 Hour before");
+
+  const {t} = useTranslation("common");
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -48,19 +51,19 @@ export default function Notification() {
     <div className="w-full">
       <div className="bg-white border border-[#e5e7eb] p-6 rounded-2xl flex flex-col w-full">
         <h2 className="text-[#101828] text-xl font-semibold leading-[28px] mb-6">
-          Notification Preferences
+          {t("notification_preferences")}
         </h2>
 
         {/* Email Notifications */}
         <div className="flex flex-col mb-8 border-b border-[#e5e7eb] pb-8">
           <h3 className="text-[#101828] text-lg font-semibold leading-[27px] mb-4">
-            Email Notifications
+            {t("email_notifications")}
           </h3>
 
           <div className="flex flex-col gap-5 mt-1">
             <div className="flex items-center justify-between">
               <span className="text-[#364153] text-base font-normal">
-                Upcoming Hearing Reminders
+                {t("upcoming_hearing_reminders")}
               </span>
               <Switch
                 checked={upcomingHearing}
@@ -73,7 +76,7 @@ export default function Notification() {
 
             <div className="flex items-center justify-between">
               <span className="text-[#364153] text-base font-normal">
-                Case Deadline Alerts
+                {t("case_deadline_alerts")}
               </span>
               <Switch
                 checked={caseDeadline}
@@ -86,7 +89,7 @@ export default function Notification() {
 
             <div className="flex items-center justify-between">
               <span className="text-[#364153] text-base font-normal">
-                Law Database Updates
+                {t("law_database_updates")}
               </span>
               <Switch
                 checked={lawDatabase}
@@ -99,7 +102,7 @@ export default function Notification() {
 
             <div className="flex items-center justify-between">
               <span className="text-[#364153] text-base font-normal">
-                System Announcements
+                {t("system_announcements")}
               </span>
               <Switch
                 checked={systemAnnouncements}
@@ -115,7 +118,7 @@ export default function Notification() {
         {/* Reminder Timing */}
         <div className="flex flex-col mb-6 mt-1">
           <label className="text-[#364153] text-sm font-medium mb-2">
-            Reminder Timing
+            {t("reminder_timing")}
           </label>
           <div className="relative w-full md:w-[320px] h-[49px]">
             <select
@@ -140,7 +143,7 @@ export default function Notification() {
             onClick={handleSave}
             className="bg-[#135576] hover:bg-[#0f435c] text-white text-base font-medium py-3 px-5 rounded-[32px] min-w-[180px] transition-colors"
           >
-            Save Preference
+            {t("save")}
           </button>
         </div>
       </div>

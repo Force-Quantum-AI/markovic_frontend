@@ -59,8 +59,8 @@ export default function RegisterPage() {
 
 
       // if (isSuccess) {
-        toast.success("An OTP has been sent to your email address.");
-        setIsOtpModalOpen(true)
+      toast.success("An OTP has been sent to your email address.");
+      setIsOtpModalOpen(true)
       // } else {
       //   toast.error("user registration failed");
       // }
@@ -80,11 +80,13 @@ export default function RegisterPage() {
         <div className="w-full md:w-7/12 lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
 
           {/* Header Brand */}
-          <div className="flex items-center gap-2 text-[#135576]">
-            <div className="p-1.5 border-2 border-[#135576] rounded-full flex items-center justify-center">
-              <Scale className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <span className="font-semibold text-xl tracking-tight">Case Solver</span>
+          <div className="relative">
+            <Image
+              src="/brandLogo.png"
+              alt="logo"
+              width={148}
+              height={42}
+            />
           </div>
 
           {/* Form Content */}
