@@ -113,6 +113,7 @@ export default function UserLayout({
             </div>
 
             <div className="flex items-center gap-5">
+              
               {/* Notification */}
               <NotificationDropdown/>
 
