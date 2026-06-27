@@ -418,7 +418,7 @@ function PricingCard({
             {FEATURE_LABELS.filter(({ key }) => pkg.features?.[key]).map(({ key, label }) => (
               <li key={key} className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-5 h-5 text-slate-400 shrink-0" />
-                <span className="text-slate-600 text-sm leading-tight">{t(`subscriptionPage.features.${key}`)}</span>
+                <span className="text-slate-600 text-sm leading-tight">{label}</span>
               </li>
             ))}
           </ul>

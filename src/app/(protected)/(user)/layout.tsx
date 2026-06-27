@@ -118,7 +118,7 @@ export default function UserLayout({
               <LanguageSwitcher />
               {/* Notification */}
               <NotificationDropdown/>
-
+   
               {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

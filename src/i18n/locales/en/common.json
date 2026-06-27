@@ -396,6 +396,10 @@
     "cancelFailed": "Failed to cancel subscription. Please try again.",
     "devicesCount_one": "1 Device",
     "devicesCount_other": "{{count}} Devices",
+    "subscriptionRequired": "Subscription Required",
+    "trialPeriod": "trial period",
+    "hasEnded": "has ended. Upgrade now to continue enjoying all premium features without interruption.",
+    "upgradeNow": "Upgrade Now",
     "features": {
       "unlimited_cases": "Unlimited Cases.",
       "client_calendar_hearing_deadline": "Clients, Calendar, Hearings & Deadlines.",

@@ -395,6 +395,10 @@
     "cancelFailed": "Otkazivanje pretplate nije uspjelo. Pokušajte ponovo.",
     "devicesCount_one": "1 uređaj",
     "devicesCount_other": "{{count}} uređaja",
+    "subscriptionRequired": "Potrebna je pretplata",
+    "trialPeriod": "Probni period",
+    "hasEnded": "je istekao. Nadogradite odmah da biste nastavili uživati u svim premium funkcijama bez prekida.",
+    "upgradeNow": "Nadogradite odmah",
     "features": {
       "unlimited_cases": "Neograničen broj predmeta.",
       "client_calendar_hearing_deadline": "Klijenti, kalendar, ročišta i rokovi.",
