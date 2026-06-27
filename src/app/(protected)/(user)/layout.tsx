@@ -1,7 +1,7 @@
 
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -84,6 +84,7 @@ export default function UserLayout({
     document.cookie = "accessToken=; Max-Age=0; path=/";
     document.cookie = "access=; Max-Age=0; path=/";
     document.cookie = "refresh=; Max-Age=0; path=/";
+    document.cookie = "role=; Max-Age=0; path=/";
     router.replace("/login");
   };
 
@@ -111,6 +112,7 @@ export default function UserLayout({
             </div>
 
             <div className="flex items-center gap-5">
+
               {/* Notification */}
               <NotificationDropdown/>
 

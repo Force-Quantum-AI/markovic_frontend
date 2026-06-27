@@ -34,6 +34,7 @@ export default function AdminHeader() {
     document.cookie = "accessToken=; Max-Age=0; path=/";
     document.cookie = "access=; Max-Age=0; path=/";
     document.cookie = "refresh=; Max-Age=0; path=/";
+    document.cookie = "role=; Max-Age=0; path=/";
     router.replace("/admin-login");
   };
 
