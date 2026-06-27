@@ -1,7 +1,7 @@
 
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -112,6 +112,7 @@ export default function UserLayout({
             </div>
 
             <div className="flex items-center gap-5">
+
               {/* Notification */}
               <NotificationDropdown/>
 
