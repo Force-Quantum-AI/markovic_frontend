@@ -223,7 +223,7 @@ export const caseApi = baseApi.injectEndpoints({
         caseId: string,
         data: {
           reason: string,
-          status: string,
+          status: number,
           time_from: string,
           time_to: string,
           am_pm: string,
@@ -245,7 +245,7 @@ export const caseApi = baseApi.injectEndpoints({
         caseId: string,
         data: {
           reason: string,
-          status: string,
+          status: number,
           time_from: string,
           time_to: string,
           am_pm: string,

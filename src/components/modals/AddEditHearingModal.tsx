@@ -19,6 +19,7 @@ import {
   useUpdateDeadlineInCaseMutation,
 } from "@/store/features/case/case.api";
 import { SelectField } from "../shared/SelectNewDropdown";
+import { SelectFieldForStatus } from "../shared/SelectFieldForStatus";
 
 interface HearingModalProps {
   open: boolean;
@@ -216,9 +217,8 @@ export default function AddEditHearingModal({
                   {t("addEditHearing.status")}
                 </label>
                 <div className="relative w-full">
-                  <SelectField
+                  <SelectFieldForStatus
                     label="Status"
-                    type="status"
                     value={formData.status ? String(formData.status) : ""}
                     onChange={(value) => handleChange("status", Number(value))}
                     classes="w-full rounded-full border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#135576]

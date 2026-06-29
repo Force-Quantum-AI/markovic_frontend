@@ -146,6 +146,7 @@ export default function Account() {
                 <input
                   type="email"
                   value={email}
+                  disabled
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full h-full bg-white border border-[#d1d5dc] rounded-[10px] px-4 pr-24 text-[#101828] text-base focus:outline-none focus:border-[#135576]"
                 />

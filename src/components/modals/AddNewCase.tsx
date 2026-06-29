@@ -8,6 +8,7 @@ import { useAddCaseDeadlineMutation, useAddCaseHearingMutation, useCreateCaseMut
 import { toast } from "sonner";
 import { getImageUrl } from "@/lib/getImageUrl";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
+import { SelectFieldForStatus } from "@/components/shared/SelectFieldForStatus";
 import { useGetAllUsersQuery } from "@/store/features/admin/my-users/my-users.api";
 import { useGetAllClientsQuery, useLazyGetAllClientsQuery } from "@/store/features/profile/profile.api";
 import { useTranslation } from "react-i18next";
@@ -38,7 +39,7 @@ export interface LegalDetailsData {
 
 export interface DateCardData {
   reason: string;
-  status: string;
+  status: number;
   timeRange: string;
   period: string;
   date: string;
@@ -303,10 +304,10 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
           </div>
         </div>
 
-        <div>
+        {/* <div>
           <FieldLabel>{t("personal_id_number_label")}</FieldLabel>
           <input type="text" value={data.personalIdNumber} onChange={(e) => setField("personalIdNumber")(e.target.value)} placeholder="#555-0128" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
-        </div>
+        </div> */}
 
         <div>
           <FieldLabel>{t("address_label")}</FieldLabel>
@@ -450,7 +451,7 @@ function ScheduleCard({
   onChange: (d: DateCardData) => void;
 }) {
   const { t } = useTranslation("common");
-  const updateField = (key: keyof DateCardData) => (value: string) => {
+  const updateField = <K extends keyof DateCardData>(key: K) => (value: DateCardData[K]) => {
     onChange({ ...data, [key]: value });
   };
 
@@ -492,15 +493,12 @@ function ScheduleCard({
         <div className="space-y-1.5">
           <FieldLabel>{t("status_colon")}</FieldLabel>
           <div className="relative w-full">
-            <select
-              value={data.status}
-              onChange={(e) => updateField("status")(e.target.value)}
-              className="w-full px-5 py-3 border border-gray-200 rounded-full text-sm text-gray-800 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer pr-10 shadow-sm"
-            >
-              <option value="Upcoming">{t("upcoming")}</option>
-              <option value="Completed">{t("completed")}</option>
-              <option value="Postponed">{t("postponed")}</option>
-            </select>
+            <SelectFieldForStatus
+              label="Status"
+              value={data.status ? String(data.status) : ""}
+              onChange={(value) => updateField("status")(Number(value))}
+              classes="w-full px-5 py-3 border border-gray-200 rounded-full text-sm text-gray-800 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer pr-10 shadow-sm"
+            />
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
           </div>
         </div>
@@ -656,7 +654,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
     schedule: {
       hearing: {
         reason: "",
-        status: "Upcoming",
+        status: 1,
         timeRange: "",
         period: "AM",
         date: "1",
@@ -665,7 +663,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
       },
       deadline: {
         reason: "",
-        status: "Upcoming",
+        status: 1,
         timeRange: "",
         period: "AM",
         date: "1",
@@ -796,7 +794,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
         caseId: caseId,
         data: {
           reason: formData.schedule.hearing.reason,
-          status: formData.schedule.hearing.status.toLowerCase(),
+          status: formData.schedule.hearing.status,
           time_from: hearingTimeFrom,
           time_to: hearingTimeTo,
           am_pm: formData.schedule.hearing.period.toUpperCase(),
@@ -812,7 +810,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
         caseId: caseId,
         data: {
           reason: formData.schedule.deadline.reason,
-          status: formData.schedule.deadline.status.toLowerCase(),
+          status: formData.schedule.deadline.status,
           time_from: deadlineTimeFrom,
           time_to: deadlineTimeTo,
           am_pm: formData.schedule.deadline.period.toUpperCase(),
