@@ -10,8 +10,9 @@ import { getImageUrl } from "@/lib/getImageUrl";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { SelectFieldForStatus } from "@/components/shared/SelectFieldForStatus";
 import { useGetAllUsersQuery } from "@/store/features/admin/my-users/my-users.api";
-import { useGetAllClientsQuery, useLazyGetAllClientsQuery } from "@/store/features/profile/profile.api";
+import { useGetAllClientsQuery, useLazyGetAllClientsQuery, useLazyGetAllLawyersQuery } from "@/store/features/profile/profile.api";
 import { useTranslation } from "react-i18next";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
 
@@ -31,7 +32,12 @@ export interface LegalDetailsData {
   category: string;
   subCategory: string;
   status: string;
-  responsibleLawyers: string[];
+  responsibleLawyers: {
+    id: string;
+    full_name: string;
+    email: string;
+    profile_image?: string;
+  }[];
   court: string;
   caseNumber: string;
   opposingParties: string[];
@@ -329,9 +335,16 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
   const { t } = useTranslation("common");
   const [lawyerInput, setLawyerInput] = useState("");
   const [opposingInput, setOpposingInput] = useState("");
-  const setField = (key: keyof LegalDetailsData) => (v: string | string[]) => onChange({ ...data, [key]: v });
+  const setField = (key: keyof LegalDetailsData) => (v: any) => onChange({ ...data, [key]: v });
 
-  // const {data: allLawyers, isLoading: allLawyersLoading} = useGetAllUsersQuery()
+  const [triggerSearch, { data: searchResults = [], isFetching }] = useLazyGetAllLawyersQuery();
+
+  useEffect(() => {
+    if (lawyerInput.trim().length >= 3) {
+      triggerSearch(lawyerInput);
+    }
+  }, [lawyerInput, triggerSearch]);
+
 
   return (
     <div className="w-full space-y-5">
@@ -382,20 +395,82 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
         </div>
       </div>
 
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 relative">
         <FieldLabel>{t("responsible_lawyer_trainee_colon")}</FieldLabel>
-        <input type="text" value={lawyerInput} onChange={(e) => setLawyerInput(e.target.value)} onKeyDown={(e) => {
-          if (e.key === "Enter" && lawyerInput.trim()) {
-            e.preventDefault();
-            if (!data.responsibleLawyers.includes(lawyerInput.trim())) setField("responsibleLawyers")([...data.responsibleLawyers, lawyerInput.trim()]);
-            setLawyerInput("");
-          }
-        }} placeholder="Type email here..." className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
-        <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5"><Info className="w-3.5 h-3.5" /><span>{t("type_email_add_coworker")}</span></div>
+        <input
+          type="text"
+          value={lawyerInput}
+          onChange={(e) => setLawyerInput(e.target.value)}
+          placeholder="Type email/name here..."
+          className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm"
+        />
+
+        {/* Search Results Dropdown */}
+        {lawyerInput.trim().length >= 3 && (
+          <div className="absolute z-50 top-full left-0 mt-2 w-full rounded-xl border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto">
+            {isFetching ? (
+              <div className="px-4 py-4 flex items-center gap-3 text-gray-500">
+                <Loader className="w-4 h-4 animate-spin" />
+                Searching...
+              </div>
+            ) : searchResults.length > 0 ? (
+              searchResults
+                .filter((lawyer: any) => !data.responsibleLawyers.some((l) => l.id === lawyer.id))
+                .map((lawyer: any) => (
+                  <button
+                    key={lawyer.id}
+                    type="button"
+                    onClick={() => {
+                      setField("responsibleLawyers")([
+                        ...data.responsibleLawyers,
+                        {
+                          id: lawyer.id,
+                          full_name: lawyer.full_name,
+                          email: lawyer.email,
+                          profile_image: lawyer.profile_image,
+                        },
+                      ]);
+                      setLawyerInput("");
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b last:border-b-0 flex items-center gap-3"
+                  >
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={lawyer.profile_image} />
+                      <AvatarFallback>{lawyer.full_name?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold text-sm">{lawyer.full_name}</p>
+                      <p className="text-xs text-gray-500">{lawyer.email}</p>
+                    </div>
+                  </button>
+                ))
+            ) : (
+              <div className="px-4 py-4 text-sm text-gray-500">
+                No lawyer found
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5">
+          <Info className="w-3.5 h-3.5" />
+          <span>Type email/name to search and select responsible lawyer</span>
+        </div>
+
         <div className="flex flex-wrap gap-2 pt-1">
-          {data.responsibleLawyers.map((lawyer, i) => (
-            <div key={i} className="flex items-center gap-2 bg-[#e9eff2] text-gray-800 text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-100">
-              <span>{lawyer}</span><button type="button" onClick={() => setField("responsibleLawyers")(data.responsibleLawyers.filter((_, idx) => idx !== i))}><X className="w-3.5 h-3.5" /></button>
+          {data.responsibleLawyers.map((lawyer) => (
+            <div key={lawyer.id} className="flex items-center gap-2 bg-[#e9eff2] text-gray-800 text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-100">
+              <Avatar className="w-5 h-5 shrink-0">
+                <AvatarImage src={lawyer.profile_image} />
+                <AvatarFallback>{lawyer.full_name?.charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <span>{lawyer.full_name} ({lawyer.email})</span>
+              <button
+                type="button"
+                onClick={() => setField("responsibleLawyers")(data.responsibleLawyers.filter((l) => l.id !== lawyer.id))}
+              >
+                <X className="w-3.5 h-3.5 hover:text-red-500" />
+              </button>
             </div>
           ))}
         </div>
@@ -748,7 +823,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
       apiData.status = Number(formData.legalDetails.status);
     }
     if (formData.legalDetails.responsibleLawyers.length > 0) {
-      apiData.responsible_lawyer_ids = formData.legalDetails.responsibleLawyers;
+      apiData.responsible_lawyer_ids = formData.legalDetails.responsibleLawyers.map((l) => l.id);
     }
     if (formData.legalDetails.opposingParties.length > 0) {
       apiData.opposing_parties = formData.legalDetails.opposingParties;
