@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useToggleBookmarkedLawsMutation } from "@/store/features/lawAndBylaw/lawAndBylaw.api";
+import { useTranslation } from "react-i18next";
 
 export interface LawCardProps {
   id?: string;
@@ -28,6 +29,7 @@ export function LawCard({
   const [toggleBookmarkedLaws, { isLoading }] = useToggleBookmarkedLawsMutation();
 
   const navigate = useRouter()
+  const {t} = useTranslation("common")
 
   const handleAddToFavorite = async (e: React.MouseEvent) => {
     try {
@@ -79,7 +81,6 @@ export function LawCard({
             bg-[#ECEFF1]
             transition-all
             hover:bg-[#dfe6ea]
-            z-999
           "
         >
           {isLoading ? (
@@ -105,7 +106,7 @@ export function LawCard({
 
         <div className="mt-2 text-sm">
           <span className="font-semibold text-[#2D3139]">
-            Official Gazette:
+            {t("official_gazette")}:
           </span>
 
           <span className="ml-2 text-[#667085]">
@@ -115,7 +116,7 @@ export function LawCard({
 
         <div className="mt-4 text-sm">
           <span className="font-semibold text-[#2D3139]">
-            Last Update:
+            {t("last_update")}:
           </span>
 
           <span className="ml-2 text-[#4B5563]">

@@ -14,6 +14,7 @@ import {
   useCancelSubscriptionMutation,
 } from "@/store/features/subscription/subscription.client.api";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -148,6 +149,7 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
   const [purchasingPlanId, setPurchasingPlanId] = useState<number | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const router = useRouter();
+  const {t} = useTranslation("common")
 
   const { data: plans, isLoading: isLoadingPlans, isError: isPlansError } = useGetAllSubscriptionListQuery();
   const { data: currentSubscription } = useGetClientCurrentSubscriptionQuery();
@@ -219,11 +221,11 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
               </div>
 
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900">
-                Choose your required package
+                {t("subscriptionPage.choosePackage")}
               </h2>
 
               <p className="text-slate-600 text-sm md:text-base max-w-2xl">
-                Subscription is based on the number of devices. All features are included in every plan.
+                {t("subscriptionPage.subtitle")}
               </p>
             </div>
 
@@ -240,13 +242,13 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
                     value="monthly"
                     className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
                   >
-                    Monthly
+                    {t("subscriptionPage.monthly")}
                   </TabsTrigger>
                   <TabsTrigger
                     value="yearly"
                     className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
                   >
-                    Yearly
+                    {t("subscriptionPage.yearly")}
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -291,16 +293,20 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
 
             <div className="text-center space-y-3 w-full pt-6 border-t border-slate-200">
               <p className="text-slate-500 text-sm">
-                You will get <span className="font-semibold text-slate-700">7 days free trial</span> for each subscription.
+                {t("subscriptionPage.trialNotice", { trial: "" }).split("{{trial}}")[0]}
+                <span className="font-semibold text-slate-700">
+                  {t("subscriptionPage.sevenDaysTrial")}
+                </span>
+                {t("subscriptionPage.trialNotice", { trial: "" }).split("{{trial}}")[1]}
               </p>
 
               <p className="text-slate-500 text-sm">
-                Need subscription for more device?{' '}
+                {t("subscriptionPage.moreDevicesPrompt")}{' '}
                 <button
                   onClick={() => setIsContactSupportOpen(true)}
                   className="text-[#135576] font-semibold hover:underline"
                 >
-                  Contact support
+                  {t("subscriptionPage.contactSupport")}
                 </button>
               </p>
             </div>
@@ -337,6 +343,7 @@ function PricingCard({
   onCancel: () => void;
   isCancelling: boolean;
 }) {
+  const { t } = useTranslation();
   const isYearly = billingCycle === "yearly";
   const activeVariant = isYearly ? pkg.yearly : pkg.monthly;
   const isPopular = pkg.recommended;
@@ -353,7 +360,7 @@ function PricingCard({
     >
       {isPopular && (
         <div className="absolute top-0 left-0 w-full text-center py-2.5 bg-[#135576] text-white/90 text-xs font-medium rounded-t-2xl tracking-wide">
-          {pkg.label || "Most Popular"}
+          {pkg.label || t("subscriptionPage.mostPopular")}
         </div>
       )}
 
@@ -363,7 +370,7 @@ function PricingCard({
             <h3 className="text-xl font-semibold text-slate-900 capitalize">{pkg.name}</h3>
             {isCurrentPlan && (
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-700">
-                Current Plan
+                {t("subscriptionPage.currentPlan")}
               </span>
             )}
           </div>
@@ -374,25 +381,25 @@ function PricingCard({
                 <span className="text-4xl md:text-5xl font-bold tracking-tight">
                   €{formatPrice(activeVariant.price)}
                 </span>
-                <span className="text-slate-500 text-sm font-medium">/{billingCycle}</span>
+                <span className="text-slate-500 text-sm font-medium">/{t(`subscriptionPage.${billingCycle}`)}</span>
               </div>
-              <div className="text-slate-900 font-semibold text-sm">{pkg.devices} Devices</div>
+              <div className="text-slate-900 font-semibold text-sm">{t("subscriptionPage.devicesCount", { count: pkg.devices })}</div>
             </div>
           ) : (
             <div className="mb-2">
-              <p className="text-sm text-slate-400">Not available for {billingCycle} billing.</p>
+              <p className="text-sm text-slate-400">{t("subscriptionPage.notAvailable", { cycle: t(`subscriptionPage.${billingCycle}`) })}</p>
             </div>
           )}
 
           <div className="h-5 mb-6">
             {isYearly && activeVariant && (
-              <p className="text-slate-500 text-sm">Save 10% in yearly.</p>
+              <p className="text-slate-500 text-sm">{t("subscriptionPage.savePercent")}</p>
             )}
           </div>
 
           <hr className="border-slate-100 mb-6" />
 
-          <p className="text-slate-900 text-sm font-semibold mb-4">All Features Included:</p>
+          <p className="text-slate-900 text-sm font-semibold mb-4">{t("subscriptionPage.featuresIncluded")}</p>
 
           <ul className="space-y-3 mb-8">
             {FEATURE_LABELS.filter(({ key }) => pkg.features?.[key]).map(({ key, label }) => (
@@ -412,7 +419,7 @@ function PricingCard({
               className="w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all mb-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
             >
               {isCancelling && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isCancelling ? "Cancelling..." : "Cancel Subscription"}
+              {isCancelling ? t("subscriptionPage.cancelling") : t("subscriptionPage.cancelSubscription")}
             </button>
           ) : (
             <button
@@ -425,10 +432,10 @@ function PricingCard({
               }`}
             >
               {purchasingThisPlan && <Loader2 className="w-4 h-4 animate-spin" />}
-              {purchasingThisPlan ? "Redirecting..." : "Purchase"}
+              {purchasingThisPlan ? t("subscriptionPage.redirecting") : t("subscriptionPage.purchase")}
             </button>
           )}
-          <p className="text-slate-400 text-xs font-medium">Free Trial - 7 Days</p>
+          <p className="text-slate-400 text-xs font-medium">{t("subscriptionPage.freeTrialLabel")}</p>
         </div>
       </div>
     </div>

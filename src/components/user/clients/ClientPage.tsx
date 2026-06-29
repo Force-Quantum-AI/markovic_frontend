@@ -7,6 +7,7 @@ import { PageHeadingTitle } from "@/components/shared/PageHeadingTitle";
 import { MetricCard } from "../dashboard/DashboardMetrics";
 import UsersTable from "./UsersTable";
 import { useGetAllClientsQuery } from "@/store/features/profile/profile.api";
+import { useTranslation } from "react-i18next";
 
 const itemsPerPage = 5;
 
@@ -25,6 +26,7 @@ export default function ClientPage() {
   const [filterYear, setFilterYear] = useState("");
   const [filterCourt, setFilterCourt] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { t } = useTranslation();
 
   const { data, isLoading, isError } = useGetAllClientsQuery({
     client_name: filterName || undefined,
@@ -38,7 +40,7 @@ export default function ClientPage() {
   const statsData = [
     {
       id: "total-clients",
-      label: "Total Clients",
+      label: t("total_clients"),
       value: stats?.total_clients ?? 0,
       icon: <Users className="w-4 h-4 stroke-2" />,
       bgColor: "bg-[#E6D1E3]",
@@ -46,7 +48,7 @@ export default function ClientPage() {
     },
     {
       id: "total-cases",
-      label: "Total Cases",
+      label: t("total_cases"),
       value: stats?.total_cases ?? 0,
       icon: <Scale className="w-4 h-4 stroke-2" />,
       bgColor: "bg-[#DAE6C9]",
@@ -54,7 +56,7 @@ export default function ClientPage() {
     },
     {
       id: "new-this-month",
-      label: "New This Month",
+      label: t("new_this_month"),
       value: stats?.new_this_month ?? 0,
       icon: <FileCheck2 className="w-4 h-4 stroke-2" />,
       bgColor: "bg-[#F2E6D8]",
@@ -62,7 +64,7 @@ export default function ClientPage() {
     },
     {
       id: "active-cases",
-      label: "Active Cases",
+      label: t("active_cases"),
       value: stats?.active_cases ?? 0,
       icon: <Files className="w-4 h-4 stroke-2" />,
       bgColor: "bg-[#C8F0DB]",
@@ -89,8 +91,8 @@ export default function ClientPage() {
     <div className="mx-auto w-full max-w-7xl p-2 md:p-3">
       <div className="flex flex-col md:flex-row items-center justify-between mb-3">
         <PageHeadingTitle
-          title="My Clients"
-          subtitle="Manage and track your clients and their legal matters"
+          title={t("my_clients")}
+          subtitle={t("manage_clients_and_track_their_legal_matters")}
         />
       </div>
 
@@ -123,7 +125,7 @@ export default function ClientPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by client name..."
+              placeholder={t("search_by_name")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
@@ -133,7 +135,7 @@ export default function ClientPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by year..."
+              placeholder={t("search_by_year")}
               value={year}
               onChange={(e) => setYear(e.target.value)}
               className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
@@ -143,14 +145,14 @@ export default function ClientPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by court name..."
+              placeholder={t("search_by_court_name")}
               value={court}
               onChange={(e) => setCourt(e.target.value)}
               className="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
             />
           </div>
         </div>
-        <MainButton icon={<Search className="h-4 w-4" />} label="Search" onClick={handleApplyFilter} />
+        <MainButton icon={<Search className="h-4 w-4" />} label={t("search")} onClick={handleApplyFilter} />
       </div>
 
       <UsersTable
