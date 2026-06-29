@@ -400,6 +400,8 @@
     "trialPeriod": "trial period",
     "hasEnded": "has ended. Upgrade now to continue enjoying all premium features without interruption.",
     "upgradeNow": "Upgrade Now",
+    "upgrade_plan": "Upgrade Plan",
+    "you_are_using_free_trial_for_7_days": "You are using free trial for 7 days. Please upgrade your subscription plan to get full access.",
     "features": {
       "unlimited_cases": "Unlimited Cases.",
       "client_calendar_hearing_deadline": "Clients, Calendar, Hearings & Deadlines.",

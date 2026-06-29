@@ -399,6 +399,8 @@
     "trialPeriod": "Probni period",
     "hasEnded": "je istekao. Nadogradite odmah da biste nastavili uživati u svim premium funkcijama bez prekida.",
     "upgradeNow": "Nadogradite odmah",
+    "upgrade_plan": "Nadogradite plan",
+    "you_are_using_free_trial_for_7_days": "Koristite besplatni probni period od 7 dana. Molimo nadogradite vaš pretplatnički plan da biste dobili puni pristup.",
     "features": {
       "unlimited_cases": "Neograničen broj predmeta.",
       "client_calendar_hearing_deadline": "Klijenti, kalendar, ročišta i rokovi.",

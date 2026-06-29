@@ -37,12 +37,7 @@ export default function LanguageSwitcher() {
 
   return (
     <Select value={language} onValueChange={handleChange}>
-      {/* 
-        Normalized to a clean, flat button layout:
-        - Replaced generic language icon with the active country's emoji flag.
-        - Kept size tight (w-[110px], h-9) to fit seamlessly on any navigation header.
-      */}
-      <SelectTrigger className=" max-w-fit h-9 gap-2 rounded-md border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium transition-colors">
+      <SelectTrigger className=" max-w-fit mt-1 h-9 gap-2 rounded-md border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium transition-colors">
         <div className="flex items-center gap-2">
           <span className="text-base leading-none shrink-0" aria-hidden="true">
             {current.flag}
