@@ -477,7 +477,7 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
+        {/* <div className="space-y-1.5">
           <FieldLabel>{t("court_colon")}</FieldLabel>
           <div className="relative w-full">
             <select value={data.court} onChange={(e) => setField("court")(e.target.value)} className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-800 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer pr-10">
@@ -485,6 +485,10 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
             </select>
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
           </div>
+        </div> */}
+        <div className="space-y-1.5">
+          <FieldLabel>{t("court_colon")}</FieldLabel>
+          <input type="text" placeholder={t("court_name")} onChange={(e) => setField("court")(e.target.value)} className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576]" />
         </div>
         <div className="space-y-1.5">
           <FieldLabel>{t("case_number_colon")}</FieldLabel>
@@ -722,7 +726,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
       subCategory: "",
       status: "",
       responsibleLawyers: [],
-      court: "Montenegro suprime Court",
+      court: "",
       caseNumber: "",
       opposingParties: [],
     },

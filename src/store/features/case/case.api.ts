@@ -41,6 +41,14 @@ export const caseApi = baseApi.injectEndpoints({
       providesTags: ["case"],
     }),
 
+    getLeftSideClientCaseDetails: builder.query<any, string>({
+      query: (clientPersonalId: string) => ({
+        url: `/cases/personal/${clientPersonalId}/`,
+        method: "GET",
+      }),
+      providesTags: ["case"],
+    }),
+
     updateClientProfileInfo: builder.mutation<any, { caseId: string, data: updateClientProfileInfoType }>({
       query: ({ caseId, data }) => {
         const formData = new FormData();
@@ -332,6 +340,7 @@ export const {
   // case details page 
   // left side 
   useGetLeftSideCaseDetailsQuery,
+  useGetLeftSideClientCaseDetailsQuery,
   useUpdateClientProfileInfoMutation,
   useUpdateClientNoteMutation,
   // right side 
