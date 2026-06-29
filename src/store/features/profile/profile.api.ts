@@ -35,6 +35,13 @@ export const profileApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Profile", "dashboard"],
     }),
+    getAllLawyers: builder.query({
+      query: (email: string) => ({
+        url: `/lawyer-dashboard/users/?email=${email}`,
+        method: "GET",
+      }),
+      providesTags: ["dashboard"],
+    })
   }),
 });
 
@@ -42,5 +49,7 @@ export const {
   useGetProfileInfoQuery,
   useUpdateProfileInfoMutation,
   useGetAllClientsQuery,
-  useLazyGetAllClientsQuery
+  useLazyGetAllClientsQuery,
+  useGetAllLawyersQuery,
+  useLazyGetAllLawyersQuery
 } = profileApi;
