@@ -67,15 +67,16 @@ export default function UsersTable({
 
   const handleView = (user: Client) => {
     if (user.id) {
-      router.push(`/my-cases/${user.id}`);
+      // here i will call api by user id to get this user cases or if case id is exists in response then i will take the first case id and sent it in my-case details page 
+      // router.push(`/my-cases/${caseId}`);
       return;
     }
-    alert(`user.id not in the api response.`);
+    alert(`This is under implementation.`);
   };
 
-  const handleDelete = (clientName: string) => {
-    alert(`Delete client "${clientName}" is not implemented yet.`);
-  };
+  // const handleDelete = (clientName: string) => {
+  //   alert(`Delete client "${clientName}" is not implemented yet.`);
+  // };
 
   return (
     <div className="w-full mx-auto p-4 md:p-6 space-y-4 bg-white rounded-2xl">
@@ -105,7 +106,7 @@ export default function UsersTable({
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                 {clients.map((user) => (
-                  <tr key={user.id ?? user.client_name} className="hover:bg-gray-50/70 transition-colors">
+                  <tr key={user.id ?? user.client_name} className="hover:bg-gray-50/70 transition-colors cursor-pointer" onClick={() => handleView(user)}>
                     <td className="py-4 px-5 flex items-center gap-2">
                       <div className="h-8 w-8 relative rounded-full overflow-hidden">
                         <Image
@@ -160,7 +161,7 @@ export default function UsersTable({
                     <span className="text-xs text-gray-400">{user.phone_number ?? "-"}</span>
                   </div>
 
-                  <DropdownMenu>
+                  {/* <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="p-1.5 rounded-full border border-gray-100 bg-gray-50 text-gray-400 focus:outline-none">
                         <MoreHorizontal className="w-4 h-4" />
@@ -176,7 +177,7 @@ export default function UsersTable({
                         <span>Delete</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
-                  </DropdownMenu>
+                  </DropdownMenu> */}
                 </div>
 
                 <div className="space-y-1 pt-1">
