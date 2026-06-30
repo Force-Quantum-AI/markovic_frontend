@@ -109,9 +109,9 @@ export default function UserLayout({
 
           <div className="flex flex-1 items-center justify-end md:justify-between">
             {/* search  */}
-            <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 bg-gray-100 rounded-full">
+            <div className="hidden  lg:flex items-center gap-2  px-3 py-1.5 bg-gray-100 rounded-full">
               <Search className="h-5 w-5 text-black/60" />
-              <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs text-black" type="text" placeholder={t("search_cases_clients_laws_documents")} />
+              <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs lg:text-base 2xl:text-lg outline-none rounded-full p-1 placeholder:text-xs xl:placeholder:text-base  text-black" type="text" placeholder={t("search_cases_clients_laws_documents")} />
             </div>
 
             <div className="flex items-center gap-5">

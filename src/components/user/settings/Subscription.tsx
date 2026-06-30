@@ -153,7 +153,7 @@ function CurrentSubscriptionBanner() {
 
 export default function Subscription() {
   const { t } = useTranslation();
-  const [billingCycle, setBillingCycle] = useState<BillingSession>("yearly");
+  const [billingCycle, setBillingCycle] = useState<BillingSession>("monthly");
   const [isContactSupportOpen, setIsContactSupportOpen] = useState(false);
   const [purchasingPlanId, setPurchasingPlanId] = useState<number | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -241,12 +241,12 @@ export default function Subscription() {
               <Tabs
                 value={billingCycle}
                 onValueChange={(v) => setBillingCycle(v as BillingSession)}
-                className="w-full max-w-xs"
+                className="w-fit"
               >
-                <TabsList className="grid w-full grid-cols-2 h-11 bg-slate-200/60 p-1 rounded-lg">
+                <TabsList className="grid w-full grid-cols-2 h-11 bg-slate-200/60 p-2 rounded-lg">
                   <TabsTrigger
                     value="monthly"
-                    className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                    className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm p-1 "
                   >
                     {t("subscriptionPage.monthly")}
                   </TabsTrigger>
@@ -391,7 +391,7 @@ function PricingCard({
           {activeVariant ? (
             <div className="flex items-end justify-between flex-wrap mb-2">
               <div className="flex items-baseline flex-wrap gap-1 text-[#135576]">
-                <span className="text-4xl md:text-5xl font-bold tracking-tight">
+                <span className="text-4xl md:text-5xl font-normal tracking-tight">
                   €{formatPrice(activeVariant.price)}
                 </span>
                 <span className="text-slate-500 text-sm font-medium">/{t(`subscriptionPage.${billingCycle}`)}</span>

@@ -171,7 +171,7 @@ function EventCard({ event }: { event: CalendarEventItem }) {
       }}
     >
       {/* Horizontal accent lines that connect the card to the grid */}
-      <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-14 -ml-14 ${c.line}`} />
+      <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-4 -ml-4 ${c.line}`} />
       <div className={`absolute right-0 top-1/2 -translate-y-1/2 h-[2px] w-2 -mr-2 ${c.line}`} />
 
       {/* Icon bubble */}

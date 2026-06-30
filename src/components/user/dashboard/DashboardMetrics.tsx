@@ -57,7 +57,7 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
       label: t("total_cases"),
       value: data?.total_cases ?? 0,
       icon: <Scale className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#DAE6C9]", // Soft Lime-Green hue
+      bgColor: "bg-[#FAFFF3]", // Soft Lime-Green hue
       iconBgColor: "bg-[#edf4e4]"
     },
     {
@@ -65,7 +65,7 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
       label: t("active_cases"),
       value: data?.active_cases ?? 0,
       icon: <Files className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#C8F0DB]", // Soft Mint hue
+      bgColor: "bg-[#ECFFF5]", // Soft Mint hue
       iconBgColor: "bg-[#e2f6ec]"
     },
     {
@@ -73,7 +73,7 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
       label: t("todays_hearing"),
       value: data?.todays_hearings ?? 0,
       icon: <Gavel className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#D4D4F2]", // Soft Purple hue
+      bgColor: "bg-[#F2F2FF]", // Soft Purple hue
       iconBgColor: "bg-[#ebebfe]"
     },
     {
@@ -81,7 +81,7 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
       label: t("upcoming_deadlines"),
       value: data?.upcoming_deadlines ?? 0,
       icon: <CalendarDays className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#D6E7ED]", // Soft Ice Blue hue
+      bgColor: "bg-[#ECFAFF]", // Soft Ice Blue hue
       iconBgColor: "bg-[#e3f3ff]"
     },
     {
@@ -89,7 +89,7 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
       label: t("total_clients"),
       value: data?.total_clients ?? 0,
       icon: <Users2 className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#E6D1E3]", // Soft Pink hue
+      bgColor: "bg-[#FFF3FD]", // Soft Pink hue
       iconBgColor: "bg-[#fbe6f7]"
     },
     {
@@ -97,7 +97,7 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
       label: t("case_completed"),
       value: data?.cases_completed ?? 0,
       icon: <FileCheck2 className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#F2E6D8]", // Soft Cream/Orange hue
+      bgColor: "bg-[#FFF7ED]", // Soft Cream/Orange hue
       iconBgColor: "bg-[#fff2de]"
     },
   ];

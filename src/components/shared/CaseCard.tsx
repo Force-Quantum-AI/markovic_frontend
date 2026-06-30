@@ -180,7 +180,7 @@ export function CaseCard({
         )}
       </button>
       <div
-        className="bg-[#f8f9fa] rounded-3xl p-3 2xl:p-6 border border-gray-100/80 shadow-sm flex flex-col justify-between transition-all hover:shadow-md w-full cursor-pointer"
+        className="bg-[#f8f9fa] rounded-3xl p-3 2xl:p-4 border border-gray-100/80 shadow-sm flex flex-col justify-between transition-all hover:shadow-md w-full cursor-pointer"
         onClick={() => router.push(`/my-cases/${id}`)}
       >
         <div>
@@ -211,7 +211,7 @@ export function CaseCard({
             <span className="block text-[11px] font-medium text-gray-400 uppercase tracking-wider">
               {t("case_name")}
             </span>
-            <p className="text-xs md:text-sm font-semibold text-gray-700 leading-snug line-clamp-2">
+            <p className="text-xs md:text-base xl:text-lg font-semibold text-gray-700 leading-snug line-clamp-2">
               {displayCaseName}
             </p>
           </div>

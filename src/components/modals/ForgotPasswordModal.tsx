@@ -323,7 +323,7 @@ export default function ForgotPasswordModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl! w-[95vw] sm:w-full bg-white rounded-[40px] border-none shadow-2xl p-6 overflow-hidden">
+      <DialogContent className="max-w-3xl! w-[95vw] sm:w-full bg-white rounded-xl border-none shadow-2xl p-6 overflow-hidden">
         
         {renderContent()}
 

@@ -40,18 +40,18 @@ export default function Page() {
                 <div>
                     {activeBtn === "cases" ? (
                         isBookmarkedCasesLoading ? (
-                            <CaseCardSkeleton />
+                            <CaseCardSkeleton maxColumn={4} />
                         ) : bookmarkedCases?.length === 0 ? (
                             <NoContent />
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                                 {bookmarkedCases?.map((card: { id: string;[key: string]: unknown }, index: number) => (
                                     <CaseCard key={index} {...card} />
                                 ))}
                             </div>
                         )
                     ) : (
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                             {isBookmarkedLawsLoading ? (
                                 <LawCardSkeleton />
                             ) : bookmarkedLaws?.length === 0 ? (

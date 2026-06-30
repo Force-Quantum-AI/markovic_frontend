@@ -120,7 +120,7 @@ export function UserAppSidebar() {
                   }
                 `}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className="h-4 w-4 xl:h-5 xl:w-5 2xl:h-6 2xl:w-6" />
 
                 <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
               </Link>

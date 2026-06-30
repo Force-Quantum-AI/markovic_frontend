@@ -77,7 +77,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-6xl h-auto md:h-[70vh] min-h-[600px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row hover:translate-y-1 transition-all duration-300">
 
         {/* Left Side: Form Controls */}
-        <div className="w-full md:w-7/12 lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
+        <div className="w-full md:w-7/12 lg:w-7/12 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
 
           {/* Header Brand */}
           <div className="relative">
@@ -243,7 +243,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Right Side: Visual Banner Component */}
-        <div className="hidden md:block w-1/2 md:w-5/12 lg:w-1/2 p-3 h-full group">
+        <div className="hidden md:block w-1/2 md:w-5/12 lg:w-5/12 p-3 h-full group">
           <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#181d20] flex flex-col justify-end p-8 lg:p-12 text-white">
 
             {/* Background Image Setup mimicking Lady Justice theme */}
