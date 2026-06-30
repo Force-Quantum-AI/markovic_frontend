@@ -5,6 +5,7 @@ import { X, User, Mail, Phone, Landmark } from "lucide-react";
 import Image from "next/image";
 import { useContactForCustomSubscriptionMutation } from "@/store/features/subscription/subscription.client.api";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface ContactSupportModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface ContactSupportModalProps {
 }
 
 export default function ContactSupportModal({ isOpen, onClose }: ContactSupportModalProps) {
+  const { t } = useTranslation("modals");
   const [contactForCustomSubscription, { isLoading }] = useContactForCustomSubscriptionMutation()
 
   // Controlled form states initialized with the design placeholders
@@ -37,7 +39,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
         phone_number: phoneNumber,
         message,
       }).unwrap();
-      toast.success("Your request has been submitted successfully.", {
+      toast.success(t("contactSupport.submitSuccess"), {
         position: "top-right"
       });
       setIsSuccess(true);
@@ -48,7 +50,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
       onClose();
     } catch (error) {
       console.log("Error", error);
-      toast.error("Failed to submit your request. Please try again.", {
+      toast.error(t("contactSupport.submitFailed"), {
         position: "top-right"
       })
       setIsSuccess(false);
@@ -98,7 +100,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                         text-slate-900
                       "
           >
-            Contact Support
+            {t("contactSupport.title")}
           </h2>
 
           <p
@@ -110,8 +112,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                         text-wrap
                       "
           >
-            Please provide your contact info, we will contact you and
-            make a custom subscription package for you.
+            {t("contactSupport.subtitle")}
           </p>
         </div>
 
@@ -120,12 +121,12 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
 
           <div className="border border-slate-200/80 rounded-2xl p-5 md:p-6 space-y-5 bg-white shadow-sm">
             <h3 className="text-base font-bold text-slate-900 tracking-tight border-b border-slate-100 pb-3 -mx-1">
-              Contact Details:
+              {t("contactSupport.contactDetails")}
             </h3>
 
             {/* Full Name Field */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400">Full Name:</label>
+              <label className="text-xs font-semibold text-slate-400">{t("contactSupport.fullName")}</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                   <User className="w-4 h-4" />
@@ -145,7 +146,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
 
               {/* Email Input Field */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-400">Email address:</label>
+                <label className="text-xs font-semibold text-slate-400">{t("contactSupport.emailAddress")}</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                     <Mail className="w-4 h-4" />
@@ -166,14 +167,14 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
 
               {/* Phone Number Field */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-400">Phone Number:</label>
+                <label className="text-xs font-semibold text-slate-400">{t("contactSupport.phoneNumber")}</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                     <Phone className="w-4 h-4" />
                   </span>
                   <input
                     type="tel"
-                    placeholder="(225) 555-0118"
+                    placeholder={t("contactSupport.phonePlaceholder")}
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     className="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-300 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all"
@@ -185,7 +186,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
 
             {/* Custom Description Textarea Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400">Message:</label>
+              <label className="text-xs font-semibold text-slate-400">{t("contactSupport.message")}</label>
               <textarea
                 required
                 rows={7}
@@ -207,11 +208,11 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                   : "bg-[#135576] text-white hover:bg-[#0e445f] active:scale-[0.99] disabled:opacity-50"
                 }`}
             >
-              {isSubmitting ? "Sending..." : isSuccess ? "Submitted Successfully!" : "Submit"}
+              {isSubmitting ? t("contactSupport.sendingButton") : isSuccess ? t("contactSupport.submittedSuccess") : t("contactSupport.submitButton")}
             </button>
           </div>
 
-          <p className="text-xs bg-[#F8FAFC] text-center py-6 text-slate-500">We will contact you through the email id and phone number that you are providing.</p>
+          <p className="text-xs bg-[#F8FAFC] text-center py-6 text-slate-500">{t("contactSupport.disclaimer")}</p>
         </form>
       </div>
     </div>

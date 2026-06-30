@@ -19,6 +19,7 @@ import {
   useDeleteNotificationMutation,
 } from "@/store/features/notification/notification.api";
 import { NotificationItem } from "@/types/notification";
+import { useTranslation } from "react-i18next";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -135,6 +136,7 @@ function NotificationRow({
 export default function NotificationDropdown() {
   const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const {t} = useTranslation("common")
 
   const {
     data,
@@ -212,7 +214,7 @@ export default function NotificationDropdown() {
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-lg md:text-xl font-semibold">Notifications</h2>
+          <h2 className="text-lg md:text-xl font-semibold">{t("notifications")}</h2>
 
           <div className="flex items-center gap-1 md:gap-2">
             {/* Tab: All */}
@@ -221,7 +223,7 @@ export default function NotificationDropdown() {
               className={`rounded-xl px-4 py-2 text-[10px] md:text-sm font-medium transition ${activeTab === "all" ? "bg-slate-100 text-black" : "text-slate-500"
                 }`}
             >
-              All
+              {t("all")}
             </button>
 
             {/* Tab: Unread */}
@@ -230,7 +232,7 @@ export default function NotificationDropdown() {
               className={`rounded-xl px-4 py-2 text-[10px] md:text-sm font-medium transition ${activeTab === "unread" ? "bg-slate-100 text-black" : "text-slate-500"
                 }`}
             >
-              Unread
+              {t("unread")}
               {unreadCount > 0 && (
                 <span className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full bg-[#135576] text-[9px] text-white font-bold">
                   {unreadCount}
@@ -255,7 +257,7 @@ export default function NotificationDropdown() {
               ) : (
                 <Check className="w-3 h-3" />
               )}
-              Mark all as read
+              {t("mark_all_as_read")}
             </button>
           </div>
         )}

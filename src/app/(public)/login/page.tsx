@@ -10,8 +10,22 @@ import { useLoginMutation } from "@/store/features/auth/authApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import AdminButton from "@/components/shared/AdminButton";
+import { useTranslation } from "react-i18next";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setClientSideLanguage } from "@/store/features/language/language.client.slice";
+import i18n from "@/i18n";
+import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 
 export default function LoginPage() {
+  const dispatch = useAppDispatch();
+  const language = useAppSelector((state) => state.clientLanguage.language);
+
+  const handleChange = (value: string) => {
+    dispatch(setClientSideLanguage(value));
+    i18n.changeLanguage(value);
+  };
+  const { t } = useTranslation("auth");
+
   // Form States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +47,7 @@ export default function LoginPage() {
     e.preventDefault();
     setErrorMsg("");
 
-    console.log("my env is:",process.env.NEXT_PUBLIC_API_URL);
+    console.log("my env is:", process.env.NEXT_PUBLIC_API_URL);
     try {
       const res = await login({ email, password }).unwrap();
 
@@ -63,22 +77,22 @@ export default function LoginPage() {
         {/* Left Side: Form Area */}
         <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
           {/* Logo / Brand Header */}
-          <div className="flex items-center gap-2 text-[#135576]">
-            <div className="p-1.5 border-2 border-[#135576] rounded-full flex items-center justify-center">
-              <Scale className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <span className="font-semibold text-xl tracking-tight">
-              Case Solver
-            </span>
+          <div className="relative">
+            <Image
+              src="/brandLogo.png"
+              alt="logo"
+              width={148}
+              height={42}
+            />
           </div>
 
           {/* Form Content */}
           <div className="my-auto py-6 max-w-md w-full mx-auto">
             <h1 className="text-3xl font-bold text-gray-900 mb-1">
-              Welcome Back
+              {t("welcome_back")}
             </h1>
             <p className="text-sm text-gray-500 mb-8">
-              Sign in to your Law Office System
+              {t("sign_in_sub")}
             </p>
 
             {errorMsg && (
@@ -91,7 +105,7 @@ export default function LoginPage() {
               {/* Email Input */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-gray-400 block">
-                  Email address:
+                  {t("email_label")}
                 </label>
                 <div className="relative flex items-center">
                   <Mail className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -99,7 +113,7 @@ export default function LoginPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder={t("email_placeholder")}
                     className="w-full pl-12 pr-12 py-3.5 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all text-gray-700"
                     required
                   />
@@ -112,7 +126,7 @@ export default function LoginPage() {
               {/* Password Input */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-gray-400 block">
-                  Password:
+                  {t("password_label")}
                 </label>
                 <div className="relative flex items-center">
                   <Lock className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -120,7 +134,7 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    placeholder={t("password_placeholder")}
                     className="w-full pl-12 pr-12 py-3.5 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all text-gray-700 tracking-wider"
                     required
                   />
@@ -147,13 +161,14 @@ export default function LoginPage() {
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 rounded border-gray-300 text-[#135576] focus:ring-[#135576]"
                   />
-                  Remember
+                  {t("remember_me")}
                 </label>
                 <button
+                  type="button"
                   onClick={() => setIsForgotPasswordModalOpen(true)}
-                  className="text-[#135576] hover:underline"
+                  className="text-[#135576] hover:underline text-xs"
                 >
-                  Forgot Password?
+                  {t("forgot_password")}
                 </button>
               </div>
 
@@ -162,7 +177,7 @@ export default function LoginPage() {
                 <AdminButton
                   type="submit"
                   disabled={isLoading}
-                  label={isLoading ? "Logging in..." : "Log in"}
+                  label={isLoading ? t("logging_in") : t("log_in")}
                   icon={
                     isLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -175,33 +190,38 @@ export default function LoginPage() {
 
             {/* Registration Prompt */}
             <p className="text-center text-xs text-gray-400 mt-6">
-              Don&apos;t have an account?{" "}
+              {t("dont_have_account")}{" "}
               <Link
                 href="/register"
                 className="text-[#135576] font-bold hover:underline"
               >
-                Register
+                {t("register")}
               </Link>
             </p>
           </div>
 
           {/* Footer Agreement */}
-          <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
-            By logging in, you agree to our{" "}
-            <a
-              href="#terms"
-              className="underline hover:text-gray-600 font-medium"
-            >
-              Terms of services
-            </a>{" "}
-            and{" "}
-            <a
-              href="#privacy"
-              className="underline hover:text-gray-600 font-medium"
-            >
-              Privacy Policy
-            </a>
-            .
+          <div className="mx-auto">
+            <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
+              {t("by_logging_in")}{" "}
+              <a
+                href="#terms"
+                className="underline hover:text-gray-600 font-medium"
+              >
+                {t("terms_of_services")}
+              </a>{" "}
+              {t("and")}{" "}
+              <a
+                href="#privacy"
+                className="underline hover:text-gray-600 font-medium"
+              >
+                {t("privacy_policy")}
+              </a>
+              .
+            </div>
+            <div className="text-center text-[10px] xl:text-xs text-gray-400 mt-1">
+              Language : <span onClick={() => handleChange("en")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2 ">EN</span> | <span onClick={() => handleChange("me")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2">ME</span>
+            </div>
           </div>
         </div>
 
@@ -220,19 +240,17 @@ export default function LoginPage() {
             {/* Content overlay matched to login.png */}
             <div className="relative z-10 space-y-4 max-w-md">
               <h2 className="text-2xl lg:text-3xl 2xl:text-4xl font-bold leading-tight tracking-tight">
-                Fast. Simple. Built for Lawyers.
+                {t("hero_title")}
               </h2>
               <p className="text-sm lg:text-base text-gray-300 font-light italic leading-relaxed">
-                Created by lawyers, for lawyers. Quick case creation, smart
-                calendar, powerful AI court practice search, and clean
-                organization — all in one place.
+                {t("hero_description")}
               </p>
 
               <div className="pt-4 border-t border-white/20">
                 <p className="text-base font-semibold tracking-wide">
                   Markovic Aleksa
                 </p>
-                <p className="text-xs text-gray-400">Founder of Case Solver</p>
+                <p className="text-xs text-gray-400">{t("hero_founder_title")}</p>
               </div>
             </div>
           </div>

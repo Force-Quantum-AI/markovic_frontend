@@ -3,13 +3,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CheckCircle2, XCircle, Loader2, RefreshCw } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+   Dialog,
+   DialogContent,
+   DialogHeader,
+   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useLoginMutation, useVerifyOtpMutation } from "@/store/features/auth/authApi";
+import { useTranslation } from "react-i18next";
 
 // Step type definitions
 type ModalStep = "ENTER_OTP" | "SUCCESS" | "ERROR";
@@ -31,6 +32,7 @@ export default function OtpVerificationModal({
 }: OtpModalProps) {
   const [verifyOtp, { isLoading, isSuccess }] = useVerifyOtpMutation();
   const [login] = useLoginMutation();
+  const { t } = useTranslation("auth");
 
   // State Matrix
   const [step, setStep] = useState<ModalStep>("ENTER_OTP");
@@ -178,13 +180,12 @@ export default function OtpVerificationModal({
           <div className="flex flex-col items-center justify-center text-center px-4 py-6">
             <DialogHeader className="items-center">
               <DialogTitle className="text-3xl font-bold text-gray-900 tracking-tight">
-                OTP Verification
+                {t("otp_title")}
               </DialogTitle>
             </DialogHeader>
 
             <p className="text-sm text-gray-500 max-w-md mt-4 leading-relaxed">
-              We have sent a 6-digit verification code to your email address.
-              Please enter the code below to complete your registration.
+              {t("otp_desc")}
             </p>
 
             <span className="text-sm font-semibold text-gray-800 mt-6 tracking-wide block">
@@ -193,7 +194,7 @@ export default function OtpVerificationModal({
 
             {/* Countdown timer matching formatting color from verifyOtp.png */}
             <div className="text-red-500 font-semibold text-base mt-8 tracking-wider">
-              {timeLeft > 0 ? formatTime(timeLeft) : "Code expired"}
+              {timeLeft > 0 ? formatTime(timeLeft) : t("code_expired")}
             </div>
 
             {/* 6-Input Row Wrapper */}
@@ -216,18 +217,19 @@ export default function OtpVerificationModal({
 
             {/* Support Links */}
             <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-              Didn&apos;t get code.{" "}
+              {t("didnt_get_code")}{" "}
               <button
                 type="button"
                 onClick={handleResend}
                 className="text-[#135576] font-bold hover:underline"
               >
-                Resend
+                {t("resend")}
               </button>
             </div>
 
             {/* Primary Action Control */}
             <button
+              type="button"
               onClick={handleVerify}
               disabled={otp.join("").length < 6 || isVerifying || timeLeft === 0}
               className="w-full max-w-sm bg-[#135576] hover:bg-[#0f445f] text-white font-medium py-3 px-12 rounded-full shadow-md transition-all transform active:scale-95 text-center text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
@@ -235,26 +237,19 @@ export default function OtpVerificationModal({
               {isVerifying ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Verifying...
+                  {t("verifying")}
                 </>
               ) : (
-                "Verify"
+                t("verify")
               )}
-            </button>
-
-            <button
-              onClick={() => onOpenChange(false)}
-              className="text-xs font-semibold text-gray-400 hover:text-gray-600 mt-5 transition-colors"
-            >
-              Skip for now
             </button>
 
             {/* Agreement Terms Block */}
             <div className="text-center text-[10px] text-gray-400 mt-12 border-t border-gray-100 pt-4 w-full">
-              By logging in, you agree to our{" "}
-              <a href="#terms" className="underline hover:text-gray-600 font-medium">Terms of services</a>
-              {" "}and{" "}
-              <a href="#privacy" className="underline hover:text-gray-600 font-medium">Privacy Policy</a>.
+              {t("by_logging_in")}{" "}
+              <a href="#terms" className="underline hover:text-gray-600 font-medium">{t("terms_of_services")}</a>
+              {" "}{t("and")}{" "}
+              <a href="#privacy" className="underline hover:text-gray-600 font-medium">{t("privacy_policy")}</a>.
             </div>
           </div>
         );
@@ -267,10 +262,10 @@ export default function OtpVerificationModal({
             </div>
 
             <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-              Verification Successful
+              {t("verification_success_title")}
             </h2>
             <p className="text-sm text-gray-500 max-w-sm mt-2 leading-relaxed">
-              Your identity has been confirmed. Welcome to the law office system interface.
+              {t("verification_success_desc")}
             </p>
 
             {/* <button
@@ -291,31 +286,33 @@ export default function OtpVerificationModal({
             </div>
 
             <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-              Verification Failed
+              {t("verification_failed_title")}
             </h2>
             <p className="text-sm text-rose-500/90 font-medium mt-1">
-              Invalid security validation code
+              {t("verification_failed_invalid_code")}
             </p>
             <p className="text-sm text-gray-400 max-w-xs mt-1 leading-relaxed">
-              The OTP you supplied does not match our parameters or has expired.
+              {t("verification_failed_desc")}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 mt-8 w-full max-w-xs">
               <button
+                type="button"
                 onClick={() => {
                   setOtp(new Array(6).fill(""));
                   setStep("ENTER_OTP");
                 }}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-2.5 px-4 rounded-full transition-colors"
               >
-                Try Again
+                {t("try_again")}
               </button>
               <button
+                type="button"
                 onClick={handleResend}
                 className="flex-1 bg-[#135576] hover:bg-[#0f445f] text-white text-sm font-medium py-2.5 px-4 rounded-full flex items-center justify-center gap-1.5 transition-colors shadow-sm"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                Resend Code
+                {t("resend_code")}
               </button>
             </div>
           </div>

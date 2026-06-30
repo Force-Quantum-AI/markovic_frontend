@@ -7,7 +7,7 @@ export const dashboardApi = baseApi.injectEndpoints({
             url: "/lawyer-dashboard/overview/",
             method: "GET",
         }),
-        providesTags: ["dashboard", "Profile"],
+        providesTags: ["dashboard", "Profile", "case"],
     })
   }),
 });

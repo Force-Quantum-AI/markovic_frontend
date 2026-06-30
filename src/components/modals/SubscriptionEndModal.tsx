@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Crown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SubscriptionModalProps {
     open: boolean;
@@ -23,6 +24,7 @@ export default function SubscriptionEndModal({
     onOpenChange,
     onClick,
 }: SubscriptionModalProps) {
+    const {t} = useTranslation("common")
     return (
         <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
             <DialogContent className="overflow-hidden border-0 p-0 sm:max-w-md rounded-3xl"
@@ -50,14 +52,12 @@ export default function SubscriptionEndModal({
 
                         <DialogHeader className="space-y-3">
                             <DialogTitle className="text-3xl font-bold">
-                                Subscription Required
+                                {t("subscriptionPage.subscriptionRequired")}
                             </DialogTitle>
 
                             <DialogDescription className="text-base leading-7 text-gray-200">
-                                Your <span className="font-semibold text-white">trial period</span>{" "}
-                                has ended or your subscription has expired.
-                                Upgrade now to continue enjoying all premium features without
-                                interruption.
+                                Your <span className="font-semibold text-white">{t("subscriptionPage.trialPeriod")}</span>{" "}
+                                {t("subscriptionPage.hasEnded")}
                             </DialogDescription>
                         </DialogHeader>
 
@@ -79,7 +79,7 @@ export default function SubscriptionEndModal({
                 bg-amber-400 hover:bg-amber-500 cursor-pointer hover:text-white
                 text-black shadow-xl transition-all duration-300 hover:scale-[1.02]"
                             >
-                                Upgrade Now
+                                {t("subscriptionPage.upgradeNow")}
                             </Button>
                         </div>
                     </div>
