@@ -41,7 +41,14 @@ export const profileApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["dashboard"],
-    })
+    }),
+    getClientCaseDetails: builder.query<any, string>({
+      query: (clientPersonalId: string) => ({
+        url: `/cases/personal/${clientPersonalId}/`,
+        method: "GET",
+      }),
+      providesTags: ["case"],
+    }),
   }),
 });
 
@@ -51,5 +58,7 @@ export const {
   useGetAllClientsQuery,
   useLazyGetAllClientsQuery,
   useGetAllLawyersQuery,
-  useLazyGetAllLawyersQuery
+  useLazyGetAllLawyersQuery,
+  useGetClientCaseDetailsQuery,
+  useLazyGetClientCaseDetailsQuery,
 } = profileApi;
