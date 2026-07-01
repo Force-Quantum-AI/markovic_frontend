@@ -27,6 +27,7 @@ interface Client {
   email?: string | null;
   created_date?: string | null;
   total_cases: number;
+  case_ids?: string[] | null;
 }
 
 interface UsersTableProps {
@@ -66,12 +67,12 @@ export default function UsersTable({
   const {t} = useTranslation();
 
   const handleView = (user: Client) => {
-    if (user.id) {
+    if (user?.case_ids) {
       // here i will call api by user id to get this user cases or if case id is exists in response then i will take the first case id and sent it in my-case details page 
-      // router.push(`/my-cases/${caseId}`);
+      router.push(`/my-cases/${user?.case_ids[0]}`);
       return;
     }
-    alert(`This is under implementation.`);
+    alert(`This is under implementation in backend.`);
   };
 
   // const handleDelete = (clientName: string) => {
