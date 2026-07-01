@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog"; // Standard Shadcn/UI import
 import { toast } from "sonner";
 import { useForgotPasswordRequestMutation, useResetPasswordMutation } from "@/store/features/auth/authApi";
+import { useTranslation } from "react-i18next";
 
 // Step Definitions
 type ResetStep = "EMAIL" | "OTP" | "NEW_PASSWORD" | "SUCCESS" | "ERROR";
@@ -34,6 +35,7 @@ export default function ForgotPasswordModal({
 
   const [forgotPasswordRequest, {isLoading:isForgotPasswordRequestLoading}] = useForgotPasswordRequestMutation();
   const [resetPassword, {isLoading:isResetPasswordLoading}] = useResetPasswordMutation();
+  const { t } = useTranslation("auth");
 
   // --- STATE MANAGEMENT ---
   const [step, setStep] = useState<ResetStep>("EMAIL");
@@ -137,9 +139,9 @@ export default function ForgotPasswordModal({
       case "EMAIL":
         return (
           <div className="flex flex-col items-center text-center px-4 py-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Forgot Password?</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">{t("forgot_password_title")}</h2>
             <p className="text-sm text-gray-500 max-w-sm mb-10 leading-relaxed">
-              No problem. Enter your registered email address and we&apos;ll send you 6 digit verification code to reset your password.
+              {t("forgot_password_desc")}
             </p>
 
             <form onSubmit={handleOtpSent} className="w-full max-w-md space-y-8">
@@ -149,8 +151,8 @@ export default function ForgotPasswordModal({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-14 pr-12 py-4 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] transition-all shadow-sm"
-                  placeholder="Enter your email"
+                  className="w-full pl-14 pr-12 py-4 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] transition-all shadow-sm text-gray-700"
+                  placeholder={t("email_placeholder")}
                   required
                 />
                 {isEmailValid && (
@@ -163,15 +165,16 @@ export default function ForgotPasswordModal({
                 disabled={isForgotPasswordRequestLoading}
                 className="w-full sm:w-64 mx-auto bg-[#135576] hover:bg-[#0f445f] text-white font-medium py-3.5 rounded-full shadow-md flex items-center justify-center gap-2"
               >
-                {isForgotPasswordRequestLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Send OTP"}
+                {isForgotPasswordRequestLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : t("send_otp")}
               </button>
             </form>
 
             <button 
+              type="button"
               onClick={() => onOpenChange(false)}
               className="mt-8 text-sm font-semibold text-[#8a94a6] hover:text-[#135576] transition-colors"
             >
-              Back to log in
+              {t("back_to_login")}
             </button>
           </div>
         );
@@ -179,10 +182,9 @@ export default function ForgotPasswordModal({
       case "OTP":
         return (
           <div className="flex flex-col items-center text-center px-4 py-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">OTP Verification</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">{t("otp_title")}</h2>
             <p className="text-sm text-gray-500 max-w-md mt-1 leading-relaxed">
-              We have sent a 6-digit verification code to your email address.
-              Please enter the code below to complete your registration.
+              {t("otp_desc")}
             </p>
             <p className="text-sm text-gray-500 max-w-sm my-4">
              <span className="font-semibold text-gray-800">{email}</span>
@@ -197,22 +199,23 @@ export default function ForgotPasswordModal({
                   type="text"
                   value={d}
                   onChange={e => handleOtpChange(e.target.value, i)}
-                  className="w-14 h-14 border border-gray-200 rounded-full text-center text-xl focus:ring-2 focus:ring-[#135576] outline-none transition-all"
+                  className="w-14 h-14 border border-gray-200 rounded-full text-center text-xl focus:ring-2 focus:ring-[#135576] outline-none transition-all text-gray-700"
                   placeholder="-"
                 />
               ))}
             </div>
 
             <div className="text-sm text-gray-400 mb-8">
-              Didn&apos;t get code. <button className="text-[#135576] font-bold">Resend</button>
+              {t("didnt_get_code")} <button type="button" className="text-[#135576] font-bold">{t("resend")}</button>
             </div>
 
             <button
+              type="button"
               onClick={()=> setStep("NEW_PASSWORD")}
               disabled={otp.join("").length < 6}
               className="w-full sm:w-64 bg-[#135576] text-white py-3.5 rounded-full font-medium disabled:opacity-50"
             >
-              {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Verify"}
+              {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : t("verify")}
             </button>
           </div>
         );
@@ -220,8 +223,8 @@ export default function ForgotPasswordModal({
       case "NEW_PASSWORD":
         return (
           <div className="flex flex-col items-center text-center px-4 py-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Reset Your Password</h2>
-            <p className="text-sm text-gray-500 mb-10">You are ready to go. Setup your new password.</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">{t("reset_password_title")}</h2>
+            <p className="text-sm text-gray-500 mb-10">{t("reset_password_desc")}</p>
 
             <form onSubmit={handlePasswordReset} className="w-full max-w-md space-y-4">
               <div className="relative">
@@ -230,8 +233,8 @@ export default function ForgotPasswordModal({
                   type={showPass ? "text" : "password"}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="New Password"
-                  className="w-full pl-14 pr-12 py-3.5 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-[#135576] outline-none"
+                  placeholder={t("new_password_placeholder")}
+                  className="w-full pl-14 pr-12 py-3.5 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-[#135576] outline-none text-gray-700"
                   required
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400">
@@ -245,8 +248,8 @@ export default function ForgotPasswordModal({
                   type={showConfirmPass ? "text" : "password"}
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm Password"
-                  className="w-full pl-14 pr-12 py-3.5 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-[#135576] outline-none"
+                  placeholder={t("confirm_password_placeholder")}
+                  className="w-full pl-14 pr-12 py-3.5 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-[#135576] outline-none text-gray-700"
                   required
                 />
                 <button type="button" onClick={() => setShowConfirmPass(!showConfirmPass)} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400">
@@ -255,7 +258,7 @@ export default function ForgotPasswordModal({
               </div>
 
               <button type="submit" className="w-full sm:w-64 bg-[#135576] text-white py-3.5 rounded-full font-medium mt-6">
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Reset Password"}
+                {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : t("reset_password_cta")}
               </button>
             </form>
           </div>
@@ -267,13 +270,14 @@ export default function ForgotPasswordModal({
             <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6 border border-emerald-100">
               <CheckCircle2 className="w-12 h-12 text-emerald-500 fill-emerald-500 stroke-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Password Reset Successful</h2>
-            <p className="text-sm text-gray-500 mb-10">You can now use your new password to access your account.</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("password_reset_success_title")}</h2>
+            <p className="text-sm text-gray-500 mb-10">{t("password_reset_success_desc")}</p>
             <button
+              type="button"
               onClick={() => onOpenChange(false)}
               className="bg-[#135576] text-white px-10 py-3 rounded-full font-medium"
             >
-              Back to Login
+              {t("back_to_login")}
             </button>
           </div>
         );
@@ -284,20 +288,22 @@ export default function ForgotPasswordModal({
             <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mb-6 border border-rose-100">
               <XCircle className="w-12 h-12 text-rose-500 fill-rose-500 stroke-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Something Went Wrong</h2>
-            <p className="text-sm text-gray-400 mb-10">Verification failed. Please check the code or resend it.</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("something_went_wrong_title")}</h2>
+            <p className="text-sm text-gray-400 mb-10">{t("something_went_wrong_desc")}</p>
             <div className="flex gap-4">
               <button
+                type="button"
                 onClick={() => setStep("OTP")}
                 className="bg-gray-100 text-gray-700 px-8 py-3 rounded-full font-medium"
               >
-                Try Again
+                {t("try_again")}
               </button>
               <button
+                type="button"
                 onClick={() => setStep("EMAIL")}
                 className="bg-[#135576] text-white px-8 py-3 rounded-full font-medium flex items-center gap-2"
               >
-                <RefreshCw className="w-4 h-4" /> Resend
+                <RefreshCw className="w-4 h-4" /> {t("resend")}
               </button>
             </div>
           </div>
@@ -317,17 +323,17 @@ export default function ForgotPasswordModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl! w-[95vw] sm:w-full bg-white rounded-[40px] border-none shadow-2xl p-6 overflow-hidden">
+      <DialogContent className="max-w-3xl! w-[95vw] sm:w-full bg-white rounded-xl border-none shadow-2xl p-6 overflow-hidden">
         
         {renderContent()}
 
         {/* Legal Footer for Step 1 - As per Image */}
         {step === "EMAIL" && (
           <div className="text-center text-[11px] text-gray-400 mt-10 border-t border-gray-50 pt-6">
-            By logging in, you agree to our{" "}
-            <a href="#" className="underline font-medium hover:text-gray-600">Terms of services</a>
-            {" "}and{" "}
-            <a href="#" className="underline font-medium hover:text-gray-600">Privacy Policy</a>.
+            {t("by_logging_in")}{" "}
+            <a href="#" className="underline font-medium hover:text-gray-600">{t("terms_of_services")}</a>
+            {" "}{t("and")}{" "}
+            <a href="#" className="underline font-medium hover:text-gray-600">{t("privacy_policy")}</a>.
           </div>
         )}
       </DialogContent>

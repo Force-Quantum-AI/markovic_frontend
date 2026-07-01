@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useToggleBookmarkedCasesMutation } from "@/store/features/case/case.api";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export interface CaseCardProps {
   id?: string;
@@ -119,6 +120,7 @@ export function CaseCard({
 }: CaseCardProps) {
   const [toggleBookmarkedCases, { isLoading }] = useToggleBookmarkedCasesMutation();
   const [isFavorite, setIsFavorite] = useState(bookmark || false);
+  const {t} = useTranslation("common")
 
   // Color configuration mapping for status pill badges
   const statusStyles: Record<string, string> = {
@@ -169,7 +171,7 @@ export function CaseCard({
       <button
         disabled={isLoading}
         onClick={handleAddToFavorite}
-        className="absolute top-5 right-5 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm z-10 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+        className="absolute top-5 right-5 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm  cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isLoading ? (
           <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
@@ -178,7 +180,7 @@ export function CaseCard({
         )}
       </button>
       <div
-        className="bg-[#f8f9fa] rounded-3xl p-3 2xl:p-6 border border-gray-100/80 shadow-sm flex flex-col justify-between transition-all hover:shadow-md w-full cursor-pointer"
+        className="bg-[#f8f9fa] rounded-3xl p-3 2xl:p-4 border border-gray-100/80 shadow-sm flex flex-col justify-between transition-all hover:shadow-md w-full cursor-pointer"
         onClick={() => router.push(`/my-cases/${id}`)}
       >
         <div>
@@ -193,7 +195,7 @@ export function CaseCard({
           <div className="flex items-center gap-3 mb-4">
             <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
               <Image
-                src="/dummy-user.jpg"
+                src={resolveImageUrl(displayClientImage)}
                 alt={displayClientName}
                 fill
                 className="object-cover"
@@ -207,9 +209,9 @@ export function CaseCard({
           {/* Case Description Info Box */}
           <div className="space-y-1 mb-5">
             <span className="block text-[11px] font-medium text-gray-400 uppercase tracking-wider">
-              Case name
+              {t("case_name")}
             </span>
-            <p className="text-xs md:text-sm font-semibold text-gray-700 leading-snug line-clamp-2">
+            <p className="text-xs md:text-base xl:text-lg font-semibold text-gray-700 leading-snug line-clamp-2">
               {displayCaseName}
             </p>
           </div>
@@ -218,7 +220,7 @@ export function CaseCard({
           <div className="grid grid-cols-2 gap-y-4 gap-x-2 bg-white rounded-2xl p-4 border border-gray-50">
             {/* Status block */}
             <div className="space-y-1">
-              <span className="block text-[11px] text-gray-400">Case status</span>
+              <span className="block text-[11px] text-gray-400">{t("case_status")}</span>
               <span
                 className={`inline-block text-[10px] xl:text-xs font-semibold px-2.5 py-0.5 rounded-md border ${getStatusStyle(displayStatus)}`}
               >
@@ -228,7 +230,7 @@ export function CaseCard({
 
             {/* Court location block */}
             <div className="space-y-1">
-              <span className="block text-[11px] text-gray-400">Court</span>
+              <span className="block text-[11px] text-gray-400">{t("court")}</span>
               <span className="block text-xs md:text-sm font-medium text-gray-800 truncate">
                 {displayCourt}
               </span>
@@ -236,7 +238,7 @@ export function CaseCard({
 
             {/* Identification instance block */}
             <div className="space-y-1">
-              <span className="block text-[11px] text-gray-400">Case number</span>
+              <span className="block text-[11px] text-gray-400">{t("case_number")}</span>
               <span className="block text-xs font-medium text-gray-700">
                 {displayCaseNumber}
               </span>
@@ -244,7 +246,7 @@ export function CaseCard({
 
             {/* Assigned legal representation stack layout */}
             <div className="space-y-1">
-              <span className="block text-[11px] text-gray-400">Assign Lawyer</span>
+              <span className="block text-[11px] text-gray-400">{t("assigned_lawyer")}</span>
               <div className="flex items-center -space-x-1.5 overflow-hidden">
                 {displayLawyers.map((avatar, idx) => {
                   const resolvedAvatar = resolveImageUrl(avatar);
@@ -275,14 +277,14 @@ export function CaseCard({
 
             {/* Date info blocks */}
             <div className="space-y-0.5">
-              <span className="block text-[11px] text-gray-400">Hearing date</span>
+              <span className="block text-[11px] text-gray-400">{t("hearing_date")}</span>
               <span className="block text-xs font-semibold text-gray-700">
                 {displayHearingDate}
               </span>
             </div>
 
             <div className="space-y-0.5">
-              <span className="block text-[11px] text-gray-400">Deadline</span>
+              <span className="block text-[11px] text-gray-400">{t("deadline")}</span>
               <span className="block text-xs font-medium text-gray-500">
                 {displayDeadline}
               </span>

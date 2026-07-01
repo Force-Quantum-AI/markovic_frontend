@@ -8,6 +8,7 @@ import { useGetAllLawAndBylawQuery, useGetAutomaticLawAndBylawQuery, useSyncAuto
 import { Skeleton } from "@/components/ui/skeleton";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { AutoLawCard } from "@/components/shared/AutoLawCard";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -18,6 +19,7 @@ export default function LawAndByLawPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const PAGE_SIZE = 10;
     const [activeBtn, setActiveBtn] = useState<('ManualLawBylaw' | 'AutoLawBylaw')>("AutoLawBylaw");
+    const {t} = useTranslation("common");
 
     // Debounce search query
     useEffect(() => {
@@ -92,30 +94,30 @@ export default function LawAndByLawPage() {
         <div className="mx-auto w-full p-2 md:p-3 bg-white rounded-2xl">
             <div className="flex items-center justify-between">
                 <PageHeadingTitle
-                    title="Laws & By-laws"
-                    subtitle="Explore all laws & bylaws here"
+                    title={t("laws_and_bylaws")}
+                    subtitle={t("explore_all_laws_bylaws_here")}
                 />
                 <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-3">
                     <div className="w-full md:w-auto flex flex-col md:flex-row items-center justify-center gap-3">
                         <button
                             onClick={() => setActiveBtn("AutoLawBylaw")}
-                            className={`${activeBtn === "AutoLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>Official Source</button>
+                            className={`${activeBtn === "AutoLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>{t("official_source")}</button>
                         <button
                             onClick={() => setActiveBtn("ManualLawBylaw")}
-                            className={`${activeBtn === "ManualLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>Admin Added</button>
+                            className={`${activeBtn === "ManualLawBylaw" ? "bg-[#135576] text-white" : "bg-[#135576]/10 text-[#135576]"} w-full md:w-auto  px-5 py-2 rounded-full hover:cursor-pointer transition-all duration-300`}>{t("admin_added")}</button>
                     </div>
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 items-end gap-3 my-4">
                 <div className="col-span-1 md:col-span-3">
                     <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                        Search
+                        {t("search")}
                     </label>
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Search cases, clients, laws, documents..."
+                            placeholder={t("search")}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full rounded-full border border-gray-200 bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
@@ -140,7 +142,7 @@ export default function LawAndByLawPage() {
                 {/* Top Header Controls Block */}
                 <div className="flex items-center justify-between">
                     <h3 className="text-xs md:text-sm text-gray-400 tracking-tight">
-                        Showing {activeBtn === "AutoLawBylaw" ? autoLawBylawData?.length : data?.results?.length} results
+                        {t("showing")} {activeBtn === "AutoLawBylaw" ? autoLawBylawData?.length : data?.results?.length} {t("results")}
                     </h3>
                 </div>
 

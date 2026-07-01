@@ -16,6 +16,7 @@ import { useGetAllArchivedCasesQuery, useDeleteArchiveCaseMutation, IArchivePara
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 
 export default function ArchiveTable() {
@@ -174,34 +175,36 @@ export default function ArchiveTable() {
         return "bg-[#e0f2fe] text-[#0284c7] border-[#bae6fd]";
     };
 
+    const {t} = useTranslation("common");
+
     return (
         <div className="space-y-4">
-            <PageHeadingTitle title="All Archive" subtitle="Manage all archived cases and records from this section" />
+            <PageHeadingTitle title={t("all_archive")} subtitle={t("manage_all_archived_cases_and_records")} />
             <div className="w-full mx-auto p-4 md:p-6 space-y-4 bg-white rounded-2xl border border-gray-100/80 shadow-sm">
                 <div className="mb-6 flex flex-col gap-5">
                     <div className="grow grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
                         <InputField
-                            label="Client name"
-                            placeholder="Search by client name..."
+                            label={t("client_name")}
+                            placeholder={t("search_by_name")}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
                         <InputField
-                            label="Year"
+                            label={t("year")}
                             inputType="number"
-                            placeholder="Search by year..."
+                            placeholder={t("search_by_year")}
                             value={year}
                             onChange={(e) => handleSetYear(e.target.value)}
                         />
                         <InputField
-                            label="Court name"
-                            placeholder="Search by court name..."
+                            label={t("court_name")}
+                            placeholder={t("search_by_court_name")}
                             value={court}
                             onChange={(e) => setCourt(e.target.value)}
                         />
                         <InputField
-                            label="Responsible lawyer or legal trainee"
-                            placeholder="Search by responsible lawyer or legal trainee..."
+                            label={t("responsible_lawyer_or_legal_trainee")}
+                            placeholder={t("search_by_responsible_lawyer_or_legal_trainee")}
                             value={responsible}
                             onChange={(e) => setResponsible(e.target.value)}
                         />
@@ -240,8 +243,8 @@ export default function ArchiveTable() {
                         />
                     </div>
                     <div className="flex items-center gap-3">
-                        <MainButton label="Apply Filter" onClick={handleApplyFilter} />
-                        <MainButton variant="secondary" label="Reset Filter" onClick={handleResetFilter} />
+                        <MainButton label={t("apply_filter")} onClick={handleApplyFilter} />
+                        <MainButton variant="secondary" label={t("reset_filter")} onClick={handleResetFilter} />
                     </div>
                 </div>
             </div>
@@ -251,10 +254,10 @@ export default function ArchiveTable() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                         <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
-                            All Archive
+                            {t("all_archive")}
                         </h2>
                         <p className="text-sm text-[#427791] mt-0.5">
-                            {totalCount} archived {totalCount === 1 ? "case" : "cases"}
+                            {totalCount} {t("results")}
                         </p>
                     </div>
                 </div>
@@ -274,13 +277,13 @@ export default function ArchiveTable() {
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-[#e9eff2] text-gray-600 text-xs font-semibold uppercase tracking-wider border-b border-gray-200">
-                                        <th className="py-3.5 px-5">Case Name</th>
-                                        <th className="py-3.5 px-4">Category</th>
-                                        <th className="py-3.5 px-4">Case Number</th>
-                                        <th className="py-3.5 px-4">Court Name</th>
-                                        <th className="py-3.5 px-4">Date</th>
-                                        <th className="py-3.5 px-4">Status</th>
-                                        <th className="py-3.5 px-5 text-right">Actions</th>
+                                        <th className="py-3.5 px-5">{t("case_name")}</th>
+                                        <th className="py-3.5 px-4">{t("category")}</th>
+                                        <th className="py-3.5 px-4">{t("case_number")}</th>
+                                        <th className="py-3.5 px-4">{t("court_name")}</th>
+                                        <th className="py-3.5 px-4">{t("date")}</th>
+                                        <th className="py-3.5 px-4">{t("status")}</th>
+                                        <th className="py-3.5 px-5 text-right">{t("action")}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
@@ -327,7 +330,7 @@ export default function ArchiveTable() {
                                                     <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-lg border border-gray-100 p-1">
                                                         <DropdownMenuItem onClick={() => handleView(item.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
                                                             <Eye className="w-4 h-4 text-gray-400" />
-                                                            <span>View</span>
+                                                            <span>{t("view")}</span>
                                                         </DropdownMenuItem>
                                                         {/* <DropdownMenuItem onClick={() => handleRestore(item.id, item.case_name)} className="flex items-center gap-2 px-3 py-2 text-sm text-[#135576] rounded-lg hover:bg-[#135576]/5 cursor-pointer transition-colors">
                                                             <ArchiveRestore className="w-4 h-4 text-[#135576]" />
@@ -335,7 +338,7 @@ export default function ArchiveTable() {
                                                         </DropdownMenuItem> */}
                                                         <DropdownMenuItem onClick={() => handleDelete(item.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
                                                             <Trash2 className="w-4 h-4 text-red-400" />
-                                                            <span>Delete</span>
+                                                            <span>{t("delete")}</span>
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
@@ -369,7 +372,7 @@ export default function ArchiveTable() {
                                             <DropdownMenuContent align="end" className="w-36 bg-white rounded-xl shadow-md border p-1">
                                                 <DropdownMenuItem onClick={() => handleView(item.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50">
                                                     <Eye className="w-4 h-4 text-gray-400" />
-                                                    <span>View</span>
+                                                    <span>{t("view")}</span>
                                                 </DropdownMenuItem>
                                                 {/* <DropdownMenuItem onClick={() => handleRestore(item.id, item.case_name)} className="flex items-center gap-2 px-3 py-2 text-sm text-[#135576] rounded-lg hover:bg-[#135576]/5">
                                                     <ArchiveRestore className="w-4 h-4 text-[#135576]" />
@@ -377,7 +380,7 @@ export default function ArchiveTable() {
                                                 </DropdownMenuItem> */}
                                                 <DropdownMenuItem onClick={() => handleDelete(item.id)} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50">
                                                     <Trash2 className="w-4 h-4 text-red-400" />
-                                                    <span>Delete</span>
+                                                    <span>{t("delete")}</span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -418,7 +421,7 @@ export default function ArchiveTable() {
                         {totalCount > 0 && (
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-100">
                                 <p className="text-[#427791] text-sm">
-                                    Showing {startIndex + 1} to {endIndex} of {totalCount} results
+                                    {t("showing")} {startIndex + 1} to {endIndex} of {totalCount} {t("results")}
                                 </p>
 
                                 {totalPages > 1 && (

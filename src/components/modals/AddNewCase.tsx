@@ -8,8 +8,11 @@ import { useAddCaseDeadlineMutation, useAddCaseHearingMutation, useCreateCaseMut
 import { toast } from "sonner";
 import { getImageUrl } from "@/lib/getImageUrl";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
+import { SelectFieldForStatus } from "@/components/shared/SelectFieldForStatus";
 import { useGetAllUsersQuery } from "@/store/features/admin/my-users/my-users.api";
-import { useGetAllClientsQuery, useLazyGetAllClientsQuery } from "@/store/features/profile/profile.api";
+import { useGetAllClientsQuery, useLazyGetAllClientsQuery, useLazyGetAllLawyersQuery } from "@/store/features/profile/profile.api";
+import { useTranslation } from "react-i18next";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // ─── TYPES & INTERFACES (ALIGNED WITH ALL 3 FIGMA STEPS) ─────────────────────
 
@@ -29,7 +32,12 @@ export interface LegalDetailsData {
   category: string;
   subCategory: string;
   status: string;
-  responsibleLawyers: string[];
+  responsibleLawyers: {
+    id: string;
+    full_name: string;
+    email: string;
+    profile_image?: string;
+  }[];
   court: string;
   caseNumber: string;
   opposingParties: string[];
@@ -37,7 +45,7 @@ export interface LegalDetailsData {
 
 export interface DateCardData {
   reason: string;
-  status: string;
+  status: number;
   timeRange: string;
   period: string;
   date: string;
@@ -105,13 +113,14 @@ function CalendarIcon({ active }: { active: boolean }) {
 
 // ─── STEPPER MODULE ───────────────────────────────────────────────────────────
 
-const STEPS = [
-  { id: 1, label: "Basic information" },
-  { id: 2, label: "Legal details" },
-  { id: 3, label: "Schedule" },
+const STEPS_KEYS = [
+  { id: 1, key: "basic_information" },
+  { id: 2, key: "legal_details" },
+  { id: 3, key: "schedule" },
 ];
 
 function Stepper({ current }: { current: number }) {
+  const { t } = useTranslation("common");
   return (
     <div className="relative flex items-center justify-between w-full max-w-2xl mx-auto px-4 md:px-12">
       <div className="absolute top-5 left-[12%] right-[12%] h-[2px] bg-gray-200 -z-10">
@@ -121,7 +130,7 @@ function Stepper({ current }: { current: number }) {
         />
       </div>
 
-      {STEPS.map((step) => {
+      {STEPS_KEYS.map((step) => {
         const isDone = step.id < current;
         const isActive = step.id === current;
         const isCompletedOrActive = isDone || isActive;
@@ -137,7 +146,7 @@ function Stepper({ current }: { current: number }) {
               {step.id === 3 && <CalendarIcon active={isCompletedOrActive} />}
             </div>
             <span className={`text-xs md:text-sm font-medium ${isCompletedOrActive ? "text-[#135576]" : "text-gray-400"}`}>
-              {step.label}
+              {t(step.key)}
             </span>
           </div>
         );
@@ -157,6 +166,7 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 // ─── STEP 1 CONTENT: BASIC INFORMATION ───────────────────────────────────────
 
 function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChange: (d: BasicInfoData) => void }) {
+  const { t } = useTranslation("common");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const setField = (key: keyof BasicInfoData) => (v: string) => onChange({ ...data, [key]: v });
 
@@ -207,7 +217,7 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
 
   return (
     <div className="w-full space-y-6">
-      <h3 className="text-lg font-bold text-gray-900 tracking-tight">Basic information</h3>
+      <h3 className="text-lg font-bold text-gray-900 tracking-tight">{t("basic_information")}</h3>
       <div className="flex items-center gap-4 pt-1">
         <div className="relative w-24 h-24 rounded-full bg-[#d9d9d9] shrink-0 overflow-hidden flex items-center justify-center border border-gray-100 shadow-inner">
           {data.avatarUrl ? (
@@ -225,7 +235,7 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
           }
         }} accept="image/*" className="hidden" />
         <button type="button" onClick={() => fileInputRef.current?.click()} className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-all shadow-sm">
-          Add Photo
+          {t("add_photo")}
         </button>
       </div>
 
@@ -233,7 +243,7 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
         <div className="space-y-1.5 relative">
 
           <FieldLabel>
-            Client name <span className="text-red-500">*</span>
+            {t("client_name")} <span className="text-red-500">*</span>
           </FieldLabel>
 
           <input
@@ -253,7 +263,7 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
                   isClientLoading ? (
                     <div className="px-4 py-4 flex items-center gap-3 text-gray-500">
                       <Loader className="w-4 h-4 animate-spin" />
-                      Loading...
+                      {t("loading")}
                     </div>
                   ) : clients.length > 0 ? (
                     clients.map((client: any) => (
@@ -274,7 +284,7 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
 
                   ) : (
                     <div onClick={() => setShowDropdown(false)} className="px-4 py-4 text-sm text-gray-500 flex items-center justify-between">
-                      No existing client found, you can create by this name. <X className="w-5 h-5 hover:cursor-pointer hover:bg-gray-200 rounded-md p-1" onClick={() => setShowDropdown(false)} />
+                      {t("no_client_found_create")} <X className="w-5 h-5 hover:cursor-pointer hover:bg-gray-200 rounded-md p-1" onClick={() => setShowDropdown(false)} />
                     </div>
                   )
                 }
@@ -284,35 +294,35 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
 
           <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5">
             <Info className="w-3.5 h-3.5 shrink-0" />
-            <span>You have to add a name to create a case.</span>
+            <span>{t("client_name_required_info")}</span>
           </div>
 
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <FieldLabel>Email Address</FieldLabel>
+            <FieldLabel>{t("email_address_label")}</FieldLabel>
             <input type="email" value={data.emailAddress} onChange={(e) => setField("emailAddress")(e.target.value)} placeholder="markovicaleksa@email.com" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
           </div>
           <div>
-            <FieldLabel>Phone Number</FieldLabel>
+            <FieldLabel>{t("phone_number_label")}</FieldLabel>
             <input type="tel" value={data.phoneNumber} onChange={(e) => setField("phoneNumber")(e.target.value)} placeholder="+386 54683248" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
           </div>
         </div>
 
-        <div>
-          <FieldLabel>Personal ID Number</FieldLabel>
+        {/* <div>
+          <FieldLabel>{t("personal_id_number_label")}</FieldLabel>
           <input type="text" value={data.personalIdNumber} onChange={(e) => setField("personalIdNumber")(e.target.value)} placeholder="#555-0128" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
-        </div>
+        </div> */}
 
         <div>
-          <FieldLabel>Address</FieldLabel>
+          <FieldLabel>{t("address_label")}</FieldLabel>
           <input type="text" value={data.address} onChange={(e) => setField("address")(e.target.value)} placeholder="Ulica Nedeljka Merdovića 42, 84000 Bijelo Polje" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
         </div>
 
         <div>
-          <FieldLabel>Note</FieldLabel>
-          <textarea value={data.note} onChange={(e) => setField("note")(e.target.value)} placeholder="Type here..." rows={4} className="w-full px-5 py-4 border border-gray-200 rounded-3xl text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all resize-none shadow-sm text-gray-800" />
+          <FieldLabel>{t("note_label")}</FieldLabel>
+          <textarea value={data.note} onChange={(e) => setField("note")(e.target.value)} placeholder={t("type_here")} rows={4} className="w-full px-5 py-4 border border-gray-200 rounded-3xl text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all resize-none shadow-sm text-gray-800" />
         </div>
       </div>
     </div>
@@ -322,23 +332,31 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
 // ─── STEP 2 CONTENT: LEGAL DETAILS ───────────────────────────────────────────
 
 function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange: (d: LegalDetailsData) => void }) {
+  const { t } = useTranslation("common");
   const [lawyerInput, setLawyerInput] = useState("");
   const [opposingInput, setOpposingInput] = useState("");
-  const setField = (key: keyof LegalDetailsData) => (v: string | string[]) => onChange({ ...data, [key]: v });
+  const setField = (key: keyof LegalDetailsData) => (v: any) => onChange({ ...data, [key]: v });
 
-  // const {data: allLawyers, isLoading: allLawyersLoading} = useGetAllUsersQuery()
+  const [triggerSearch, { data: searchResults = [], isFetching }] = useLazyGetAllLawyersQuery();
+
+  useEffect(() => {
+    if (lawyerInput.trim().length >= 3) {
+      triggerSearch(lawyerInput);
+    }
+  }, [lawyerInput, triggerSearch]);
+
 
   return (
     <div className="w-full space-y-5">
-      <h3 className="text-lg font-bold text-gray-900 tracking-tight">Legal details</h3>
+      <h3 className="text-lg font-bold text-gray-900 tracking-tight">{t("legal_details")}</h3>
       <div className="space-y-1.5">
-        <FieldLabel>Case name:</FieldLabel>
+        <FieldLabel>{t("case_name_colon")}</FieldLabel>
         <input type="text" value={data.caseName} onChange={(e) => setField("caseName")(e.target.value)} placeholder="Markovic/Lovence Insurance - damages claim - PI" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <FieldLabel>Category:</FieldLabel>
+          <FieldLabel>{t("category_colon")}</FieldLabel>
           <div className="relative w-full">
             <SelectField
               label="Category"
@@ -350,7 +368,7 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
           </div>
         </div>
         <div className="space-y-1.5">
-          <FieldLabel>Sub-Category:</FieldLabel>
+          <FieldLabel>{t("sub_category_colon")}</FieldLabel>
           <div className="relative w-full">
             <SelectField
               label="Sub Category"
@@ -365,7 +383,7 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
       </div>
 
       <div className="space-y-1.5">
-        <FieldLabel>Status:</FieldLabel>
+        <FieldLabel>{t("status_colon")}</FieldLabel>
         <div className="relative w-full">
           <SelectField
             label="Status"
@@ -377,43 +395,109 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <FieldLabel>Responsible lawyer or legal trainee:</FieldLabel>
-        <input type="text" value={lawyerInput} onChange={(e) => setLawyerInput(e.target.value)} onKeyDown={(e) => {
-          if (e.key === "Enter" && lawyerInput.trim()) {
-            e.preventDefault();
-            if (!data.responsibleLawyers.includes(lawyerInput.trim())) setField("responsibleLawyers")([...data.responsibleLawyers, lawyerInput.trim()]);
-            setLawyerInput("");
-          }
-        }} placeholder="Type email here..." className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm" />
-        <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5"><Info className="w-3.5 h-3.5" /><span>Type email to add your co-worker to this case.</span></div>
+      <div className="space-y-1.5 relative">
+        <FieldLabel>{t("responsible_lawyer_trainee_colon")}</FieldLabel>
+        <input
+          type="text"
+          value={lawyerInput}
+          onChange={(e) => setLawyerInput(e.target.value)}
+          placeholder="Type email/name here..."
+          className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] transition-all shadow-sm"
+        />
+
+        {/* Search Results Dropdown */}
+        {lawyerInput.trim().length >= 3 && (
+          <div className="absolute z-50 top-full left-0 mt-2 w-full rounded-xl border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto">
+            {isFetching ? (
+              <div className="px-4 py-4 flex items-center gap-3 text-gray-500">
+                <Loader className="w-4 h-4 animate-spin" />
+                Searching...
+              </div>
+            ) : searchResults.length > 0 ? (
+              searchResults
+                .filter((lawyer: any) => !data.responsibleLawyers.some((l) => l.id === lawyer.id))
+                .map((lawyer: any) => (
+                  <button
+                    key={lawyer.id}
+                    type="button"
+                    onClick={() => {
+                      setField("responsibleLawyers")([
+                        ...data.responsibleLawyers,
+                        {
+                          id: lawyer.id,
+                          full_name: lawyer.full_name,
+                          email: lawyer.email,
+                          profile_image: lawyer.profile_image,
+                        },
+                      ]);
+                      setLawyerInput("");
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b last:border-b-0 flex items-center gap-3"
+                  >
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={lawyer.profile_image} />
+                      <AvatarFallback>{lawyer.full_name?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold text-sm">{lawyer.full_name}</p>
+                      <p className="text-xs text-gray-500">{lawyer.email}</p>
+                    </div>
+                  </button>
+                ))
+            ) : (
+              <div className="px-4 py-4 text-sm text-gray-500">
+                No lawyer found
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5">
+          <Info className="w-3.5 h-3.5" />
+          <span>Type email/name to search and select responsible lawyer</span>
+        </div>
+
         <div className="flex flex-wrap gap-2 pt-1">
-          {data.responsibleLawyers.map((lawyer, i) => (
-            <div key={i} className="flex items-center gap-2 bg-[#e9eff2] text-gray-800 text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-100">
-              <span>{lawyer}</span><button type="button" onClick={() => setField("responsibleLawyers")(data.responsibleLawyers.filter((_, idx) => idx !== i))}><X className="w-3.5 h-3.5" /></button>
+          {data.responsibleLawyers.map((lawyer) => (
+            <div key={lawyer.id} className="flex items-center gap-2 bg-[#e9eff2] text-gray-800 text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-100">
+              <Avatar className="w-5 h-5 shrink-0">
+                <AvatarImage src={lawyer.profile_image} />
+                <AvatarFallback>{lawyer.full_name?.charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <span>{lawyer.full_name} ({lawyer.email})</span>
+              <button
+                type="button"
+                onClick={() => setField("responsibleLawyers")(data.responsibleLawyers.filter((l) => l.id !== lawyer.id))}
+              >
+                <X className="w-3.5 h-3.5 hover:text-red-500" />
+              </button>
             </div>
           ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <FieldLabel>Court:</FieldLabel>
+        {/* <div className="space-y-1.5">
+          <FieldLabel>{t("court_colon")}</FieldLabel>
           <div className="relative w-full">
             <select value={data.court} onChange={(e) => setField("court")(e.target.value)} className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-800 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer pr-10">
               <option value="Montenegro suprime Court">Montenegro suprime Court</option>
             </select>
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
           </div>
+        </div> */}
+        <div className="space-y-1.5">
+          <FieldLabel>{t("court_colon")}</FieldLabel>
+          <input type="text" placeholder={t("court_name")} onChange={(e) => setField("court")(e.target.value)} className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576]" />
         </div>
         <div className="space-y-1.5">
-          <FieldLabel>Case number:</FieldLabel>
+          <FieldLabel>{t("case_number_colon")}</FieldLabel>
           <input type="text" value={data.caseNumber} onChange={(e) => setField("caseNumber")(e.target.value)} placeholder="MKL-87587345-TA" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576]" />
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <FieldLabel>Opposing party:</FieldLabel>
+        <FieldLabel>{t("opposing_party_colon")}</FieldLabel>
         <input type="text" value={opposingInput} onChange={(e) => setOpposingInput(e.target.value)} onKeyDown={(e) => {
           if (e.key === "Enter" && opposingInput.trim()) {
             e.preventDefault();
@@ -421,7 +505,7 @@ function LegalDetailsStep({ data, onChange }: { data: LegalDetailsData; onChange
             setOpposingInput("");
           }
         }} placeholder="Lovcen insurance Company" className="w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576]" />
-        <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5"><Info className="w-3.5 h-3.5" /><span>Type name and press enter to add opposing parties.</span></div>
+        <div className="flex items-center gap-1.5 text-xs text-blue-500 font-medium px-1 pt-0.5"><Info className="w-3.5 h-3.5" /><span>{t("type_name_press_enter_opposing")}</span></div>
         <div className="flex flex-wrap gap-2 pt-1">
           {data.opposingParties.map((party, i) => (
             <div key={i} className="flex items-center gap-2 bg-[#f8fafc] text-gray-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-200">
@@ -445,12 +529,26 @@ function ScheduleCard({
   data: DateCardData;
   onChange: (d: DateCardData) => void;
 }) {
-  const updateField = (key: keyof DateCardData) => (value: string) => {
+  const { t } = useTranslation("common");
+  const updateField = <K extends keyof DateCardData>(key: K) => (value: DateCardData[K]) => {
     onChange({ ...data, [key]: value });
   };
 
   const days = Array.from({ length: 31 }, (_, i) => String(i + 1));
-  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const months = [
+    { value: "January", label: t("january") },
+    { value: "February", label: t("february") },
+    { value: "March", label: t("march") },
+    { value: "April", label: t("april") },
+    { value: "May", label: t("may") },
+    { value: "June", label: t("june") },
+    { value: "July", label: t("july") },
+    { value: "August", label: t("august") },
+    { value: "September", label: t("september") },
+    { value: "October", label: t("october") },
+    { value: "November", label: t("november") },
+    { value: "December", label: t("december") },
+  ];
   const years = ["2024", "2025", "2026", "2027", "2028"];
 
 
@@ -461,7 +559,7 @@ function ScheduleCard({
       {/* Reason + Status Double Column Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <FieldLabel>Reason:</FieldLabel>
+          <FieldLabel>{t("reason_colon")}</FieldLabel>
           <input
             type="text"
             value={data.reason}
@@ -472,17 +570,14 @@ function ScheduleCard({
         </div>
 
         <div className="space-y-1.5">
-          <FieldLabel>Status:</FieldLabel>
+          <FieldLabel>{t("status_colon")}</FieldLabel>
           <div className="relative w-full">
-            <select
-              value={data.status}
-              onChange={(e) => updateField("status")(e.target.value)}
-              className="w-full px-5 py-3 border border-gray-200 rounded-full text-sm text-gray-800 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer pr-10 shadow-sm"
-            >
-              <option value="Upcoming">Upcoming</option>
-              <option value="Completed">Completed</option>
-              <option value="Postponed">Postponed</option>
-            </select>
+            <SelectFieldForStatus
+              label="Status"
+              value={data.status ? String(data.status) : ""}
+              onChange={(value) => updateField("status")(Number(value))}
+              classes="w-full px-5 py-3 border border-gray-200 rounded-full text-sm text-gray-800 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer pr-10 shadow-sm"
+            />
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-gray-400" />
           </div>
         </div>
@@ -491,7 +586,7 @@ function ScheduleCard({
       {/* Time Frame Layout Input Matrix */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <FieldLabel>Time:</FieldLabel>
+          <FieldLabel>{t("time_colon")}</FieldLabel>
           <input
             type="text"
             value={data.timeRange}
@@ -519,7 +614,7 @@ function ScheduleCard({
       {/* Date, Month, and Year Selector Stack Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="space-y-1.5">
-          <FieldLabel>Date:</FieldLabel>
+          <FieldLabel>{t("date_colon")}</FieldLabel>
           <div className="relative w-full">
             <select
               value={data.date}
@@ -533,14 +628,14 @@ function ScheduleCard({
         </div>
 
         <div className="space-y-1.5">
-          <FieldLabel>Month:</FieldLabel>
+          <FieldLabel>{t("month_colon")}</FieldLabel>
           <div className="relative w-full">
             <select
               value={data.month}
               onChange={(e) => updateField("month")(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-full text-sm text-gray-800 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer pr-8 shadow-sm text-center"
             >
-              {months.map((m) => (<option key={m} value={m}>{m}</option>))}
+              {months.map((m) => (<option key={m.value} value={m.value}>{m.label}</option>))}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none w-3.5 h-3.5 text-gray-400" />
           </div>
@@ -548,7 +643,7 @@ function ScheduleCard({
 
         {/* Labeled 'Client name:' exactly mirroring Figma labels error */}
         <div className="space-y-1.5">
-          <FieldLabel>Year :</FieldLabel>
+          <FieldLabel>{t("year_colon")}</FieldLabel>
           <div className="relative w-full">
             <select
               value={data.year}
@@ -572,20 +667,21 @@ function ScheduleStep({
   data: ScheduleData;
   onChange: (d: ScheduleData) => void;
 }) {
+  const { t } = useTranslation("common");
   return (
     <div className="w-full space-y-6 animate-fade-in">
-      <h3 className="text-xl font-bold text-gray-900 tracking-tight">Schedule</h3>
+      <h3 className="text-xl font-bold text-gray-900 tracking-tight">{t("schedule")}</h3>
 
       {/* Add Hearing Date Segment Card */}
       <ScheduleCard
-        title="Add Hearing Date"
+        title={t("add_hearing_date")}
         data={data.hearing}
         onChange={(hearing) => onChange({ ...data, hearing })}
       />
 
       {/* Add Deadline Date Segment Card */}
       <ScheduleCard
-        title="Add Deadline Date"
+        title={t("add_deadline_date")}
         data={data.deadline}
         onChange={(deadline) => onChange({ ...data, deadline })}
       />
@@ -608,6 +704,7 @@ function buildDateString(card: DateCardData): string | undefined {
 // ─── MAIN MODAL COMPONENT ───────────────────────────────────────────────────
 
 export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clientId, clientAddress, clientEmail, clientPhoneNumber, clientAvatar, clientNote }: AddNewCaseProps) {
+  const { t } = useTranslation("common");
   const [currentStep, setCurrentStep] = useState(1);
 
   // ─── INITIAL SYSTEM FORM DICTIONARY ──────────────────────────────────────────
@@ -629,14 +726,14 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
       subCategory: "",
       status: "",
       responsibleLawyers: [],
-      court: "Montenegro suprime Court",
+      court: "",
       caseNumber: "",
       opposingParties: [],
     },
     schedule: {
       hearing: {
         reason: "",
-        status: "Upcoming",
+        status: 1,
         timeRange: "",
         period: "AM",
         date: "1",
@@ -645,7 +742,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
       },
       deadline: {
         reason: "",
-        status: "Upcoming",
+        status: 1,
         timeRange: "",
         period: "AM",
         date: "1",
@@ -671,12 +768,12 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
   const handleSave = async () => {
     // Validate required field
     if (!formData.basicInfo.clientName.trim()) {
-      toast.error("Client name is required to create a case.");
+      toast.error(t("toast_client_name_required"));
       setCurrentStep(1);
       return;
     }
     if (!formData.legalDetails.caseName.trim()) {
-      toast.error("Case name is required to create a case.");
+      toast.error(t("toast_case_name_required"));
       setCurrentStep(2);
       return;
     }
@@ -730,7 +827,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
       apiData.status = Number(formData.legalDetails.status);
     }
     if (formData.legalDetails.responsibleLawyers.length > 0) {
-      apiData.responsible_lawyer_ids = formData.legalDetails.responsibleLawyers;
+      apiData.responsible_lawyer_ids = formData.legalDetails.responsibleLawyers.map((l) => l.id);
     }
     if (formData.legalDetails.opposingParties.length > 0) {
       apiData.opposing_parties = formData.legalDetails.opposingParties;
@@ -754,7 +851,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
         data: apiData,
       }).unwrap();
 
-      toast.success("Case created successfully!");
+      toast.success(t("toast_case_created_success"));
       if (res?.id) {
         await createHearingAndDeadline(res.id);
       }
@@ -763,7 +860,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
     } catch (err: unknown) {
       console.log("error iss:", err);
       const e = err as { data?: { message?: string; detail?: string } };
-      const message = e?.data?.message || e?.data?.detail || "Failed to create case. Please try again.";
+      const message = e?.data?.message || e?.data?.detail || t("toast_case_created_failed");
       toast.error(message);
     }
   };
@@ -776,7 +873,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
         caseId: caseId,
         data: {
           reason: formData.schedule.hearing.reason,
-          status: formData.schedule.hearing.status.toLowerCase(),
+          status: formData.schedule.hearing.status,
           time_from: hearingTimeFrom,
           time_to: hearingTimeTo,
           am_pm: formData.schedule.hearing.period.toUpperCase(),
@@ -792,7 +889,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
         caseId: caseId,
         data: {
           reason: formData.schedule.deadline.reason,
-          status: formData.schedule.deadline.status.toLowerCase(),
+          status: formData.schedule.deadline.status,
           time_from: deadlineTimeFrom,
           time_to: deadlineTimeTo,
           am_pm: formData.schedule.deadline.period.toUpperCase(),
@@ -802,11 +899,11 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
         },
       }).unwrap();
       setTimeout(() => {
-        toast.success("Hearing and deadline added successfully!");
+        toast.success(t("toast_hearing_deadline_success"));
       }, 1000);
     } catch {
       setTimeout(() => {
-        toast.error("Please enter hearing and deadline from case details page for this case.");
+        toast.error(t("toast_hearing_deadline_failed"));
       }, 1000);
     }
   }
@@ -818,7 +915,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
 
         {/* Global Component Heading Block */}
         <div className="w-full text-center pb-2 pt-2">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Add New Case</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">{t("add_new_case")}</h2>
         </div>
 
         {/* Component Core Scrollable Viewport Content Layer */}
@@ -857,7 +954,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
             onClick={handleClose}
             className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-gray-500 bg-[#e9eff2] hover:bg-gray-200 transition-all focus:outline-none"
           >
-            Save as draft
+            {t("save_as_draft")}
           </button>
 
           <div className="flex items-center gap-3">
@@ -867,7 +964,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
                 onClick={() => setCurrentStep((p) => p - 1)}
                 className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all focus:outline-none"
               >
-                Back
+                {t("previous")}
               </button>
             )}
 
@@ -877,7 +974,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
                 onClick={() => setCurrentStep((p) => p + 1)}
                 className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-white bg-[#135576] hover:bg-[#0f445f] transition-all focus:outline-none active:scale-95 shadow-md shadow-blue-900/10"
               >
-                Next
+                {t("next")}
               </button>
             ) : (
               <button
@@ -887,7 +984,7 @@ export default function AddNewCase({ isOpen, onClose, onSubmit, clientName, clie
                 className="px-3 md:px-6 py-1 md:py-3 rounded-full text-xs md:text-sm font-semibold text-white bg-[#135576] hover:bg-[#0f445f] transition-all focus:outline-none active:scale-95 shadow-md shadow-blue-900/10 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-                {isLoading ? "Saving..." : "Save"}
+                {isLoading ? t("saving_dots") : t("save")}
               </button>
             )}
           </div>

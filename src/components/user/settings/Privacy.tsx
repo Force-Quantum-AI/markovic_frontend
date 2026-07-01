@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { logout } from "@/store/features/auth/authSlice";
 import { useDispatch } from "react-redux";
 import DeleteModal from "@/components/modals/DeleteModal";
+import { useTranslation } from "react-i18next";
 
 export default function Privacy() { 
   const { data: cookiePreferenceData } = useGetCookiePreferenceQuery({});
@@ -34,6 +35,7 @@ export default function Privacy() {
 
   const router = useRouter();
   const dispatch = useDispatch();
+  const {t} = useTranslation("common");
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
@@ -105,12 +107,11 @@ export default function Privacy() {
       <div className="bg-white border border-[#e5e7eb] p-6 rounded-2xl flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <h2 className="text-[#101828] text-lg font-semibold leading-[28px]">
-            Data Export
+            {t("data_export")}
           </h2>
 
           <p className="text-[#4a5565] text-sm leading-[20px]">
-            Download all your data including cases, documents, and account
-            information.
+            {t("data_export_description")}
           </p>
         </div>
 
@@ -121,14 +122,14 @@ export default function Privacy() {
         >
           <Download size={18} />
 
-          {isDownloading ? "Downloading..." : "Download My Data as ZIP"}
+          {isDownloading ? "Downloading..." : t("download_my_data_as_zip")}
         </button>
       </div>
 
       {/* Cookie Preferences */}
       <div className="bg-white border border-[#e5e7eb] p-6 rounded-2xl flex flex-col gap-6">
         <h2 className="text-[#101828] text-lg font-semibold leading-[28px]">
-          Cookie Preferences
+          {t("cookie_preferences")}
         </h2>
 
         <div className="flex flex-col gap-6">
@@ -136,26 +137,26 @@ export default function Privacy() {
           <div className="flex items-center justify-between border-b border-[#e5e7eb] pb-6">
             <div className="flex flex-col gap-1">
               <span className="text-[#101828] text-base font-medium">
-                Essential Cookies
+                {t("essential_cookies")}
               </span>
 
               <span className="text-[#4a5565] text-sm">
-                Required for the platform to function
+                {t("essential_cookies_description")}
               </span>
             </div>
 
-            <span className="text-[#667085] text-sm">Always On</span>
+            <span className="text-[#667085] text-sm">{t("always_on")}</span>
           </div>
 
           {/* Analytics Cookies */}
           <div className="flex items-center justify-between border-b border-[#e5e7eb] pb-6">
             <div className="flex flex-col gap-1">
               <span className="text-[#101828] text-base font-medium">
-                Analytics Cookies
+                {t("analytics_cookies")}
               </span>
 
               <span className="text-[#4a5565] text-sm">
-                Help us improve our service
+                {t("analytics_cookies_description")}
               </span>
             </div>
 
@@ -174,11 +175,11 @@ export default function Privacy() {
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <span className="text-[#101828] text-base font-medium">
-                Marketing Cookies
+                {t("marketing_cookies")}
               </span>
 
               <span className="text-[#4a5565] text-sm">
-                Used for targeted advertising
+                {t("marketing_cookies_description")}
               </span>
             </div>
 
@@ -202,13 +203,12 @@ export default function Privacy() {
             <AlertCircle className="text-[#d92d20]" size={20} />
 
             <h2 className="text-[#101828] text-lg font-semibold">
-              Delete Account
+              {t("delete_account")}
             </h2>
           </div>
 
           <p className="text-[#4a5565] text-sm ml-7 mt-[-4px]">
-            Permanently delete your account and all associated data. This action
-            cannot be undone.
+            {t("delete_account_description")}
           </p>
         </div>
 
@@ -218,7 +218,7 @@ export default function Privacy() {
         >
           <Trash2 size={18} />
 
-          {isUserDeleting ? "Deleting..." : "Delete Account"}
+          {isUserDeleting ? "Deleting..." : t("delete_account")}
         </button>
       </div>
       <DeleteModal
@@ -226,7 +226,7 @@ export default function Privacy() {
         onOpenChange={setDeleteModalOpen}
         onConfirm={handleDelete}
         loading={isUserDeleting}
-        title="Delete Account"
+        title={t("delete_account")}
         description="Are you sure you want to delete your account?"
       />
     </div>

@@ -3,7 +3,7 @@
 import { ArrowLeft, ArrowRight, ClockAlert } from "lucide-react";
 import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import { useState } from "react";
 import { NoContent } from "@/components/shared/NoContent";
@@ -81,6 +81,7 @@ export default function UpcomingHearings({ data, isLoading }: { data?: any[]; is
   const [min, setMin] = useState<number>(0);
   const [max, setMax] = useState<number>(3);
   const router = useRouter();
+  const { t } = useTranslation("common");
 
   const prevPage = ()=>{
     setMin(min - 3)
@@ -95,10 +96,10 @@ export default function UpcomingHearings({ data, isLoading }: { data?: any[]; is
       {/* Top Header Controls Block */}
       <div className="flex items-center justify-between">
         <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
-          Upcoming Hearings
+          {t("upcoming_hearings")}
         </h3>
         <button onClick={() => router.push("/hearing-and-deadline")} className="text-sm font-semibold text-[#135576] hover:underline transition-all">
-          View All
+          {t("view_all")}
         </button>
       </div>
 

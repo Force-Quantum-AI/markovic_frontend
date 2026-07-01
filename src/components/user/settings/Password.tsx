@@ -7,8 +7,10 @@ import { useGetProfileInfoQuery, useUpdateProfileInfoMutation } from "@/store/fe
 import { useUpdatePasswordMutation } from "@/store/features/auth/authApi";
 import { useGetActiveSessionQuery, useRevokeActiveSessionMutation } from "@/store/features/setting/setting.api";
 import { ActiveSession } from "@/types/settingPageTabs";
+import { useTranslation } from "react-i18next";
 
 export default function Password() {
+  const {t} = useTranslation("common");
   const { data: profileInfo, isLoading: isLoadingProfileInfo } = useGetProfileInfoQuery({});
   const [updateProfileInfo, { isLoading: isLoadingUpdateProfileInfo }] = useUpdateProfileInfoMutation();
   const [updatePassword, { isLoading: isLoadingUpdatePassword }] = useUpdatePasswordMutation();
@@ -113,11 +115,11 @@ export default function Password() {
     <div className="flex flex-col gap-6 w-full">
       {/* Change Password */}
       <div className="bg-white border border-[#e8eef2] p-6 rounded-2xl flex flex-col gap-6 w-full">
-        <h2 className="text-[#101828] text-xl font-semibold leading-7">Change Password</h2>
+        <h2 className="text-[#101828] text-xl font-semibold leading-7">{t("change_password")}</h2>
 
         {/* Current Password */}
         <div className="flex flex-col gap-2">
-          <label className="text-[#364153] text-sm font-medium">Current Password</label>
+          <label className="text-[#364153] text-sm font-medium">{t("current_password")}</label>
           <div className="relative h-[50px] w-full">
             <input
               type={showCurrent ? "text" : "password"}
@@ -137,7 +139,7 @@ export default function Password() {
 
         {/* New Password */}
         <div className="flex flex-col gap-2">
-          <label className="text-[#364153] text-sm font-medium">New Password</label>
+          <label className="text-[#364153] text-sm font-medium">{t("new_password")}</label>
           <div className="relative h-[50px] w-full">
             <input
               type={showNew ? "text" : "password"}
@@ -158,7 +160,7 @@ export default function Password() {
         {/* Password Strength */}
         <div className="flex flex-col gap-2 relative mt-[-8px]">
           <div className="flex justify-between items-center mb-1">
-            <span className="text-[#4a5565] text-xs">Password Strength</span>
+            <span className="text-[#4a5565] text-xs">{t("password_strength")}</span>
             <span className="text-[#4a5565] text-xs">{strength}%</span>
           </div>
           <div className="w-full h-2 bg-[#e5e7eb] rounded-full overflow-hidden">
@@ -171,7 +173,7 @@ export default function Password() {
 
         {/* Confirm New Password */}
         <div className="flex flex-col gap-2">
-          <label className="text-[#364153] text-sm font-medium">Confirm New Password</label>
+          <label className="text-[#364153] text-sm font-medium">{t("confirm_new_password")}</label>
           <div className="relative h-[50px] w-full">
             <input
               type={showConfirm ? "text" : "password"}
@@ -196,7 +198,7 @@ export default function Password() {
             disabled={isLoadingUpdatePassword}
             className="bg-[#135576] hover:bg-[#0f435c] text-white text-base font-medium py-3 px-6 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoadingUpdatePassword ? "Updating..." : "Update password"}
+            {isLoadingUpdatePassword ? "Updating..." : t("update_password")}
           </button>
         </div>
       </div>
@@ -204,8 +206,8 @@ export default function Password() {
       {/* Two-Factor Authentication */}
       <div className="bg-white border border-[#eff1f4] p-6 rounded-2xl flex items-center justify-between w-full">
         <div className="flex flex-col gap-1">
-          <h3 className="text-[#101828] text-lg font-semibold">Two-Factor Authentication</h3>
-          <p className="text-[#4a5565] text-sm">Add an extra layer of security to your account</p>
+          <h3 className="text-[#101828] text-lg font-semibold">{t("two_factor_authentication")}</h3>
+          <p className="text-[#4a5565] text-sm">{t("add_extra_layer_security")}</p>
         </div>
         {
           isLoadingProfileInfo || isLoadingUpdateProfileInfo ? (
@@ -220,7 +222,7 @@ export default function Password() {
 
       {/* Active Sessions */}
       <div className="bg-white border border-[#e8eef2] p-6 rounded-2xl flex flex-col gap-2 w-full">
-        <h2 className="text-[#101828] text-xl font-semibold leading-7 mb-2">Active Sessions</h2>
+        <h2 className="text-[#101828] text-xl font-semibold leading-7 mb-2">{t("active_sessions")}</h2>
 
         <div className="flex flex-col gap-0">
           {isLoadingActiveSessions ? (

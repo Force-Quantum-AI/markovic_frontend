@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { NoContent } from "@/components/shared/NoContent";
+import { useTranslation } from "react-i18next";
 
 // --- TYPES & INTERFACES ---
 interface CaseItem {
@@ -45,6 +46,7 @@ const getHearingDateStr = (nextHearing?: any) => {
 
 export default function RecentCases({ data, isLoading }: { data?: any[]; isLoading?: boolean }) {
   const router = useRouter();
+  const {t} = useTranslation("common");
 
   const [cases, setCases] = useState<CaseItem[]>([]);
 
@@ -88,10 +90,10 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
       {/* Table Header Section */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
-          Recent Cases
+          {t("recent_cases")}
         </h2>
         <button onClick={() => router.push("/my-cases")} className="text-sm font-semibold text-[#135576] hover:underline">
-          View All
+          {t("view_all")}
         </button>
       </div>
 
@@ -103,11 +105,11 @@ export default function RecentCases({ data, isLoading }: { data?: any[]; isLoadi
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-[#e9eff2] text-gray-600 text-xs font-semibold uppercase tracking-wider border-b border-gray-200">
-              <th className="py-3.5 px-5">Client</th>
-              <th className="py-3.5 px-4">Case Name</th>
-              <th className="py-3.5 px-4">Case Number</th>
-              <th className="py-3.5 px-4">Hearing</th>
-              <th className="py-3.5 px-4 w-28">Status</th>
+              <th className="py-3.5 px-5">{t("client")}</th>
+              <th className="py-3.5 px-4">{t("case_name")}</th>
+              <th className="py-3.5 px-4">{t("case_number")}</th>
+              <th className="py-3.5 px-4">{t("hearing")}</th>
+              <th className="py-3.5 px-4 w-28">{t("status")}</th>
               {/* <th className="py-3.5 px-5 text-right"></th> */}
             </tr>
           </thead>
