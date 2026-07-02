@@ -167,7 +167,7 @@ export function CaseCard({
   }
 
   return (
-    <div className="relative">
+    <div className="relative shadow-sm bg-transparent rounded-3xl transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
       <button
         disabled={isLoading}
         onClick={handleAddToFavorite}
@@ -180,7 +180,7 @@ export function CaseCard({
         )}
       </button>
       <div
-        className="bg-[#f8f9fa] rounded-3xl p-3 2xl:p-4 border border-gray-100/80 shadow-sm flex flex-col justify-between transition-all hover:shadow-md w-full cursor-pointer"
+        className="bg-[#f8f9fa] h-full rounded-3xl p-3 2xl:p-4 border border-gray-100/80  flex flex-col justify-between  w-full cursor-pointer"
         onClick={() => router.push(`/my-cases/${id}`)}
       >
         <div>

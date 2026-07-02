@@ -28,7 +28,7 @@ export function MetricCard({ icon, value, label, bgColor, iconBgColor }: MetricC
   return (
     <div className={`p-5 rounded-2xl border border-gray-100 flex flex-col justify-between min-h-[135px] transition-all hover:shadow-xl hover:-translate-y-1 hover:scale-102 duration-500 ${bgColor}`}>
       {/* Icon Wrapper */}
-      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[#135576] ${iconBgColor}`}>
+      <div className={`w-9 h-9  rounded-full flex items-center justify-center text-[#135576] ${iconBgColor}`}>
         {icon}
       </div>
       
@@ -56,49 +56,50 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
       id: "total-cases",
       label: t("total_cases"),
       value: data?.total_cases ?? 0,
-      icon: <Scale className="w-4 h-4 stroke-[2]" />,
+      icon: <Scale className="w-4 h-4 xl:w-6 xl:h-6 stroke-2" />,
       bgColor: "bg-[#FAFFF3]", // Soft Lime-Green hue
-      iconBgColor: "bg-[#edf4e4]"
+      iconBgColor: "bg-white"
     },
     {
       id: "active-cases",
       label: t("active_cases"),
       value: data?.active_cases ?? 0,
-      icon: <Files className="w-4 h-4 stroke-[2]" />,
+      icon: <Files className="w-4 h-4 xl:w-6 xl:h-6 stroke-2" />,
       bgColor: "bg-[#ECFFF5]", // Soft Mint hue
-      iconBgColor: "bg-[#e2f6ec]"
+      iconBgColor: "bg-white"
     },
     {
       id: "todays-hearing",
       label: t("todays_hearing"),
       value: data?.todays_hearings ?? 0,
-      icon: <Gavel className="w-4 h-4 stroke-[2]" />,
+      icon: <Gavel className="w-4 h-4 xl:w-6 xl:h-6 stroke-2" />,
       bgColor: "bg-[#F2F2FF]", // Soft Purple hue
-      iconBgColor: "bg-[#ebebfe]"
+      iconBgColor: "bg-white"
     },
     {
       id: "upcoming-deadlines",
       label: t("upcoming_deadlines"),
       value: data?.upcoming_deadlines ?? 0,
-      icon: <CalendarDays className="w-4 h-4 stroke-[2]" />,
+      icon: <CalendarDays className="w-4 h-4 xl:w-6 xl:h-6 stroke-2" />,
       bgColor: "bg-[#ECFAFF]", // Soft Ice Blue hue
-      iconBgColor: "bg-[#e3f3ff]"
+      iconBgColor: "bg-white"
     },
     {
       id: "total-clients",
       label: t("total_clients"),
       value: data?.total_clients ?? 0,
-      icon: <Users2 className="w-4 h-4 stroke-[2]" />,
+      icon: <Users2 className="w-4 h-4 xl:w-6 xl:h-6 stroke-2" />,
       bgColor: "bg-[#FFF3FD]", // Soft Pink hue
-      iconBgColor: "bg-[#fbe6f7]"
+      iconBgColor: "bg-white"
     },
     {
       id: "case-completed",
       label: t("case_completed"),
       value: data?.cases_completed ?? 0,
-      icon: <FileCheck2 className="w-4 h-4 stroke-[2]" />,
+      icon: <FileCheck2 className="w-4 h-4 xl:w-6 xl:h-6 stroke-2" />,
       bgColor: "bg-[#FFF7ED]", // Soft Cream/Orange hue
-      iconBgColor: "bg-[#fff2de]"
+      iconBgColor: "bg-white"
+      
     },
   ];
 

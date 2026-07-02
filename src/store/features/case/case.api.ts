@@ -88,7 +88,7 @@ export const caseApi = baseApi.injectEndpoints({
         category: number,
         sub_category: number,
         status: number,
-        court: number,
+        court: string,
         responsible_lawyer_ids: string[],
         opposing_parties: string[]
       }

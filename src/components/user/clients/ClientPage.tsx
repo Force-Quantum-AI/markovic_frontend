@@ -26,7 +26,7 @@ export default function ClientPage() {
   const [filterYear, setFilterYear] = useState("");
   const [filterCourt, setFilterCourt] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const { t } = useTranslation();
+  const { t } = useTranslation("common");
 
   const { data, isLoading, isError } = useGetAllClientsQuery({
     client_name: filterName || undefined,
