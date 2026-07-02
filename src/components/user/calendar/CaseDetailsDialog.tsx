@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -21,7 +22,7 @@ import {
   Loader2,
   FileText,
   ShieldAlert,
-} from "lucide-react";
+} from "lucide-react"; 
 
 interface CaseDetailsDialogProps {
   isOpen: boolean;

@@ -39,7 +39,6 @@ function SystemSettingsForm({ settingsData }: { settingsData: PlatformSettingsRe
   const [updateSystemSettings, { isLoading: isUpdatingSettings }] =
     useUpdateSystemSettingsMutation();
 
-  // General Settings State initialized dynamically from API data (falls back to empty string to show placeholder)
   const [platformName, setPlatformName] = useState(settingsData.platform?.platform_name || "");
   const [supportEmail, setSupportEmail] = useState(settingsData.platform?.support_email || "");
   const [timeZone, setTimeZone] = useState(settingsData.platform?.timezone || "");

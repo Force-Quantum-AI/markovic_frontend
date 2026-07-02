@@ -140,6 +140,7 @@ export default function AdminLoginPage() {
                   label={isLoading ? "Logging in..." : "Log in"}
                   icon={isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
                   className="w-full sm:w-56"
+                  hoverEffect="simple"
                 />
               </div>
             </form>
