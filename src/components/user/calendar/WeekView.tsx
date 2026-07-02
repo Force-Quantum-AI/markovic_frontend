@@ -102,6 +102,7 @@ export default function WeekView({
           {weekDays.map((day, idx) => {
             const isActive = day.toDateString() === currentDate.toDateString();
             const dayName = DAYS_OF_WEEK_SHORT[idx];
+            const dayNumber = day.getDate();
 
             return (
               <button
@@ -115,13 +116,14 @@ export default function WeekView({
                       }
                     : {}
                 }
-                className={`text-xs md:text-sm font-semibold tracking-wide transition-all cursor-pointer ${
+                className={`text-xs font-semibold tracking-wide transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 ${
                   isActive
-                    ? "text-white px-8 py-2 font-bold shadow-xs scale-105"
-                    : "text-gray-500 hover:text-gray-800 px-3 py-2"
+                    ? "text-white px-2 sm:px-5 py-1.5 font-bold shadow-xs scale-105"
+                    : "text-gray-500 hover:text-gray-800 px-1 sm:px-3 py-1.5"
                 }`}
               >
-                {dayName}
+                <span>{dayName}</span>
+                <span className={`${isActive ? "text-white" : "text-gray-400 font-bold"}`}>{dayNumber}</span>
               </button>
             );
           })}
@@ -154,7 +156,7 @@ export default function WeekView({
           {/* Grid columns layer */}
           <div className="flex h-full w-full relative">
             {/* Time Column (overlayed on top of grid lines) */}
-            <div className="w-20 md:w-24 shrink-0 select-none z-10 border-r border-[#F3F4F6]">
+            <div className="w-14 sm:w-20 md:w-24 shrink-0 select-none z-10 border-r border-[#F3F4F6]">
               {hours.map((hour) => {
                 const displayHour = hour % 12 || 12;
                 const ampm = hour >= 12 ? "PM" : "AM";
@@ -181,22 +183,64 @@ export default function WeekView({
               })}
             </div>
 
-            {/* Event Grid Column (overlayed on top of grid lines) */}
+            {/* Desktop Grid: 7 columns for 7 days */}
+            <div className="hidden md:grid grid-cols-7 flex-grow h-full relative z-10">
+              {weekDays.map((day, dayIdx) => {
+                const dayTasks = getTasksForDay(day);
+                const timedTasksForDay = dayTasks.filter((t) => !t.allDay);
+                return (
+                  <div
+                    key={dayIdx}
+                    className="relative h-full border-r border-[#F3F4F6]/80 last:border-r-0"
+                  >
+                    {timedTasksForDay.map((task) => {
+                      const { top, height } = getTaskPosition(task);
+                      const isHearing = task.type === "hearing";
+                      const cardTop = top;
+                      const cardHeight = height;
+
+                      return (
+                        <div
+                          key={task.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectTask(task);
+                          }}
+                          style={{
+                            position: "absolute",
+                            top: `${cardTop}px`,
+                            height: `${cardHeight}px`,
+                            minHeight: "44px",
+                            left: "4px",
+                            right: "4px",
+                            borderRadius: "8px",
+                            background: isHearing ? "#268808" : "#BA8800",
+                          }}
+                          className="text-left text-white font-semibold flex flex-col justify-start gap-0.5 overflow-hidden shadow-xs border-none hover:shadow-md hover:brightness-105 transition-all duration-300 ease-in-out cursor-pointer p-1.5 md:p-2"
+                        >
+                          <span className="text-[10px] md:text-xs font-bold truncate leading-none">
+                            {task.title}
+                          </span>
+                          <span className="text-[8px] md:text-[10px] opacity-90 font-medium leading-none mt-1">
+                            {formatTime12h(task.startTime)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Mobile View: Single column for selected day */}
             <div
-              className="flex-grow relative h-full cursor-pointer z-10"
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const clickY = e.clientY - rect.top;
-                const clickedHour = Math.floor(clickY / HOUR_HEIGHT) + 8; // Offset by start hour (8)
-                onCreateTaskOnDateTime(currentDate, clickedHour);
-              }}
+              className="flex md:hidden flex-grow relative h-full z-10"
             >
               {timedTasks.map((task) => {
                 const { top, height } = getTaskPosition(task);
                 const isHearing = task.type === "hearing";
-
-                const cardTop = top + 6;
-                const cardHeight = height - 12;
+                const cardTop = top;
+                const cardHeight = height;
 
                 return (
                   <div
@@ -210,12 +254,12 @@ export default function WeekView({
                       top: `${cardTop}px`,
                       height: `${cardHeight}px`,
                       minHeight: "44px",
-                      left: "12px",
-                      right: "12px",
+                      left: "4px",
+                      right: "4px",
                       borderRadius: "8px",
                       background: isHearing ? "#268808" : "#BA8800",
                     }}
-                    className="text-left text-white font-semibold flex flex-col justify-start gap-1 overflow-hidden shadow-xs hover:brightness-95 hover:scale-[1.005] transition-all cursor-pointer border-none p-3"
+                    className="text-left text-white font-semibold flex flex-col justify-start gap-1 overflow-hidden shadow-xs border-none hover:shadow-md hover:brightness-105 transition-all duration-300 ease-in-out cursor-pointer p-1.5 md:p-3"
                   >
                     <div className="flex flex-col gap-0.5 w-full">
                       <span className="text-xs md:text-sm font-bold truncate leading-none">
@@ -244,21 +288,53 @@ export default function WeekView({
         <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 px-1">
           All Day Tasks
         </h3>
-        <div className="flex flex-col gap-2 w-full px-1">
+
+        {/* Desktop View: Grid of 7 days */}
+        <div className="hidden md:grid grid-cols-7 gap-2 px-1">
+          {weekDays.map((day, idx) => {
+            const dayAllDayTasks = getTasksForDay(day).filter((t) => t.allDay);
+            return (
+              <div key={idx} className="flex flex-col gap-1.5 min-h-[40px]">
+                {dayAllDayTasks.length > 0 ? (
+                  dayAllDayTasks.map((task) => {
+                    const isHearing = task.type === "hearing";
+                    return (
+                      <button
+                        key={task.id}
+                        onClick={() => onSelectTask(task)}
+                        style={{
+                          borderRadius: "6px",
+                          background: isHearing ? "#268808" : "#BA8800",
+                        }}
+                        className="w-full text-left px-2 py-1.5 text-[10px] font-semibold text-white shadow-xs truncate border-none hover:shadow-md hover:brightness-105 transition-all duration-300 ease-in-out cursor-pointer"
+                      >
+                        {task.title}
+                      </button>
+                    );
+                  })
+                ) : (
+                  <span className="text-[10px] text-gray-300 italic py-1 text-center">
+                    -
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Mobile View: List for selected day only */}
+        <div className="flex md:hidden flex-col gap-2 w-full px-1">
           {allDayTasks.length > 0 ? (
             allDayTasks.map((task) => {
               const isSpecificGrayTask =
                 task.title === "Organize and Facilitate Meetings" ||
                 task.title === "Conduct Legal Research";
-
               const isHearing = task.type === "hearing";
-
               const bg = isSpecificGrayTask
                 ? "#EFF1F4"
                 : isHearing
                   ? "#268808"
                   : "#BA8800";
-
               const textColor = isSpecificGrayTask ? "#475569" : "#FFFFFF";
 
               return (
@@ -270,7 +346,7 @@ export default function WeekView({
                     background: bg,
                     color: textColor,
                   }}
-                  className={`w-full text-left px-4 py-2.5 text-xs md:text-sm font-semibold shadow-xs transition-all cursor-pointer border ${
+                  className={`w-full text-left px-4 py-2.5 text-xs md:text-sm font-semibold shadow-xs hover:shadow-md hover:brightness-105 transition-all duration-300 ease-in-out cursor-pointer border ${
                     isSpecificGrayTask ? "border-gray-200/50" : "border-none"
                   }`}
                 >

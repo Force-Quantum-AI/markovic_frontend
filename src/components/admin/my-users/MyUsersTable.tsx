@@ -32,6 +32,7 @@ interface UserRow {
 
 import AddUserDialog from "./AddUserDialog";
 import AdminButton from "@/components/shared/AdminButton";
+import { MyUsersTableSkeleton } from "@/components/admin/admin-skeletons";
 
 interface MyUsersTableProps {
   usersList: UserRow[];
@@ -47,6 +48,7 @@ interface MyUsersTableProps {
   currentPage?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
+  isLoading?: boolean;
 }
 
 const planBadgeStyles: Record<UserRow["plan"], string> = {
@@ -63,8 +65,14 @@ export default function MyUsersTable({
   currentPage = 1,
   totalPages = 1,
   onPageChange,
+  isLoading,
 }: MyUsersTableProps) {
   const [isAddUserOpen, setIsAddUserOpen] = React.useState(false);
+
+  if (isLoading) {
+    return <MyUsersTableSkeleton />;
+  }
+
   return (
     <div className="w-full bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-6">
       {/* Table Title + Header Actions */}

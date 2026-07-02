@@ -127,27 +127,22 @@ export default function MyUsers() {
   return (
     <div className="w-full space-y-6">
       {/* Stats Cards */}
-      <MyUsersMetrics stats={usersData?.results?.stats} />
+      <MyUsersMetrics stats={usersData?.results?.stats} isLoading={showLoader} />
 
       {/* Search & Filter */}
-      <MyUsersFilters onFilter={handleFilter} onReset={handleReset} />
+      <MyUsersFilters onFilter={handleFilter} onReset={handleReset} isLoading={showLoader} />
 
       {/* Users Table */}
-      {showLoader ? (
-        <div className="w-full bg-white rounded-3xl p-10 border border-gray-100 flex flex-col justify-center items-center min-h-[300px]">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#135576]"></div>
-        </div>
-      ) : (
-        <MyUsersTable
-          usersList={mappedUsers}
-          onAddUser={handleAddUser}
-          onDeleteUser={handleDeleteUserClick}
-          totalCount={usersData?.count || 0}
-          currentPage={page}
-          totalPages={usersData?.total_pages || 1}
-          onPageChange={setPage}
-        />
-      )}
+      <MyUsersTable
+        usersList={mappedUsers}
+        onAddUser={handleAddUser}
+        onDeleteUser={handleDeleteUserClick}
+        totalCount={usersData?.count || 0}
+        currentPage={page}
+        totalPages={usersData?.total_pages || 1}
+        onPageChange={setPage}
+        isLoading={showLoader}
+      />
 
       {/* Reusable Delete Confirmation Dialog */}
       <DeleteConfirmationDialog

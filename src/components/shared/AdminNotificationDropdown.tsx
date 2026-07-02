@@ -12,6 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminNotificationDropdown() {
   const { data: apiNotifications, isLoading } = useGetAdminNotificationsQuery(undefined);
@@ -24,10 +25,14 @@ export default function AdminNotificationDropdown() {
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="size-5 cursor-pointer" />
 
-          {apiNotifications && apiNotifications.length > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#135576] text-[10px] font-medium text-white">
-              {apiNotifications.length}
-            </span>
+          {isLoading ? (
+            <Skeleton className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-gray-300" />
+          ) : (
+            apiNotifications && apiNotifications.length > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#135576] text-[10px] font-medium text-white">
+                {apiNotifications.length}
+              </span>
+            )
           )}
         </Button>
       </DropdownMenuTrigger>

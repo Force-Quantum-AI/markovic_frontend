@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useGetArchiveCasesListQuery } from "@/store/features/admin/archive-cases/archive.api";
 import { ArchiveCasesResponse } from "@/store/features/admin/archive-cases/archive.type";
+import { ArchiveCasesTableSkeleton } from "@/components/admin/admin-skeletons";
 
 interface ArchiveCasesTableProps {
   archiveData?: ArchiveCasesResponse;
@@ -73,11 +74,7 @@ export default function ArchiveCasesTable({
   };
 
   if (isLoading) {
-    return (
-      <div className="w-full bg-white rounded-2xl pt-6 pb-6 border border-[#E5E7EB] flex flex-col justify-center items-center min-h-[240px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#135576]"></div>
-      </div>
-    );
+    return <ArchiveCasesTableSkeleton isDashboard={isDashboard} />;
   }
 
   const showPagination = !hidePagination && !isDashboard && totalPages > 1 && onPageChange;
