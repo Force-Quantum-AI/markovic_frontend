@@ -141,7 +141,7 @@ export default function DayView({
           {/* Grid columns layer */}
           <div className="flex h-full w-full relative">
             {/* Time Column (overlayed on top of grid lines) */}
-            <div className="w-20 md:w-24 shrink-0 select-none z-10 border-r border-[#F3F4F6]">
+            <div className="w-14 sm:w-20 md:w-24 shrink-0 select-none z-10 border-r border-[#F3F4F6]">
               {hours.map((hour) => {
                 const displayHour = hour % 12 || 12;
                 const ampm = hour >= 12 ? "PM" : "AM";
@@ -170,20 +170,14 @@ export default function DayView({
 
             {/* Event Grid Column (overlayed on top of grid lines) */}
             <div
-              className="flex-grow relative h-full cursor-pointer z-10"
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const clickY = e.clientY - rect.top;
-                const clickedHour = Math.floor(clickY / HOUR_HEIGHT) + 8; // Offset by start hour (8)
-                onCreateTaskOnHour(clickedHour);
-              }}
+              className="flex-grow relative h-full z-10"
             >
               {timedTasks.map((task) => {
                 const { top, height } = getTaskPosition(task);
                 const isHearing = task.type === "hearing";
 
-                const cardTop = top + 6;
-                const cardHeight = height - 12;
+                const cardTop = top;
+                const cardHeight = height;
 
                 return (
                   <div
@@ -197,12 +191,12 @@ export default function DayView({
                       top: `${cardTop}px`,
                       height: `${cardHeight}px`,
                       minHeight: "44px",
-                      left: "12px",
-                      right: "12px",
+                      left: "4px",
+                      right: "4px",
                       borderRadius: "8px",
                       background: isHearing ? "#268808" : "#BA8800",
                     }}
-                    className="text-left text-white font-semibold flex flex-col justify-start gap-1 overflow-hidden shadow-sm hover:brightness-95 hover:scale-[1.005] transition-all cursor-pointer border-none p-3"
+                    className="text-left text-white font-semibold flex flex-col justify-start gap-1 overflow-hidden shadow-sm border-none hover:shadow-md hover:brightness-105 transition-all duration-300 ease-in-out cursor-pointer p-1.5 md:p-3"
                   >
                     <div className="flex flex-col gap-0.5 w-full">
                       <span className="text-xs md:text-sm font-bold truncate leading-none">
@@ -257,8 +251,8 @@ export default function DayView({
                     background: bg,
                     color: textColor,
                   }}
-                  className={`px-4 py-1.5 text-xs font-semibold shadow-xs transition-all cursor-pointer border ${
-                    isSpecificGrayTask ? "border-gray-200" : "border-none"
+                  className={`px-4 py-1.5 text-xs font-semibold shadow-xs hover:shadow-md hover:brightness-105 transition-all duration-300 ease-in-out cursor-pointer border ${
+                    isSpecificGrayTask ? "border-gray-200 hover:bg-gray-100" : "border-none"
                   }`}
                 >
                   {task.title}

@@ -9,6 +9,7 @@ import {
   useGetAllSubscriptionRequestQuery,
   useUpdateSubscriptionRequestMutation,
 } from "@/store/features/admin/subscriptions/subscriptions.api";
+import { SubscriptionRequestsSkeleton } from "@/components/admin/admin-skeletons";
 
 export default function RequestsContent() {
   const {
@@ -79,11 +80,7 @@ export default function RequestsContent() {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#135576]"></div>
-      </div>
-    );
+    return <SubscriptionRequestsSkeleton />;
   }
 
   if (error) {

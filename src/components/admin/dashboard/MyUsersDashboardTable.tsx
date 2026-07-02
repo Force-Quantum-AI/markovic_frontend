@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User, UsersResponse } from "@/store/features/admin/my-users/my-users.type";
+import { MyUsersDashboardTableSkeleton } from "@/components/admin/admin-skeletons";
 
 interface MyUsersTableProps {
   usersData?: UsersResponse;
@@ -46,11 +47,7 @@ export default function MyUsersDashboardTable({
   };
 
   if (isLoading) {
-    return (
-      <div className="w-full bg-white rounded-2xl p-6 border border-gray-100 flex flex-col justify-center items-center min-h-[240px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#135576]"></div>
-      </div>
-    );
+    return <MyUsersDashboardTableSkeleton />;
   }
 
   return (

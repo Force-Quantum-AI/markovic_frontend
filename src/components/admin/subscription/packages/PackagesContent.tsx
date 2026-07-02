@@ -6,6 +6,7 @@ import UpdatePackageDialog from "./UpdatePackageDialog";
 import {
   useGetAllSubscriptionQuery,
 } from "@/store/features/admin/subscriptions/subscriptions.api";
+import { SubscriptionPackagesSkeleton } from "@/components/admin/admin-skeletons";
 
 export default function PackagesContent() {
   const { data: subscriptionPlans, isLoading, isError } = useGetAllSubscriptionQuery();
@@ -65,9 +66,18 @@ export default function PackagesContent() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-slate-400 font-roboto">
-        <div className="w-8 h-8 border-4 border-[#135576] border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-sm font-medium">Loading subscription plans...</p>
+      <div className="w-full flex flex-col items-center py-8 pb-24 font-roboto">
+        <h1 className="text-2xl md:text-[28px] font-bold text-[#1A2328] mb-8">Update your package</h1>
+
+        <div className="mb-6 flex justify-center">
+          <span className="px-5 py-1.5 rounded-md bg-white border border-[#BEC4D2] text-[13px] font-semibold text-[#135576]">
+            Monthly Package
+          </span>
+        </div>
+
+        <div className="flex flex-col md:flex-row flex-wrap justify-center gap-5 mb-16 max-w-7xl px-4 w-full">
+          <SubscriptionPackagesSkeleton />
+        </div>
       </div>
     );
   }

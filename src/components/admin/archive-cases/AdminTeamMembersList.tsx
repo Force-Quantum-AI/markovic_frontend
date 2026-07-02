@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 interface Lawyer {
@@ -22,27 +24,29 @@ const getInitials = (name: string): string => {
 
 const getInitialsColor = (initials: string, index: number) => {
   const colors = [
-    "bg-slate-700",
-    "bg-teal-600",
-    "bg-violet-600",
-    "bg-red-600",
-    "bg-orange-600",
-    "bg-pink-600",
-    "bg-cyan-600",
-    "bg-emerald-600",
+    "bg-[#135576]", // Slate/Blue-grey
+    "bg-[#0D9488]", // Teal/Emerald
+    "bg-[#7C3AED]", // Purple/Violet
+    "bg-[#DC2626]", // Red
+    "bg-[#D97706]", // Amber/Orange
   ];
   return colors[index % colors.length];
 };
 
 export default function AdminTeamMembersList({ lawyers = [] }: AdminTeamMembersListProps) {
   return (
-    <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Responsible Lawyers</h2>
+    <div className="w-full bg-gray-50/50 rounded-2xl border border-gray-100/80 overflow-hidden shadow-sm">
+      {/* Card Header */}
+      <div className="p-6 border-b border-gray-100">
+        <h2 className="text-lg font-bold text-gray-900">Assigned lawyer</h2>
+      </div>
 
-      <div className="space-y-6">
+      {/* Card Body */}
+      <div className="p-6 space-y-5">
         {lawyers && lawyers.length > 0 ? (
           lawyers.map((lawyer, index) => {
             const initials = getInitials(lawyer.full_name);
+            const isLead = lawyer.professional_role?.toLowerCase().includes("lead");
             return (
               <div key={lawyer.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -57,6 +61,13 @@ export default function AdminTeamMembersList({ lawyers = [] }: AdminTeamMembersL
                     <p className="text-xs text-gray-500 font-medium">{lawyer.professional_role || "Lawyer"}</p>
                   </div>
                 </div>
+
+                {/* Lead Badge */}
+                {isLead && (
+                  <span className="px-2.5 py-1 bg-[#EBF5FF] text-[#2563EB] rounded-full text-[11px] font-semibold">
+                    Lead
+                  </span>
+                )}
               </div>
             );
           })

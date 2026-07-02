@@ -15,29 +15,21 @@ export default function Dashboard() {
   const {data: archiveData, isLoading: archiveLoading} = useGetAdminDashboardArchieveCaseQuery(undefined);
   const {data: usersData, isLoading: usersLoading} = useGetAllUsersQuery(undefined);
   
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#135576]"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
         {/* Left Column: 3/4 width on desktop */}
         <div className="xl:col-span-3 space-y-6">
           {/* Stats Cards */}
-          <AdminMetrics overview={data?.overview} />
+          <AdminMetrics overview={data?.overview} isLoading={isLoading} />
 
           {/* Charts: Bar Chart + Donut Chart */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div className="lg:col-span-3">
-              <PlatformOverview graph={data?.graph} />
+              <PlatformOverview graph={data?.graph} isLoading={isLoading} />
             </div>
             <div className="lg:col-span-2">
-              <GraphReport totalCasesBreakdown={data?.total_cases_breakdown} />
+              <GraphReport totalCasesBreakdown={data?.total_cases_breakdown} isLoading={isLoading} />
             </div>
           </div>
 
@@ -48,8 +40,8 @@ export default function Dashboard() {
 
         {/* Right Column: 1/4 width on desktop */}
         <div className="xl:col-span-1 space-y-6">
-          <QuickActions />
-          <SystemHealth systemHealth={data?.system_health} />
+          <QuickActions isLoading={isLoading} />
+          <SystemHealth systemHealth={data?.system_health} isLoading={isLoading} />
         </div>
       </div>
     </div>

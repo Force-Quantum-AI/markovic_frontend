@@ -9,6 +9,7 @@ import {
   useUpdateSystemSettingsMutation,
 } from "@/store/features/admin/system-settings/system-settings.api";
 import { PlatformSettingsResponse } from "@/store/features/admin/system-settings/system-settings.type";
+import { SystemSettingsSkeleton } from "@/components/admin/admin-skeletons";
 
 interface ToggleSwitchProps {
   checked: boolean;
@@ -39,7 +40,6 @@ function SystemSettingsForm({ settingsData }: { settingsData: PlatformSettingsRe
   const [updateSystemSettings, { isLoading: isUpdatingSettings }] =
     useUpdateSystemSettingsMutation();
 
-  // General Settings State initialized dynamically from API data (falls back to empty string to show placeholder)
   const [platformName, setPlatformName] = useState(settingsData.platform?.platform_name || "");
   const [supportEmail, setSupportEmail] = useState(settingsData.platform?.support_email || "");
   const [timeZone, setTimeZone] = useState(settingsData.platform?.timezone || "");
@@ -224,12 +224,7 @@ export default function SystemSettingsPage() {
   } = useGetSystemSettingsQuery();
 
   if (isSettingsLoading) {
-    return (
-      <div className="w-full max-w-[894px] mx-auto min-h-[400px] flex flex-col items-center justify-center font-roboto">
-        <Loader2 className="w-8 h-8 text-[#135576] animate-spin" />
-        <p className="text-[#99A1AF] text-[14px] mt-2">Loading system settings...</p>
-      </div>
-    );
+    return <SystemSettingsSkeleton />;
   }
 
   if (isSettingsError || !settingsData) {

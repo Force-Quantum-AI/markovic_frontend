@@ -8,7 +8,7 @@ const adminDashboardApi = baseApi.injectEndpoints({
         url: "/admin-dashboard/overview/",
         method: "GET",
       }),
-      providesTags: ["Laws"],
+      providesTags: ["Dashboard", "case", "Users"],
     }),
     getAdminDashboardArchieveCase: build.query<CaseListResponse, DataPaginationResponse | void>({
       query: (params) => ({
@@ -16,7 +16,7 @@ const adminDashboardApi = baseApi.injectEndpoints({
         method: "GET",
         params: params || undefined,
       }),
-      providesTags: ["Dashboard", "archive"],
+      providesTags: ["archive"],
     }),
     getAdminDashboardMyUsers: build.query<UsersResponse, DataPaginationResponse | void>({
       query: (params) => ({
@@ -24,7 +24,7 @@ const adminDashboardApi = baseApi.injectEndpoints({
         method: "GET",
         params: params || undefined,
       }),
-      providesTags: ["Auth", "Profile"],
+      providesTags: ["Users"],
     }),
   }),
 });

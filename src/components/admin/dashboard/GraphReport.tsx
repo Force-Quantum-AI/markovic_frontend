@@ -1,13 +1,18 @@
 "use client";
 
-import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { GraphReportSkeleton } from "@/components/admin/admin-skeletons";
 
 interface GraphReportProps {
   totalCasesBreakdown?: Record<string, number | string>;
+  isLoading?: boolean;
 }
 
-export default function GraphReport({ totalCasesBreakdown }: GraphReportProps) {
+export default function GraphReport({ totalCasesBreakdown, isLoading }: GraphReportProps) {
+  if (isLoading) {
+    return <GraphReportSkeleton />;
+  }
+
   const breakdown = totalCasesBreakdown || {};
   const totalCasesValue = breakdown.total !== undefined ? String(breakdown.total) : "0";
 

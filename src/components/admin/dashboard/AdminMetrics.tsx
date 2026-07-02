@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Users, Sparkles, FolderOpen, DollarSign, ArrowUpRight } from "lucide-react";
+import { AdminMetricsSkeleton } from "@/components/admin/admin-skeletons";
 
 interface AdminMetricsProps {
   overview?: {
@@ -11,10 +12,15 @@ interface AdminMetricsProps {
     cases: number;
     total_earning: number;
   };
+  isLoading?: boolean;
 }
 
-export default function AdminMetrics({ overview }: AdminMetricsProps) {
-  console.log("overview", overview);
+export default function AdminMetrics({ overview, isLoading }: AdminMetricsProps) {
+  // console.log("overview", overview);
+
+  if (isLoading) {
+    return <AdminMetricsSkeleton cardCount={4} />;
+  }
 
   const cards = [
     {

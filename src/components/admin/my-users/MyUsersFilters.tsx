@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Filter } from "lucide-react";
 import BasedSelect from "@/components/shared/BasedSelect";
 import AdminButton from "@/components/shared/AdminButton";
+import { MyUsersFiltersSkeleton } from "@/components/admin/admin-skeletons";
 
 interface MyUsersFiltersProps {
   onFilter: (filters: {
@@ -14,6 +15,7 @@ interface MyUsersFiltersProps {
     year: string;
   }) => void;
   onReset: () => void;
+  isLoading?: boolean;
 }
 
 const subscriptionOptions = [
@@ -39,7 +41,7 @@ const monthOptions = [
   { value: "12", label: "December" },
 ];
 
-export default function MyUsersFilters({ onFilter, onReset }: MyUsersFiltersProps) {
+export default function MyUsersFilters({ onFilter, onReset, isLoading }: MyUsersFiltersProps) {
   const [search, setSearch] = useState("");
   const [subscription, setSubscription] = useState("all");
   const [day, setDay] = useState("");
@@ -58,6 +60,10 @@ export default function MyUsersFilters({ onFilter, onReset }: MyUsersFiltersProp
     setYear("");
     onReset();
   };
+
+  if (isLoading) {
+    return <MyUsersFiltersSkeleton />;
+  }
 
   return (
     <div className="w-full bg-white rounded-3xl p-6 border border-[#BEC4D2]/40 shadow-xs space-y-6">
@@ -81,68 +87,73 @@ export default function MyUsersFilters({ onFilter, onReset }: MyUsersFiltersProp
         </div>
 
         {/* Grid Fields: subscription + day + month + year */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="flex flex-col lg:flex-row gap-4 w-full">
 
-          {/* Subscription */}
-          <BasedSelect
-            label="Subscription"
-            placeholder="All"
-            options={subscriptionOptions}
-            value={subscription}
-            onValueChange={setSubscription}
-          />
-
-          {/* Day */}
-          <div className="space-y-1.5">
-            <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">Day</label>
-            <input
-              type="number"
-              placeholder="e.g. 22"
-              min={1}
-              max={31}
-              value={day}
-              onChange={(e) => setDay(e.target.value)}
-              className="w-full px-5 py-3 rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
+          {/* Left half: Subscription */}
+          <div className="w-full lg:w-1/2">
+            <BasedSelect
+              label="Subscription"
+              placeholder="All"
+              options={subscriptionOptions}
+              value={subscription}
+              onValueChange={setSubscription}
             />
           </div>
 
-          {/* Month */}
-          <BasedSelect
-            label="Month"
-            placeholder="All Months"
-            options={monthOptions}
-            value={month}
-            onValueChange={setMonth}
-          />
+          {/* Right half: Day, Month, Year */}
+          <div className="w-full lg:w-1/2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Day */}
+            <div className="space-y-1.5">
+              <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">Day</label>
+              <input
+                type="number"
+                placeholder="e.g. 22"
+                min={1}
+                max={31}
+                value={day}
+                onChange={(e) => setDay(e.target.value)}
+                className="w-full px-5 py-3 rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
+              />
+            </div>
 
-          {/* Year */}
-          <div className="space-y-1.5">
-            <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">Year</label>
-            <input
-              type="number"
-              placeholder="e.g. 2026"
-              min={2000}
-              max={2100}
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="w-full px-5 py-3 rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
+            {/* Month */}
+            <BasedSelect
+              label="Month"
+              placeholder="All Months"
+              options={monthOptions}
+              value={month}
+              onValueChange={setMonth}
             />
+
+            {/* Year */}
+            <div className="space-y-1.5">
+              <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">Year</label>
+              <input
+                type="number"
+                placeholder="e.g. 2026"
+                min={2000}
+                max={2100}
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="w-full px-5 py-3 rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
+              />
+            </div>
           </div>
 
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 pt-2">
+        <div className="flex flex-col sm:flex-row gap-4 pt-2">
           <AdminButton
             onClick={handleApplyFilter}
             label="Apply Filter"
-            className="py-3"
+            className="py-3 w-full sm:w-auto"
           />
           <AdminButton
             onClick={handleResetFilter}
             label="Reset Filter"
             variant="secondary"
-            className="py-3"
+            className="py-3 w-full sm:w-auto"
           />
         </div>
       </div>

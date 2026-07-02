@@ -18,9 +18,9 @@ export default function AdminCaseHealth({
   case_age_days = 0,
 }: AdminCaseHealthProps) {
   return (
-    <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="w-full bg-gray-50/50 rounded-2xl border border-gray-100/80 overflow-hidden shadow-sm">
       {/* Blue Header Section */}
-      <div className="bg-[#135576] p-6 text-white">
+      <div className="bg-[#135576] hover:bg-[#1a648a] transition-all duration-300 p-6 text-white cursor-pointer">
         <div className="flex justify-between items-start mb-4">
           <div>
             <p className="text-xs font-medium text-white/70 uppercase tracking-wider mb-1">Case Health</p>

@@ -9,6 +9,7 @@ import AddLawDialog from "@/components/admin/law-database/AddLawDialog";
 import UpdateLawDialog from "@/components/admin/law-database/UpdateLawDialog";
 import DeleteLawDialog from "@/components/admin/law-database/DeleteLawDialog";
 import { toast } from "sonner";
+import { LawDatabaseSkeleton } from "@/components/admin/admin-skeletons";
 import {
   useGetAllLawsQuery,
   useCreateLawMutation,
@@ -399,9 +400,7 @@ export default function LawDatabasePage() {
           className="w-full"
         >
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-16 text-slate-400 font-roboto">
-              <p className="text-lg font-medium">Loading laws...</p>
-            </div>
+            <LawDatabaseSkeleton />
           ) : isError ? (
             <div className="flex flex-col items-center justify-center py-16 text-red-500 font-roboto">
               <p className="text-lg font-medium">Error loading laws. Please try again later.</p>

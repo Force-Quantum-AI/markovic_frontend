@@ -15,9 +15,10 @@ import { useAppDispatch } from "@/store/hooks";
 import { logout } from "@/store/features/auth/authSlice";
 import { useLogoutUserMutation } from "@/store/features/auth/authApi";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminHeader() {
-  const { data: profileInfo } = useGetProfileInfoQuery({});
+  const { data: profileInfo, isLoading: isLoadingProfileInfo } = useGetProfileInfoQuery({});
 
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -68,24 +69,33 @@ export default function AdminHeader() {
           {/* User Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1 md:gap-3 bg-gray-100 rounded-full p-1 cursor-pointer border">
-                {/* <Avatar>
-                  <AvatarImage src={profileInfo?.profile_image || "/dummy-user.jpg"} />
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar> */}
-
-                <div className="hidden md:block text-left pl-2">
-                  <p className="text-sm font-medium text-black">
-                    {profileInfo?.full_name || "Admin User"}
-                  </p>
-
-                  <p className="text-xs text-muted-foreground">
-                    {profileInfo?.email || "admin@markovic.com"}
-                  </p>
+              {isLoadingProfileInfo ? (
+                <div className="flex items-center gap-1 md:gap-3 bg-gray-100 rounded-full p-1 border">
+                  <div className="hidden md:flex flex-col gap-2 mr-2 pl-2">
+                    <Skeleton className="h-4 w-28 bg-gray-300" />
+                    <Skeleton className="h-3 w-20 bg-gray-300" />
+                  </div>
                 </div>
+              ) : (
+                <button className="flex items-center gap-1 md:gap-3 bg-gray-100 rounded-full p-1 cursor-pointer border">
+                  {/* <Avatar>
+                    <AvatarImage src={profileInfo?.profile_image || "/dummy-user.jpg"} />
+                    <AvatarFallback>{initials}</AvatarFallback>
+                  </Avatar> */}
 
-                <ChevronDown className="h-4 w-4 mr-1 bg-black rounded-full text-white cursor-pointer" />
-              </button>
+                  <div className="hidden md:block text-left pl-2">
+                    <p className="text-sm font-medium text-black">
+                      {profileInfo?.full_name || "Admin User"}
+                    </p>
+
+                    <p className="text-xs text-muted-foreground">
+                      {profileInfo?.email || "admin@markovic.com"}
+                    </p>
+                  </div>
+
+                  <ChevronDown className="h-4 w-4 mr-1 bg-black rounded-full text-white cursor-pointer" />
+                </button>
+              )}
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end">
