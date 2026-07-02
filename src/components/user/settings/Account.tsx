@@ -28,8 +28,10 @@ export default function Account() {
 
   // Using a placeholder image similar to the design
   const [avatarUrl, setAvatarUrl] = useState(
-    "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  );
+  "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+);
+
+const [profileImage, setProfileImage] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -48,30 +50,34 @@ export default function Account() {
   const handleSave = async () => {
     try {
       await updateProfileInfo({
-        data: {
-          full_name: fullName,
-          number: phoneNumber,
-          professional_role: professionalRole,
-          bar_association_number: barAssociationNumber,
-          two_factor_enabled: profileInfo?.two_factor_enabled,
-        },
-        profile_image: avatarUrl,
-      });
-      toast.success("Profile information updated successfully");
+  profile_image: profileImage,
+  data: {
+    full_name: fullName,
+    number: phoneNumber,
+    professional_role: professionalRole,
+    bar_association_number: barAssociationNumber,
+    two_factor_enabled: profileInfo?.two_factor_enabled,
+  },
+}).unwrap();
+
+toast.success("Profile information updated successfully");
     } catch (error) {
       console.log(error);
       toast.error("Failed to update profile information");
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setAvatarUrl(imageUrl);
-      toast.success("Profile photo updated");
-    }
-  };
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (!e.target.files?.length) return;
+
+  const file = e.target.files[0];
+
+  setProfileImage(file);
+
+  setAvatarUrl(URL.createObjectURL(file));
+
+  toast.success("Profile photo updated");
+};
 
   const handleChangePhoto = () => {
     fileInputRef.current?.click();

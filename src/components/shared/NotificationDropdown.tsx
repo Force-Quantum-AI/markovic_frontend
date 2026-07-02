@@ -20,6 +20,7 @@ import {
 } from "@/store/features/notification/notification.api";
 import { NotificationItem } from "@/types/notification";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -56,11 +57,18 @@ function NotificationRow({
   isDeleting: boolean;
 }) {
   const senderLabel = item.sender_name ?? "System";
+  const router = useRouter();
 
   return (
     <div
       className={`relative flex items-start gap-3 rounded-2xl p-3 transition group ${!item.is_read ? "bg-slate-100" : "hover:bg-slate-50"
         }`}
+      onClick={() => {
+        if(item?.data?.case_id){
+          !item.is_read && onRead(item.id)
+          router.push(`/my-cases/${item?.data?.case_id}`);
+        }
+      }}
     >
       {/* Avatar */}
       <div className="relative h-10 md:h-12 w-10 md:w-12 shrink-0">
