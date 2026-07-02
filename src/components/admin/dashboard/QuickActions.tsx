@@ -2,12 +2,17 @@
 
 import { Database, Users, BarChart3, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { QuickActionsSkeleton } from "@/components/admin/admin-skeletons";
 
-export default function QuickActions() {
+export default function QuickActions({ isLoading }: { isLoading?: boolean }) {
   const router = useRouter();
+
+  if (isLoading) {
+    return <QuickActionsSkeleton />;
+  }
   const actions = [
     {
-      label: "Update Laws DB",
+      label: "Update Laws Database",
       icon: <Database className="w-4 h-4" />,
       active: false,
       href: "/admin/law-database",

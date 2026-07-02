@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { GraphMetric } from "@/store/features/admin/dashboard/dashboard.type";
+import { PlatformOverviewSkeleton } from "@/components/admin/admin-skeletons";
 
 interface PlatformOverviewProps {
   graph?: {
     monthly: GraphMetric[];
     yearly: GraphMetric[];
   };
+  isLoading?: boolean;
 }
 
 const colors = [
@@ -20,8 +22,12 @@ const colors = [
   "#A7E5F3", // Storage
 ];
 
-export default function PlatformOverview({ graph }: PlatformOverviewProps) {
+export default function PlatformOverview({ graph, isLoading }: PlatformOverviewProps) {
   const [view, setView] = useState<"Monthly" | "Yearly">("Monthly");
+
+  if (isLoading) {
+    return <PlatformOverviewSkeleton />;
+  }
 
   const activeList = view === "Monthly" ? graph?.monthly : graph?.yearly;
   const activeItem = activeList && activeList.length > 0 ? activeList[activeList.length - 1] : null;

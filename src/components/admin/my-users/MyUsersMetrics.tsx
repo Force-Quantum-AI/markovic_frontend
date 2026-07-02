@@ -1,5 +1,6 @@
 import { Users, UserCheck, Clock, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import { AdminMetricsSkeleton } from "@/components/admin/admin-skeletons";
 
 interface MyUsersMetricsProps {
   stats?: {
@@ -7,12 +8,17 @@ interface MyUsersMetricsProps {
     active_users: number;
     new_today: number;
   };
+  isLoading?: boolean;
 }
 
-export default function MyUsersMetrics({ stats }: MyUsersMetricsProps) {
+export default function MyUsersMetrics({ stats, isLoading }: MyUsersMetricsProps) {
   const activeRate = stats?.total_users 
     ? ((stats.active_users / stats.total_users) * 100).toFixed(1) 
     : "100";
+
+  if (isLoading) {
+    return <AdminMetricsSkeleton cardCount={3} />;
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useMemo } from "react";
@@ -10,52 +11,69 @@ import { Task, CalendarView } from "@/components/user/calendar/types";
 import { useGetCaseCalenderEventsQuery } from "@/store/features/calendar/calendar.api";
 import CaseDetailsDialog from "@/components/user/calendar/CaseDetailsDialog";
 
+const convertBackendDate = (dateStr: string): string => {
+  const parts = dateStr.split("-");
+  if (parts.length === 3) {
+    const [day, month, year] = parts;
+    return `${year}-${month}-${day}`;
+  }
+  return dateStr;
+};
+
+const convert12hTo24h = (time12h: string): string => {
+  const cleanTime = time12h.trim().toUpperCase();
+  const isPM = cleanTime.endsWith("PM");
+  const isAM = cleanTime.endsWith("AM");
+  const timeOnly = cleanTime.replace(/(AM|PM)/g, "").trim();
+  const [hoursStr, minutesStr] = timeOnly.split(":");
+  let hours = parseInt(hoursStr, 10);
+  const minutes = minutesStr ? minutesStr.padStart(2, "0") : "00";
+
+  if (isPM && hours !== 12) {
+    hours += 12;
+  } else if (isAM && hours === 12) {
+    hours = 0;
+  }
+
+  return `${hours.toString().padStart(2, "0")}:${minutes}`;
+};
+
+const parseBackendTimeRange = (
+  timeRangeStr: string,
+): { startTime?: string; endTime?: string } => {
+  const parts = timeRangeStr.split("-");
+  if (parts.length === 2) {
+    const startStr = parts[0].trim();
+    const endStr = parts[1].trim();
+
+    const startTime = convert12hTo24h(startStr);
+    let endTime = convert12hTo24h(endStr);
+
+    // If start is AM and end is "12:00 AM" (which converts to "00:00"),
+    // it is almost certainly a backend bug formatting 12:00 PM (noon) as "12:00 AM".
+    // Let's correct it to "12:00" (noon).
+    if (
+      startStr.toUpperCase().endsWith("AM") &&
+      endStr.toUpperCase() === "12:00 AM"
+    ) {
+      endTime = "12:00";
+    }
+
+    return { startTime, endTime };
+  }
+  return {};
+};
+
 export default function CalendarContainer() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [activeView, setActiveView] = useState<CalendarView>("day");
-  
+
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
+  const [selectedEventType, setSelectedEventType] = useState<"hearing" | "deadline" | null>(null);
   const [isCaseDetailsOpen, setIsCaseDetailsOpen] = useState(false);
 
   const { data: apiEvents } = useGetCaseCalenderEventsQuery();
 
-  const convertBackendDate = (dateStr: string): string => {
-    const parts = dateStr.split("-");
-    if (parts.length === 3) {
-      const [day, month, year] = parts;
-      return `${year}-${month}-${day}`;
-    }
-    return dateStr;
-  };
-
-  const convert12hTo24h = (time12h: string): string => {
-    const cleanTime = time12h.trim().toUpperCase();
-    const isPM = cleanTime.endsWith("PM");
-    const isAM = cleanTime.endsWith("AM");
-    const timeOnly = cleanTime.replace(/(AM|PM)/g, "").trim();
-    const [hoursStr, minutesStr] = timeOnly.split(":");
-    let hours = parseInt(hoursStr, 10);
-    const minutes = minutesStr ? minutesStr.padStart(2, "0") : "00";
-    
-    if (isPM && hours !== 12) {
-      hours += 12;
-    } else if (isAM && hours === 12) {
-      hours = 0;
-    }
-    
-    return `${hours.toString().padStart(2, "0")}:${minutes}`;
-  };
-
-  const parseBackendTimeRange = (timeRangeStr: string): { startTime?: string; endTime?: string } => {
-    const parts = timeRangeStr.split("-");
-    if (parts.length === 2) {
-      return {
-        startTime: convert12hTo24h(parts[0]),
-        endTime: convert12hTo24h(parts[1]),
-      };
-    }
-    return {};
-  };
 
   const apiTasks = useMemo(() => {
     if (!apiEvents) return [];
@@ -63,9 +81,9 @@ export default function CalendarContainer() {
     const mappedHearings = (apiEvents.hearings || []).map((h: any, idx: number) => {
       const dateFormatted = convertBackendDate(h.date);
       const times = parseBackendTimeRange(h.time);
-      const caseId = h.id || h.case_id || null;
+      const caseId = h.case_id || null;
       return {
-        id: caseId || `hearing-${idx}`,
+        id: h.id ? `hearing-${h.id}` : `hearing-temp-${idx}`,
         title: h.name,
         type: "hearing" as const,
         date: dateFormatted,
@@ -80,9 +98,9 @@ export default function CalendarContainer() {
     const mappedDeadlines = (apiEvents.deadlines || []).map((d: any, idx: number) => {
       const dateFormatted = convertBackendDate(d.date);
       const times = parseBackendTimeRange(d.time);
-      const caseId = d.id || d.case_id || null;
+      const caseId = d.case_id || null;
       return {
-        id: caseId || `deadline-${idx}`,
+        id: d.id ? `deadline-${d.id}` : `deadline-temp-${idx}`,
         title: d.name,
         type: "deadline" as const,
         date: dateFormatted,
@@ -110,7 +128,9 @@ export default function CalendarContainer() {
     } else if (activeView === "week") {
       nextDate.setDate(currentDate.getDate() + (direction === "next" ? 7 : -7));
     } else if (activeView === "month") {
-      nextDate.setMonth(currentDate.getMonth() + (direction === "next" ? 1 : -1));
+      nextDate.setMonth(
+        currentDate.getMonth() + (direction === "next" ? 1 : -1),
+      );
     }
     setCurrentDate(nextDate);
   };
@@ -121,6 +141,7 @@ export default function CalendarContainer() {
 
   const handleSelectTask = (task: Task) => {
     setSelectedCaseId(task.caseId || task.id);
+    setSelectedEventType(task.type);
     setIsCaseDetailsOpen(true);
   };
 
@@ -130,10 +151,10 @@ export default function CalendarContainer() {
       <div className="flex items-center justify-between flex-wrap gap-4 p-4 md:p-6">
         <div className="space-y-0.5">
           <h1 className="text-xl md:text-2xl xl:text-3xl font-bold text-gray-900 tracking-tight">
-            Manage Tasks
+            Manage Calendar
           </h1>
           <p className="text-gray-500 text-xs md:text-sm">
-            Create and control everyday life tasks
+            Create and control all cases, hearings and deadlines
           </p>
         </div>
       </div>
@@ -185,10 +206,11 @@ export default function CalendarContainer() {
         onClose={() => {
           setIsCaseDetailsOpen(false);
           setSelectedCaseId(null);
+          setSelectedEventType(null);
         }}
         caseId={selectedCaseId}
+        eventType={selectedEventType}
       />
     </div>
   );
 }
-

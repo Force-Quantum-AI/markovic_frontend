@@ -1,6 +1,5 @@
 "use client"
 
-import Loading from "@/app/loading";
 import AddNewCase from "@/components/modals/AddNewCase";
 import MainButton from "@/components/shared/MainButton";
 import DashboardMetrics from "@/components/user/dashboard/DashboardMetrics";

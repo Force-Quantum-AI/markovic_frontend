@@ -8,6 +8,7 @@ import AddSubCategoryDialog from "@/components/admin/categories/AddSubCategoryDi
 import EditSubCategoryDialog from "@/components/admin/categories/EditSubCategoryDialog";
 import DeleteConfirmationDialog from "@/components/admin/categories/DeleteConfirmationDialog";
 import AdminButton from "@/components/shared/AdminButton";
+import { AdminCategoriesSkeleton } from "@/components/admin/admin-skeletons";
 import {
   useCreateCategoryMutation,
   useGetAllCategoriesQuery,
@@ -267,11 +268,7 @@ export default function CategoriesPage() {
         </div>
 
         <div className="divide-y divide-[#E5E7EB]">
-          {isCategoriesLoading && (
-            <div className="py-16 text-center text-[#99A1AF] font-roboto text-[14px]">
-              Loading categories...
-            </div>
-          )}
+          {isCategoriesLoading && <AdminCategoriesSkeleton />}
 
           {isCategoriesError && !isCategoriesLoading && (
             <div className="py-16 text-center text-[#99A1AF] font-roboto text-[14px]">

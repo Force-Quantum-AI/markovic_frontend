@@ -184,6 +184,7 @@ export default function LoginPage() {
                     ) : undefined
                   }
                   className="w-full sm:w-56"
+                  hoverEffect="simple"
                 />
               </div>
             </form>

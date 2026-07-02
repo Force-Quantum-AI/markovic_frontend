@@ -251,19 +251,14 @@ export default function ArchiveCasesPage() {
         </div>
       </div>
       <div>
-        {showLoader ? (
-          <div className="w-full bg-white rounded-3xl p-10 border border-gray-100 flex flex-col justify-center items-center min-h-[300px]">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#135576]"></div>
-          </div>
-        ) : (
-          <ArchiveCasesTable
-            archiveData={archiveData}
-            currentPage={page}
-            totalPages={archiveData?.total_pages || 1}
-            onPageChange={setPage}
-            isDashboard={false}
-          />
-        )}
+        <ArchiveCasesTable
+          archiveData={archiveData}
+          currentPage={page}
+          totalPages={archiveData?.total_pages || 1}
+          onPageChange={setPage}
+          isDashboard={false}
+          isLoading={showLoader}
+        />
       </div>
     </div>
   );

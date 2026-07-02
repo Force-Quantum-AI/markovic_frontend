@@ -10,7 +10,7 @@ const adminUsersApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Auth", "Profile"],
+      invalidatesTags: ["Users"],
     }),
     getAllUsers: build.query<UsersResponse, PaginationQueryParams | void>({
       query: (params) => ({
@@ -18,14 +18,14 @@ const adminUsersApi = baseApi.injectEndpoints({
         method: "GET",
         params: params || undefined,
       }),
-      providesTags: ["Auth", "Profile"],
+      providesTags: ["Users"],
     }),
     deleteUser: build.mutation<any, { id: string | number }>({
       query: ({ id }) => ({
         url: `/admin-dashboard/users/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Auth", "Profile"],
+      invalidatesTags: ["Users"],
     }),
   }),
 });

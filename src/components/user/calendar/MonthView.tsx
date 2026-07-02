@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Task } from "./types";
 import {
   Dialog,
@@ -94,30 +94,20 @@ export default function MonthView({
     return `${displayHours}${ampm}`;
   };
 
-  const handleDayClick = (date: Date, e: React.MouseEvent) => {
-    if (
-      (e.target as HTMLElement).closest(".task-pill") ||
-      (e.target as HTMLElement).closest(".more-link")
-    ) {
-      return;
-    }
-    onCreateTaskOnDate(date);
-  };
-
   return (
     <div className="bg-transparent border-none shadow-none">
-      <div className="grid grid-cols-7 gap-3 bg-transparent mb-2">
+      <div className="grid grid-cols-7 gap-1 sm:gap-3 bg-transparent mb-2">
         {DAYS_OF_WEEK_SHORT.map((day) => (
           <div
             key={day}
-            className="py-3 text-center text-xs md:text-sm font-semibold text-gray-400 uppercase tracking-wider"
+            className="py-3 text-center text-[10px] sm:text-xs md:text-sm font-semibold text-gray-400 uppercase tracking-wider"
           >
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-3">
+      <div className="grid grid-cols-7 gap-1 sm:gap-3">
         {days.map((item, index) => {
           const isSelectedMonth = item.isCurrentMonth;
           const dayTasks = isSelectedMonth ? getTasksForDay(item.date) : [];
@@ -129,16 +119,15 @@ export default function MonthView({
           return (
             <div
               key={index}
-              onClick={(e) => handleDayClick(item.date, e)}
-              className={`min-h-[110px] md:min-h-[135px] flex flex-col p-3 transition-all cursor-pointer relative ${
+              className={`min-h-[70px] sm:min-h-[110px] md:min-h-[135px] flex flex-col p-1 sm:p-2.5 transition-all relative ${
                 !isSelectedMonth
                   ? "bg-transparent border border-transparent text-gray-300"
                   : "bg-white border border-gray-100 rounded-2xl shadow-[0_1.5px_4px_rgba(0,0,0,0.02)] text-gray-700 hover:shadow-xs hover:border-gray-200"
               }`}
             >
-              <div className="flex items-center justify-between mb-1.5 px-0.5">
+              <div className="flex items-center justify-between mb-1 px-0.5">
                 <span
-                  className={`text-xs md:text-sm font-semibold flex items-center justify-center h-6 w-6 rounded-full transition-all ${
+                  className={`text-[10px] sm:text-xs md:text-sm font-semibold flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full transition-all ${
                     isToday
                       ? "bg-[#135576] text-white"
                       : isSelectedMonth
@@ -161,7 +150,7 @@ export default function MonthView({
                         borderRadius: "8px",
                         background: isHearing ? "#268808" : "#BA8800",
                       }}
-                      className="task-pill w-full text-left text-[10px] md:text-xs font-bold px-3 py-1.5 text-white truncate transition-all hover:scale-[1.01] hover:brightness-95 cursor-pointer block border-none"
+                      className="task-pill w-full text-left text-[8px] sm:text-[10px] md:text-xs font-semibold px-1 py-0.5 sm:px-2.5 sm:py-1 text-white truncate hover:shadow-md hover:brightness-105 transition-all duration-300 ease-in-out cursor-pointer block border-none"
                     >
                       {task.allDay
                         ? task.title
@@ -176,7 +165,7 @@ export default function MonthView({
                       e.stopPropagation();
                       setSelectedDayTasks({ date: item.date, tasks: dayTasks });
                     }}
-                    className="more-link text-left text-[10px] md:text-xs font-bold text-gray-400 hover:text-gray-600 px-3 py-0.5 mt-0.5 transition-colors cursor-pointer bg-transparent border-none"
+                    className="more-link text-left text-[8px] sm:text-[10px] md:text-xs font-bold text-black hover:text-gray-700 px-1 py-0.5 mt-0.5 transition-colors cursor-pointer bg-transparent border-none"
                   >
                     +{remainingCount} more
                   </button>
@@ -219,7 +208,7 @@ export default function MonthView({
                       borderRadius: "8px",
                       background: isHearing ? "#268808" : "#BA8800",
                     }}
-                    className="text-left p-2.5 text-white font-semibold transition-all hover:brightness-95 cursor-pointer flex justify-between items-center border-none"
+                    className="text-left p-2.5 text-white font-semibold hover:shadow-md hover:brightness-105 transition-all duration-300 ease-in-out cursor-pointer flex justify-between items-center border-none"
                   >
                     <span className="truncate text-xs md:text-sm">
                       {task.title}

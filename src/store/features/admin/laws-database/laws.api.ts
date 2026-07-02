@@ -11,7 +11,7 @@ const lawsApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Laws"],
+      invalidatesTags: ["lawAndBylaw"],
     }),
 
     getAllLaws: build.query<LawsResponse, LawsQueryParams | void>({
@@ -20,18 +20,16 @@ const lawsApi = baseApi.injectEndpoints({
         method: "GET",
         params: params || undefined,
       }),
-      providesTags: ["Laws"],
+      providesTags: ["lawAndBylaw"],
     }),
 
-    getSingleLaws: build.query<
-      LawDetails & { id: number },
-      { id: string | number }
+    getSingleLaws: build.query< LawDetails & { id: number }, { id: string | number }
     >({
       query: ({ id }) => ({
         url: `/laws/${id}/`,
         method: "GET",
       }),
-      providesTags: ["Laws"],
+      providesTags: ["lawAndBylaw"],
     }),
 
     exportLaws: build.query<string, { id: string | number }>({
@@ -40,7 +38,7 @@ const lawsApi = baseApi.injectEndpoints({
         method: "GET",
         responseHandler: "text",
       }),
-      providesTags: ["Laws"],
+      providesTags: ["lawAndBylaw"],
     }),
 
     updateLaws: build.mutation<any, { id: string | number; data: LawDetails }>({
@@ -49,7 +47,7 @@ const lawsApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["Laws"],
+      invalidatesTags: ["lawAndBylaw"],
     }),
 
     deleteLaws: build.mutation<any, string | number>({
@@ -57,7 +55,7 @@ const lawsApi = baseApi.injectEndpoints({
         url: `/laws/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Laws"],
+      invalidatesTags: ["lawAndBylaw"],
     }),
   }),
 });

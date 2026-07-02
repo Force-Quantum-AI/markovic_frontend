@@ -20,9 +20,9 @@ const calendarApi = baseApi.injectEndpoints({
       }),
       providesTags: ["case", "lawAndBylaw"],
     }),
-    getCasesDetails: build.query<CaseDetailsResponseType, { caseId: string }>({
-      query: ({ caseId }) => ({
-        url: `/cases/${caseId}/`,
+    getCasesDetails: build.query<CaseDetailsResponseType, { case_id: string }>({
+      query: ({ case_id }) => ({
+        url: `/cases/${case_id}/`,
         method: "GET",
       }),
       providesTags: ["case"],

@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import { Activity, CheckCircle } from "lucide-react";
+import { SystemHealthSkeleton } from "@/components/admin/admin-skeletons";
 
 interface SystemHealthProps {
   systemHealth?: {
@@ -10,9 +10,13 @@ interface SystemHealthProps {
     ai_service: { label: string; value: number; unit: string };
     storage: { label: string; value: number; unit: string };
   };
+  isLoading?: boolean;
 }
 
-export default function SystemHealth({ systemHealth }: SystemHealthProps) {
+export default function SystemHealth({ systemHealth, isLoading }: SystemHealthProps) {
+  if (isLoading) {
+    return <SystemHealthSkeleton />;
+  }
   const getProgressColor = (value: number) => {
     if (value >= 90) return "bg-emerald-500";
     if (value >= 10) return "bg-amber-500";

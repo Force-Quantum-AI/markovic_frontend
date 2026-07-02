@@ -1,13 +1,19 @@
 "use client";
 
-import React from "react";
 import { Eye, FileText, File } from "lucide-react";
+
+interface UploadedBy {
+  id: number;
+  full_name: string;
+  email: string;
+  professional_role?: string;
+}
 
 interface Document {
   id: number;
   file_name: string;
   file_url?: string;
-  uploaded_by?: string | null;
+  uploaded_by?: string | UploadedBy | null;
   created_at?: string;
 }
 
@@ -55,7 +61,13 @@ export default function AdminAllDocumentsTable({ documents = [] }: AdminAllDocum
                   </div>
                 </td>
 
-                <td className="px-6 py-4 text-sm text-gray-600">{doc.uploaded_by || "Unknown"}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  {doc.uploaded_by
+                    ? typeof doc.uploaded_by === "object"
+                      ? doc.uploaded_by.full_name || doc.uploaded_by.email
+                      : doc.uploaded_by
+                    : "Unknown"}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{doc.created_at ? new Date(doc.created_at).toLocaleDateString() : "N/A"}</td>
 
                 <td className="px-6 py-4">

@@ -26,12 +26,12 @@ export default function AdminCaseOverview({
 }: AdminCaseOverviewProps) {
   const router = useRouter();
   return (
-    <div className="w-full rounded-[30px] bg-white p-7 relative border border-gray-100 shadow-sm">
+    <div className="w-full relative pt-12">
       <button
         onClick={() => router.back()}
-        className="absolute -top-3 left-4 bg-gray-100 px-3 py-1 rounded-2xl cursor-pointer transition-all hover:bg-gray-400 text-[#1F2937]/50 text-xs md:text-sm flex items-center gap-1"
+        className="group absolute top-1 left-0 bg-[#145576] hover:bg-[#0f4460] text-white px-3 py-1.5 rounded-2xl cursor-pointer transition-all text-xs md:text-sm flex items-center gap-1 font-medium"
       >
-        <ArrowLeftIcon className="w-3 h-3" />
+        <ArrowLeftIcon className="w-3.5 h-3.5 transition-transform duration-300 ease-in-out group-hover:-translate-x-1" />
         Back
       </button>
       {/* Header */}
@@ -66,12 +66,12 @@ export default function AdminCaseOverview({
         <InfoRow label="Category:" value={category_name} />
         <InfoRow label="Subcategory:" value={sub_category_name} />
 
-        <div className="grid grid-cols-[160px_1fr] items-center gap-x-6">
+        <div className="flex flex-col md:flex-row justify-start md:justify-between md:items-center gap-2">
           <p className="text-[14px] font-semibold text-[#667085]">
             Status:
           </p>
 
-          <div className="flex justify-end">
+          <div className="flex justify-start md:justify-end">
             <span className="rounded-full border border-[#E11D48] px-4 py-[5px] text-[14px] font-medium text-[#DC2626]">
               {status_name}
             </span>
