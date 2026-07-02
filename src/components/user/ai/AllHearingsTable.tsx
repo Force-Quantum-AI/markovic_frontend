@@ -31,11 +31,13 @@ export default function AllHearingsTable({ title = "All Hearings", tag = "hearin
       <div className="overflow-x-auto m-2 rounded-2xl  border">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-200">
+            <tr>
               {[ `${tag.toUpperCase()} DATE`, "REASON", "STATUS"].map((header) => (
                 <th  key={header} className="px-6 py-4 text-[11px] font-bold text-gray-400 tracking-wider uppercase">
                   {header}
                 </th>
               ))}
+            </tr>
           </thead>
           
           <tbody className="divide-y divide-gray-100">
