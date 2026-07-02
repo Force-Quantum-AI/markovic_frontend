@@ -33,7 +33,7 @@ interface OverviewFormData {
   sub_category_name: string;
   status: number;
   status_name: string;
-  court: number;
+  court: string;
   court_name: string;
   case_number: string;
   responsible_lawyer_ids: string[];
@@ -60,7 +60,7 @@ function buildInitialFormData(d: any): OverviewFormData {
     sub_category_name: d?.sub_category_name || "",
     status: d?.status ?? 1,
     status_name: d?.status_name || "",
-    court: d?.court ?? 100,
+    court: d?.court ?? "",
     court_name: d?.court_name || "",
     case_number: d?.case_number || "",
     responsible_lawyer_ids: d?.responsible_lawyers?.map((l: any) => l.id) || [],
@@ -83,7 +83,7 @@ export default function UpdateCaseOverviewModal({
 
   const [updateOverviewInfoOfCase, { isLoading }] =
     useUpdateOverviewInfoOfCaseMutation();
-  const [makeCompleteCase, { isLoading: isCompleteCaseLoading }] = useMakeCompleteCaseMutation()
+  const [makeCompleteCase] = useMakeCompleteCaseMutation()
 
   useEffect(() => {
     if (data) {
@@ -129,7 +129,7 @@ export default function UpdateCaseOverviewModal({
           category: formData.category,
           sub_category: formData.sub_category,
           status: formData.status,
-          court: formData.court ?? 100,
+          court: formData.court,
           responsible_lawyer_ids: formData.responsible_lawyer_ids,
           opposing_parties: formData.opposing_parties,
         },
@@ -253,7 +253,6 @@ export default function UpdateCaseOverviewModal({
               <InputField
                 label={t("updateCaseOverview.court")}
                 placeholder={t("updateCaseOverview.courtPlaceholder")}
-                inputType="number"
                 value={formData.court}
                 onChange={handleInputChange("court")}
               />
@@ -269,7 +268,6 @@ export default function UpdateCaseOverviewModal({
             {/* Category + Subcategory */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t("updateCaseOverview.category")}</label>
                 <SelectField
                   label={t("updateCaseOverview.category")}
                   type="category"
@@ -284,7 +282,6 @@ export default function UpdateCaseOverviewModal({
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t("updateCaseOverview.subcategory")}</label>
                 <SelectField
                   label={t("updateCaseOverview.subcategory")}
                   type="subCategory"
@@ -302,7 +299,6 @@ export default function UpdateCaseOverviewModal({
 
             {/* Status */}
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t("updateCaseOverview.status")}</label>
               <SelectField
                 label={t("updateCaseOverview.status")}
                 type="status"

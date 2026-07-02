@@ -267,19 +267,31 @@ function BasicInformationStep({ data, onChange }: { data: BasicInfoData; onChang
                     </div>
                   ) : clients.length > 0 ? (
                     clients.map((client: any) => (
+                      <div className="relative" key={client.email}>
                       <button
-                        key={client.email}
                         type="button"
                         onClick={() => handleSelectClient(client)}
-                        className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b last:border-b-0"
+                        className="w-full flex items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 border-b last:border-b-0"
                       >
-                        <p className="font-semibold">
-                          {client.client_name}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {client.email}
-                        </p>
+                        <div className="h-8 w-8 relative rounded-full overflow-hidden">
+                          <Image
+                            src={client.client_image || "/dummy-user.jpg"}
+                            alt={client.client_name}
+                            fill
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="">
+                          <p className="font-semibold">
+                            {client.client_name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {client.email}
+                          </p>
+                        </div>
                       </button>
+                      <X className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 hover:cursor-pointer hover:bg-gray-200 rounded-md p-1" onClick={() => setShowDropdown(false)} />
+                      </div>
                     ))
 
                   ) : (

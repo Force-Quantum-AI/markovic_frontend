@@ -390,6 +390,7 @@
     "redirecting": "Redirecting...",
     "purchase": "Purchase",
     "mostPopular": "Most Popular",
+    "my_clients": "My Clients",
     "unavailableBilling": "This billing option isn't available for this plan yet.",
     "failedCheckout": "Failed to start checkout. Please try again.",
     "cancelSuccess": "Subscription cancelled successfully.",

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Edit2, TimerOff } from "lucide-react";
+import { Plus, Edit2, TimerOff, SquarePen } from "lucide-react";
 import AddEditHearingModal from "@/components/modals/AddEditHearingModal";
 
 export default function HearingsTab({
@@ -61,20 +61,17 @@ export default function HearingsTab({
 
           {upcoming ? (
             <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 relative group">
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-start gap-2">
                 <div>
                   <span className="text-emerald-600 text-sm font-medium block mb-3">
                     Next Hearing:
                   </span>
-                  <div className="text-gray-900 font-bold text-xl tracking-tight">
+                  <div className="text-gray-900 font-semibold text-lg tracking-tight">
                     {upcoming.day}-{upcoming.month}-{upcoming.year}
                   </div>
-                  <div className="text-gray-900 font-bold text-xl tracking-tight mb-4">
+                  <div className="text-gray-900 text-sm tracking-tight mb-4">
                     {upcoming.time_from} - {upcoming.time_to} {upcoming.am_pm}
                   </div>
-                  <span className="text-gray-700 text-sm bg-emerald-100/50 px-2.5 py-1 rounded-md">
-                    {upcoming.reason}
-                  </span>
                 </div>
 
                 <div className="flex flex-col items-end justify-between h-full space-y-8">
@@ -83,7 +80,7 @@ export default function HearingsTab({
                     className="p-2 text-teal-600 hover:bg-emerald-100 rounded-lg transition-colors"
                     aria-label="Edit hearing"
                   >
-                    <Edit2 className="w-5 h-5" />
+                    <SquarePen className="w-5 h-5" />
                   </button>
                   {upcoming.days_remaining !== null && upcoming.days_remaining !== undefined && (
                     <span className="text-gray-500 text-xs font-medium">
@@ -92,6 +89,9 @@ export default function HearingsTab({
                   )}
                 </div>
               </div>
+              <div className="text-gray-700 text-sm bg-emerald-100/50 p-3 rounded-md mt-1">
+                    {upcoming.reason}
+                  </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8">

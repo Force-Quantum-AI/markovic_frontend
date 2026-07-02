@@ -243,7 +243,7 @@ export default function Subscription() {
                 onValueChange={(v) => setBillingCycle(v as BillingSession)}
                 className="w-fit"
               >
-                <TabsList className="grid w-full grid-cols-2 h-11 bg-slate-200/60 p-2 rounded-lg">
+                <TabsList className="grid w-full grid-cols-2 h-12! bg-slate-200/60 p-2 rounded-lg">
                   <TabsTrigger
                     value="monthly"
                     className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm p-1 "
