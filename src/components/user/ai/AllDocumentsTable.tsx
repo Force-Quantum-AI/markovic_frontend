@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Eye, FileText, File } from "lucide-react";
+import { NoContent } from "@/components/shared/NoContent";
 
 interface Document {
   id: number;
@@ -37,21 +38,20 @@ export default function AllDocumentsTable({ documents = [] }: AllDocumentsTableP
     <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       
       {/* Header */}
-      <div className="p-6 border-b border-gray-100">
+      <div className="p-6 ">
         <h2 className="text-xl font-bold text-gray-900">All Documents</h2>
+        <p className="text-sm text-gray-500">{documents?.length || 0}  documents</p>
       </div>
 
       {/* Table Content */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto m-2 rounded-2xl border">
         <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-50/50">
-              {["DOCUMENT NAME", "UPLOADED BY", "DATE", "ACTIONS"].map((header) => (
+          <thead className="bg-gray-200">
+              {["DOCUMENT NAME", "UPLOADED BY", "DATE"].map((header) => (
                 <th key={header} className="px-6 py-4 text-[11px] font-bold text-gray-400 tracking-wider uppercase">
                   {header}
                 </th>
               ))}
-            </tr>
           </thead>
           
           <tbody className="divide-y divide-gray-100">
@@ -71,16 +71,12 @@ export default function AllDocumentsTable({ documents = [] }: AllDocumentsTableP
                 <td className="px-6 py-4 text-sm text-gray-600">{doc.uploaded_by || "Unknown"}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{doc.created_at ? new Date(doc.created_at).toLocaleDateString() : "N/A"}</td>
                 
-                <td className="px-6 py-4">
-                  <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-semibold text-sky-600 hover:text-sky-700 transition-colors">
-                    <Eye className="w-4 h-4" />
-                    Preview
-                  </a>
-                </td>
               </tr>
             )) : (
               <tr>
-                <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">No documents available</td>
+                <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">
+                  <NoContent/>
+                </td>
               </tr>
             )}
           </tbody>

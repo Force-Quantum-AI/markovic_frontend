@@ -298,7 +298,7 @@ function ResultCard({
 
       {/* Actions */}
       <div className="flex items-center gap-3 pt-1">
-        <Link href={`/ai-search/results/${result.id}`} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#135576] hover:bg-[#0d3f59] text-white text-xs font-medium transition-colors">
+        <Link href={`/archive-cases/${result.caseNumber}`} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#135576] hover:bg-[#0d3f59] text-white text-xs font-medium transition-colors">
           <Eye className="w-3.5 h-3.5" />
           View Full Decision
         </Link>

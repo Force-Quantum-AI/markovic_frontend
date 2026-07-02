@@ -11,11 +11,13 @@ import { useGetHearingAndDeadlinePageDataQuery } from "@/store/features/case/cas
 import { HearingAndDeadlinePageDataParamsType } from "@/types/case.types";
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import { NoContent } from "@/components/shared/NoContent";
+import { useTranslation } from "react-i18next";
 
 export default function HearingAndDeadlinePage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState<number>();
     const [selectedSubCategory, setSelectedSubCategory] = useState<number>();
+    const { t } = useTranslation("common");
     const [hearingDate, setHearingDate] = useState<{ day: number | null; month: number | null; year: number | null }>({ day: null, month: null, year: null });
     const [deadlineDate, setDeadlineDate] = useState<{ day: number | null; month: number | null; year: number | null }>({ day: null, month: null, year: null });
     const [currentPage, setCurrentPage] = useState(1);
@@ -70,14 +72,14 @@ export default function HearingAndDeadlinePage() {
     return (
         <div className="mx-auto w-full p-2 md:p-3 bg-white rounded-2xl">
             <PageHeadingTitle
-                title="Hearings & Deadlines"
-                subtitle="Schedule and details for all court proceedings"
+                title={t("hearing_and_deadline")}
+                subtitle={t("schedule_and_details_for_all_court_proceedings")}
             />
             <div className="grid grid-cols-1 md:grid-cols-4 items-end gap-3">
                 <div className="col-span-1 md:col-span-2">
                     <InputField
-                        label="Search"
-                        placeholder="Search cases, clients, laws, documents..."
+                        label={t("search")}
+                        placeholder={t("search_cases_clients_laws_documents")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -110,7 +112,7 @@ export default function HearingAndDeadlinePage() {
                 {/* Hearing Date Filter */}
                 <div>
                     <label className="mb-1 block text-xs font-medium text-gray-500">
-                        Hearing date
+                        {t("hearing_date")}
                     </label>
 
                     <div className="grid grid-cols-3 gap-1 xl:gap-2">
@@ -161,7 +163,7 @@ export default function HearingAndDeadlinePage() {
                 {/* Deadline Filter */}
                 <div>
                     <label className="mb-1 block text-xs font-medium text-gray-500">
-                        Deadline
+                        {t("deadline")}
                     </label>
 
                     <div className="grid grid-cols-3 gap-1 xl:gap-2">
@@ -215,7 +217,7 @@ export default function HearingAndDeadlinePage() {
                 {/* Top Header Controls Block */}
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
-                        All
+                        {t("all")}
                     </h3>
                 </div>
 

@@ -12,6 +12,7 @@ import {
   ArrowUpRight 
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 // --- TYPES FOR THE REUSABLE CARD ---
 interface MetricCardProps {
@@ -47,55 +48,56 @@ export function MetricCard({ icon, value, label, bgColor, iconBgColor }: MetricC
 // --- MAIN WRAPPER COMPONENT ---
 export default function DashboardMetrics({ data, isLoading }: { data?: any; isLoading?: boolean }) {
   const router = useRouter()
+  const {t} = useTranslation("common")
   
   // Dynamic dataset mapping backend API payload fields
   const statsData = [
     {
       id: "total-cases",
-      label: "Total Cases",
+      label: t("total_cases"),
       value: data?.total_cases ?? 0,
       icon: <Scale className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#DAE6C9]", // Soft Lime-Green hue
+      bgColor: "bg-[#FAFFF3]", // Soft Lime-Green hue
       iconBgColor: "bg-[#edf4e4]"
     },
     {
       id: "active-cases",
-      label: "Active Cases",
+      label: t("active_cases"),
       value: data?.active_cases ?? 0,
       icon: <Files className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#C8F0DB]", // Soft Mint hue
+      bgColor: "bg-[#ECFFF5]", // Soft Mint hue
       iconBgColor: "bg-[#e2f6ec]"
     },
     {
       id: "todays-hearing",
-      label: "Todays Hearing",
+      label: t("todays_hearing"),
       value: data?.todays_hearings ?? 0,
       icon: <Gavel className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#D4D4F2]", // Soft Purple hue
+      bgColor: "bg-[#F2F2FF]", // Soft Purple hue
       iconBgColor: "bg-[#ebebfe]"
     },
     {
       id: "upcoming-deadlines",
-      label: "Upcoming Deadlines",
+      label: t("upcoming_deadlines"),
       value: data?.upcoming_deadlines ?? 0,
       icon: <CalendarDays className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#D6E7ED]", // Soft Ice Blue hue
+      bgColor: "bg-[#ECFAFF]", // Soft Ice Blue hue
       iconBgColor: "bg-[#e3f3ff]"
     },
     {
       id: "total-clients",
-      label: "Total Clients",
+      label: t("total_clients"),
       value: data?.total_clients ?? 0,
       icon: <Users2 className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#E6D1E3]", // Soft Pink hue
+      bgColor: "bg-[#FFF3FD]", // Soft Pink hue
       iconBgColor: "bg-[#fbe6f7]"
     },
     {
       id: "case-completed",
-      label: "Case Completed",
+      label: t("case_completed"),
       value: data?.cases_completed ?? 0,
       icon: <FileCheck2 className="w-4 h-4 stroke-[2]" />,
-      bgColor: "bg-[#F2E6D8]", // Soft Cream/Orange hue
+      bgColor: "bg-[#FFF7ED]", // Soft Cream/Orange hue
       iconBgColor: "bg-[#fff2de]"
     },
   ];
@@ -136,10 +138,10 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4 mt-auto">
             <div className="space-y-1">
               <h3 className="text-2xl font-bold text-white tracking-tight">
-                AI Court Practice
+                {t("ai_court_practice")}
               </h3>
               <p className="text-xs text-gray-300 font-light">
-                Go to Full AI Search
+                {t("go_to_full_ai_search")}
               </p>
             </div>
 
@@ -147,7 +149,7 @@ export default function DashboardMetrics({ data, isLoading }: { data?: any; isLo
               onClick={handleExploreAction}
               className="bg-white hover:bg-gray-100 text-[#135576] font-semibold text-xs px-5 py-2.5 rounded-full transition-all shadow-sm active:scale-95 focus:outline-none whitespace-nowrap"
             >
-              Explore Now
+              {t("explore_now")}
             </button>
           </div>
         </div>

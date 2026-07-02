@@ -30,6 +30,7 @@ export default function AdminLoginPage() {
       const res = await adminLogin({ email, password }).unwrap();
 
       document.cookie = `accessToken=${res.access}; path=/; SameSite=Lax`;
+      document.cookie = `role=${res.role}; path=/; SameSite=Lax`;
 
       router.push("/admin/dashboard");
     } catch (err: any) {

@@ -41,29 +41,32 @@ export const subscriptionApi = baseApi.injectEndpoints({
             invalidatesTags: ["subscription"],
         }),
 
-        getPaymentVerified: builder.query<PaymentVerificationResponse, string>({
-            query: (session_id) => ({
-                url: `/subscription/payment/success/?session_id=${encodeURIComponent(session_id)}`,
-                method: "GET",
+        isPaymentVerified: builder.mutation<PaymentVerificationResponse, string>({
+            query: (transaction_id) => ({
+                url: `/subscription/payment/success/`,
+                method: "POST",
+                body: { transaction_id },
             }),
-            providesTags: ["subscription"],
+            invalidatesTags: ["subscription"],
         }),
 
-        cancelSubscription: builder.query<PaymentCancelResponse, string>({
-            query: (session_id) => ({
-                url: `/subscription/payment/cancel/?session_id=${encodeURIComponent(session_id)}`,
-                method: "GET",
+        cancelSubscription: builder.mutation<PaymentCancelResponse, string>({
+            query: (transaction_id) => ({
+                url: `/subscription/payment/cancel/`,
+                method: "POST",
+                body: { transaction_id },
             }),
-            providesTags: ["subscription"],
-        }),
+            invalidatesTags: ["subscription"],
+    }),
     }),
 });
+
 
 export const {
     useGetAllSubscriptionListQuery,
     useGetClientCurrentSubscriptionQuery,
     useContactForCustomSubscriptionMutation,
     usePurchaseSubscriptionPlanMutation,
-    useGetPaymentVerifiedQuery,
-    useCancelSubscriptionQuery,
+    useIsPaymentVerifiedMutation,
+    useCancelSubscriptionMutation,
 } = subscriptionApi;

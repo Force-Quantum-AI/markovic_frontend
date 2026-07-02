@@ -10,12 +10,14 @@ import { useGetAllCasesQuery, useGetCategoryDropdownOptionsQuery } from "@/store
 import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { NoContent } from "@/components/shared/NoContent";
+import { useTranslation } from "react-i18next";
 
 
 export default function AllCasesPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState<number>();
     const [selectedCategory, setSelectedCategory] = useState<number>();
+    const {t} = useTranslation("common")
     const [hearingDate, setHearingDate] = useState<{ day: number | null, month: number | null, year: number | null }>({ day: null, month: null, year: null });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
@@ -88,8 +90,8 @@ export default function AllCasesPage() {
     return (
         <div className="mx-auto w-full max-w-7xl p-2 md:p-3">
             <PageHeadingTitle
-                title="My Cases"
-                subtitle="All your cases in one place"
+                title={t("all_cases")}
+                subtitle={t("all_your_cases_in_one_place")}
             />
             {/* Search Bar */}
             <div className="mb-6 flex items-center gap-5">
@@ -97,7 +99,7 @@ export default function AllCasesPage() {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Search cases, clients, laws, documents..."
+                        placeholder={t("search_cases_clients_laws_documents")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full rounded-full border border-gray-200 bg-white py-3.5 pl-10 pr-4 shadow-sm text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
@@ -108,7 +110,7 @@ export default function AllCasesPage() {
             {/* Filters Row */}
             <div className="mb-6 grid grid-cols-2 gap-3">
                 <SelectField
-                    label="Case status"
+                    label={t("case_status")}
                     type="status"
                     value={selectedStatus?.toString() || ""}
                     onChange={(value) =>
@@ -117,7 +119,7 @@ export default function AllCasesPage() {
                 />
 
                 <SelectField
-                    label="Case category"
+                    label={t("case_category")}
                     type="category"
                     value={selectedCategory ? String(selectedCategory) : ""}
                     onChange={(value) =>
@@ -130,7 +132,7 @@ export default function AllCasesPage() {
             {/* Hearing Date Filter */}
             <div className="mb-6">
                 <label className="mb-1 block text-xs font-medium text-gray-500">
-                    Hearing date
+                    {t("hearing_date")}
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                     <input
@@ -177,7 +179,7 @@ export default function AllCasesPage() {
                 {/* Top Header Controls Block */}
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
-                        All Cases
+                        {t("all_cases")}
                     </h3>
                 </div>
 

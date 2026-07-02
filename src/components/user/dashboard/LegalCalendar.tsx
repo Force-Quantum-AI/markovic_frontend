@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Users, Scale, Loader2 } from "lucide-react";
 import { useGetAllCasesQuery, useGetCaseHearingAndDeadlineAllDateForCalendarQuery } from "@/store/features/case/case.api";
+import { useTranslation } from "react-i18next";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -170,7 +171,7 @@ function EventCard({ event }: { event: CalendarEventItem }) {
       }}
     >
       {/* Horizontal accent lines that connect the card to the grid */}
-      <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-14 -ml-14 ${c.line}`} />
+      <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-4 -ml-4 ${c.line}`} />
       <div className={`absolute right-0 top-1/2 -translate-y-1/2 h-[2px] w-2 -mr-2 ${c.line}`} />
 
       {/* Icon bubble */}
@@ -191,6 +192,7 @@ function EventCard({ event }: { event: CalendarEventItem }) {
 
 export default function LegalCalendar() {
   const today = new Date();
+  const {t} = useTranslation("common");
 
   const [viewYear,     setViewYear]     = useState(today.getFullYear());
   const [viewMonth,    setViewMonth]    = useState(today.getMonth());
@@ -292,7 +294,7 @@ export default function LegalCalendar() {
   return (
     <div className="flex flex-col h-fit bg-white rounded-xl overflow-hidden select-none">
       <h2 className="px-4 pt-4 pb-2 text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
-        Upcoming
+        {t("upcoming")}
       </h2>
 
       {/* ── Month Header ── */}
@@ -398,15 +400,15 @@ export default function LegalCalendar() {
         <div className="flex items-center gap-4 mt-2 mb-1 px-1 py-2 bg-gray-50 rounded-lg flex-wrap">
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-sm bg-[#2ecc71]" />
-            <span className="text-xs text-gray-600">Hearing</span>
+            <span className="text-xs text-gray-600">{t("hearing")}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-sm bg-[#f0a500]" />
-            <span className="text-xs text-gray-600">Deadline</span>
+            <span className="text-xs text-gray-600">{t("deadline")}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-sm bg-[#8b5cf6]" />
-            <span className="text-xs text-gray-600">Both</span>
+            <span className="text-xs text-gray-600">{t("both")}</span>
           </div>
         </div>
       </div>
@@ -422,7 +424,7 @@ export default function LegalCalendar() {
             <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
               <Scale className="w-5 h-5 text-gray-400" />
             </div>
-            <p className="text-sm font-medium text-gray-500">No events on</p>
+            <p className="text-sm font-medium text-gray-500">{t("no_result")}</p>
             <p className="text-xs text-gray-400">
               {selMonthName} {selDay}
             </p>

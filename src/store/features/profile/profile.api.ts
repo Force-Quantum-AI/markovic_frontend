@@ -35,11 +35,30 @@ export const profileApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Profile", "dashboard"],
     }),
+    getAllLawyers: builder.query({
+      query: (email: string) => ({
+        url: `/lawyer-dashboard/users/?email=${email}`,
+        method: "GET",
+      }),
+      providesTags: ["dashboard"],
+    }),
+    getClientCaseDetails: builder.query<any, string>({
+      query: (clientPersonalId: string) => ({
+        url: `/cases/personal/${clientPersonalId}/`,
+        method: "GET",
+      }),
+      providesTags: ["case"],
+    }),
   }),
 });
 
 export const {
   useGetProfileInfoQuery,
   useUpdateProfileInfoMutation,
-  useGetAllClientsQuery
+  useGetAllClientsQuery,
+  useLazyGetAllClientsQuery,
+  useGetAllLawyersQuery,
+  useLazyGetAllLawyersQuery,
+  useGetClientCaseDetailsQuery,
+  useLazyGetClientCaseDetailsQuery,
 } = profileApi;

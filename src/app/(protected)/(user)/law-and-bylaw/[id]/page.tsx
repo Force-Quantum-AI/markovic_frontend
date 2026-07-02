@@ -4,12 +4,15 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { 
-  ArrowLeft, 
-  Star, 
-  Copy, 
-  Printer, 
-  FileText, 
+import { useRef } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import {
+  ArrowLeft,
+  Star,
+  Copy,
+  Printer,
+  FileText,
   ChevronDown,
   Scale,
   Loader
@@ -22,15 +25,16 @@ import { toast } from "sonner";
 export default function LawDetailsPage() {
   const params = useParams();
   const lawId = (params?.id as string) || "";
-  
+
   const { data: lawDetailsData, isLoading, error } = useGetLawBylawDetailsQuery({ id: lawId });
   const [isFavorite, setIsFavorite] = useState(lawDetailsData?.bookmark || false);
-    const [toggleBookmarkedLaws, { isLoading : isToggoling}] = useToggleBookmarkedLawsMutation();
+  const [toggleBookmarkedLaws, { isLoading: isToggoling }] = useToggleBookmarkedLawsMutation();
 
   // States for interactive UI filters and copy feedback
   const [selectedSectionId, setSelectedSectionId] = useState("");
   const [selectedArticleId, setSelectedArticleId] = useState("all");
   const [copiedText, setCopiedText] = useState(false);
+  const pdfRef = useRef<HTMLDivElement>(null);
 
   const sections = lawDetailsData?.sections || [];
 
@@ -58,7 +62,7 @@ export default function LawDetailsPage() {
   // Copy Entire Text content utilities function
   const handleCopyFullText = () => {
     if (displayedArticles.length === 0) return;
-    const rawTextContent = displayedArticles.map((art: { id: number; title: string; description?: string }) => 
+    const rawTextContent = displayedArticles.map((art: { id: number; title: string; description?: string }) =>
       `${art.title}\n${art.description || ""}`
     ).join("\n\n");
 
@@ -72,6 +76,104 @@ export default function LawDetailsPage() {
   const handlePrint = () => {
     window.print();
   };
+
+const handleExportPDF = () => {
+  try {
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    let y = 20;
+
+    // Title
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(18);
+
+    const titleLines = pdf.splitTextToSize(
+      lawDetailsData.title,
+      pageWidth - 30
+    );
+
+    pdf.text(titleLines, 15, y);
+
+    y += titleLines.length * 8 + 5;
+
+    // Metadata
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10);
+
+    pdf.text(
+      `Source: ${lawDetailsData.source || "Official Source"}`,
+      15,
+      y
+    );
+
+    y += 7;
+
+    pdf.text(
+      `Last Updated: ${lawDetailsData.last_updated}`,
+      15,
+      y
+    );
+
+    y += 10;
+
+    // Articles
+    displayedArticles.forEach((article:any) => {
+      // New page if needed
+      if (y > pageHeight - 30) {
+        pdf.addPage();
+        y = 20;
+      }
+
+      // Article Title
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+
+      const articleTitle = pdf.splitTextToSize(
+        article.title,
+        pageWidth - 30
+      );
+
+      pdf.text(articleTitle, 15, y);
+
+      y += articleTitle.length * 6 + 3;
+
+      // Description
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(11);
+
+      const descriptionLines = pdf.splitTextToSize(
+        article.description || "",
+        pageWidth - 30
+      );
+
+      descriptionLines.forEach((line: string) => {
+        if (y > pageHeight - 15) {
+          pdf.addPage();
+          y = 20;
+        }
+
+        pdf.text(line, 15, y);
+        y += 6;
+      });
+
+      y += 8;
+    });
+
+    pdf.save(
+      `${lawDetailsData.title.replace(/[^\w\s]/gi, "")}.pdf`
+    );
+  } catch (error) {
+    console.error("pdf export error:", error);
+    toast.error("Failed to export PDF");
+  }
+};
 
   const handleAddToFavorite = async (e: React.MouseEvent) => {
     try {
@@ -104,8 +206,8 @@ export default function LawDetailsPage() {
         <Scale className="w-12 h-12 mb-3 opacity-60 text-red-400" />
         <p className="text-lg font-medium">Failed to load law details</p>
         <p className="text-sm">Please check the connection or try again later.</p>
-        <Link 
-          href="/law-and-bylaw" 
+        <Link
+          href="/law-and-bylaw"
           className="mt-4 px-4 py-2 bg-[#135576] text-white rounded-full text-xs font-bold hover:bg-[#135576]/90 transition-all"
         >
           Back to Laws & Bylaws
@@ -116,11 +218,11 @@ export default function LawDetailsPage() {
 
   return (
     <div className="min-h-screen bg-white rounded-2xl p-1 md:p-4 font-sans selection:bg-[#135576]/10 print:bg-white print:p-0">
-      
+
       {/* 1. Top Navigation Row */}
       <div className="max-w-[1600px] mx-auto mb-4 print:hidden">
-        <Link 
-          href="/law-and-bylaw" 
+        <Link
+          href="/law-and-bylaw"
           className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 text-xs font-bold text-[#8a94a6] hover:text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -129,17 +231,17 @@ export default function LawDetailsPage() {
       </div>
 
       {/* Main Framework Box Architecture Container Layout */}
-      <div className="max-w-[1600px] mx-auto space-y-6">
+      <div ref={pdfRef} className="max-w-[1600px] mx-auto space-y-6">
 
         {/* 2. Hero Header Block Section */}
         <div className="w-full h-[60vh] md:h-fit bg-[#135576] rounded-[24px] p-6 md:p-8 text-white relative overflow-hidden shadow-xl shadow-blue-950/10 flex flex-col lg:flex-row justify-between items-start gap-6 print:border print:border-gray-300 print:text-black print:bg-white">
-          
+
           <div className="space-y-4 max-w-3xl z-10">
             {/* Tag Badge Category indicator label */}
             <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-xs font-bold tracking-wide backdrop-blur-sm border border-white/10 print:border-black print:text-black">
               {lawDetailsData.category_name}
             </span>
-            
+
             {/* Main Title Header string identifier */}
             <h1 className="text-3xl md:text-4xl font-serif font-bold tracking-tight italic">
               {lawDetailsData.title}
@@ -160,8 +262,8 @@ export default function LawDetailsPage() {
 
           {/* Functional Floating Tools Widget Button Options Array Grid Right Panel */}
           <div className="absolute right-1/2 md:right-5 bottom-5 translate-x-1/2 md:translate-x-0 flex flex-col sm:flex-row md:flex-col lg:flex-row items-stretch sm:items-center gap-2.5 px-3 md:px-0 w-full md:w-auto z-10 print:hidden">
-            
-            <button 
+
+            <button
               onClick={handleCopyFullText}
               className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98"
             >
@@ -169,7 +271,7 @@ export default function LawDetailsPage() {
               {copiedText ? "Copied!" : "Copy Full Text"}
             </button>
 
-            <button 
+            <button
               onClick={handlePrint}
               className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98"
             >
@@ -178,7 +280,7 @@ export default function LawDetailsPage() {
             </button>
 
             <button
-              onClick={handlePrint}
+              onClick={handleExportPDF}
               className="flex items-center justify-center gap-2 px-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-all text-white active:scale-98"
             >
               <FileText className="w-4 h-4" />
@@ -199,22 +301,22 @@ export default function LawDetailsPage() {
           </div>
 
           {/* Absolute Top-Right Star Favorite Layout Overlay Toggle Option */}
-          <button 
+          <button
             onClick={handleAddToFavorite}
             className="absolute top-6 right-6 p-2 rounded-full bg-white/10 border border-white/10 hover:bg-white/20 text-white transition-all print:hidden"
           >
             {isToggoling ? (
-            <Loader className="w-4 h-4 animate-spin text-white" />
-          ) : (
-            <Star className={`w-5 h-5 ${isFavorite || lawDetailsData.bookmark ? "fill-amber-400 stroke-amber-400" : ""}`} />
-          )}
+              <Loader className="w-4 h-4 animate-spin text-white" />
+            ) : (
+              <Star className={`w-5 h-5 ${isFavorite || lawDetailsData.bookmark ? "fill-amber-400 stroke-amber-400" : ""}`} />
+            )}
           </button>
         </div>
 
 
         {/* 3. Dropdown Selection Navigation Section Filters Menu */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
-          
+
           {/* Section Dynamic Controller Select Option */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider px-1">Sections:</label>
@@ -258,18 +360,17 @@ export default function LawDetailsPage() {
 
         {/* 4. Article Full Content Viewer Panel Sheet */}
         <div className="w-full bg-gray-100 border border-gray-200 rounded-[28px] p-6 md:p-10 space-y-8 shadow-sm print:border-none print:p-0">
-          
+
           {displayedArticles.length === 0 ? (
             <div className="py-20 text-center text-gray-400 text-sm font-medium">
               No matching articles found in this section.
             </div>
           ) : (
             displayedArticles.map((article: { id: number; title: string; description?: string }, idx: number) => (
-              <div 
-                key={article.id} 
-                className={`space-y-3.5 pb-8 ${
-                  idx !== displayedArticles.length - 1 ? "border-b border-gray-200 " : ""
-                } print:pb-6 print:break-inside-avoid`}
+              <div
+                key={article.id}
+                className={`space-y-3.5 pb-8 ${idx !== displayedArticles.length - 1 ? "border-b border-gray-200 " : ""
+                  } print:pb-6 print:break-inside-avoid`}
               >
                 {/* Article Header */}
                 <h3 className="text-lg font-bold text-[#1a202c] tracking-tight">

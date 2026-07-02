@@ -15,12 +15,10 @@ export default function HearingsTab({
 }) {
   const displayHearings = hearings.length > 0 ? hearings : [];
 
-  // Find the next upcoming hearing dynamically.
-  // NOTE: `nextHearing[0]` may be a separate object reference from anything in
-  // `displayHearings` (e.g. it comes from a different API field). We must not
-  // require it to also exist inside `displayHearings` in order to edit it —
-  // that was the root cause of the edit modal silently failing to open.
-  const upcoming = nextHearing?.[0] || displayHearings.find((h: any) => h.status === "upcoming");
+  const upcoming = nextHearing?.[0] || displayHearings.find((h: any) => {
+    const s = h.status_name || h.status;
+    return typeof s === "string" && s.toLowerCase() === "upcoming";
+  });
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedHearing, setSelectedHearing] = useState<any | null>(null);
@@ -32,13 +30,6 @@ export default function HearingsTab({
     setOpenModal(true);
   };
 
-  /**
-   * Accepts the full hearing object directly instead of just an id.
-   * Previously this looked the id up inside `displayHearings`, which silently
-   * failed (and never opened the modal) whenever `upcoming` wasn't also
-   * present in that array — e.g. when it's a distinct "next hearing" object
-   * returned separately by the API.
-   */
   const handleEditHearing = (hearingItem: any) => {
     if (!hearingItem) return;
     setSelectedHearing(hearingItem);
@@ -46,8 +37,9 @@ export default function HearingsTab({
     setOpenModal(true);
   };
 
-  const getStatusStyles = (status: string) => {
-    switch (status?.toLowerCase()) {
+  const getStatusStyles = (status: any) => {
+    const s = typeof status === "string" ? status : "";
+    switch (s.toLowerCase()) {
       case "upcoming":
         return "text-blue-600 font-semibold";
       case "held":
@@ -151,7 +143,7 @@ export default function HearingsTab({
 
                 {/* Status Badge block */}
                 <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm capitalize flex flex-col items-end gap-2">
-                  <span className={getStatusStyles(hearing.status)}>{hearing.status}</span>
+                  <span className={getStatusStyles(hearing.status_name || hearing.status)}>{hearing.status_name || hearing.status}</span>
                   <button
                     onClick={() => handleEditHearing(hearing)}
                     className="p-1.5 text-gray-400 hover:text-teal-600 transition-colors"

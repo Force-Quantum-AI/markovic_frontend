@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight, UserX } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 const resolveImageUrl = (imgUrl: string | null | undefined): string => {
   if (!imgUrl) return "/dummy-user.jpg";
@@ -20,6 +21,7 @@ const resolveImageUrl = (imgUrl: string | null | undefined): string => {
 
 export default function MyClients({ data, isLoading }: any) {
   const router = useRouter();
+  const {t} = useTranslation("common");
 
   // Show only first 5 clients
   const displayedClients = data?.slice(0, 5) || [];
@@ -28,9 +30,9 @@ export default function MyClients({ data, isLoading }: any) {
     <div className="w-full rounded-xl bg-white p-5 shadow-sm">
       {/* Header Section */}
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-xl font-bold text-gray-900">My Clients</h3>
+        <h3 className="text-xl font-bold text-gray-900">{t("my")} {t("clients")}</h3>
         <button onClick={() => router.push("/my-clients")} className="text-sm font-medium text-[#135576] transition-all hover:opacity-80 cursor-pointer ">
-          View All
+          {t("view_all")}
         </button>
       </div>
 
@@ -45,7 +47,7 @@ export default function MyClients({ data, isLoading }: any) {
             <Skeleton className="w-full h-10 rounded-md bg-gray-300" />
           </div>
         ) : data?.length===0 ? (
-        <NoContent message="No Clients yet" icon={<UserX className="text-gray-500" />} />
+        <NoContent message={t("no_clients")} icon={<UserX className="text-gray-500" />} />
       ):  displayedClients.map((client: any, idx: number) => {
           const clientImage = resolveImageUrl(client.client_image);
           const clientName = client.client_name ?? client.name ?? "Client";
@@ -62,7 +64,7 @@ export default function MyClients({ data, isLoading }: any) {
                 <p className="text-gray-900">{clientName}</p>
               </div>
               <p className="text-sm text-green-600">
-                {clientCaseCount} {clientCaseCount === 1 ? "Case" : "Cases"}
+                {clientCaseCount} {t("cases")}
               </p>
             </div>
           );

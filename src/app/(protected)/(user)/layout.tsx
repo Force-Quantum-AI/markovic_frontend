@@ -1,7 +1,7 @@
 
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -36,6 +36,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import SubscriptionEndModal from "@/components/modals/SubscriptionEndModal";
 import NotificationDropdown from "@/components/shared/NotificationDropdown";
+import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 export default function UserLayout({
   children,
@@ -49,6 +51,7 @@ export default function UserLayout({
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const {t} = useTranslation("common")
   
   useEffect(()=>{
     if (currentSubscription) {
@@ -69,7 +72,7 @@ export default function UserLayout({
 
   const handleSearch = (value: string) => { 
     setTimeout(() => {
-      toast.info("This feature will be implement later!")
+      toast.info("No result found.")
     }, 2000); 
   };
 
@@ -84,6 +87,7 @@ export default function UserLayout({
     document.cookie = "accessToken=; Max-Age=0; path=/";
     document.cookie = "access=; Max-Age=0; path=/";
     document.cookie = "refresh=; Max-Age=0; path=/";
+    document.cookie = "role=; Max-Age=0; path=/";
     router.replace("/login");
   };
 
@@ -103,17 +107,18 @@ export default function UserLayout({
             />
           </div>
 
-          <div className="flex flex-1 items-center justify-end ">
+          <div className="flex flex-1 items-center justify-end md:justify-between">
             {/* search  */}
-            {/* <div className="hidden  lg:flex items-center gap-2 2xl:gap-5 px-3 py-1.5 bg-gray-100 rounded-full">
+            <div className="hidden  lg:flex items-center gap-2  px-3 py-1.5 bg-gray-100 rounded-full">
               <Search className="h-5 w-5 text-black/60" />
-              <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs xl:text-base outline-none rounded-full p-1 placeholder:text-xs text-black" type="text" placeholder="Search cases, clients, laws, documents..." />
-            </div> */}
+              <input onChange={(e) => handleSearch(e.target.value)} className="w-2/3 lg:w-50 2xl:w-96 text-xs lg:text-base 2xl:text-lg outline-none rounded-full p-1 placeholder:text-xs xl:placeholder:text-base  text-black" type="text" placeholder={t("search_cases_clients_laws_documents")} />
+            </div>
 
             <div className="flex items-center gap-5">
+              <LanguageSwitcher />
               {/* Notification */}
               <NotificationDropdown/>
-
+   
               {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -137,7 +142,7 @@ export default function UserLayout({
                         {profileInfo?.full_name ? profileInfo?.full_name : "Mr/Mrs User"}
                       </p>
 
-                      <p className="text-xs text-muted-foreground text-gray-400">
+                      <p className="text-xs text-gray-400">
                         {profileInfo?.email ? profileInfo?.email : "me@gmail.com"}
                       </p>
                     </div>
@@ -149,17 +154,17 @@ export default function UserLayout({
 
                 <DropdownMenuContent align="end" className="bg-white text-black">
                   <DropdownMenuItem  onClick={() => router.push("/settings")}>
-                    Profile
+                    {t("profile")}
                   </DropdownMenuItem>
 
                   <DropdownMenuItem  onClick={() => router.push("/settings")}>
-                    Settings
+                    {t("settings")}
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
                     onClick={handleLogout}
                     className="text-red-500">
-                    Logout
+                    {t("logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

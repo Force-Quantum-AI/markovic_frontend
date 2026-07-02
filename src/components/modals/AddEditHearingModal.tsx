@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Loader } from "lucide-react";
+import { X, Loader, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import {
   Dialog,
@@ -17,6 +18,8 @@ import {
   useAddDeadlineInCaseMutation,
   useUpdateDeadlineInCaseMutation,
 } from "@/store/features/case/case.api";
+import { SelectField } from "../shared/SelectNewDropdown";
+import { SelectFieldForStatus } from "../shared/SelectFieldForStatus";
 
 interface HearingModalProps {
   open: boolean;
@@ -29,7 +32,7 @@ interface HearingModalProps {
 
 export interface HearingFormData {
   reason: string;
-  status: string;
+  status: number;
   time_from: string;
   time_to: string;
   period: string;
@@ -40,7 +43,7 @@ export interface HearingFormData {
 
 const DEFAULT_FORM: HearingFormData = {
   reason: "",
-  status: "Upcoming",
+  status: 1,
   time_from: "",
   time_to: "",
   period: "AM",
@@ -53,7 +56,7 @@ const DEFAULT_FORM: HearingFormData = {
 function buildFormFromHearing(hearing: any): HearingFormData {
   return {
     reason: hearing?.reason ?? hearing?.type ?? "",
-    status: hearing?.status ?? "Upcoming",
+    status: (hearing?.status != null && !isNaN(Number(hearing.status))) ? Number(hearing.status) : 1,
     time_from: hearing?.time_from ?? "",
     time_to: hearing?.time_to ?? "",
     period: hearing?.am_pm ?? "AM",
@@ -72,6 +75,7 @@ export default function AddEditHearingModal({
   hearing,
   caseId,
 }: HearingModalProps) {
+  const { t } = useTranslation("modals");
   const [addHearing, { isLoading: isAddingHearing }] = useAddHearingInCaseMutation();
   const [updateHearing, { isLoading: isUpdatingHearing }] = useUpdateHearingInCaseMutation();
   const [addDeadline, { isLoading: isAddingDeadline }] = useAddDeadlineInCaseMutation();
@@ -93,7 +97,7 @@ export default function AddEditHearingModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, mode, hearing?.id]);
 
-  const handleChange = (key: keyof HearingFormData, value: string) => {
+  const handleChange = (key: keyof HearingFormData, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [key]: value,
@@ -105,7 +109,7 @@ export default function AddEditHearingModal({
 
   const handleSubmit = async () => {
     if (!caseId) {
-      toast.error("Case ID is missing.");
+      toast.error(t("addEditHearing.caseIdMissing"));
       return;
     }
 
@@ -124,44 +128,44 @@ export default function AddEditHearingModal({
       if (mode === "add") {
         if (forModal === "hearing") {
           await addHearing({ caseId, data: payload }).unwrap();
-          toast.success("Hearing added successfully!");
+          toast.success(t("addEditHearing.hearingAddSuccess"));
         } else {
           await addDeadline({ caseId, data: payload }).unwrap();
-          toast.success("Deadline added successfully!");
+          toast.success(t("addEditHearing.deadlineAddSuccess"));
         }
       } else {
         if (!hearing?.id) {
-          toast.error("Item ID is missing for update.");
+          toast.error(t("addEditHearing.itemIdMissing"));
           return;
         }
         if (forModal === "hearing") {
           await updateHearing({ caseId, hearingId: hearing.id, data: payload }).unwrap();
-          toast.success("Hearing updated successfully!");
+          toast.success(t("addEditHearing.hearingUpdateSuccess"));
         } else {
           await updateDeadline({ caseId, deadlineId: hearing.id, data: payload }).unwrap();
-          toast.success("Deadline updated successfully!");
+          toast.success(t("addEditHearing.deadlineUpdateSuccess"));
         }
       }
       setOpen(false);
     } catch (error) {
       console.error(error);
-      toast.error(`Failed to ${mode} ${forModal}.`);
+      toast.error(t("addEditHearing.failedOperation", { mode, item: t(`addEditHearing.${forModal}`) }));
     }
   };
 
   const months = [
-    { value: "1", label: "January" },
-    { value: "2", label: "February" },
-    { value: "3", label: "March" },
-    { value: "4", label: "April" },
-    { value: "5", label: "May" },
-    { value: "6", label: "June" },
-    { value: "7", label: "July" },
-    { value: "8", label: "August" },
-    { value: "9", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
+    { value: "1", label: t("addEditHearing.january") },
+    { value: "2", label: t("addEditHearing.february") },
+    { value: "3", label: t("addEditHearing.march") },
+    { value: "4", label: t("addEditHearing.april") },
+    { value: "5", label: t("addEditHearing.may") },
+    { value: "6", label: t("addEditHearing.june") },
+    { value: "7", label: t("addEditHearing.july") },
+    { value: "8", label: t("addEditHearing.august") },
+    { value: "9", label: t("addEditHearing.september") },
+    { value: "10", label: t("addEditHearing.october") },
+    { value: "11", label: t("addEditHearing.november") },
+    { value: "12", label: t("addEditHearing.december") },
   ];
 
   return (
@@ -179,7 +183,7 @@ export default function AddEditHearingModal({
         "
       >
         <DialogTitle className="sr-only">
-          {mode === "edit" ? "Edit" : "Add"} {forModal}
+          {mode === "edit" ? t("addEditHearing.title_edit") : t("addEditHearing.title_add")} {t(`addEditHearing.${forModal}`)}
         </DialogTitle>
 
         <div className="relative bg-white px-6 md:px-10 py-8 md:py-10">
@@ -194,7 +198,7 @@ export default function AddEditHearingModal({
 
           {/* Heading */}
           <h2 className="text-center text-3xl font-bold text-[#111827] mb-10 capitalize">
-            {mode === "edit" ? "Edit" : "Add"} {forModal}
+            {mode === "edit" ? t("addEditHearing.title_edit") : t("addEditHearing.title_add")} {t(`addEditHearing.${forModal}`)}
           </h2>
 
           {/* Form */}
@@ -202,60 +206,46 @@ export default function AddEditHearingModal({
             {/* Row 1 */}
             <div className="grid md:grid-cols-2 gap-4">
               <InputField
-                label="Reason:"
-                placeholder="Reason"
+                label={t("addEditHearing.reason")}
+                placeholder={t("addEditHearing.reasonPlaceholder")}
                 value={formData.reason}
                 onChange={(e) => handleChange("reason", e.target.value)}
               />
 
-              <div>
+              <div className="space-y-1.5">
                 <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                  Status:
+                  {t("addEditHearing.status")}
                 </label>
-
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleChange("status", e.target.value)}
-                  className="
-                    w-full
-                    rounded-full
-                    border
-                    border-gray-200
-                    bg-gray-100
-                    px-4
-                    py-2.5
-                    text-sm
-                    focus:outline-none
-                    focus:ring-1
-                    focus:ring-[#135576]
+                <div className="relative w-full">
+                  <SelectFieldForStatus
+                    label="Status"
+                    value={formData.status ? String(formData.status) : ""}
+                    onChange={(value) => handleChange("status", Number(value))}
+                    classes="w-full rounded-full border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#135576]
                   "
-                >
-                  <option value="Upcoming">Upcoming</option>
-                  <option value="Held">Held</option>
-                  <option value="Postponed">Postponed</option>
-                  <option value="Extended">Extended</option>
-                </select>
+                  />
+                </div>
               </div>
             </div>
 
             {/* Row 2 */}
             <div className="grid md:grid-cols-3 gap-4">
               <InputField
-                label="Time From:"
-                placeholder="09:00"
+                label={t("addEditHearing.timeFrom")}
+                placeholder={t("addEditHearing.timeFromPlaceholder")}
                 value={formData.time_from}
                 onChange={(e) => handleChange("time_from", e.target.value)}
               />
               <InputField
-                label="Time To:"
-                placeholder="10:00"
+                label={t("addEditHearing.timeTo")}
+                placeholder={t("addEditHearing.toPlaceholder")}
                 value={formData.time_to}
                 onChange={(e) => handleChange("time_to", e.target.value)}
               />
 
               <div>
                 <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                  Period:
+                  {t("addEditHearing.period")}
                 </label>
 
                 <select
@@ -275,8 +265,8 @@ export default function AddEditHearingModal({
                     focus:ring-[#135576]
                   "
                 >
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
+                  <option value="AM">{t("addEditHearing.periodAM")}</option>
+                  <option value="PM">{t("addEditHearing.periodPM")}</option>
                 </select>
               </div>
             </div>
@@ -285,7 +275,7 @@ export default function AddEditHearingModal({
             <div className="grid md:grid-cols-3 gap-4">
               <div>
                 <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                  Date:
+                  {t("addEditHearing.date")}
                 </label>
 
                 <select
@@ -312,7 +302,7 @@ export default function AddEditHearingModal({
 
               <div>
                 <label className="ml-1 mb-1 block text-xs font-medium text-gray-500">
-                  Month:
+                  {t("addEditHearing.month")}
                 </label>
 
                 <select
@@ -338,8 +328,8 @@ export default function AddEditHearingModal({
               </div>
 
               <InputField
-                label="Year:"
-                placeholder="2026"
+                label={t("addEditHearing.year")}
+                placeholder={t("addEditHearing.yearPlaceholder")}
                 value={formData.year}
                 inputType="number"
                 onChange={(e) => handleChange("year", e.target.value)}
@@ -366,10 +356,10 @@ export default function AddEditHearingModal({
               >
                 {isLoading && <Loader className="w-4 h-4 animate-spin" />}
                 {isLoading
-                  ? "Saving..."
+                  ? t("addEditHearing.savingButton")
                   : mode === "edit"
-                  ? "Update Now"
-                  : `Add ${forModal}`}
+                    ? t("addEditHearing.updateButton")
+                    : t("addEditHearing.addButton", { item: t(`addEditHearing.${forModal}`) })}
               </button>
             </div>
           </div>

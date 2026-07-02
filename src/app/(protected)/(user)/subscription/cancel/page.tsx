@@ -1,28 +1,43 @@
 "use client";
 
-import { useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { XCircle, Loader2 } from "lucide-react";
-import { useCancelSubscriptionQuery } from "@/store/features/subscription/subscription.client.api";
+import { useCancelSubscriptionMutation } from "@/store/features/subscription/subscription.client.api";
 
-// Stripe redirects here (typically configured as the `cancel_url` on the
-// Checkout Session) when the user backs out of payment without completing it.
+// Paddle redirects here when the user backs out of payment without completing it.
 export default function SubscriptionCancelPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+  const [detail, setDetail] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data, isLoading } = useCancelSubscriptionQuery(sessionId ?? "", {
-    skip: !sessionId,
-  });
+  const [cancelSubscription] = useCancelSubscriptionMutation();
 
   useEffect(() => {
-    if (!sessionId) {
-      router.replace("/subscription");
-    }
-  }, [sessionId, router]);
+    const txnId = localStorage.getItem("paddle_transaction_id");
 
-  if (!sessionId) return null;
+    if (!txnId) {
+      // No transaction ID — redirect to subscription page
+      router.replace("/subscription");
+      return;
+    }
+
+    cancelSubscription(txnId)
+      .unwrap()
+      .then((data) => {
+        setDetail(data.detail);
+      })
+      .catch(() => {
+        // Even on error, show the cancelled UI
+        setDetail("Payment was cancelled. No charges were made.");
+      })
+      .finally(() => {
+        // Clear the stored transaction_id on cancel
+        localStorage.removeItem("paddle_transaction_id");
+        setIsLoading(false);
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-4">
@@ -37,7 +52,7 @@ export default function SubscriptionCancelPage() {
             <XCircle className="w-12 h-12 text-slate-400 mx-auto mb-4" />
             <h2 className="text-lg font-semibold text-slate-900 mb-1">Checkout cancelled</h2>
             <p className="text-sm text-slate-500 mb-6">
-              {data?.detail ?? "Payment was cancelled. No charges were made."}
+              {detail ?? "Payment was cancelled. No charges were made."}
             </p>
             <a
               href="/subscription"

@@ -13,6 +13,7 @@ import { InputField } from "@/components/shared/InputField";
 import { useUpdateClientProfileInfoMutation } from "@/store/features/case/case.api";
 import { updateClientProfileInfoType, UserData } from "@/types/case.types";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface PersonalDetailsModalProps {
   open: boolean;
@@ -27,6 +28,7 @@ export default function EditPersonalModal({
   caseId,
   data,
 }: PersonalDetailsModalProps) {
+  const { t } = useTranslation("modals");
   const [updateClientProfileInfo, { isLoading }] = useUpdateClientProfileInfoMutation()
 
   const [formData, setFormData] = useState<UserData>({
@@ -90,10 +92,10 @@ export default function EditPersonalModal({
         caseId,
         data: updatedData,
       }).unwrap();
-      toast.success("Client profile info updated successfully");
+      toast.success(t("editPersonal.updateSuccess"));
       setOpen(false);
     } catch (error) {
-      toast.error("Failed to update client profile info")
+      toast.error(t("editPersonal.updateFailed"))
     }
 
   };
@@ -111,7 +113,7 @@ export default function EditPersonalModal({
         showCloseButton={false}
       >
         <DialogTitle className="hidden">
-          Personal Details
+          {t("editPersonal.title")}
         </DialogTitle>
 
         <div className="relative bg-white px-6 py-8 md:px-8 md:py-10">
@@ -125,13 +127,13 @@ export default function EditPersonalModal({
 
           {/* Heading */}
           <h2 className="text-center text-[24px] font-semibold text-[#111827]">
-            Personal Details
+            {t("editPersonal.title")}
           </h2>
 
           {/* Content */}
           <div className="mt-10">
             <h3 className="mb-6 text-[16px] font-semibold text-[#111827]">
-              Basic information
+              {t("editPersonal.basicInfo")}
             </h3>
 
             {/* Avatar Upload */}
@@ -206,45 +208,45 @@ export default function EditPersonalModal({
                   text-[#344054]
                 "
               >
-                Add Photo
+                {t("editPersonal.addPhoto")}
               </label>
             </div>
 
             {/* Form */}
             <div className="space-y-5">
               <InputField
-                label="Client name:"
-                placeholder="Client Name"
+                label={t("editPersonal.clientName")}
+                placeholder={t("editPersonal.clientNamePlaceholder")}
                 value={formData.name}
                 onChange={handleInputChange("name")}
               />
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <InputField
-                  label="Email Address:"
-                  placeholder="Email"
+                  label={t("editPersonal.emailAddress")}
+                  placeholder={t("editPersonal.emailPlaceholder")}
                   value={formData.email}
                   onChange={handleInputChange("email")}
                 />
 
                 <InputField
-                  label="Phone Number:"
-                  placeholder="Phone"
+                  label={t("editPersonal.phoneNumber")}
+                  placeholder={t("editPersonal.phonePlaceholder")}
                   value={formData.phone}
                   onChange={handleInputChange("phone")}
                 />
               </div>
 
               <InputField
-                label="Personal ID Number:"
-                placeholder="Personal ID"
+                label={t("editPersonal.personalId")}
+                placeholder={t("editPersonal.personalIdPlaceholder")}
                 value={formData.personalId}
                 onChange={handleInputChange("personalId")}
               />
 
               <InputField
-                label="Address:"
-                placeholder="Address"
+                label={t("editPersonal.address")}
+                placeholder={t("editPersonal.addressPlaceholder")}
                 value={formData.address}
                 onChange={handleInputChange("address")}
               />
@@ -269,7 +271,7 @@ export default function EditPersonalModal({
                   disabled:cursor-not-allowed
                 "
               >
-                {isLoading ? "Updating..." : "Update Now"}
+                {isLoading ? t("editPersonal.updatingButton") : t("editPersonal.updateButton")}
               </button>
             </div>
           </div>

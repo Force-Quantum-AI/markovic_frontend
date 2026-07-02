@@ -6,6 +6,7 @@ import {
   useGetLanguageAndTimeSettingQuery,
   useUpdateLanguageAndTimeSettingMutation,
 } from "@/store/features/setting/setting.api";
+import { useTranslation } from "react-i18next";
 
 export default function Language() {
   const {
@@ -19,6 +20,7 @@ export default function Language() {
   const [dateFormat, setDateFormat] = useState("");
   const [timeFormat, setTimeFormat] = useState("");
   const [timezone, setTimezone] = useState("");
+  const {t} = useTranslation("common");
 
   useEffect(() => {
     if (languageAndTimeSettingData) {
@@ -57,14 +59,14 @@ export default function Language() {
     <div className="w-full">
       <div className="bg-white border border-[#e5e7eb] p-6 rounded-2xl flex flex-col gap-6 w-full">
         <h2 className="text-[#101828] text-xl font-semibold leading-7">
-          Language & Region Settings
+          {t("language_and_region_settings")}
         </h2>
 
         <div className="flex flex-col gap-6 w-full mt-2">
           {/* Language Select */}
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[#364153] text-sm font-medium">
-              Language
+              {t("language")}
             </label>
             <div className="relative h-[49px] w-full">
               <select
@@ -74,7 +76,6 @@ export default function Language() {
               >
                 <option value="montenegrin">Montenegrin</option>
                 <option value="english">English</option>
-                <option value="serbian">Serbian</option>
               </select>
               <ChevronDown
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
@@ -86,7 +87,7 @@ export default function Language() {
           {/* Date Format Select */}
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[#364153] text-sm font-medium">
-              Date Format
+              {t("date_format")}
             </label>
             <div className="relative h-[49px] w-full">
               <select
@@ -108,7 +109,7 @@ export default function Language() {
           {/* Time Format Radio Group */}
           <div className="flex flex-col gap-3 w-full">
             <label className="text-[#364153] text-sm font-medium">
-              Time Format
+              {t("time_format")}
             </label>
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -143,7 +144,7 @@ export default function Language() {
           {/* Timezone Select */}
           <div className="flex flex-col gap-2 w-full">
             <label className="text-[#364153] text-sm font-medium">
-              Timezone
+              {t("timezone")}
             </label>
             <div className="relative h-[49px] w-full">
               <select
@@ -174,7 +175,7 @@ export default function Language() {
             onClick={handleSave}
             className="bg-[#135576] hover:bg-[#0f435c] text-white text-base font-medium py-3 px-6 rounded-full transition-colors"
           >
-            Save changes
+            {t("save_changes")}
           </button>
         </div>
       </div>

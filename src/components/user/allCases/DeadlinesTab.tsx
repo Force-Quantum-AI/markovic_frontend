@@ -21,7 +21,10 @@ export default function DeadlinesTab({
 
   // Same caveat as HearingsTab: `nextDeadline[0]` is not guaranteed to be the
   // same object reference (or even present) inside `displayDeadlines`.
-  const upcoming = nextDeadline?.[0] || displayDeadlines.find((h: any) => h.status === "upcoming");
+  const upcoming = nextDeadline?.[0] || displayDeadlines.find((h: any) => {
+    const s = h.status_name || h.status;
+    return typeof s === "string" && s.toLowerCase() === "upcoming";
+  });
 
   const handleAddDeadline = () => {
     setMode("add");
@@ -41,8 +44,9 @@ export default function DeadlinesTab({
     setOpenModal(true);
   };
 
-  const getStatusStyles = (status: string) => {
-    switch (status?.toLowerCase()) {
+  const getStatusStyles = (status: any) => {
+    const s = typeof status === "string" ? status : "";
+    switch (s.toLowerCase()) {
       case "upcoming":
       case "extended":
         return "text-blue-600 font-semibold";
@@ -147,7 +151,7 @@ export default function DeadlinesTab({
 
                 {/* Status Badge block */}
                 <div className="w-1/6 text-right border-l border-gray-100 pl-2 text-sm capitalize flex flex-col items-end gap-2">
-                  <span className={getStatusStyles(deadline.status)}>{deadline.status}</span>
+                  <span className={getStatusStyles(deadline.status_name || deadline.status)}>{deadline.status_name || deadline.status}</span>
                   <button
                     onClick={() => handleEditDeadline(deadline)}
                     className="p-1.5 text-gray-400 hover:text-[#C28203] transition-colors"

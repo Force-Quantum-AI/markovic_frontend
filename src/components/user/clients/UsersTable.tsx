@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 interface Client {
   id?: string;
@@ -26,6 +27,7 @@ interface Client {
   email?: string | null;
   created_date?: string | null;
   total_cases: number;
+  case_ids?: string[] | null;
 }
 
 interface UsersTableProps {
@@ -62,23 +64,25 @@ export default function UsersTable({
   const totalPages = Math.ceil(totalCount / itemsPerPage);
   const startIndex = totalCount > 0 ? (currentPage - 1) * itemsPerPage : 0;
   const endIndex = Math.min(startIndex + clients.length, totalCount);
+  const {t} = useTranslation();
 
   const handleView = (user: Client) => {
-    if (user.id) {
-      router.push(`/my-cases/${user.id}`);
+    if (user?.case_ids) {
+      // here i will call api by user id to get this user cases or if case id is exists in response then i will take the first case id and sent it in my-case details page 
+      router.push(`/my-cases/${user?.case_ids[0]}`);
       return;
     }
-    alert(`Viewing client details for: ${user.client_name}`);
+    alert(`This is under implementation in backend.`);
   };
 
-  const handleDelete = (clientName: string) => {
-    alert(`Delete client "${clientName}" is not implemented yet.`);
-  };
+  // const handleDelete = (clientName: string) => {
+  //   alert(`Delete client "${clientName}" is not implemented yet.`);
+  // };
 
   return (
     <div className="w-full mx-auto p-4 md:p-6 space-y-4 bg-white rounded-2xl">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Clients</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">{t("my_clients")}</h2>
       </div>
 
       {isLoading ? (
@@ -93,17 +97,17 @@ export default function UsersTable({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-[#e9eff2] text-gray-600 text-xs font-semibold uppercase tracking-wider border-b border-gray-200">
-                  <th className="py-3.5 px-5">Name</th>
-                  <th className="py-3.5 px-4">Phone Number</th>
-                  <th className="py-3.5 px-4">Email</th>
-                  <th className="py-3.5 px-4">Created Date</th>
-                  <th className="py-3.5 px-4">Total Cases</th>
-                  <th className="py-3.5 px-5 text-right">Actions</th>
+                  <th className="py-3.5 px-5">{t("name")}</th>
+                  <th className="py-3.5 px-4">{t("phone_number")}</th>
+                  <th className="py-3.5 px-4">{t("email")}</th>
+                  <th className="py-3.5 px-4">{t("created_date")}</th>
+                  <th className="py-3.5 px-4">{t("total_cases")}</th>
+                  {/* <th className="py-3.5 px-5 text-right">Actions</th> */}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                 {clients.map((user) => (
-                  <tr key={user.id ?? user.client_name} className="hover:bg-gray-50/70 transition-colors">
+                  <tr key={user.id ?? user.client_name} className="hover:bg-gray-50/70 transition-colors cursor-pointer" onClick={() => handleView(user)}>
                     <td className="py-4 px-5 flex items-center gap-2">
                       <div className="h-8 w-8 relative rounded-full overflow-hidden">
                         <Image
@@ -124,7 +128,7 @@ export default function UsersTable({
                         {user.total_cases}
                       </span>
                     </td>
-                    <td className="py-4 px-5 text-right">
+                    {/* <td className="py-4 px-5 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all focus:outline-none">
@@ -142,7 +146,7 @@ export default function UsersTable({
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>
@@ -158,7 +162,7 @@ export default function UsersTable({
                     <span className="text-xs text-gray-400">{user.phone_number ?? "-"}</span>
                   </div>
 
-                  <DropdownMenu>
+                  {/* <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="p-1.5 rounded-full border border-gray-100 bg-gray-50 text-gray-400 focus:outline-none">
                         <MoreHorizontal className="w-4 h-4" />
@@ -174,7 +178,7 @@ export default function UsersTable({
                         <span>Delete</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
-                  </DropdownMenu>
+                  </DropdownMenu> */}
                 </div>
 
                 <div className="space-y-1 pt-1">
@@ -201,7 +205,7 @@ export default function UsersTable({
           {clients.length > 0 ? (
             <div className="flex items-center justify-center md:justify-between gap-3 flex-wrap pt-2">
               <p className="text-[#427791] text-xs md:text-base">
-                Showing {startIndex + 1} to {endIndex} of {totalCount} clients
+                {t("showing")} {startIndex + 1} to {endIndex} of {totalCount} {t("clients")}
               </p>
               {totalPages > 1 && (
                 <div className="flex items-center justify-end gap-2">
@@ -210,7 +214,7 @@ export default function UsersTable({
                     disabled={currentPage === 1}
                     className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === 1 ? "cursor-not-allowed border-gray-200 text-gray-300" : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"}`}
                   >
-                    <ChevronLeft className="h-4 w-4" /> Prev
+                    <ChevronLeft className="h-4 w-4" /> {t("previous")}
                   </button>
 
                   <div className="flex gap-1">
@@ -230,7 +234,7 @@ export default function UsersTable({
                     disabled={currentPage === totalPages}
                     className={`flex h-9 w-fit px-2 items-center gap-2 justify-center rounded-full transition-all ${currentPage === totalPages ? "cursor-not-allowed border-gray-200 text-gray-300" : "border-gray-300 text-[#427791] hover:border-[#135576] hover:bg-[#135576]/5 hover:text-[#135576]"}`}
                   >
-                    Next <ChevronRight className="h-4 w-4" />
+                    {t("next")} <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               )}

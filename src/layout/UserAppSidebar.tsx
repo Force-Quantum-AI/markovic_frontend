@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   Archive,
@@ -23,62 +23,67 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { useTranslation } from "react-i18next";
 
-const navItems = [
+
+
+export function UserAppSidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { t } = useTranslation("sideAndTopBar");
+
+  const navItems = [
   {
-    title: "Dashboard",
+    title: t("Dashboard"),
     href: "/",
     icon: Grid2x2Check,
   },
   {
-    title: "Bookmarks",
+    title: t("Bookmarks"),
     href: "/bookmarks",
     icon: Star,
   },
   {
-    title: "My Cases",
+    title: t("My Cases"),
     href: "/my-cases",
     icon: Scale,
   },
   {
-    title: "My Clients",
+    title: t("My Clients"),
     href: "/my-clients",
     icon: Users,
   },
   {
-    title: "Calendar",
+    title: t("Calendar"),
     href: "/calendar",
     icon: Calendar,
   },
   {
-    title: "Hearing & Deadline",
+    title: t("Hearing & Deadline"),
     href: "/hearing-and-deadline",
     icon: Gavel,
   },
   {
-    title: "Law & Bylaw",
+    title: t("Law & Bylaw"),
     href: "/law-and-bylaw",
     icon: ScrollText,
   },
   {
-    title: "Archive Cases",
+    title: t("Archive Cases"),
     href: "/archive-cases",
     icon: Archive,
   },
   {
-    title: "AI Court Practice Search",
+    title: t("AI Court Practice Search"),
     href: "/ai-search",
     icon: Bot,
   },
   {
-    title: "Settings",
+    title: t("Settings"),
     href: "/settings",
     icon: SlidersHorizontal,
   },
 ];
-
-export function UserAppSidebar() {
-  const pathname = usePathname();
 
   return (
     <Sidebar
@@ -86,7 +91,7 @@ export function UserAppSidebar() {
       collapsible="offcanvas"
     >
       <SidebarHeader className=" bg-white">
-        <div className="flex items-center gap-3 px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+        <div onClick={()=> router.push("/")} className="flex items-center gap-3 px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <Image
             src="/brandLogo.png"
             alt="logo"
@@ -115,7 +120,7 @@ export function UserAppSidebar() {
                   }
                 `}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className="h-4 w-4 xl:h-5 xl:w-5 2xl:h-6 2xl:w-6" />
 
                 <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
               </Link>
