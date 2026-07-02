@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import MainButton from "@/components/shared/MainButton";
 import { CaseCard, CaseCardProps } from "@/components/shared/CaseCard";
 import { hearingsDataset } from "../dashboard/UpcomingHearings";
@@ -11,13 +11,15 @@ import CaseCardSkeleton from "@/components/skeletons/CaseCardSkeleton";
 import { SelectField } from "@/components/shared/SelectNewDropdown";
 import { NoContent } from "@/components/shared/NoContent";
 import { useTranslation } from "react-i18next";
+import AddNewCase from "@/components/modals/AddNewCase";
 
 
 export default function AllCasesPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState<number>();
     const [selectedCategory, setSelectedCategory] = useState<number>();
-    const {t} = useTranslation("common")
+    const [isAddNewCaseOpen, setIsAddNewCaseOpen] = useState(false);
+    const { t } = useTranslation("common")
     const [hearingDate, setHearingDate] = useState<{ day: number | null, month: number | null, year: number | null }>({ day: null, month: null, year: null });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
@@ -89,10 +91,13 @@ export default function AllCasesPage() {
 
     return (
         <div className="mx-auto w-full max-w-7xl p-2 md:p-3">
-            <PageHeadingTitle
-                title={t("all_cases")}
-                subtitle={t("all_your_cases_in_one_place")}
-            />
+            <section className="flex items-center justify-center md:justify-between flex-wrap gap-5 md:gap-3">
+                <PageHeadingTitle
+                    title={t("all_cases")}
+                    subtitle={t("all_your_cases_in_one_place")}
+                />
+                <MainButton label={t("add_new_case")} icon={<Plus />} onClick={() => setIsAddNewCaseOpen(true)} />
+            </section>
             {/* Search Bar */}
             <div className="mb-6 flex items-center gap-5">
                 <div className="relative grow">
@@ -108,7 +113,7 @@ export default function AllCasesPage() {
             </div>
 
             {/* Filters Row */}
-            <div className="mb-6 grid grid-cols-2 gap-3">
+            <div className="mb-6 grid grid-cols-1 lg:grid-cols-3 gap-3">
                 <SelectField
                     label={t("case_status")}
                     type="status"
@@ -128,51 +133,52 @@ export default function AllCasesPage() {
                         )
                     }
                 />
-            </div>
-            {/* Hearing Date Filter */}
-            <div className="mb-6">
-                <label className="mb-1 block text-xs font-medium text-gray-500">
-                    {t("hearing_date")}
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    <input
-                        type="text"
-                        placeholder="DD"
-                        onChange={(e) =>
-                            setHearingDate({
-                                ...hearingDate,
-                                day: e.target.value ? Number(e.target.value) : null,
-                            })
-                        }
-                        className="w-full  shadow-sm rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                        maxLength={2}
-                    />
-                    <input
-                        type="text"
-                        placeholder="MM"
-                        onChange={(e) =>
-                            setHearingDate({
-                                ...hearingDate,
-                                month: e.target.value ? Number(e.target.value) : null,
-                            })
-                        }
-                        className="w-full shadow-sm  rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                        maxLength={2}
-                    />
-                    <input
-                        type="text"
-                        placeholder="YY"
-                        onChange={(e) =>
-                            setHearingDate({
-                                ...hearingDate,
-                                year: e.target.value ? Number(e.target.value) : null,
-                            })
-                        }
-                        className="w-full shadow-sm  rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
-                        maxLength={2}
-                    />
+                {/* Hearing Date Filter */}
+                <div className="mb-6">
+                    <label className="mb-1 block text-xs font-medium text-gray-500">
+                        {t("hearing_date")}
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <input
+                            type="text"
+                            placeholder="DD"
+                            onChange={(e) =>
+                                setHearingDate({
+                                    ...hearingDate,
+                                    day: e.target.value ? Number(e.target.value) : null,
+                                })
+                            }
+                            className="w-full  shadow-sm rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            maxLength={2}
+                        />
+                        <input
+                            type="text"
+                            placeholder="MM"
+                            onChange={(e) =>
+                                setHearingDate({
+                                    ...hearingDate,
+                                    month: e.target.value ? Number(e.target.value) : null,
+                                })
+                            }
+                            className="w-full shadow-sm  rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            maxLength={2}
+                        />
+                        <input
+                            type="text"
+                            placeholder="YY"
+                            onChange={(e) =>
+                                setHearingDate({
+                                    ...hearingDate,
+                                    year: e.target.value ? Number(e.target.value) : null,
+                                })
+                            }
+                            className="w-full shadow-sm  rounded-full border border-gray-200 bg-white px-2 py-3.5 text-center text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"
+                            maxLength={2}
+                        />
+                    </div>
                 </div>
             </div>
+
 
 
             <section className="w-full max-w-7xl mx-auto p-3 md:p-5 space-y-3 md:space-y-6 bg-white rounded-2xl">
@@ -186,8 +192,8 @@ export default function AllCasesPage() {
                 {/* Grid Container Matrix mapping responsive column breakdowns */}
                 {isAllCasesLoading ? (
                     <CaseCardSkeleton cardNumber={3} />
-                ) : allCases.results.length===0 ? (
-                    <NoContent message="No cases yet"/>
+                ) : allCases.results.length === 0 ? (
+                    <NoContent message="No cases yet" />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
                         {allCases?.results ? allCases?.results.map((card: CaseCardProps, index: number) => (
@@ -243,6 +249,10 @@ export default function AllCasesPage() {
                     )}
                 </div> */}
             </section>
+            <AddNewCase
+                isOpen={isAddNewCaseOpen}
+                onClose={() => setIsAddNewCaseOpen(false)}
+            />
         </div>
     );
 }

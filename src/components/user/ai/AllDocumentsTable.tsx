@@ -4,11 +4,18 @@ import React from "react";
 import { Eye, FileText, File } from "lucide-react";
 import { NoContent } from "@/components/shared/NoContent";
 
+interface UploadedBy {
+  id: string;
+  full_name: string;
+  email: string;
+  professional_role?: string;
+}
+
 interface Document {
   id: number;
   file_name: string;
   file_url?: string;
-  uploaded_by?: string | null;
+  uploaded_by?: string | UploadedBy | null;
   created_at?: string;
 }
 
@@ -47,11 +54,13 @@ export default function AllDocumentsTable({ documents = [] }: AllDocumentsTableP
       <div className="overflow-x-auto m-2 rounded-2xl border">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-200">
+            <tr>
               {["DOCUMENT NAME", "UPLOADED BY", "DATE"].map((header) => (
                 <th key={header} className="px-6 py-4 text-[11px] font-bold text-gray-400 tracking-wider uppercase">
                   {header}
                 </th>
               ))}
+            </tr>
           </thead>
           
           <tbody className="divide-y divide-gray-100">
@@ -60,7 +69,7 @@ export default function AllDocumentsTable({ documents = [] }: AllDocumentsTableP
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     {getFileType(doc.file_name) === "pdf" ? (
-                      <FileText className="w-5 h-5 text-rose-400" />
+                      <FileText className="w-5 h-5 text-sky-400" />
                     ) : (
                       <File className="w-5 h-5 text-sky-400" />
                     )}
@@ -68,7 +77,11 @@ export default function AllDocumentsTable({ documents = [] }: AllDocumentsTableP
                   </div>
                 </td>
                 
-                <td className="px-6 py-4 text-sm text-gray-600">{doc.uploaded_by || "Unknown"}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  {typeof doc.uploaded_by === "object" && doc.uploaded_by
+                    ? doc.uploaded_by.full_name
+                    : doc.uploaded_by || "Unknown"}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{doc.created_at ? new Date(doc.created_at).toLocaleDateString() : "N/A"}</td>
                 
               </tr>

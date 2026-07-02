@@ -27,6 +27,8 @@ up:
 push:
 	@docker push anower77/markovic-frontend:latest
 
+all: down build up
+
 # Git helpers
 cm ?= Update code
 

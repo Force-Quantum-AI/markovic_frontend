@@ -75,8 +75,7 @@ export default function HearingAndDeadlinePage() {
                 title={t("hearing_and_deadline")}
                 subtitle={t("schedule_and_details_for_all_court_proceedings")}
             />
-            <div className="grid grid-cols-1 md:grid-cols-4 items-end gap-3">
-                <div className="col-span-1 md:col-span-2">
+            <div className="col-span-1 md:col-span-2 mb-3">
                     <InputField
                         label={t("search")}
                         placeholder={t("search_cases_clients_laws_documents")}
@@ -84,6 +83,8 @@ export default function HearingAndDeadlinePage() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 items-end gap-3 mb-6">
+                
                 <SelectField
                     label="Category"
                     type="category"
@@ -92,7 +93,7 @@ export default function HearingAndDeadlinePage() {
                         setSelectedCategory(Number(value));
                         setSelectedSubCategory(undefined);
                     }}
-                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
+                    classes={"rounded-full w-full h-fit border border-gray-200 bg-gray-100 px-2 py-3 text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                 />
                 <SelectField
                     label="Sub-category"
@@ -104,11 +105,8 @@ export default function HearingAndDeadlinePage() {
                             value ? Number(value) : undefined
                         )
                     }
-                    classes={"rounded-full h-fit border border-gray-200 bg-gray-100 px-2 py-3  text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
+                    classes={"rounded-full w-full h-fit border border-gray-200 bg-gray-100 px-2 py-3  text-sm focus:border-[#135576] focus:outline-none focus:ring-1 focus:ring-[#135576]"}
                 />
-            </div>
-
-            <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-3">
                 {/* Hearing Date Filter */}
                 <div>
                     <label className="mb-1 block text-xs font-medium text-gray-500">
@@ -212,6 +210,8 @@ export default function HearingAndDeadlinePage() {
                 </div>
             </div>
 
+            
+
 
             <section className="w-full mx-auto space-y-3 md:space-y-6 rounded-2xl">
                 {/* Top Header Controls Block */}
@@ -227,7 +227,7 @@ export default function HearingAndDeadlinePage() {
                 ) : data?.cases?.results.length === 0 ? (
                     <NoContent message="No hearing and deadline yet" />
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3 md:gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-6">
                         {data?.cases?.results.map((card: { id: string; [key: string]: unknown }, index: number) => (
                             <CaseCard key={index} {...card} />
                         ))}

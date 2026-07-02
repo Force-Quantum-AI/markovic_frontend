@@ -111,9 +111,9 @@ function Sidebar({
             {/* New chat */}
             <button
                 onClick={onNew}
-                className="flex items-center gap-2 px-3 py-2.5 mb-3 rounded-xl border border-gray-200 bg-[#A1BBC8]/50 hover:bg-gray-50 text-sm font-medium text-[#135576] transition-colors w-full"
+                className="flex items-center gap-2 px-3 py-2.5 mb-3 rounded-xl bg-[#135576] hover:bg-[#0e3e56] text-sm font-medium text-white transition-colors w-full duration-500"
             >
-                <Plus className="w-4 h-4 text-gray-500" />
+                <Plus className="w-4 h-4 text-white" />
                 {t("new_chat")}
             </button>
 
@@ -277,7 +277,7 @@ export default function AiSearchPage() {
     };
 
     return (
-        <div className="flex gap-3 h-[calc(85vh-80px)] min-h-[600px]">
+        <div className="flex gap-3 h-[calc(90vh-80px)] min-h-[600px]">
             {/* ── Desktop Sidebar ── */}
             <aside className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 bg-white border border-gray-200 rounded-xl p-3 overflow-hidden">
                 <Sidebar
@@ -328,11 +328,11 @@ export default function AiSearchPage() {
                             {PROMPT_SUGGESTIONS.map(({ icon: Icon, label }) => (
                                 <button
                                     key={label}
-                                    onClick={() => handleSend(label)}
+                                    onClick={() => setInputValue(label)}
                                     className="flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#135576]/30 hover:bg-[#135576]/5 hover:shadow-sm transition-all text-center group"
                                 >
-                                    <Icon className="w-5 h-5 text-gray-400 group-hover:text-[#135576] transition-colors" />
-                                    <span className="text-xs text-gray-500 leading-snug group-hover:text-gray-700 transition-colors">
+                                    <Icon className="w-5 h-5 text-gray-800 group-hover:text-[#135576] transition-colors" />
+                                    <span className="text-xs text-gray-800 leading-snug group-hover:text-gray-700 transition-colors">
                                         {label}
                                     </span>
                                 </button>
