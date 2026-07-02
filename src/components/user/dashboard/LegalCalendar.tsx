@@ -4,12 +4,14 @@ import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Users, Scale, Loader2 } from "lucide-react";
 import { useGetAllCasesQuery, useGetCaseHearingAndDeadlineAllDateForCalendarQuery } from "@/store/features/case/case.api";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type EventType = "hearing" | "deadline";
 
 interface CalendarEventItem {
+  case_id: string;
   name: string;
   time: string; // e.g. "09:00 AM - 10:00 AM"
   date: string;
@@ -148,6 +150,7 @@ const TIME_SLOTS = buildTimeSlots();
 function EventCard({ event }: { event: CalendarEventItem }) {
   const c    = EVENT_COLORS[event.type];
   const Icon = event.type === "hearing" ? Users : Scale;
+  const router = useRouter()
 
   const { startTime, endTime } = parseTimeRange(event.time);
   const startH = timeToHours(startTime);
@@ -169,6 +172,7 @@ function EventCard({ event }: { event: CalendarEventItem }) {
         top:    `${topFraction * totalPx}px`,
         zIndex: 10,
       }}
+      onClick={()=> router.push(`/my-cases/${event.case_id}`)}
     >
       {/* Horizontal accent lines that connect the card to the grid */}
       <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-4 -ml-4 ${c.line}`} />
@@ -193,6 +197,7 @@ function EventCard({ event }: { event: CalendarEventItem }) {
 export default function LegalCalendar() {
   const today = new Date();
   const {t} = useTranslation("common");
+  const router = useRouter();
 
   const [viewYear,     setViewYear]     = useState(today.getFullYear());
   const [viewMonth,    setViewMonth]    = useState(today.getMonth());

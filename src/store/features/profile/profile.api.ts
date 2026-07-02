@@ -19,13 +19,30 @@ export const profileApi = baseApi.injectEndpoints({
       providesTags: ["Profile"],
     }),
     updateProfileInfo: builder.mutation({
-      query: (data: { profile_image?: any; data: any }) => ({
-        url: "/auth/profile/",
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: ["Profile"],
-    }),
+  query: ({
+    profile_image,
+    data,
+  }: {
+    profile_image?: File | null;
+    data: any;
+  }) => {
+    const formData = new FormData();
+
+    if (profile_image) {
+      formData.append("profile_image", profile_image);
+    }
+
+    formData.append("data", JSON.stringify(data));
+
+    return {
+      url: "/auth/profile/",
+      method: "PATCH",
+      body: formData,
+    };
+  },
+
+  invalidatesTags: ["Profile"],
+}),
     // for client page 
     getAllClients: builder.query<any, IArchiveParams | void>({ 
       query: (params) => ({

@@ -56,22 +56,27 @@ export function SelectField({ label, type, categoryId, value, onChange, classes 
         : statusLoading;
 
   return (
-    <select
-      aria-label={label}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      disabled={isLoading || options.length === 0 || type === "subCategory"
-        ? !categoryId || isLoading
-        : isLoading
-      }
-      className={`${classes === null ? "w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer transition-all shadow-sm" : classes} `}
-    >
-      <option value="">{isLoading ? `Loading ${label.toLowerCase()}...` : `Select ${label}`}</option>
-      {options.map((option) => (
-        <option key={option.id} value={String(option.id)}>
-          {option.name}
-        </option>
-      ))}
-    </select>
+    <div className="">
+      <label className="mb-1 block text-xs font-medium text-gray-500">
+        {label}
+      </label>
+      <select
+        aria-label={label}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={isLoading || options.length === 0 || type === "subCategory"
+          ? !categoryId || isLoading
+          : isLoading
+        }
+        className={`${classes === null ? "w-full px-5 py-3.5 border border-gray-200 rounded-full text-sm text-gray-900 bg-white outline-none focus:ring-2 focus:ring-[#135576]/20 focus:border-[#135576] appearance-none cursor-pointer transition-all shadow-sm" : classes} `}
+      >
+        <option value="">{isLoading ? `Loading ${label.toLowerCase()}...` : `Select ${label}`}</option>
+        {options.map((option) => (
+          <option key={option.id} value={String(option.id)}>
+            {option.name}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
