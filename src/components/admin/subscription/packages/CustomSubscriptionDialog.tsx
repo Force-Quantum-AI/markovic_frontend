@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
-import { X, Info, CheckCircle2 } from "lucide-react";
+import { X, CheckCircle2 } from "lucide-react";
 import AdminButton from "@/components/shared/AdminButton";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -89,30 +88,30 @@ export default function CustomSubscriptionDialog({
             {/* User Email */}
             <div className="space-y-2">
               <label className="block text-[#344054] font-roboto text-[14px] font-medium leading-[20px]">
-                User: <span className="text-[#D92D20]">*</span>
+                User Email <span className="text-[#D92D20]">*</span>
               </label>
               <input
                 type="email"
                 {...register("user_email", { required: "User email is required!" })}
-                placeholder="Type email here..."
+                placeholder="Enter your email"
                 className="w-full rounded-full border border-[#D0D5DD] bg-white px-5 py-3 h-[50px] text-[#101828] placeholder:text-[#98A2B3] font-roboto text-[16px] font-normal leading-[24px] focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
                 disabled={isLoading}
               />
               {errors.user_email && (
                 <span className="text-[#EF4444] text-[12px] pl-2">{errors.user_email.message}</span>
               )}
-              <div className="flex items-start gap-1.5 mt-2 text-[#155EEF]">
+              {/* <div className="flex items-start gap-1.5 mt-2 text-[#155EEF]">
                 <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span className="font-roboto text-[12px] font-normal leading-[18px]">
                   Type user email address to provide custom subscription.
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Devices */}
             <div className="space-y-2">
               <label className="block text-[#344054] font-roboto text-[14px] font-medium leading-[20px]">
-                Devices:
+                Device Limit:
               </label>
               <input
                 type="number"

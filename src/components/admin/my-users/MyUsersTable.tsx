@@ -44,6 +44,8 @@ interface MyUsersTableProps {
     role: string;
   }) => void;
   onDeleteUser?: (id: string | number) => void;
+  onSuspendUser?: (id: string | number) => void;
+  onCustomSubscription?: (id: string | number, email: string) => void;
   totalCount?: number;
   currentPage?: number;
   totalPages?: number;
@@ -61,6 +63,8 @@ export default function MyUsersTable({
   usersList,
   onAddUser,
   onDeleteUser,
+  onSuspendUser,
+  onCustomSubscription,
   totalCount = 0,
   currentPage = 1,
   totalPages = 1,
@@ -201,11 +205,17 @@ export default function MyUsersTable({
                           align="end"
                           className="w-[210px] bg-white border border-[#E4E7EC] rounded-2xl shadow-xl p-2 z-50"
                         >
-                          <DropdownMenuItem className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none">
+                          <DropdownMenuItem
+                            onClick={() => onCustomSubscription && onCustomSubscription(row.id, row.email)}
+                            className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none"
+                          >
                             <Layers className="w-[18px] h-[18px] text-[#0F5A7F] shrink-0" />
                             <span>Custom Subscription</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none">
+                          <DropdownMenuItem
+                            onClick={() => onSuspendUser && onSuspendUser(row.id)}
+                            className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none"
+                          >
                             <UserMinus className="w-[18px] h-[18px] text-[#D97706] shrink-0" />
                             <span>Suspend</span>
                           </DropdownMenuItem>

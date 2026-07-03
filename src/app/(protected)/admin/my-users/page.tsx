@@ -6,9 +6,12 @@ import MyUsersMetrics from "@/components/admin/my-users/MyUsersMetrics";
 import MyUsersFilters from "@/components/admin/my-users/MyUsersFilters";
 import MyUsersTable from "@/components/admin/my-users/MyUsersTable";
 import DeleteConfirmationDialog from "@/components/admin/categories/DeleteConfirmationDialog";
+import SuspendConfirmationDialog from "@/components/admin/my-users/SuspendConfirmationDialog";
+import CustomSubscriptionDialog from "@/components/admin/subscription/packages/CustomSubscriptionDialog";
 import {
   useGetAllUsersQuery,
   useDeleteUserMutation,
+  useSuspendUserMutation,
 } from "@/store/features/admin/my-users/my-users.api";
 import { User } from "@/store/features/admin/my-users/my-users.type";
 
@@ -71,6 +74,11 @@ export default function MyUsers() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState<string | number | null>(null);
 
+  const [isSuspendDialogOpen, setIsSuspendDialogOpen] = useState(false);
+  const [suspendUserId, setSuspendUserId] = useState<string | number | null>(null);
+
+  const [isCustomSubDialogOpen, setIsCustomSubDialogOpen] = useState(false);
+
   const queryParams = {
     page,
     search: filters.search || undefined,
@@ -82,6 +90,7 @@ export default function MyUsers() {
 
   const { data: usersData, isLoading, isFetching } = useGetAllUsersQuery(queryParams);
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
+  const [suspendUser, { isLoading: isSuspending }] = useSuspendUserMutation();
 
   const handleFilter = (newFilters: {
     search: string;
@@ -122,6 +131,26 @@ export default function MyUsers() {
     }
   };
 
+  const handleSuspendUserClick = (id: string | number) => {
+    setSuspendUserId(id);
+    setIsSuspendDialogOpen(true);
+  };
+
+  const handleConfirmSuspend = async () => {
+    if (!suspendUserId) return;
+    try {
+      await suspendUser({ id: suspendUserId, is_active: false }).unwrap();
+      toast.success("User suspended successfully!");
+    } catch (error) {
+      console.error("Failed to suspend user:", error);
+      toast.error("Failed to suspend user. Please try again.");
+    }
+  };
+
+  const handleCustomSubClick = () => {
+    setIsCustomSubDialogOpen(true);
+  };
+
   const showLoader = isLoading || isFetching;
 
   return (
@@ -137,6 +166,8 @@ export default function MyUsers() {
         usersList={mappedUsers}
         onAddUser={handleAddUser}
         onDeleteUser={handleDeleteUserClick}
+        onSuspendUser={handleSuspendUserClick}
+        onCustomSubscription={handleCustomSubClick}
         totalCount={usersData?.count || 0}
         currentPage={page}
         totalPages={usersData?.total_pages || 1}
@@ -152,6 +183,22 @@ export default function MyUsers() {
         description="Are you sure you want to delete this user? This action cannot be undone."
         onConfirm={handleConfirmDelete}
         isSubmitting={isDeleting}
+      />
+
+      {/* Suspend Confirmation Dialog */}
+      <SuspendConfirmationDialog
+        isOpen={isSuspendDialogOpen}
+        onOpenChange={setIsSuspendDialogOpen}
+        title="Suspend User"
+        description="Are you sure you want to suspend this user? They will not be able to log in or access the platform."
+        onConfirm={handleConfirmSuspend}
+        isSubmitting={isSuspending}
+      />
+
+      {/* Custom Subscription Dialog */}
+      <CustomSubscriptionDialog
+        isOpen={isCustomSubDialogOpen}
+        onOpenChange={setIsCustomSubDialogOpen}
       />
     </div>
   );
