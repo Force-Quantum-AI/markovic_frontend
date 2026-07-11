@@ -6,6 +6,8 @@ import BasedSelect from "@/components/shared/BasedSelect";
 import AdminButton from "@/components/shared/AdminButton";
 import { MyUsersFiltersSkeleton } from "@/components/admin/admin-skeletons";
 
+import { useTranslation } from "react-i18next";
+
 interface MyUsersFiltersProps {
   onFilter: (filters: {
     search: string;
@@ -42,6 +44,7 @@ const monthOptions = [
 ];
 
 export default function MyUsersFilters({ onFilter, onReset, isLoading }: MyUsersFiltersProps) {
+  const { t } = useTranslation(["adminMyUsers", "common"]);
   const [search, setSearch] = useState("");
   const [subscription, setSubscription] = useState("all");
   const [day, setDay] = useState("");
@@ -65,12 +68,22 @@ export default function MyUsersFilters({ onFilter, onReset, isLoading }: MyUsers
     return <MyUsersFiltersSkeleton />;
   }
 
+  const translatedSubscriptionOptions = subscriptionOptions.map(opt => ({
+    ...opt,
+    label: opt.value === "all" ? t("all") : t(opt.value, opt.label)
+  }));
+
+  const translatedMonthOptions = monthOptions.map(opt => ({
+    ...opt,
+    label: opt.value === "all" ? t("all_months") : t(opt.label.toLowerCase(), opt.label)
+  }));
+
   return (
     <div className="w-full bg-white rounded-3xl p-6 border border-[#BEC4D2]/40 shadow-xs space-y-6">
       <div className="flex items-center gap-2">
         <Filter className="w-5 h-5 text-[#101828]" />
         <h2 className="text-[#101828] font-roboto text-[20px] font-semibold leading-[130%]">
-          Search &amp; Filter
+          {t("search_and_filter")}
         </h2>
       </div>
 
@@ -79,7 +92,7 @@ export default function MyUsersFilters({ onFilter, onReset, isLoading }: MyUsers
         <div className="w-full">
           <input
             type="text"
-            placeholder="Search by name, email, number..."
+            placeholder={t("search_users_placeholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-6 py-3.5 rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
@@ -92,9 +105,9 @@ export default function MyUsersFilters({ onFilter, onReset, isLoading }: MyUsers
           {/* Left half: Subscription */}
           <div className="w-full lg:w-1/2">
             <BasedSelect
-              label="Subscription"
-              placeholder="All"
-              options={subscriptionOptions}
+              label={t("subscription")}
+              placeholder={t("all")}
+              options={translatedSubscriptionOptions}
               value={subscription}
               onValueChange={setSubscription}
             />
@@ -104,7 +117,7 @@ export default function MyUsersFilters({ onFilter, onReset, isLoading }: MyUsers
           <div className="w-full lg:w-1/2 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Day */}
             <div className="space-y-1.5">
-              <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">Day</label>
+              <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">{t("day")}</label>
               <input
                 type="number"
                 placeholder="e.g. 22"
@@ -118,16 +131,16 @@ export default function MyUsersFilters({ onFilter, onReset, isLoading }: MyUsers
 
             {/* Month */}
             <BasedSelect
-              label="Month"
-              placeholder="All Months"
-              options={monthOptions}
+              label={t("month")}
+              placeholder={t("all_months")}
+              options={translatedMonthOptions}
               value={month}
               onValueChange={setMonth}
             />
 
             {/* Year */}
             <div className="space-y-1.5">
-              <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">Year</label>
+              <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">{t("year")}</label>
               <input
                 type="number"
                 placeholder="e.g. 2026"
@@ -146,12 +159,12 @@ export default function MyUsersFilters({ onFilter, onReset, isLoading }: MyUsers
         <div className="flex flex-col sm:flex-row gap-4 pt-2">
           <AdminButton
             onClick={handleApplyFilter}
-            label="Apply Filter"
+            label={t("apply_filter")}
             className="py-3 w-full sm:w-auto"
           />
           <AdminButton
             onClick={handleResetFilter}
-            label="Reset Filter"
+            label={t("reset_filter")}
             variant="secondary"
             className="py-3 w-full sm:w-auto"
           />

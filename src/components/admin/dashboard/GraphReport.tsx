@@ -3,12 +3,16 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { GraphReportSkeleton } from "@/components/admin/admin-skeletons";
 
+import { useTranslation } from "react-i18next";
+
 interface GraphReportProps {
   totalCasesBreakdown?: Record<string, number | string>;
   isLoading?: boolean;
 }
 
 export default function GraphReport({ totalCasesBreakdown, isLoading }: GraphReportProps) {
+  const { t } = useTranslation("adminDashboard");
+
   if (isLoading) {
     return <GraphReportSkeleton />;
   }
@@ -23,17 +27,19 @@ export default function GraphReport({ totalCasesBreakdown, isLoading }: GraphRep
         .split(" ")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
+      const translationKey = key.toLowerCase().trim().replace(/\s+/g, "_");
+      const translatedName = t(translationKey, name);
       const value = typeof val === "string" ? parseFloat(val) : Number(val);
       const color = ["#3B82F6", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"][idx % 5];
-      return { name, value, color };
+      return { name: translatedName, value, color };
     });
 
   const finalData = categoriesData.length > 0 ? categoriesData : [
-    { name: "Civil", value: 0, color: "#3B82F6" },
-    { name: "Criminal", value: 0, color: "#8B5CF6" },
-    { name: "Family", value: 0, color: "#EC4899" },
-    { name: "Corporate", value: 0, color: "#10B981" },
-    { name: "Other", value: 0, color: "#F59E0B" },
+    { name: t("civil_law"), value: 0, color: "#3B82F6" },
+    { name: t("criminal_law"), value: 0, color: "#8B5CF6" },
+    { name: t("family_law"), value: 0, color: "#EC4899" },
+    { name: t("corporate"), value: 0, color: "#10B981" },
+    { name: t("other"), value: 0, color: "#F59E0B" },
   ];
   const finalTotal = categoriesData.length > 0 ? totalCasesValue : "0";
 
@@ -42,10 +48,10 @@ export default function GraphReport({ totalCasesBreakdown, isLoading }: GraphRep
       {/* Header */}
       <div>
         <h2 className="text-[#101828] font-inter text-[18px] font-semibold leading-[28px]">
-          Graph Report
+          {t("graph_report")}
         </h2>
         <p className="text-[#6A7282] font-inter text-[14px] font-normal leading-[20px]">
-          Case distribution
+          {t("case_distribution")}
         </p>
       </div>
 

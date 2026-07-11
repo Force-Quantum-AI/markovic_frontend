@@ -4,6 +4,8 @@ import Image from "next/image";
 import { Users, Sparkles, FolderOpen, DollarSign, ArrowUpRight } from "lucide-react";
 import { AdminMetricsSkeleton } from "@/components/admin/admin-skeletons";
 
+import { useTranslation } from "react-i18next";
+
 interface AdminMetricsProps {
   overview?: {
     total_users: number;
@@ -16,7 +18,7 @@ interface AdminMetricsProps {
 }
 
 export default function AdminMetrics({ overview, isLoading }: AdminMetricsProps) {
-  // console.log("overview", overview);
+  const { t } = useTranslation("adminDashboard");
 
   if (isLoading) {
     return <AdminMetricsSkeleton cardCount={4} />;
@@ -24,9 +26,9 @@ export default function AdminMetrics({ overview, isLoading }: AdminMetricsProps)
 
   const cards = [
     {
-      title: "Total Users",
+      title: t("total_users"),
       value: overview?.total_users?.toLocaleString() ?? "0",
-      trend: "+8% this month",
+      trend: `+8% ${t("this_month")}`,
       icon: <Users className="w-4 h-4" />,
       border: "border-[#029CA8]",
       bg: "bg-[#E4FDFF]",
@@ -38,9 +40,9 @@ export default function AdminMetrics({ overview, isLoading }: AdminMetricsProps)
       imageH: 72,
     },
     {
-      title: "AI Search",
+      title: t("ai_search"),
       value: overview?.ai_search?.toLocaleString() ?? "0",
-      trend: "+12% this month",
+      trend: `+12% ${t("this_month")}`,
       icon: <Sparkles className="w-4 h-4" />,
       border: "border-[#02A841]",
       bg: "bg-[#E4FFF3]",
@@ -52,9 +54,9 @@ export default function AdminMetrics({ overview, isLoading }: AdminMetricsProps)
       imageH: 72,
     },
     {
-      title: "Archive Cases",
+      title: t("archived_cases"),
       value: overview?.archive?.toLocaleString() ?? "0",
-      trend: "+15% this month",
+      trend: `+15% ${t("this_month")}`,
       icon: <FolderOpen className="w-4 h-4" />,
       border: "border-[#909404]",
       bg: "bg-[#FFFEEF]",
@@ -66,9 +68,9 @@ export default function AdminMetrics({ overview, isLoading }: AdminMetricsProps)
       imageH: 88,
     },
     {
-      title: "Total Earning",
+      title: t("total_earning"),
       value: overview?.total_earning !== undefined ? `$${overview.total_earning.toLocaleString()}` : "$0",
-      trend: "+15% this month",
+      trend: `+15% ${t("this_month")}`,
       icon: <DollarSign className="w-4 h-4" />,
       border: "border-[#6502A8]",
       bg: "bg-[#F9F3FF]",

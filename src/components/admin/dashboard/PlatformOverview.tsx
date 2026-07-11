@@ -13,6 +13,8 @@ interface PlatformOverviewProps {
   isLoading?: boolean;
 }
 
+import { useTranslation } from "react-i18next";
+
 const colors = [
   "#F3B0A7", // Subscription
   "#F3F0A7", // Total Cases
@@ -23,6 +25,7 @@ const colors = [
 ];
 
 export default function PlatformOverview({ graph, isLoading }: PlatformOverviewProps) {
+  const { t } = useTranslation("adminDashboard");
   const [view, setView] = useState<"Monthly" | "Yearly">("Monthly");
 
   if (isLoading) {
@@ -34,20 +37,20 @@ export default function PlatformOverview({ graph, isLoading }: PlatformOverviewP
 
   const data = activeItem
     ? [
-        { name: "Subscription", value: activeItem.subscription?.value ?? 0 },
-        { name: "Total Cases", value: activeItem.total_cases?.value ?? 0 },
-        { name: "Archive Cases", value: activeItem.archive_cases?.value ?? 0 },
-        { name: "Total User", value: activeItem.total_users?.value ?? 0 },
-        { name: "Total Court", value: activeItem.total_courts?.value ?? 0 },
-        { name: "Storage", value: activeItem.storage?.value ?? 0 },
+        { name: t("subscription"), value: activeItem.subscription?.value ?? 0 },
+        { name: t("total_cases"), value: activeItem.total_cases?.value ?? 0 },
+        { name: t("archived_cases"), value: activeItem.archive_cases?.value ?? 0 },
+        { name: t("total_users"), value: activeItem.total_users?.value ?? 0 },
+        { name: t("total_court"), value: activeItem.total_courts?.value ?? 0 },
+        { name: t("storage"), value: activeItem.storage?.value ?? 0 },
       ]
     : [
-        { name: "Subscription", value: 0 },
-        { name: "Total Cases", value: 0 },
-        { name: "Archive Cases", value: 0 },
-        { name: "Total User", value: 0 },
-        { name: "Total Court", value: 0 },
-        { name: "Storage", value: 0 },
+        { name: t("subscription"), value: 0 },
+        { name: t("total_cases"), value: 0 },
+        { name: t("archived_cases"), value: 0 },
+        { name: t("total_users"), value: 0 },
+        { name: t("total_court"), value: 0 },
+        { name: t("storage"), value: 0 },
       ];
 
   return (
@@ -56,10 +59,10 @@ export default function PlatformOverview({ graph, isLoading }: PlatformOverviewP
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-[#101828] font-inter text-[18px] font-semibold leading-[28px]">
-            Total Platform Overview
+            {t("total_platform_overview")}
           </h2>
           <p className="text-[#6A7282] font-inter text-[14px] font-normal leading-[20px]">
-            {view} activity metrics {activeItem ? `(${activeItem.period})` : ""}
+            {view === "Monthly" ? t("monthly") : t("yearly")} {t("activity_metrics")} {activeItem ? `(${activeItem.period})` : ""}
           </p>
         </div>
 
@@ -73,7 +76,7 @@ export default function PlatformOverview({ graph, isLoading }: PlatformOverviewP
                 : "text-gray-500 hover:text-gray-900"
             }`}
           >
-            Monthly
+            {t("monthly")}
           </button>
           <button
             onClick={() => setView("Yearly")}
@@ -83,7 +86,7 @@ export default function PlatformOverview({ graph, isLoading }: PlatformOverviewP
                 : "text-gray-500 hover:text-gray-900"
             }`}
           >
-            Yearly
+            {t("yearly")}
           </button>
         </div>
       </div>

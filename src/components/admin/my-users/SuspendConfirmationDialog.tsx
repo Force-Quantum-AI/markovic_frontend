@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
 
 interface SuspendConfirmationDialogProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export default function SuspendConfirmationDialog({
   onConfirm,
   isSubmitting = false,
 }: SuspendConfirmationDialogProps) {
+  const { t } = useTranslation("adminMyUsers");
   const handleConfirm = async () => {
     await onConfirm();
     onOpenChange(false);
@@ -62,7 +64,7 @@ export default function SuspendConfirmationDialog({
               disabled={isSubmitting}
               className="flex-1 px-4 py-2.5 rounded-[32px] border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-roboto text-[14px] font-semibold transition-colors focus:outline-none cursor-pointer disabled:opacity-50"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="button"
@@ -70,7 +72,7 @@ export default function SuspendConfirmationDialog({
               disabled={isSubmitting}
               className="flex-1 px-4 py-2.5 rounded-[32px] bg-amber-600 hover:bg-amber-700 text-white font-roboto text-[14px] font-semibold transition-colors focus:outline-none cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
             >
-              {isSubmitting ? "Processing..." : "Suspend"}
+              {isSubmitting ? t("processing") : t("suspend")}
             </button>
           </div>
         </div>

@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 interface UserRow {
   id: string;
@@ -71,6 +72,7 @@ export default function MyUsersTable({
   onPageChange,
   isLoading,
 }: MyUsersTableProps) {
+  const { t } = useTranslation("adminMyUsers");
   const [isAddUserOpen, setIsAddUserOpen] = React.useState(false);
 
   if (isLoading) {
@@ -83,24 +85,24 @@ export default function MyUsersTable({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-[#101828] font-roboto text-[20px] font-semibold leading-[28px]">
-            All Users
+            {t("all_users")}
           </h2>
           <p className="text-gray-500 font-roboto text-[14px] font-normal leading-[20px]">
-            Manage and monitor all platform users
+            {t("manage_and_monitor_users")}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <AdminButton
             onClick={() => alert("Exporting database...")}
-            label="Export"
+            label={t("export")}
             icon={<Download className="w-4 h-4" />}
             variant="secondary"
             className="py-2.5"
           />
           <AdminButton
             onClick={() => setIsAddUserOpen(true)}
-            label="Add User"
+            label={t("add_user")}
             icon={<Plus className="w-4 h-4" />}
             className="py-2.5"
           />
@@ -114,19 +116,19 @@ export default function MyUsersTable({
             <thead>
               <tr className="bg-[#E8EEF2] text-[#3C4250] text-[14px] font-roboto font-normal leading-[21px] border-b border-[#BEC4D2]">
                 <th className="py-3 px-5 border-r border-[#BEC4D2] font-semibold font-roboto">
-                  User name
+                  {t("user_name")}
                 </th>
                 <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">
-                  Role
+                  {t("role")}
                 </th>
                 <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">
-                  Phone Number
+                  {t("phone_number")}
                 </th>
                 <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">
-                  Account created
+                  {t("account_created")}
                 </th>
                 <th className="py-3 px-4 border-r border-[#BEC4D2] font-semibold font-roboto">
-                  Subscription
+                  {t("subscription")}
                 </th>
                 <th className="py-3 px-4 font-semibold font-roboto"></th>
               </tr>
@@ -138,7 +140,7 @@ export default function MyUsersTable({
                     colSpan={6}
                     className="py-8 text-center text-gray-400 font-roboto"
                   >
-                    No users found.
+                    {t("no_users_found")}
                   </td>
                 </tr>
               ) : (
@@ -210,21 +212,21 @@ export default function MyUsersTable({
                             className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none"
                           >
                             <Layers className="w-[18px] h-[18px] text-[#0F5A7F] shrink-0" />
-                            <span>Custom Subscription</span>
+                            <span>{t("custom_subscription")}</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => onSuspendUser && onSuspendUser(row.id)}
                             className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none"
                           >
                             <UserMinus className="w-[18px] h-[18px] text-[#D97706] shrink-0" />
-                            <span>Suspend</span>
+                            <span>{t("suspend")}</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => onDeleteUser && onDeleteUser(row.id)}
                             className="cursor-pointer font-roboto flex items-center gap-3 px-3 py-2.5 text-[14px] font-medium text-[#344054] rounded-xl hover:bg-[#F9FAFB] focus:bg-[#F9FAFB] focus:text-[#344054] outline-none"
                           >
                             <Trash2 className="w-[18px] h-[18px] text-[#F04438] shrink-0" />
-                            <span>Delete</span>
+                            <span>{t("delete")}</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -240,8 +242,8 @@ export default function MyUsersTable({
       {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between pt-4 text-sm font-roboto text-[#475467] gap-4">
         <span>
-          Showing {usersList.length > 0 ? (currentPage - 1) * (usersList.length > 0 ? Math.ceil(totalCount / totalPages) : 10) + 1 : 0} to{" "}
-          {Math.min(currentPage * (usersList.length > 0 ? Math.ceil(totalCount / totalPages) : 10), totalCount)} of {totalCount} users
+          {t("showing")} {usersList.length > 0 ? (currentPage - 1) * (usersList.length > 0 ? Math.ceil(totalCount / totalPages) : 10) + 1 : 0} {t("to") || "to"}{" "}
+          {Math.min(currentPage * (usersList.length > 0 ? Math.ceil(totalCount / totalPages) : 10), totalCount)} {t("of")} {totalCount} {t("users")}
         </span>
 
         {totalPages > 1 && onPageChange && (
@@ -252,7 +254,7 @@ export default function MyUsersTable({
               className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Previous</span>
+              <span>{t("previous")}</span>
             </button>
 
             {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((p) => (
@@ -274,7 +276,7 @@ export default function MyUsersTable({
               disabled={currentPage === totalPages}
               className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>Next</span>
+              <span>{t("next")}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>

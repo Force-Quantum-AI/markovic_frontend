@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 export interface Law {
   id: string;
@@ -25,6 +26,7 @@ interface LawCardProps {
 }
 
 export default function LawCard({ law, onEdit, onDelete, onExportPDF, onView }: LawCardProps) {
+  const { t } = useTranslation("adminLawDatabase");
   const handleAction = (action: "edit" | "delete" | "export-pdf" | "view") => {
     if (action === "edit" && onEdit) {
       onEdit(law);
@@ -74,25 +76,25 @@ export default function LawCard({ law, onEdit, onDelete, onExportPDF, onView }: 
               onClick={() => handleAction("view")}
               className="flex items-center px-4 py-2.5 text-[15px] font-medium text-[#292E38] rounded-xl hover:bg-slate-50 cursor-pointer focus:bg-slate-50 focus:outline-none transition-colors"
             >
-              View Details
+              {t("view_details")}
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => handleAction("edit")}
               className="flex items-center px-4 py-2.5 text-[15px] font-medium text-[#292E38] rounded-xl hover:bg-slate-50 cursor-pointer focus:bg-slate-50 focus:outline-none transition-colors"
             >
-              Edit
+              {t("edit")}
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => handleAction("export-pdf")}
               className="flex items-center px-4 py-2.5 text-[15px] font-medium text-[#292E38] rounded-xl hover:bg-slate-50 cursor-pointer focus:bg-slate-50 focus:outline-none transition-colors"
             >
-              Export
+              {t("export")}
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => handleAction("delete")}
               className="flex items-center px-4 py-2.5 text-[15px] font-medium text-red-600 hover:text-red-700 hover:bg-red-50 focus:text-red-700 focus:bg-red-50 rounded-xl cursor-pointer focus:outline-none transition-colors"
             >
-              Delete
+              {t("delete")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -122,7 +124,7 @@ export default function LawCard({ law, onEdit, onDelete, onExportPDF, onView }: 
               lineHeight: "18.2px"
             }}
           >
-            Official Gazette:
+            {t("official_gazette")}
           </span>
           <span 
             style={{
@@ -152,7 +154,7 @@ export default function LawCard({ law, onEdit, onDelete, onExportPDF, onView }: 
               textTransform: "capitalize"
             }}
           >
-            Last update:
+            {t("last_update")}
           </span>
           <span 
             style={{
@@ -184,7 +186,6 @@ export default function LawCard({ law, onEdit, onDelete, onExportPDF, onView }: 
           {law.category}
         </div>
       </div>
-
     </div>
   );
 }

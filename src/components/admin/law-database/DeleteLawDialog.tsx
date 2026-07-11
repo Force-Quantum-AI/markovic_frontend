@@ -7,6 +7,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { X, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface DeleteLawDialogProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export default function DeleteLawDialog({
   onConfirm,
   isLoading = false,
 }: DeleteLawDialogProps) {
+  const { t } = useTranslation("adminLawDatabase");
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
@@ -41,11 +43,11 @@ export default function DeleteLawDialog({
           </div>
 
           <DialogTitle className="text-[20px] font-bold text-[#101828] font-roboto">
-            Delete Law/Bylaw
+            {t("delete_law_title")}
           </DialogTitle>
 
           <p className="text-sm text-gray-500 leading-relaxed">
-            Are you sure you want to delete <span className="font-semibold text-gray-800">&ldquo;{lawTitle}&rdquo;</span>? This action cannot be undone and will permanently remove this law and all its associated sections and articles.
+            {t("delete_law_desc", { title: lawTitle })}
           </p>
         </div>
 
@@ -56,7 +58,7 @@ export default function DeleteLawDialog({
             className="flex-1 h-11 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-semibold transition-all cursor-pointer focus:outline-none active:scale-95"
             disabled={isLoading}
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             type="button"
@@ -67,7 +69,7 @@ export default function DeleteLawDialog({
             {isLoading ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <span>Delete</span>
+              <span>{t("delete")}</span>
             )}
           </button>
         </div>

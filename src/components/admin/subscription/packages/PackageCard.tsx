@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useDeletePackageMutation } from "@/store/features/admin/subscriptions/subscriptions.api";
 import { toast } from "sonner";
 import DeleteConfirmationDialog from "@/components/admin/categories/DeleteConfirmationDialog";
+import { useTranslation } from "react-i18next";
 
 export interface PackageProps {
   id: string;
@@ -26,6 +27,7 @@ export default function PackageCard({
   plan: PackageProps; 
   onUpdate?: (plan: PackageProps) => void;
 }) {
+  const { t } = useTranslation("adminSubscriptionPackages");
   const [deletePackage, { isLoading: isDeleting }] = useDeletePackageMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -51,11 +53,13 @@ export default function PackageCard({
                 ? "bg-[#D0FAE5] text-[#007A55]" 
                 : "bg-gray-100 text-gray-500"
             }`}>
-              {plan.isVisible ? "Enabled" : "Disabled"}
+              {plan.isVisible ? t("enabled") : t("disabled")}
             </span>
           )}
         </div>
-        <span className="text-[13px] font-bold text-[#1A2328]">{plan.devices} Devices</span>
+        <span className="text-[13px] font-bold text-[#1A2328]">
+          {plan.devices === 1 ? t("device") || "1 Device" : t("devices", { count: plan.devices })}
+        </span>
       </div>
       
       <div className="flex items-baseline mb-3">
@@ -70,7 +74,7 @@ export default function PackageCard({
       )}
 
       <div className="border-t border-[#BEC4D2]/40 pt-4 flex-1">
-        <p className="text-[11px] font-bold text-[#1A2328] mb-3">All Features Included:</p>
+        <p className="text-[11px] font-bold text-[#1A2328] mb-3">{t("all_features_included")}</p>
         <ul className="space-y-2 mb-6">
           {plan.features.map((feature, i) => (
             <li key={i} className="flex items-start gap-2">
@@ -97,15 +101,15 @@ export default function PackageCard({
           className="w-full border-[#EF4444] text-[#EF4444] hover:bg-[#EF4444]/5 hover:text-[#EF4444] rounded-full font-semibold h-12 cursor-pointer flex items-center justify-center gap-2"
         >
           <Trash2 className="w-4 h-4" />
-          <span>Delete package</span>
+          <span>{t("delete_package")}</span>
         </Button>
       </div>
 
       <DeleteConfirmationDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        title="Delete Subscription Package"
-        description={`Are you sure you want to delete the package "${plan.name}"? This action cannot be undone.`}
+        title={t("delete_subscription_package")}
+        description={t("delete_package_confirm_desc", { name: plan.name })}
         onConfirm={handleDelete}
         isSubmitting={isDeleting}
       />

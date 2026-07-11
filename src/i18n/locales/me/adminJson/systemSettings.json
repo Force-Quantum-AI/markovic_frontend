@@ -1,0 +1,21 @@
+{
+  "system_settings": "Sistemska podešavanja",
+  "general_settings": "Opšta podešavanja",
+  "platform_name": "Naziv platforme",
+  "support_email": "E-pošta za podršku",
+  "time_zone": "Vremenska zona",
+  "select_time_zone_placeholder": "Odaberite vremensku zonu",
+  "notification_preferences": "Podešavanja obavještenja",
+  "email_notifications": "Obavještenja putem e-pošte",
+  "receive_updates_email": "Primajte ažuriranja putem e-pošte",
+  "system_alerts": "Sistemska upozorenja",
+  "important_platform_notifications": "Važna obavještenja na platformi",
+  "save_changes": "Sačuvaj promjene",
+  "cancel": "Otkaži",
+  "saving": "Čuvanje...",
+  "toast_update_success": "Sistemska podešavanja su uspješno ažurirana!",
+  "toast_update_failed": "Ažuriranje sistemskih podešavanja nije uspjelo.",
+  "toast_discarded": "Izmjene su odbačene.",
+  "failed_load_settings": "Učitavanje sistemskih podešavanja nije uspjelo.",
+  "retry": "Pokušaj ponovo"
+}

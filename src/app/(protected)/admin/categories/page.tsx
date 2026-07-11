@@ -20,6 +20,7 @@ import {
   useDeleteSubCategoryMutation,
 } from "@/store/features/admin/category-subcategory/category.api";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,6 +56,7 @@ const CATEGORY_COLORS = [
 ];
 
 export default function CategoriesPage() {
+  const { t } = useTranslation("adminCategories");
   const [createCategory, { isLoading: isCreatingCategory }] = useCreateCategoryMutation();
   const [createSubCategory, { isLoading: isCreatingSubCategory }] = useCreateSubCategoryMutation();
   const [updateCategory, { isLoading: isUpdatingCategory }] = useUpdateCategoryMutation();
@@ -104,8 +106,8 @@ export default function CategoriesPage() {
             id: String(sub.id),
             name: sub.name,
             description: sub.created_at
-              ? `Created ${new Date(sub.created_at).toLocaleDateString("en-US", { timeZone: "UTC" })}`
-              : "No description available",
+              ? t("created_at", { date: new Date(sub.created_at).toLocaleDateString("en-US", { timeZone: "UTC" }) })
+              : t("no_description"),
             status: "Active" as const,
             cases: 0,
           }));
@@ -114,15 +116,15 @@ export default function CategoriesPage() {
           id: String(category.id),
           name: category.name,
           description: category.created_at
-            ? `Created ${new Date(category.created_at).toLocaleDateString("en-US", { timeZone: "UTC" })}`
-            : "No description available",
+            ? t("created_at", { date: new Date(category.created_at).toLocaleDateString("en-US", { timeZone: "UTC" }) })
+            : t("no_description"),
           status: "Active",
           subcategories: subList,
           totalCases: 0,
           ...colors,
         };
       }),
-    [categoriesData, subcategoriesData]
+    [categoriesData, subcategoriesData, t]
   );
 
   const filtered = categories.filter(
@@ -174,14 +176,18 @@ export default function CategoriesPage() {
     try {
       if (deleteConfirmType === "category") {
         await deleteCategory(deleteConfirmId).unwrap();
-        toast.success("Category deleted successfully!");
+        toast.success(t("category_deleted_success") || "Category deleted successfully!");
       } else {
         await deleteSubCategory(deleteConfirmId).unwrap();
-        toast.success("Subcategory deleted successfully!");
+        toast.success(t("subcategory_deleted_success") || "Subcategory deleted successfully!");
       }
     } catch (err) {
       console.error(`Failed to delete ${deleteConfirmType}:`, err);
-      toast.error(`Failed to delete ${deleteConfirmType}.`);
+      toast.error(
+        deleteConfirmType === "category"
+          ? t("failed_delete_category")
+          : t("failed_delete_subcategory")
+      );
     }
   };
 
@@ -189,12 +195,12 @@ export default function CategoriesPage() {
     try {
       const res = await createCategory({ name }).unwrap();
       if (res){
-        toast.success("Category created successfully!");
+        toast.success(t("category_created_success") || "Category created successfully!");
         return true;
       }
     } catch (err) {
       console.error("Failed to create category:", err);
-      toast.error("Failed to create category. Please try again.");
+      toast.error(t("failed_create_category") || "Failed to create category. Please try again.");
     }
     return false;
   };
@@ -203,12 +209,12 @@ export default function CategoriesPage() {
     try {
       const res = await createSubCategory({ name, category: Number(categoryId) }).unwrap();
       if (res){
-        toast.success("Subcategory created successfully!");
+        toast.success(t("subcategory_created_success") || "Subcategory created successfully!");
         return true;
       }
     } catch (err) {
       console.error("Failed to create subcategory:", err);
-      toast.error("Failed to create subcategory. Please try again.");
+      toast.error(t("failed_create_subcategory") || "Failed to create subcategory. Please try again.");
     }
     return false;
   };
@@ -217,12 +223,12 @@ export default function CategoriesPage() {
     try {
       const res = await updateCategory({ id: editId, name }).unwrap();
       if (res) {
-        toast.success("Category updated successfully!");
+        toast.success(t("category_updated_success") || "Category updated successfully!");
         return true;
       }
     } catch (err) {
       console.error("Failed to update category:", err);
-      toast.error("Failed to update category. Please try again.");
+      toast.error(t("failed_update_category") || "Failed to update category. Please try again.");
     }
     return false;
   };
@@ -231,12 +237,12 @@ export default function CategoriesPage() {
     try {
       const res = await updateSubCategory({ id: editId, name, category: Number(categoryId) }).unwrap();
       if (res) {
-        toast.success("Subcategory updated successfully!");
+        toast.success(t("subcategory_updated_success") || "Subcategory updated successfully!");
         return true;
       }
     } catch (err) {
       console.error("Failed to update subcategory:", err);
-      toast.error("Failed to update subcategory. Please try again.");
+      toast.error(t("failed_update_subcategory") || "Failed to update subcategory. Please try again.");
     }
     return false;
   };
@@ -244,7 +250,7 @@ export default function CategoriesPage() {
   return (
     <div className="w-full space-y-6 font-roboto">
       <h1 className="text-[#292E38] font-roboto text-[24px] font-semibold leading-[32px]">
-        Categories & Sub Category
+        {t("categories_subcategory")}
       </h1>
 
       <div className="w-full bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden">
@@ -252,7 +258,7 @@ export default function CategoriesPage() {
           <div className="relative w-full sm:w-64">
             <input
               type="text"
-              placeholder="Search categories..."
+              placeholder={t("search_categories") || "Search categories..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full h-10 pl-4 pr-10 rounded-[32px] border border-[#E5E7EB] bg-[#F9FAFB] text-[#292E38] placeholder:text-[#99A1AF] font-roboto text-[14px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
@@ -260,7 +266,7 @@ export default function CategoriesPage() {
           </div>
 
           <AdminButton
-            label="Add Category"
+            label={t("add_category")}
             onClick={openCategoryDialog}
             icon={<Plus className="w-4 h-4" />}
             className="h-10 py-2 px-5 text-[14px] font-roboto font-semibold shrink-0"
@@ -272,7 +278,7 @@ export default function CategoriesPage() {
 
           {isCategoriesError && !isCategoriesLoading && (
             <div className="py-16 text-center text-[#99A1AF] font-roboto text-[14px]">
-              Failed to load categories.
+              {t("failed_load_categories")}
             </div>
           )}
 
@@ -311,11 +317,11 @@ export default function CategoriesPage() {
                       </span>
                       {cat.status === "Active" ? (
                         <span className="flex items-center justify-center px-[10px] py-[2px] rounded-full bg-[#D0FAE5] text-[#007A55] font-roboto text-[12px] font-medium leading-[16px]">
-                          Active
+                          {t("active")}
                         </span>
                       ) : (
                         <span className="flex items-center justify-center px-[10px] py-[2px] rounded-full bg-[#F3F4F6] text-[#6A7282] font-roboto text-[12px] font-medium leading-[16px]">
-                          Inactive
+                          {t("inactive")}
                         </span>
                       )}
                     </div>
@@ -330,7 +336,7 @@ export default function CategoriesPage() {
                         {cat.subcategories.length}
                       </div>
                       <div className="text-[#99A1AF] font-roboto text-[12px] font-normal leading-[16px]">
-                        subcategories
+                        {t("subcategories_count")}
                       </div>
                     </div>
                     <div className="text-right">
@@ -338,7 +344,7 @@ export default function CategoriesPage() {
                         {cat.totalCases.toLocaleString()}
                       </div>
                       <div className="text-[#99A1AF] font-roboto text-[12px] font-normal leading-[16px]">
-                        cases
+                        {t("cases_count")}
                       </div>
                     </div>
 
@@ -360,7 +366,7 @@ export default function CategoriesPage() {
                           }}
                           className="cursor-pointer"
                         >
-                          Edit Category
+                          {t("edit_category_title")}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
@@ -369,7 +375,7 @@ export default function CategoriesPage() {
                           }}
                           className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
                         >
-                          Delete
+                          {t("delete")}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -395,7 +401,7 @@ export default function CategoriesPage() {
                               {sub.name}
                             </span>
                             <span className="flex items-center justify-center px-[10px] py-[2px] rounded-full bg-[#D0FAE5] text-[#007A55] font-roboto text-[12px] font-medium leading-[16px]">
-                              Active
+                              {t("active")}
                             </span>
                           </div>
                           <p className="text-[#99A1AF] font-roboto text-[12px] font-normal leading-[16px] mt-0.5 truncate">
@@ -409,7 +415,7 @@ export default function CategoriesPage() {
                               {sub.cases}
                             </div>
                             <div className="text-[#99A1AF] font-roboto text-[12px] font-normal leading-[16px]">
-                              cases
+                              {t("cases_count")}
                             </div>
                           </div>
 
@@ -431,7 +437,7 @@ export default function CategoriesPage() {
                                 }}
                                 className="cursor-pointer"
                               >
-                                Edit Sub Category
+                                {t("edit_subcategory_title")}
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={(e) => {
@@ -440,7 +446,7 @@ export default function CategoriesPage() {
                                 }}
                                 className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
                               >
-                                Delete
+                                {t("delete")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -454,7 +460,7 @@ export default function CategoriesPage() {
                         className="flex items-center gap-[6px] py-[6px] px-[12px] rounded-[10px] border border-dashed border-[#D1D5DC] text-[#99A1AF] font-roboto text-[12px] font-medium leading-[16px] hover:bg-[#F9FAFB] transition-colors cursor-pointer"
                       >
                         <Plus className="w-[14px] h-[14px] flex-shrink-0" />
-                        Add Subcategory
+                        {t("add_subcategory")}
                       </button>
                     </div>
                   </div>
@@ -465,7 +471,7 @@ export default function CategoriesPage() {
 
           {!isCategoriesLoading && !isCategoriesError && filtered.length === 0 && (
             <div className="py-16 text-center text-[#99A1AF] font-roboto text-[14px]">
-              No categories found matching your search.
+              {t("no_categories_found")}
             </div>
           )}
         </div>
@@ -513,11 +519,11 @@ export default function CategoriesPage() {
         key={deleteConfirmOpen ? `delete-${deleteConfirmType}-${deleteConfirmId}` : "delete-confirm-closed"}
         isOpen={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
-        title={deleteConfirmType === "category" ? "Delete Category" : "Delete Sub-Category"}
+        title={deleteConfirmType === "category" ? t("delete_category") : t("delete_subcategory")}
         description={
           deleteConfirmType === "category"
-            ? `Are you sure you want to delete "${deleteConfirmName}"? This will also delete all subcategories inside it.`
-            : `Are you sure you want to delete "${deleteConfirmName}"? This action cannot be undone.`
+            ? t("delete_category_desc", { name: deleteConfirmName })
+            : t("delete_subcategory_desc", { name: deleteConfirmName })
         }
         onConfirm={handleConfirmDelete}
         isSubmitting={deleteConfirmType === "category" ? isDeletingCategory : isDeletingSubCategory}

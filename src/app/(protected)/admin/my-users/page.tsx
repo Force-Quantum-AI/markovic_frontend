@@ -15,6 +15,8 @@ import {
 } from "@/store/features/admin/my-users/my-users.api";
 import { User } from "@/store/features/admin/my-users/my-users.type";
 
+import { useTranslation } from "react-i18next";
+
 type PlanType = "Basic" | "Standard" | "Premium";
 
 interface UserRow {
@@ -62,6 +64,7 @@ function mapUser(user: User): UserRow {
 }
 
 export default function MyUsers() {
+  const { t } = useTranslation("adminMyUsers");
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
     search: "",
@@ -179,8 +182,8 @@ export default function MyUsers() {
       <DeleteConfirmationDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        title="Delete User"
-        description="Are you sure you want to delete this user? This action cannot be undone."
+        title={t("delete_user")}
+        description={t("delete_user_confirm_desc")}
         onConfirm={handleConfirmDelete}
         isSubmitting={isDeleting}
       />
@@ -189,8 +192,8 @@ export default function MyUsers() {
       <SuspendConfirmationDialog
         isOpen={isSuspendDialogOpen}
         onOpenChange={setIsSuspendDialogOpen}
-        title="Suspend User"
-        description="Are you sure you want to suspend this user? They will not be able to log in or access the platform."
+        title={t("suspend_user")}
+        description={t("suspend_user_confirm_desc")}
         onConfirm={handleConfirmSuspend}
         isSubmitting={isSuspending}
       />

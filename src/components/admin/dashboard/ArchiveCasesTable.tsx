@@ -18,6 +18,8 @@ import { useGetArchiveCasesListQuery } from "@/store/features/admin/archive-case
 import { ArchiveCasesResponse } from "@/store/features/admin/archive-cases/archive.type";
 import { ArchiveCasesTableSkeleton } from "@/components/admin/admin-skeletons";
 
+import { useTranslation } from "react-i18next";
+
 interface ArchiveCasesTableProps {
   archiveData?: ArchiveCasesResponse;
   isLoading?: boolean;
@@ -43,6 +45,7 @@ export default function ArchiveCasesTable({
   hidePagination = false,
   isDashboard = false,
 }: ArchiveCasesTableProps) {
+  const { t } = useTranslation(["adminArchiveCases", "adminDashboard"]);
   const { data: internalData, isLoading: internalLoading } =
     useGetArchiveCasesListQuery(undefined, {
       skip: !!archiveData,
@@ -86,10 +89,10 @@ export default function ArchiveCasesTable({
         <div className="relative pb-3">
           <div className="flex items-center gap-2">
             <h2 className="text-[#135576] font-roboto text-[16px] font-semibold leading-[24px]">
-              Archive Cases
+              {t("archived_cases")}
             </h2>
             <span className="text-[#427791] font-roboto text-[12px] font-medium leading-[140%]">
-              ({resolvedData?.count ?? 0} Cases)
+              ({resolvedData?.count ?? 0} {t("cases")})
             </span>
           </div>
           {/* Tab Underline */}
@@ -100,7 +103,7 @@ export default function ArchiveCasesTable({
             onClick={() => router.push("/admin/archive-cases")}
             className="text-sm font-semibold text-[#135576] hover:underline font-inter pb-3"
           >
-            View All
+            {t("view_all")}
           </button>
         )}
       </div>
@@ -110,20 +113,20 @@ export default function ArchiveCasesTable({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-[#F9FAFB] border-b border-[#E5E7EB] text-[#475467] text-[14px] font-medium font-roboto">
-              <th className="p-4 font-medium">Case Name</th>
-              <th className="p-4 font-medium">Category</th>
-              <th className="p-4 font-medium">Case Number</th>
-              <th className="p-4 font-medium">Court Name</th>
-              <th className="p-4 font-medium">Date</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 text-center font-medium">Action</th>
+              <th className="p-4 font-medium">{t("case_name")}</th>
+              <th className="p-4 font-medium">{t("category")}</th>
+              <th className="p-4 font-medium">{t("case_number")}</th>
+              <th className="p-4 font-medium">{t("court_name")}</th>
+              <th className="p-4 font-medium">{t("date")}</th>
+              <th className="p-4 font-medium">{t("status")}</th>
+              <th className="p-4 text-center font-medium">{t("action")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E5E7EB] text-sm text-gray-700">
             {cases.length === 0 ? (
               <tr>
                 <td colSpan={7} className="p-8 text-center text-gray-400 font-roboto">
-                  No archived cases found.
+                  {t("no_archived_cases_found")}
                 </td>
               </tr>
             ) : (
@@ -212,7 +215,7 @@ export default function ArchiveCasesTable({
       <div className="block lg:hidden space-y-4 px-6 pb-6">
         {cases.length === 0 ? (
           <div className="text-center py-6 text-gray-400 font-roboto text-sm">
-            No archived cases found.
+            {t("no_archived_cases_found") || "No archived cases found."}
           </div>
         ) : (
           cases.map((row) => (
@@ -237,7 +240,7 @@ export default function ArchiveCasesTable({
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-50 text-xs">
                 <div>
                   <span className="text-[#808CA5] block text-[10px]">
-                    Category
+                    {t("category")}
                   </span>
                   <span className="font-medium text-[#344054]">
                     {row.category}
@@ -245,24 +248,24 @@ export default function ArchiveCasesTable({
                 </div>
                 <div>
                   <span className="text-[#808CA5] block text-[10px]">
-                    Case Number
+                    {t("case_number")}
                   </span>
                   <span className="text-[#344054]">{row.case_number}</span>
                 </div>
                 <div>
                   <span className="text-[#808CA5] block text-[10px]">
-                    Court Name
+                    {t("court_name")}
                   </span>
                   <span className="font-medium text-[#344054]">
                     {row.court_name}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[#808CA5] block text-[10px]">Date</span>
+                  <span className="text-[#808CA5] block text-[10px]">{t("date")}</span>
                   <span className="font-medium text-[#344054]">{row.date}</span>
                 </div>
               </div>
-
+ 
               <div className="pt-2 border-t border-gray-50 flex justify-end gap-3">
                 <button
                   onClick={() => router.push(`/admin/archive-cases/${row.id}`)}
@@ -281,13 +284,13 @@ export default function ArchiveCasesTable({
           ))
         )}
       </div>
-
+ 
       {/* Pagination component */}
       {!isDashboard && (
         <div className="flex flex-col sm:flex-row items-center justify-between pt-4 pb-6 px-6 border-t border-[#E5E7EB] text-sm font-roboto text-[#475467] gap-4">
           <span>
-            Showing {cases.length > 0 ? (currentPage - 1) * 10 + 1 : 0} to{" "}
-            {Math.min(currentPage * 10, resolvedData?.count ?? 0)} of {resolvedData?.count ?? 0} results
+            {t("showing")} {cases.length > 0 ? (currentPage - 1) * 10 + 1 : 0} {t("to") || "to"}{" "}
+            {Math.min(currentPage * 10, resolvedData?.count ?? 0)} {t("of")} {resolvedData?.count ?? 0} {t("results")}
           </span>
           {showPagination && (
             <div className="flex items-center gap-1.5">
@@ -297,9 +300,9 @@ export default function ArchiveCasesTable({
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Prev.</span>
+                <span>{t("previous")}</span>
               </button>
-
+ 
               {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((p) => (
                 <button
                   key={p}
@@ -313,13 +316,13 @@ export default function ArchiveCasesTable({
                   {p}
                 </button>
               ))}
-
+ 
               <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all text-xs font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span>Next</span>
+                <span>{t("next")}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -331,17 +334,17 @@ export default function ArchiveCasesTable({
         onOpenChange={(open) => {
           if (!open) setDeleteId(null);
         }}
-        title="Delete Archived Case"
-        description="Are you sure you want to delete this archived case record? This action cannot be undone."
+        title={t("delete_archived_case") || "Delete Archived Case"}
+        description={t("delete_archived_case_desc") || "Are you sure you want to delete this archived case record? This action cannot be undone."}
         isSubmitting={isDeleting}
         onConfirm={async () => {
           if (deleteId) {
             try {
               await deleteArchiveCase({ id: deleteId }).unwrap();
-              toast.success("Archived case record deleted successfully!");
+              toast.success(t("delete_success") || "Archived case record deleted successfully!");
             } catch (err) {
               console.error("Failed to delete archive case:", err);
-              toast.error("Failed to delete the archived case. Please try again.");
+              toast.error(t("delete_failed") || "Failed to delete the archived case. Please try again.");
             }
           }
         }}

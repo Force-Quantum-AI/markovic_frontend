@@ -1,4 +1,5 @@
 import { Gavel, Clock3, TrendingUp } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface AdminCaseHealthProps {
   case_name?: string;
@@ -17,13 +18,14 @@ export default function AdminCaseHealth({
   total_deadlines = 0,
   case_age_days = 0,
 }: AdminCaseHealthProps) {
+  const { t } = useTranslation("adminArchiveCases");
   return (
     <div className="w-full bg-gray-50/50 rounded-2xl border border-gray-100/80 overflow-hidden shadow-sm">
       {/* Blue Header Section */}
       <div className="bg-[#135576] hover:bg-[#1a648a] transition-all duration-300 p-6 text-white cursor-pointer">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <p className="text-xs font-medium text-white/70 uppercase tracking-wider mb-1">Case Health</p>
+            <p className="text-xs font-medium text-white/70 uppercase tracking-wider mb-1">{t("case_health")}</p>
             <h2 className="text-2xl font-bold">{case_name}</h2>
             <p className="text-sm text-white/80 font-mono">{case_number}</p>
           </div>
@@ -38,7 +40,7 @@ export default function AdminCaseHealth({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-slate-500">
             <Gavel className="w-5 h-5" />
-            <span className="text-sm font-medium">Total Hearings</span>
+            <span className="text-sm font-medium">{t("total_hearings")}</span>
           </div>
           <span className="text-sm font-bold text-[#135576]">{total_hearings}</span>
         </div>
@@ -46,7 +48,7 @@ export default function AdminCaseHealth({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-slate-500">
             <Clock3 className="w-5 h-5" />
-            <span className="text-sm font-medium">Total Deadlines</span>
+            <span className="text-sm font-medium">{t("total_deadlines")}</span>
           </div>
           <span className="text-sm font-bold text-amber-600">{total_deadlines}</span>
         </div>
@@ -54,7 +56,7 @@ export default function AdminCaseHealth({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-slate-500">
             <TrendingUp className="w-5 h-5" />
-            <span className="text-sm font-medium">Case Age (Days)</span>
+            <span className="text-sm font-medium">{t("case_age_days")}</span>
           </div>
           <span className="text-sm font-bold text-slate-900">{case_age_days}</span>
         </div>

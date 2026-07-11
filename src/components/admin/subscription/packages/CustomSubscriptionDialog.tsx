@@ -7,6 +7,7 @@ import AdminButton from "@/components/shared/AdminButton";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useCreateCustomSubscriptionMutation } from "@/store/features/admin/subscriptions/subscriptions.api";
+import { useTranslation } from "react-i18next";
 
 interface CustomSubscriptionDialogProps {
   isOpen: boolean;
@@ -18,19 +19,11 @@ interface CustomSubscriptionFormValues {
   devices: string;
 }
 
-const FEATURES = [
-  "Unlimited Cases.",
-  "Clients, Calendar, Hearings & Deadlines.",
-  "Documents Management.",
-  "Laws & Bylaws Module.",
-  "AI Court Practice Search.",
-  "Global Search & Archive."
-];
-
 export default function CustomSubscriptionDialog({
   isOpen,
   onOpenChange,
 }: CustomSubscriptionDialogProps) {
+  const { t } = useTranslation(["adminMyUsers", "common"]);
   const [createCustomSubscription, { isLoading }] = useCreateCustomSubscriptionMutation();
 
   const defaultValues: CustomSubscriptionFormValues = {
@@ -66,6 +59,15 @@ export default function CustomSubscriptionDialog({
     }
   };
 
+  const FEATURES = [
+    t("common:subscriptionPage.features.unlimited_cases"),
+    t("common:subscriptionPage.features.client_calendar_hearing_deadline"),
+    t("common:subscriptionPage.features.documents_management"),
+    t("common:subscriptionPage.features.laws_bylaws_module"),
+    t("common:subscriptionPage.features.ai_court_practice_search"),
+    t("common:subscriptionPage.features.global_search_archive")
+  ];
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
@@ -81,18 +83,18 @@ export default function CustomSubscriptionDialog({
 
         {/* Dialog Title */}
         <DialogTitle className="text-[28px] font-bold text-center text-[#101828] font-roboto mt-2 mb-6 shrink-0">
-          Custom Subscription
+          {t("custom_subscription")}
         </DialogTitle>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full font-roboto overflow-y-auto px-1 flex-1 custom-scrollbar pt-2 min-h-0">
             {/* User Email */}
             <div className="space-y-2">
               <label className="block text-[#344054] font-roboto text-[14px] font-medium leading-[20px]">
-                User Email <span className="text-[#D92D20]">*</span>
+                {t("user_email")} <span className="text-[#D92D20]">*</span>
               </label>
               <input
                 type="email"
-                {...register("user_email", { required: "User email is required!" })}
+                {...register("user_email", { required: t("user_email_required") || "User email is required!" })}
                 placeholder="Enter your email"
                 className="w-full rounded-full border border-[#D0D5DD] bg-white px-5 py-3 h-[50px] text-[#101828] placeholder:text-[#98A2B3] font-roboto text-[16px] font-normal leading-[24px] focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
                 disabled={isLoading}
@@ -100,22 +102,16 @@ export default function CustomSubscriptionDialog({
               {errors.user_email && (
                 <span className="text-[#EF4444] text-[12px] pl-2">{errors.user_email.message}</span>
               )}
-              {/* <div className="flex items-start gap-1.5 mt-2 text-[#155EEF]">
-                <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span className="font-roboto text-[12px] font-normal leading-[18px]">
-                  Type user email address to provide custom subscription.
-                </span>
-              </div> */}
             </div>
 
             {/* Devices */}
             <div className="space-y-2">
               <label className="block text-[#344054] font-roboto text-[14px] font-medium leading-[20px]">
-                Device Limit:
+                {t("device_limit")}
               </label>
               <input
                 type="number"
-                {...register("devices", { required: "Devices count is required!" })}
+                {...register("devices", { required: t("devices_count_required") || "Devices count is required!" })}
                 placeholder="Enter your device limit"
                 className="w-full rounded-full border border-[#D0D5DD] bg-white px-5 py-3 h-[50px] text-[#101828] placeholder:text-[#98A2B3] font-roboto text-[16px] font-normal leading-[24px] focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
                 disabled={isLoading}
@@ -131,7 +127,7 @@ export default function CustomSubscriptionDialog({
             {/* Features List */}
             <div className="space-y-4">
               <span className="block text-[#101828] font-roboto text-[15px] font-semibold leading-[20px]">
-                All Features Included:
+                {t("all_features_included") || "All Features Included:"}
               </span>
               <div className="space-y-3">
                 {FEATURES.map((feature, idx) => (
@@ -149,7 +145,7 @@ export default function CustomSubscriptionDialog({
             <div className="pt-4">
               <AdminButton
                 type="submit"
-                label={isLoading ? "Providing..." : "Provide Custom Subscription"}
+                label={isLoading ? t("providing") : t("provide_custom_subscription")}
                 disabled={isLoading}
                 className="w-full py-3.5 text-[16px] font-semibold justify-center rounded-full"
               />

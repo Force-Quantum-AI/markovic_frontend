@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 interface LawFiltersProps {
   search: string;
@@ -29,14 +30,15 @@ export default function LawFilters({
   onExport,
   onAddLaw,
 }: LawFiltersProps) {
+  const { t } = useTranslation("adminLawDatabase");
   return (
     <div className="w-full bg-white p-6 rounded-[24px] border border-[#E5E7EB] shadow-sm flex flex-col md:flex-row items-end justify-between gap-4 font-roboto">
       {/* Search Input */}
       <div className="w-full md:flex-1 space-y-1.5 flex flex-col items-start">
-        <span className="text-sm font-semibold text-gray-700 pl-1">Search:</span>
+        <span className="text-sm font-semibold text-gray-700 pl-1">{t("search_label")}</span>
         <input
           type="text"
-          placeholder="Search laws, bylaws, articles, keywords"
+          placeholder={t("search_placeholder") || "Search laws, bylaws, articles, keywords"}
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full px-5 py-3 h-12 rounded-full border border-[#D1D5DC] bg-[#F5F6F7] text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all"
@@ -45,13 +47,13 @@ export default function LawFilters({
 
       {/* Category Dropdown */}
       <div className="w-full md:w-[220px] space-y-1.5 flex flex-col items-start">
-        <span className="text-sm font-semibold text-gray-700 pl-1">Filters:</span>
+        <span className="text-sm font-semibold text-gray-700 pl-1">{t("filters_label")}</span>
         <Select
           value={categoryFilter}
           onValueChange={onCategoryChange}
         >
           <SelectTrigger className="w-full h-12 rounded-full border border-[#D1D5DC] bg-[#F5F6F7] px-5 py-3 text-[#101828] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all cursor-pointer">
-            <SelectValue placeholder="All Laws" />
+            <SelectValue placeholder={t("all_laws")} />
             <ChevronDown className="ml-auto w-5 h-5 shrink-0 text-gray-500" />
           </SelectTrigger>
           <SelectContent
@@ -63,7 +65,7 @@ export default function LawFilters({
               value="all"
               className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]"
             >
-              All Laws
+              {t("all_laws")}
             </SelectItem>
             {filterCategories.map((catName) => (
               <SelectItem
@@ -81,7 +83,7 @@ export default function LawFilters({
       {/* Action Buttons */}
       <div className="flex gap-3 w-full md:w-auto shrink-0">
         <AdminButton
-          label="Export"
+          label={t("export")}
           icon={<Download className="w-4 h-4" />}
           variant="secondary"
           onClick={onExport}
@@ -89,7 +91,7 @@ export default function LawFilters({
           className="flex-1 md:flex-none h-12"
         />
         <AdminButton
-          label="Add Law"
+          label={t("add_law")}
           icon={<Plus className="w-4 h-4" />}
           onClick={onAddLaw}
           style={{ padding: "12px 24px" }}

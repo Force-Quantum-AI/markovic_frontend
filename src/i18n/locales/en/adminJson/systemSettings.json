@@ -1,0 +1,21 @@
+{
+  "system_settings": "System Settings",
+  "general_settings": "General Settings",
+  "platform_name": "Platform Name",
+  "support_email": "Support Email",
+  "time_zone": "Time Zone",
+  "select_time_zone_placeholder": "Select time zone",
+  "notification_preferences": "Notification Preferences",
+  "email_notifications": "Email Notifications",
+  "receive_updates_email": "Receive updates via email",
+  "system_alerts": "System Alerts",
+  "important_platform_notifications": "Important platform notifications",
+  "save_changes": "Save Changes",
+  "cancel": "Cancel",
+  "saving": "Saving...",
+  "toast_update_success": "System settings updated successfully!",
+  "toast_update_failed": "Failed to update system settings.",
+  "toast_discarded": "Changes discarded.",
+  "failed_load_settings": "Failed to load system settings.",
+  "retry": "Retry"
+}
