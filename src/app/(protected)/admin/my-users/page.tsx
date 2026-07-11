@@ -13,55 +13,8 @@ import {
   useDeleteUserMutation,
   useSuspendUserMutation,
 } from "@/store/features/admin/my-users/my-users.api";
-import { User } from "@/store/features/admin/my-users/my-users.type";
 
 import { useTranslation } from "react-i18next";
-
-type PlanType = "Basic" | "Standard" | "Premium";
-
-interface UserRow {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: string;
-  phone: string;
-  created: string;
-  plan: PlanType;
-}
-
-function mapPlan(sub: string | null): PlanType {
-  if (!sub) return "Basic";
-  const s = sub.trim().toLowerCase();
-  if (s === "standard") return "Standard";
-  if (s === "premium") return "Premium";
-  return "Basic";
-}
-
-function mapUser(user: User): UserRow {
-  let created = "";
-  if (user.account_created) {
-    try {
-      created = new Date(user.account_created).toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-    } catch {
-      created = user.account_created;
-    }
-  }
-  return {
-    id: user.unique_id,
-    name: user.full_name,
-    email: user.email,
-    avatar: user.profile_image || "/dummy-user.jpg",
-    role: "User",
-    phone: user.number || "N/A",
-    created,
-    plan: mapPlan(user.subscription),
-  };
-}
 
 export default function MyUsers() {
   const { t } = useTranslation("adminMyUsers");
@@ -111,8 +64,7 @@ export default function MyUsers() {
     setPage(1);
   };
 
-  const dbUsers = usersData?.results?.users || [];
-  const mappedUsers: UserRow[] = dbUsers.map(mapUser);
+  const users = usersData?.results?.users || [];
 
   const handleAddUser = () => {
     alert("Adding user — implementation pending API mutation mapping.");
@@ -166,7 +118,7 @@ export default function MyUsers() {
 
       {/* Users Table */}
       <MyUsersTable
-        usersList={mappedUsers}
+        usersList={users}
         onAddUser={handleAddUser}
         onDeleteUser={handleDeleteUserClick}
         onSuspendUser={handleSuspendUserClick}
@@ -206,5 +158,3 @@ export default function MyUsers() {
     </div>
   );
 }
-
-

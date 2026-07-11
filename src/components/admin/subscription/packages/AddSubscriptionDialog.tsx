@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import { X, Info, ChevronDown, MinusCircle, Plus } from "lucide-react";
+import { X, Info, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -71,21 +71,21 @@ export default function AddSubscriptionDialog({
     "Laws & Bylaws",
   ]);
 
-  const [newFeatureText, setNewFeatureText] = useState("");
+  // const [newFeatureText, setNewFeatureText] = useState("");
 
-  const handleDeleteFeature = (featureToDelete: string) => {
-    setFeatures((prev) => prev.filter((f) => f !== featureToDelete));
-  };
+  // const handleDeleteFeature = (featureToDelete: string) => {
+  //   setFeatures((prev) => prev.filter((f) => f !== featureToDelete));
+  // };
 
-  const handleAddFeature = () => {
-    if (!newFeatureText.trim()) return;
-    if (features.includes(newFeatureText.trim())) {
-      toast.error("Feature already exists!");
-      return;
-    }
-    setFeatures((prev) => [...prev, newFeatureText.trim()]);
-    setNewFeatureText("");
-  };
+  // const handleAddFeature = () => {
+  //   if (!newFeatureText.trim()) return;
+  //   if (features.includes(newFeatureText.trim())) {
+  //     toast.error("Feature already exists!");
+  //     return;
+  //   }
+  //   setFeatures((prev) => [...prev, newFeatureText.trim()]);
+  //   setNewFeatureText("");
+  // };
 
   const onSubmit = async (data: SubscriptionFormValues) => {
     const cleanPriceStr = data.price.replace(/[$€s\s]/g, "");
@@ -312,51 +312,6 @@ export default function AddSubscriptionDialog({
               </div>
             )}
           />
-
-          <div className="border-t border-[#E5E7EB] my-6" />
-
-          {/* Dynamic Features List */}
-          <div className="space-y-3 w-full pt-2 flex flex-col items-start">
-            <span className="block text-[#475467] font-roboto text-[14px] font-bold pl-1">
-              {t("all_features") || "All Features:"}
-            </span>
-            <div className="w-full space-y-2">
-              {features.map((feature, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between w-full bg-white py-3.5 px-5 rounded-2xl border border-[#D1D5DC] text-[16px] text-[#101828] font-normal font-roboto transition-all"
-                >
-                  <span>{feature}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteFeature(feature)}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded-full transition-colors cursor-pointer"
-                  >
-                    <MinusCircle className="w-5 h-5 text-red-500" />
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Add feature input */}
-            <input
-              type="text"
-              placeholder={t("add_more_features_placeholder") || "Add more features..."}
-              value={newFeatureText}
-              onChange={(e) => setNewFeatureText(e.target.value)}
-              className="w-full rounded-full border border-[#D1D5DC] bg-[#F1F5F9] px-5 py-3 h-12 text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all mt-3"
-            />
-
-            {/* Add feature button */}
-            <button
-              type="button"
-              onClick={handleAddFeature}
-              className="mt-2.5 flex items-center justify-center gap-2 px-6 py-2.5 bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#135576] rounded-full border border-[#D5DFE9] text-[15px] font-semibold cursor-pointer transition-all focus:outline-none active:scale-95"
-            >
-              <Plus className="w-4 h-4" />
-              <span>{t("add_new_features")}</span>
-            </button>
-          </div>
 
           {/* Enabled Switch */}
           <Controller

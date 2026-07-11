@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
-import { X, Info, ChevronDown, MinusCircle, Plus } from "lucide-react";
+import { X, Info, ChevronDown } from "lucide-react";
 import { PackageProps } from "./PackageCard";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
@@ -139,21 +139,21 @@ function UpdatePackageForm({ subscriptionDetails, onOpenChange }: UpdatePackageF
     return list;
   });
 
-  const [newFeatureText, setNewFeatureText] = useState("");
+  // const [newFeatureText, setNewFeatureText] = useState("");
 
-  const handleDeleteFeature = (featureToDelete: string) => {
-    setFeatures((prev) => prev.filter((f) => f !== featureToDelete));
-  };
+  // const handleDeleteFeature = (featureToDelete: string) => {
+  //   setFeatures((prev) => prev.filter((f) => f !== featureToDelete));
+  // };
 
-  const handleAddFeature = () => {
-    if (!newFeatureText.trim()) return;
-    if (features.includes(newFeatureText.trim())) {
-      toast.error("Feature already exists!");
-      return;
-    }
-    setFeatures((prev) => [...prev, newFeatureText.trim()]);
-    setNewFeatureText("");
-  };
+  // const handleAddFeature = () => {
+  //   if (!newFeatureText.trim()) return;
+  //   if (features.includes(newFeatureText.trim())) {
+  //     toast.error("Feature already exists!");
+  //     return;
+  //   }
+  //   setFeatures((prev) => [...prev, newFeatureText.trim()]);
+  //   setNewFeatureText("");
+  // };
 
   const onSubmit = async (data: SubscriptionFormValues) => {
     const cleanPriceStr = data.price.replace(/[$€s\s]/g, "");
@@ -348,10 +348,10 @@ function UpdatePackageForm({ subscriptionDetails, onOpenChange }: UpdatePackageF
       />
 
       {/* Divider */}
-      <div className="border-t border-[#E5E7EB] my-6" />
+      {/* <div className="border-t border-[#E5E7EB] my-6" /> */}
 
       {/* Features List */}
-      <div className="space-y-3 w-full pt-2 flex flex-col items-start">
+      {/* <div className="space-y-3 w-full pt-2 flex flex-col items-start">
         <span className="block text-[#475467] font-roboto text-[14px] font-bold pl-1">
           {t("all_features_included")}
         </span>
@@ -387,7 +387,7 @@ function UpdatePackageForm({ subscriptionDetails, onOpenChange }: UpdatePackageF
           <Plus className="w-4 h-4" />
           <span>{t("add_new_features")}</span>
         </button>
-      </div>
+      </div> */}
 
       {/* Enabled Switch */}
       <Controller

@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MoreHorizontal, Phone } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Phone } from "lucide-react";
 import { User, UsersResponse } from "@/store/features/admin/my-users/my-users.type";
 import { MyUsersDashboardTableSkeleton } from "@/components/admin/admin-skeletons";
 
@@ -20,9 +14,11 @@ interface MyUsersTableProps {
 
 const getPlanBadgeStyle = (plan: string | null) => {
   const normPlan = (plan || "").trim().toLowerCase();
-  if (normPlan === "standard") return "bg-[#E8D5FF] text-[#7314E6]";
-  if (normPlan === "premium")  return "bg-[#FFF3E0] text-[#E69514]";
-  // basic or no subscription → blue badge
+  if (normPlan === "professional" || normPlan === "Professional" || normPlan === "PROFESSIONAL") return "bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]";
+  if (normPlan === "standard" || normPlan === "Standard" || normPlan === "STANDARD") return "bg-[#E8D5FF] text-[#7314E6]";
+  if (normPlan === "premium" || normPlan === "Premium" || normPlan === "PREMIUM")  return "bg-[#FFF3E0] text-[#E69514]";
+  if(normPlan === "custom" || normPlan === "Custom" || normPlan === "CUSTOM") return "bg-[#EFF1F4] text-[#667085]";
+  // basic or no subscription
   return "bg-[#DBEAFE] text-[#1447E6]";
 };
 
@@ -34,8 +30,6 @@ export default function MyUsersDashboardTable({
   const allUsers: User[] = usersData?.results?.users || [];
   
   const users = allUsers.slice(0, 5);
-  console.log("fasdfasdfds fadsf", users);
-  
 
   const formatDate = (dateStr: string) => {
     try {
@@ -84,7 +78,7 @@ export default function MyUsersDashboardTable({
                 {t("user_name")}
               </th>
               <th className="py-3 px-4 border-r border-[#BEC4D2] font-normal font-roboto">
-                {t("role")}
+                {t("email")}
               </th>
               <th className="py-3 px-4 border-r border-[#BEC4D2] font-normal font-roboto text-center">
                 {t("phone_number")}
@@ -92,17 +86,16 @@ export default function MyUsersDashboardTable({
               <th className="py-3 px-4 border-r border-[#BEC4D2] font-normal font-roboto text-center">
                 {t("account_created")}
               </th>
-              <th className="py-3 px-4 border-r border-[#BEC4D2] font-normal font-roboto text-center">
+              <th className="py-3 px-4 font-normal font-roboto text-center">
                 {t("subscription")}
               </th>
-              <th className="py-3 px-5 text-right font-normal"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#BEC4D2]/50 text-sm text-gray-700">
             {users.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={5}
                   className="py-8 text-center text-gray-400 font-roboto"
                 >
                   {t("no_users_found")}
@@ -114,32 +107,34 @@ export default function MyUsersDashboardTable({
                   key={row.unique_id}
                   className="hover:bg-gray-50/70 transition-colors"
                 >
-                  {/* User Name */}
-                  <td className="py-3.5 px-5 border-r border-[#BEC4D2]/40 flex items-center gap-3">
-                    <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                      <img
-                        src={row.profile_image || "/dummy-user.jpg"}
-                        alt={row.full_name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <span className="block font-medium text-[#161A20] font-roboto text-[14px]">
-                        {row.full_name}
-                      </span>
-                      <span className="block text-[#808CA5] font-roboto text-[12px]">
-                        {row.email}
-                      </span>
+                  {/* User Name + ID */}
+                  <td className="py-3.5 px-5 border-r border-gray-300">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                        <img
+                          src={row.profile_image || "/dummy-user.jpg"}
+                          alt={row.full_name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="block font-medium text-[#161A20] font-roboto text-[14px]">
+                          {row.full_name}
+                        </span>
+                        <span className="block text-[#808CA5] font-roboto text-[11px] truncate">
+                          id: {row.unique_id}
+                        </span>
+                      </div>
                     </div>
                   </td>
 
-                  {/* Role */}
-                  <td className="py-3.5 px-4 border-r border-[#BEC4D2]/40 font-roboto text-[16px] font-normal text-[#364153]">
-                    User
+                  {/* Email */}
+                  <td className="py-3.5 px-4 border-r border-gray-300 font-roboto text-[14px] font-normal text-[#364153]">
+                    {row.email}
                   </td>
 
                   {/* Phone */}
-                  <td className="py-3.5 px-4 border-r border-[#BEC4D2]/40 font-roboto text-[14px] font-normal text-[#364153]">
+                  <td className="py-3.5 px-4 border-r border-gray-300 font-roboto text-[14px] font-normal text-[#364153]">
                     <div className="flex items-center justify-center gap-2">
                       <Phone className="w-4 h-4 text-[#808CA5] flex-shrink-0" />
                       <span>{row.number || "N/A"}</span>
@@ -147,36 +142,17 @@ export default function MyUsersDashboardTable({
                   </td>
 
                   {/* Date */}
-                  <td className="py-3.5 px-4 border-r border-[#BEC4D2]/40 font-roboto text-[14px] font-normal text-[#364153] text-center">
+                  <td className="py-3.5 px-4 border-r border-gray-300 font-roboto text-[14px] font-normal text-[#364153] text-center">
                     {formatDate(row.account_created)}
                   </td>
 
                   {/* Subscription */}
-                  <td className="py-3.5 px-4 border-r border-[#BEC4D2]/40 text-center">
+                  <td className="py-3.5 px-4 text-center">
                     <span
                       className={`inline-block text-xs font-semibold px-4 py-1.5 rounded-full ${getPlanBadgeStyle(row.subscription || null)}`}
                     >
                       {row.subscription || "Basic"}
                     </span>
-                  </td>
-
-                  {/* Actions */}
-                  <td className="py-3.5 px-5 text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all focus:outline-none cursor-pointer">
-                          <MoreHorizontal className="w-5 h-5" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-32">
-                        <DropdownMenuItem className="cursor-pointer">
-                          {t("edit")}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500 cursor-pointer">
-                          {t("deactivate")}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </td>
                 </tr>
               ))
@@ -210,8 +186,8 @@ export default function MyUsersDashboardTable({
                     <h4 className="font-medium text-[#161A20] text-sm font-roboto">
                       {row.full_name}
                     </h4>
-                    <span className="text-xs text-[#808CA5] block break-all font-roboto">
-                      {row.email}
+                    <span className="text-[11px] text-[#808CA5] block font-roboto">
+                      id: {row.unique_id}
                     </span>
                   </div>
                 </div>
@@ -224,9 +200,9 @@ export default function MyUsersDashboardTable({
 
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-50 text-xs">
                 <div>
-                  <span className="text-gray-400 block text-[10px]">{t("role")}</span>
-                  <span className="font-normal text-[#364153] font-roboto">
-                    {t("user")}
+                  <span className="text-gray-400 block text-[10px]">{t("email")}</span>
+                  <span className="font-normal text-[#364153] font-roboto break-all">
+                    {row.email}
                   </span>
                 </div>
                 <div>
