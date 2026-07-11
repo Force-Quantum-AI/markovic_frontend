@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import CalendarToolbar from "@/components/user/calendar/CalendarToolbar";
 import MonthView from "@/components/user/calendar/MonthView";
@@ -65,6 +66,7 @@ const parseBackendTimeRange = (
 };
 
 export default function CalendarContainer() {
+  const { t } = useTranslation("userCalendar");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [activeView, setActiveView] = useState<CalendarView>("day");
 
@@ -118,7 +120,7 @@ export default function CalendarContainer() {
   const handleNavigate = (direction: "prev" | "next" | "today") => {
     if (direction === "today") {
       setCurrentDate(new Date());
-      toast.info("Navigated to Today");
+      toast.info(t("navigated_to_today"));
       return;
     }
 
@@ -151,10 +153,10 @@ export default function CalendarContainer() {
       <div className="flex items-center justify-between flex-wrap gap-4 p-4 md:p-6">
         <div className="space-y-0.5">
           <h1 className="text-xl md:text-2xl xl:text-3xl font-bold text-gray-900 tracking-tight">
-            Manage Calendar
+            {t("manage_calendar")}
           </h1>
           <p className="text-gray-500 text-xs md:text-sm">
-            Create and control all cases, hearings and deadlines
+            {t("calendar_subtitle")}
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Task } from "./types";
 import {
   Dialog,
@@ -27,6 +28,7 @@ export default function MonthView({
   onSelectTask,
   onCreateTaskOnDate,
 }: MonthViewProps) {
+  const { t } = useTranslation("userCalendar");
   const [selectedDayTasks, setSelectedDayTasks] = useState<{
     date: Date;
     tasks: Task[];
@@ -167,7 +169,7 @@ export default function MonthView({
                     }}
                     className="more-link text-left text-[8px] sm:text-[10px] md:text-xs font-bold text-black hover:text-gray-700 px-1 py-0.5 mt-0.5 transition-colors cursor-pointer bg-transparent border-none"
                   >
-                    +{remainingCount} more
+                    {t("more", { count: remainingCount })}
                   </button>
                 )}
               </div>
@@ -184,13 +186,12 @@ export default function MonthView({
           <DialogContent className="sm:max-w-sm border-gray-100 max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-base font-semibold text-gray-800">
-                Tasks for{" "}
-                {selectedDayTasks.date.toLocaleDateString("en-US", {
+                {t("tasks_for", { date: selectedDayTasks.date.toLocaleDateString("en-US", {
                   weekday: "long",
                   day: "numeric",
                   month: "long",
                   year: "numeric",
-                })}
+                }) })}
               </DialogTitle>
             </DialogHeader>
 
@@ -215,7 +216,7 @@ export default function MonthView({
                     </span>
                     <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-md font-medium shrink-0">
                       {task.allDay
-                        ? "All Day"
+                        ? t("all_day")
                         : `${formatTime12h(task.startTime)} - ${formatTime12h(task.endTime)}`}
                     </span>
                   </button>
@@ -231,7 +232,7 @@ export default function MonthView({
                 }}
                 className="w-full text-xs h-9 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full gap-1 flex items-center justify-center cursor-pointer border border-gray-200"
               >
-                <Plus className="w-4 h-4" /> Add Task
+                <Plus className="w-4 h-4" /> {t("add_task")}
               </Button>
             </div>
           </DialogContent>

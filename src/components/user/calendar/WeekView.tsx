@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Task } from "./types";
 
 interface WeekViewProps {
@@ -21,6 +22,7 @@ export default function WeekView({
   onSelectDate,
   onCreateTaskOnDateTime,
 }: WeekViewProps) {
+  const { t } = useTranslation("userCalendar");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -286,7 +288,7 @@ export default function WeekView({
       {/* All Day Tasks Bottom Bar */}
       <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-col gap-2 shrink-0">
         <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 px-1">
-          All Day Tasks
+          {t("all_day_tasks")}
         </h3>
 
         {/* Desktop View: Grid of 7 days */}
@@ -356,7 +358,7 @@ export default function WeekView({
             })
           ) : (
             <span className="text-xs text-gray-400 italic py-1 px-1">
-              No all-day tasks scheduled
+              {t("no_all_day_tasks")}
             </span>
           )}
         </div>

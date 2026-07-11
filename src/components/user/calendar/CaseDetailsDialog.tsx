@@ -2,6 +2,7 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -85,8 +86,10 @@ export default function CaseDetailsDialog({
     isError,
   } = useGetCasesDetailsQuery({ case_id: caseId || "" }, { skip: !caseId });
 
+  const { t } = useTranslation("userCalendar");
+
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return "Not set";
+    if (!dateStr) return t("not_set");
     try {
       const date = new Date(dateStr);
       return date.toLocaleDateString("en-US", {
@@ -113,12 +116,12 @@ export default function CaseDetailsDialog({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
               <span className="text-xs font-bold text-[#135576] uppercase tracking-wider">
-                Case details
+                {t("case_details_label")}
               </span>
               <DialogTitle className="text-xl md:text-2xl font-bold text-gray-900 mt-1">
                 {isLoading
-                  ? "Loading Case Details..."
-                  : caseData?.case_name || "Case Details"}
+                  ? t("loading_case_details")
+                  : caseData?.case_name || t("case_details_title")}
               </DialogTitle>
             </div>
             {!isLoading && caseData && (
@@ -134,22 +137,22 @@ export default function CaseDetailsDialog({
             <div className="flex flex-col items-center justify-center py-16 gap-3">
               <Loader2 className="w-10 h-10 text-[#135576] animate-spin" />
               <p className="text-sm font-medium text-gray-500">
-                Fetching case information...
+                {t("fetching_case_info")}
               </p>
             </div>
           ) : isError ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <ShieldAlert className="w-12 h-12 text-red-500 mb-3" />
               <p className="text-sm font-semibold text-gray-800">
-                Failed to load case details
+                {t("failed_to_load")}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Please check if the case exists or try again.
+                {t("failed_to_load_hint")}
               </p>
             </div>
           ) : !caseData ? (
             <div className="flex flex-col items-center justify-center py-12 text-center text-gray-400">
-              No case data available.
+              {t("no_case_data")}
             </div>
           ) : (
             <div className="space-y-6">
@@ -170,7 +173,7 @@ export default function CaseDetailsDialog({
                       {caseData.client_name}
                     </h4>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      Personal ID:{" "}
+                      {t("personal_id")}:{" "}
                       <span className="font-semibold text-gray-700">
                         {caseData.personal_id}
                       </span>
@@ -202,44 +205,44 @@ export default function CaseDetailsDialog({
                 <div className="space-y-4">
                   <DetailRow
                     icon={Scale}
-                    label="Case Number"
+                    label={t("case_number")}
                     value={caseData.case_number}
                   />
                   <DetailRow
                     icon={Building2}
-                    label="Court"
+                    label={t("court")}
                     value={caseData.court_name}
                   />
                   <DetailRow
                     icon={Briefcase}
-                    label="Category"
+                    label={t("category")}
                     value={caseData.category_name}
                   />
                   <DetailRow
                     icon={Briefcase}
-                    label="Sub-Category"
+                    label={t("sub_category")}
                     value={caseData.sub_category_name}
                   />
                 </div>
                 <div className="space-y-4">
                   <DetailRow
                     icon={Calendar}
-                    label="Hearing Date"
+                    label={t("hearing_date")}
                     value={formatDate(caseData.hearing_date)}
                   />
                   <DetailRow
                     icon={Calendar}
-                    label="Deadline Date"
+                    label={t("deadline_date")}
                     value={formatDate(caseData.deadline_date)}
                   />
                   <DetailRow
                     icon={User}
-                    label="Created By"
+                    label={t("created_by")}
                     value={caseData.created_by_name}
                   />
                   <DetailRow
                     icon={Calendar}
-                    label="Created At"
+                    label={t("created_at")}
                     value={formatDate(caseData.created_at)}
                   />
                 </div>
@@ -250,7 +253,7 @@ export default function CaseDetailsDialog({
                 caseData.opposing_parties.length > 0 && (
                   <div className="border-t border-gray-100 pt-4">
                     <h5 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                      Opposing Parties
+                      {t("opposing_parties")}
                     </h5>
                     <div className="flex flex-wrap gap-2">
                       {caseData.opposing_parties.map((party, index) => {
@@ -280,7 +283,7 @@ export default function CaseDetailsDialog({
                 caseData.responsible_lawyers.length > 0 && (
                   <div className="border-t border-gray-100 pt-4">
                     <h5 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
-                      Responsible Lawyers
+                      {t("responsible_lawyers")}
                     </h5>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {caseData.responsible_lawyers.map((lawyer) => (
@@ -317,7 +320,7 @@ export default function CaseDetailsDialog({
               {caseData.note && (
                 <div className="border-t border-gray-100 pt-4">
                   <h5 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                    Client Notes
+                    {t("client_notes")}
                   </h5>
                   <div
                     className={`p-3.5 rounded-2xl flex gap-2 border text-black ${
@@ -350,8 +353,7 @@ export default function CaseDetailsDialog({
         {!isLoading && caseData && (
           <div className="p-4 bg-gray-50/50 border-t border-gray-100 shrink-0 text-center text-[11px] text-gray-400 rounded-b-2xl font-medium tracking-wide">
             <p>
-              Note: This card displays case details. To edit files, hearings, or
-              deadlines, please visit the Cases management view.
+              {t("dialog_footer_note")}
             </p>
           </div>
         )}
