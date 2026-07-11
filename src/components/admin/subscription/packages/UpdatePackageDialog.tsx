@@ -116,7 +116,7 @@ function UpdatePackageForm({ subscriptionDetails, onOpenChange }: UpdatePackageF
     defaultValues,
   });
 
-  const [features, setFeatures] = useState<string[]>(() => {
+  const [features] = useState<string[]>(() => {
     const list: string[] = [];
     if (subscriptionDetails.features?.unlimited_cases) {
       list.push("Unlimited cases");
