@@ -6,8 +6,10 @@ import AdminButton from "@/components/shared/AdminButton";
 import CustomSubscriptionDialog from "@/components/admin/subscription/packages/CustomSubscriptionDialog";
 import AddSubscriptionDialog from "@/components/admin/subscription/packages/AddSubscriptionDialog";
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function PackagesPage() {
+  const { t } = useTranslation("adminSubscriptionPackages");
   const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
@@ -16,17 +18,17 @@ export default function PackagesPage() {
       {/* Header */}
       <div className="bg-white px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100">
         <div className="flex items-center justify-between gap-4">
-          <h1 className="text-xl font-bold text-[#1A2328]">Subscriptions</h1>
+          <h1 className="text-xl font-bold text-[#1A2328]">{t("subscriptions")}</h1>
           <div className="flex items-center gap-3">
             <AdminButton
-              label="Add Subscription Package"
+              label={t("add_subscription_package")}
               onClick={() => setIsAddDialogOpen(true)}
               variant="secondary"
               icon={<Plus className="w-4 h-4 text-[#135576]" />}
               className="h-10 py-2 px-4 sm:px-5 text-[#135576] border-[#135576] hover:text-[#135576] text-[13px] sm:text-[14px] font-roboto font-semibold shrink-0 bg-transparent"
             />
             <AdminButton
-              label="Provide Custom Subscription"
+              label={t("provide_custom_subscription")}
               onClick={() => setIsCustomDialogOpen(true)}
               className="h-10 py-2 px-4 sm:px-5 text-[13px] sm:text-[14px] font-roboto font-semibold shrink-0"
             />

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import AdminButton from "@/components/shared/AdminButton";
+import { useTranslation } from "react-i18next";
 
 interface AddUserDialogProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ export default function AddUserDialog({
   onOpenChange,
   onAddUser,
 }: AddUserDialogProps) {
+  const { t } = useTranslation("adminMyUsers");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoPreview, setPhotoPreview] = useState<string>("/dummy-user.jpg");
   const [name, setName] = useState("");
@@ -83,7 +85,7 @@ export default function AddUserDialog({
 
         {/* Dialog Title */}
         <DialogTitle className="text-[24px] font-bold text-center text-[#101828] font-roboto mt-2 mb-6">
-          Add User
+          {t("add_user")}
         </DialogTitle>
 
         <form onSubmit={handleSubmit} className="space-y-6 w-full">
@@ -91,13 +93,13 @@ export default function AddUserDialog({
           <div className="flex flex-col items-start gap-4 self-stretch p-6 rounded-[16px] border border-[#E8EEF2] bg-white w-full">
             
             <h3 className="text-[#101828] font-roboto text-[20px] font-semibold leading-[28px] self-stretch">
-              Account Information
+              {t("account_information")}
             </h3>
 
             {/* Profile Photo Upload Row */}
             <div className="space-y-2 w-full flex flex-col items-start">
               <span className="block text-[#364153] font-roboto text-[14px] font-medium leading-[20px]">
-                Profile Photo
+                {t("profile_photo")}
               </span>
               <div className="flex items-center gap-4">
                 {/* Avatar wrapper */}
@@ -126,7 +128,7 @@ export default function AddUserDialog({
                   style={{ padding: "7px 17.938px 11px 18px" }}
                   className="flex justify-center items-center rounded-[10px] border border-[#D1D5DC] bg-white text-[#364153] font-roboto text-[14px] font-medium leading-[20px] hover:bg-slate-50 transition-all cursor-pointer"
                 >
-                  Change Photo
+                  {t("change_photo")}
                 </button>
 
                 {/* Hidden input for image picker */}
@@ -142,7 +144,7 @@ export default function AddUserDialog({
 
             <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
               <label className="block text-[#364153] font-roboto text-[14px] font-medium leading-[20px]">
-                Full Name<span className="text-[#EF4444] font-roboto text-[14px] font-medium leading-[20px] ml-0.5">*</span>
+                {t("full_name")}<span className="text-[#EF4444] font-roboto text-[14px] font-medium leading-[20px] ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -157,7 +159,7 @@ export default function AddUserDialog({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
               <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
                 <label className="block text-[#364153] font-roboto text-[14px] font-medium leading-[20px]">
-                  Email Address<span className="text-[#EF4444] font-roboto text-[14px] font-medium leading-[20px] ml-0.5">*</span>
+                  {t("email_address")}<span className="text-[#EF4444] font-roboto text-[14px] font-medium leading-[20px] ml-0.5">*</span>
                 </label>
                 <input
                   type="email"
@@ -170,7 +172,7 @@ export default function AddUserDialog({
               </div>
               <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
                 <label className="block text-[#364153] font-roboto text-[14px] font-medium leading-[20px]">
-                  Phone Number
+                  {t("phone_number")}
                 </label>
                 <input
                   type="tel"
@@ -185,7 +187,7 @@ export default function AddUserDialog({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
               <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
                 <label className="block text-[#364153] font-roboto text-[14px] font-medium leading-[20px]">
-                  Role<span className="text-[#EF4444] font-roboto text-[14px] font-medium leading-[20px] ml-0.5">*</span>
+                  {t("role")}<span className="text-[#EF4444] font-roboto text-[14px] font-medium leading-[20px] ml-0.5">*</span>
                 </label>
                 <Select value={role} onValueChange={setRole}>
                   <SelectTrigger className="w-full h-[48px] rounded-[10px] border border-[#D1D5DC] bg-white px-4 py-3 text-[#101828] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#0F5A7F] focus:border-transparent transition-all">
@@ -193,21 +195,21 @@ export default function AddUserDialog({
                     <ChevronDown className="ml-auto w-5 h-5 shrink-0 text-[#9CA6BB]" />
                   </SelectTrigger>
                   <SelectContent position="popper" sideOffset={4} className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#101828] font-roboto min-w-[var(--radix-select-trigger-width)]">
-                    <SelectItem value="Lawyer" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">Lawyer</SelectItem>
-                    <SelectItem value="Attorney" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">Attorney</SelectItem>
-                    <SelectItem value="Paralegal" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">Paralegal</SelectItem>
-                    <SelectItem value="Judge" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">Judge</SelectItem>
-                    <SelectItem value="Mediator" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">Mediator</SelectItem>
-                    <SelectItem value="Court Staff" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">Court Staff</SelectItem>
-                    <SelectItem value="Legal Researcher" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">Legal Researcher</SelectItem>
-                    <SelectItem value="Corporate Counsel" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">Corporate Counsel</SelectItem>
+                    <SelectItem value="Lawyer" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">{t("lawyer") || "Lawyer"}</SelectItem>
+                    <SelectItem value="Attorney" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">{t("attorney") || "Attorney"}</SelectItem>
+                    <SelectItem value="Paralegal" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">{t("paralegal") || "Paralegal"}</SelectItem>
+                    <SelectItem value="Judge" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">{t("judge") || "Judge"}</SelectItem>
+                    <SelectItem value="Mediator" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">{t("mediator") || "Mediator"}</SelectItem>
+                    <SelectItem value="Court Staff" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">{t("court_staff") || "Court Staff"}</SelectItem>
+                    <SelectItem value="Legal Researcher" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">{t("legal_researcher") || "Legal Researcher"}</SelectItem>
+                    <SelectItem value="Corporate Counsel" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]">{t("corporate_counsel") || "Corporate Counsel"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
                 <label className="block text-[#364153] font-roboto text-[14px] font-medium leading-[20px]">
-                  Required Password<span className="text-[#EF4444] font-roboto text-[14px] font-medium leading-[20px] ml-0.5">*</span>
+                  {t("required_password")}<span className="text-[#EF4444] font-roboto text-[14px] font-medium leading-[20px] ml-0.5">*</span>
                 </label>
                 <input
                   type="text"
@@ -226,7 +228,7 @@ export default function AddUserDialog({
           <div className="flex justify-end pt-2">
             <AdminButton
               type="submit"
-              label="Add User"
+              label={t("add_user")}
               className="px-6 md:px-8 py-3"
             />
           </div>

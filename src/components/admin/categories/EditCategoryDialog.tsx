@@ -22,6 +22,8 @@ type CategoryFormData = {
   name: string;
 };
 
+import { useTranslation } from "react-i18next";
+
 export default function EditCategoryDialog({
   isOpen,
   onOpenChange,
@@ -29,6 +31,7 @@ export default function EditCategoryDialog({
   onSubmit,
   isSubmitting = false,
 }: EditCategoryDialogProps) {
+  const { t } = useTranslation("adminCategories");
   const {
     register,
     handleSubmit,
@@ -61,21 +64,21 @@ export default function EditCategoryDialog({
         </DialogClose>
 
         <DialogTitle className="text-[#101828] font-roboto text-[24px] font-bold text-center mb-6">
-          Edit Category
+          {t("edit_category_title")}
         </DialogTitle>
 
         <form onSubmit={handleSubmit(handleUpdateCategory)} className="space-y-4">
           <div className="space-y-1.5">
             <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">
-              Category Name
+              {t("category_name")}
             </label>
             <input
               type="text"
-              placeholder="Category name..."
+              placeholder={t("category_name_placeholder") || "Category name..."}
               {...register("name", {
-                required: "Category name is required.",
+                required: t("category_name_required") || "Category name is required.",
                 validate: (value) =>
-                  value.trim() ? true : "Category name is required.",
+                  value.trim() ? true : t("category_name_required") || "Category name is required.",
               })}
               disabled={isSubmitting}
               aria-invalid={Boolean(errors.name)}
@@ -91,14 +94,14 @@ export default function EditCategoryDialog({
           <div className="flex items-start gap-2 pt-1">
             <Info className="w-4 h-4 text-[#135576] flex-shrink-0 mt-0.5" />
             <p className="text-[#135576] font-roboto text-[13px] font-normal leading-[18px] italic">
-              Categories and subcategories can be added independently.
+              {t("independent_addition_info")}
             </p>
           </div>
 
           <div className="flex justify-end pt-4">
             <AdminButton
               type="submit"
-              label={isSubmitting ? "Saving..." : "Update Category"}
+              label={isSubmitting ? (t("saving") || "Saving...") : (t("update_category") || "Update Category")}
               className="px-7 py-3"
               disabled={isSubmitting}
             />

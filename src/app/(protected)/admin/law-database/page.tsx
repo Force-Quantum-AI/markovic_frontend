@@ -22,8 +22,10 @@ import { LawDetails } from "@/store/features/admin/laws-database/laws.type";
 import { parseCSVToLawDetails, generateLawPDF } from "./utils";
 import { useGetAllCategoriesQuery } from "@/store/features/admin/category-subcategory/category.api";
 import ViewLawDetailsDialog from "@/components/admin/law-database/ViewLawDetailsDialog";
+import { useTranslation } from "react-i18next";
 
 export default function LawDatabasePage() {
+  const { t } = useTranslation("adminLawDatabase");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -88,15 +90,15 @@ export default function LawDatabasePage() {
   }, [laws, search, categoryFilter]);
 
   const handleExportSingleLaw = async (law: Law) => {
-    const toastId = toast.loading(`Exporting "${law.title}" as PDF...`);
+    const toastId = toast.loading(t("exporting_single_law", { title: law.title }) || `Exporting "${law.title}" as PDF...`);
     try {
       const result = await triggerExport({ id: law.id }).unwrap();
       const parsed = parseCSVToLawDetails(result);
       generateLawPDF(parsed);
-      toast.success(`"${law.title}" exported as PDF successfully!`, { id: toastId });
+      toast.success(t("export_single_success", { title: law.title }) || `"${law.title}" exported as PDF successfully!`, { id: toastId });
     } catch (error) {
       console.error("Export failed:", error);
-      toast.error("Failed to export law as PDF. Please try again.", { id: toastId });
+      toast.error(t("export_single_failed") || "Failed to export law as PDF. Please try again.", { id: toastId });
     }
   };
 
@@ -114,10 +116,10 @@ export default function LawDatabasePage() {
 
   const handleExport = async () => {
     if (filteredLaws.length === 0) {
-      toast.error("No laws available to export.");
+      toast.error(t("no_laws_export") || "No laws available to export.");
       return;
     }
-    const toastId = toast.loading("Exporting laws database as PDF...");
+    const toastId = toast.loading(t("exporting_db") || "Exporting laws database as PDF...");
     try {
       const doc = new jsPDF({
         orientation: "portrait",
@@ -251,10 +253,10 @@ export default function LawDatabasePage() {
         }
       }
       doc.save("laws_database_export.pdf");
-      toast.success("Laws database exported successfully as PDF!", { id: toastId });
+      toast.success(t("export_db_success") || "Laws database exported successfully as PDF!", { id: toastId });
     } catch (error) {
       console.error("Export failed:", error);
-      toast.error("Failed to export laws database as PDF. Please try again.", { id: toastId });
+      toast.error(t("export_db_failed") || "Failed to export laws database as PDF. Please try again.", { id: toastId });
     }
   };
 
@@ -285,7 +287,7 @@ export default function LawDatabasePage() {
   const handleAddNewLaw = async (newLaw: LawDetails) => {
     try {
       await createLaw(newLaw).unwrap();
-      toast.success(`"${newLaw.title}" added to database!`);
+      toast.success(t("add_success", { title: newLaw.title }) || `"${newLaw.title}" added to database!`);
     } catch (error: unknown) {
       const err = error as { data?: Record<string, string[]> };
       if (err?.data) {
@@ -294,7 +296,7 @@ export default function LawDatabasePage() {
           .join(" | ");
         toast.error(messages);
       } else {
-        toast.error("Failed to add law. Please try again.");
+        toast.error(t("add_failed") || "Failed to add law. Please try again.");
       }
     }
   };
@@ -317,7 +319,7 @@ export default function LawDatabasePage() {
   const handleUpdateLaw = async (id: string | number, updatedLaw: LawDetails) => {
     try {
       await updateLaw({ id, data: updatedLaw }).unwrap();
-      toast.success(`"${updatedLaw.title}" updated successfully!`);
+      toast.success(t("update_success", { title: updatedLaw.title }) || `"${updatedLaw.title}" updated successfully!`);
     } catch (error: unknown) {
       const err = error as { data?: Record<string, string[]> };
       if (err?.data) {
@@ -326,7 +328,7 @@ export default function LawDatabasePage() {
           .join(" | ");
         toast.error(messages);
       } else {
-        toast.error("Failed to update law. Please try again.");
+        toast.error(t("update_failed") || "Failed to update law. Please try again.");
       }
     }
   };
@@ -335,7 +337,7 @@ export default function LawDatabasePage() {
     if (!selectedLaw) return;
     try {
       await deleteLaw(selectedLaw.id).unwrap();
-      toast.success(`"${selectedLaw.title}" deleted successfully!`);
+      toast.success(t("delete_success", { title: selectedLaw.title }) || `"${selectedLaw.title}" deleted successfully!`);
       setIsDeleteDialogOpen(false);
     } catch (error: unknown) {
       const err = error as { data?: Record<string, string[]> };
@@ -345,7 +347,7 @@ export default function LawDatabasePage() {
           .join(" | ");
         toast.error(messages);
       } else {
-        toast.error("Failed to delete law. Please try again.");
+        toast.error(t("delete_failed") || "Failed to delete law. Please try again.");
       }
     }
   };
@@ -363,7 +365,7 @@ export default function LawDatabasePage() {
         }}
         className="text-left"
       >
-        Laws Database
+        {t("laws_database")}
       </h1>
 
       <LawFilters
@@ -386,7 +388,7 @@ export default function LawDatabasePage() {
         }}
         className="text-left mt-6"
       >
-        All Laws
+        {t("all_laws")}
       </h2>
 
       <div className="w-full bg-white p-6 rounded-[24px] border border-[#E5E7EB] shadow-sm space-y-6">
@@ -403,13 +405,13 @@ export default function LawDatabasePage() {
             <LawDatabaseSkeleton />
           ) : isError ? (
             <div className="flex flex-col items-center justify-center py-16 text-red-500 font-roboto">
-              <p className="text-lg font-medium">Error loading laws. Please try again later.</p>
+              <p className="text-lg font-medium">{t("error_loading_laws")}</p>
             </div>
           ) : filteredLaws.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-slate-400 font-roboto">
               <Scale className="w-12 h-12 mb-3 opacity-60 text-slate-400" />
-              <p className="text-lg font-medium">No laws found matching your search</p>
-              <p className="text-sm">Try typing different keywords or resetting filters.</p>
+              <p className="text-lg font-medium">{t("no_laws_found")}</p>
+              <p className="text-sm">{t("reset_filters_msg")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
@@ -430,7 +432,7 @@ export default function LawDatabasePage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-100 w-full font-roboto">
           
           <span className="text-sm text-gray-500">
-            Showing {filteredLaws.length} of {allLaws?.count || filteredLaws.length} results
+            {t("showing_results", { count: filteredLaws.length, total: allLaws?.count || filteredLaws.length })}
           </span>
 
           <div className="flex items-center gap-1">
@@ -438,14 +440,14 @@ export default function LawDatabasePage() {
               className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-all font-semibold rounded-md hover:bg-slate-50 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
               disabled={!allLaws?.previous}
             >
-              Prev.
+              {t("previous")}
             </button>
 
             <button 
               className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-all font-semibold rounded-md hover:bg-slate-50 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
               disabled={!allLaws?.next}
             >
-              Next
+              {t("next")}
             </button>
           </div>
         </div>

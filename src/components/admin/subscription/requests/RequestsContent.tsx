@@ -10,8 +10,10 @@ import {
   useUpdateSubscriptionRequestMutation,
 } from "@/store/features/admin/subscriptions/subscriptions.api";
 import { SubscriptionRequestsSkeleton } from "@/components/admin/admin-skeletons";
+import { useTranslation } from "react-i18next";
 
 export default function RequestsContent() {
+  const { t } = useTranslation("adminSubscriptionRequests");
   const {
     data: requests = [],
     isLoading,
@@ -25,7 +27,7 @@ export default function RequestsContent() {
 
   const handleApprove = async (id: number | string) => {
     setLoadingAction({ id, type: "approved" });
-    const toastId = toast.loading("Approving subscription request...");
+    const toastId = toast.loading(t("approving") || "Approving subscription request...");
     try {
       const res = await updateRequest({ id,data: {action: "approved",},}).unwrap();
       if(res?.status === 'success'){
@@ -48,7 +50,7 @@ export default function RequestsContent() {
 
   const handleDecline = async (id: number | string) => {
     setLoadingAction({ id, type: "decline" });
-    const toastId = toast.loading("Declining subscription request...");
+    const toastId = toast.loading(t("declining") || "Declining subscription request...");
     try {
       const res = await updateRequest({
         id,
@@ -87,10 +89,10 @@ export default function RequestsContent() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-red-500 font-roboto space-y-2">
         <p className="text-lg font-semibold">
-          Failed to load subscription requests.
+          {t("failed_load_requests")}
         </p>
         <p className="text-sm text-gray-500">
-          Please check your network and try again.
+          {t("network_error_msg")}
         </p>
       </div>
     );
@@ -99,7 +101,7 @@ export default function RequestsContent() {
   if (requests.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-500 font-roboto">
-        <p className="text-lg font-medium">No subscription requests found.</p>
+        <p className="text-lg font-medium">{t("no_requests_found")}</p>
       </div>
     );
   }
@@ -115,7 +117,7 @@ export default function RequestsContent() {
               : "bg-[#DDE0E7] text-[#667085] hover:bg-[#C8CBD3] hover:text-[#161A20]"
           }`}
         >
-          All
+          {t("all")}
         </button>
         <button
           onClick={() => setFilter("approved")}
@@ -125,7 +127,7 @@ export default function RequestsContent() {
               : "bg-[#DDE0E7] text-[#667085] hover:bg-[#C8CBD3] hover:text-[#161A20]"
           }`}
         >
-          Approved request
+          {t("approved_request")}
         </button>
         <button
           onClick={() => setFilter("pending")}
@@ -135,7 +137,7 @@ export default function RequestsContent() {
               : "bg-[#DDE0E7] text-[#667085] hover:bg-[#C8CBD3] hover:text-[#161A20]"
           }`}
         >
-          Pending request
+          {t("pending_request")}
         </button>
         <button
           onClick={() => setFilter("declined")}
@@ -145,14 +147,14 @@ export default function RequestsContent() {
               : "bg-[#DDE0E7] text-[#667085] hover:bg-[#C8CBD3] hover:text-[#161A20]"
           }`}
         >
-          Decline request
+          {t("decline_request")}
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         {filteredRequests.length === 0 ? (
           <div className="col-span-full bg-white rounded-2xl border border-dashed border-[#BEC4D2] p-12 text-center text-gray-500 font-roboto">
-            No {filter === "all" ? "" : filter} requests at the moment.
+            {t("no_requests_at_moment", { filter: filter === "all" ? "" : t(`${filter}_request`) })}
           </div>
         ) : (
           filteredRequests.map((req) => (
@@ -182,7 +184,7 @@ export default function RequestsContent() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-[#808CA5] font-roboto text-[14px] font-medium leading-[140%]">
                     <User className="w-5 h-5 shrink-0 text-[#808CA5] aspect-square" />
-                    <span>Full Name:</span>
+                    <span>{t("full_name")}</span>
                   </div>
                   <p className="text-[#0E1116] font-roboto text-[16px] font-normal leading-[140%]">
                     {req.full_name}
@@ -193,7 +195,7 @@ export default function RequestsContent() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[#808CA5] font-roboto text-[14px] font-medium leading-[140%]">
                       <Mail className="w-5 h-5 shrink-0 text-[#808CA5] aspect-square" />
-                      <span>Email address:</span>
+                      <span>{t("email_address")}</span>
                     </div>
                     <p
                       className="text-[#0E1116] font-roboto text-[16px] font-normal leading-[140%] truncate"
@@ -206,7 +208,7 @@ export default function RequestsContent() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[#808CA5] font-roboto text-[14px] font-medium leading-[140%]">
                       <Phone className="w-5 h-5 shrink-0 text-[#808CA5] aspect-square" />
-                      <span>Phone Number:</span>
+                      <span>{t("phone_number")}</span>
                     </div>
                     <p
                       className="text-[#0E1116] font-roboto text-[16px] font-normal leading-[140%] truncate"
@@ -219,7 +221,7 @@ export default function RequestsContent() {
 
                 <div className="space-y-1.5">
                   <div className="text-[#808CA5] font-roboto text-[14px] font-medium leading-[140%]">
-                    <span>Message:</span>
+                    <span>{t("message")}</span>
                   </div>
                   <div className="rounded-[20px] border border-[#DDE0E7] px-[16px] py-[14px] text-[#161A20] font-roboto text-[16px] font-normal leading-[140%] bg-white min-h-[120px] whitespace-pre-line">
                     {req.message}
@@ -233,7 +235,7 @@ export default function RequestsContent() {
                     <CheckCircle2 className="w-4 h-4 shrink-0 text-[#0C9C37]" />
                     <span>
                       {req.admin_note ||
-                        "Already approved this user subscription request."}
+                        t("already_approved_note")}
                     </span>
                   </div>
                 ) : req.status === "declined" ? (
@@ -241,20 +243,20 @@ export default function RequestsContent() {
                     <X className="w-4 h-4 shrink-0 text-[#EF4444]" />
                     <span>
                       {req.admin_note ||
-                        "Declined this user subscription request."}
+                        t("already_declined_note")}
                     </span>
                   </div>
                 ) : (
                   <div className="w-full flex justify-end gap-3">
                     <AdminButton
-                      label={loadingAction?.id === req.id && loadingAction?.type === "decline" ? "Declining..." : "Decline"}
+                      label={loadingAction?.id === req.id && loadingAction?.type === "decline" ? t("declining") : t("decline")}
                       variant="secondary"
                       onClick={() => handleDecline(req.id)}
                       disabled={loadingAction !== null}
                       className="h-11 px-6 rounded-full border-[#BEC4D2] text-[#475467] hover:text-[#101828]"
                     />
                     <AdminButton
-                      label={loadingAction?.id === req.id && loadingAction?.type === "approved" ? "Approving..." : "Approved"}
+                      label={loadingAction?.id === req.id && loadingAction?.type === "approved" ? t("approving") : t("approved")}
                       onClick={() => handleApprove(req.id)}
                       disabled={loadingAction !== null}
                       className="h-11 px-6 rounded-full bg-[#135576] text-white border-[#135576]"

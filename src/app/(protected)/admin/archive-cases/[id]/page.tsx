@@ -10,8 +10,10 @@ import AdminTeamMembersList from "@/components/admin/archive-cases/AdminTeamMemb
 import { ArchiveCaseDetailsSkeleton } from "@/components/admin/admin-skeletons";
 import { useGetArchiveCasesDetailsQuery } from "@/store/features/admin/archive-cases/archive.api";
 import { useParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export default function ArchieveCaseDetails() {
+  const { t } = useTranslation("adminArchiveCases");
   const params = useParams();
   const id = params?.id as string;
   const { data, isLoading, error } = useGetArchiveCasesDetailsQuery({ id }, { skip: !id });
@@ -23,7 +25,7 @@ export default function ArchieveCaseDetails() {
   if (error || !data) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-red-500">Failed to load case details. Please try again.</p>
+        <p className="text-red-500">{t("failed_load_details")}</p>
       </div>
     );
   }

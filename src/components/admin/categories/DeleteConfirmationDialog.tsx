@@ -17,6 +17,8 @@ interface DeleteConfirmationDialogProps {
   isSubmitting?: boolean;
 }
 
+import { useTranslation } from "react-i18next";
+
 export default function DeleteConfirmationDialog({
   isOpen,
   onOpenChange,
@@ -25,6 +27,7 @@ export default function DeleteConfirmationDialog({
   onConfirm,
   isSubmitting = false,
 }: DeleteConfirmationDialogProps) {
+  const { t } = useTranslation("adminCategories");
   const handleConfirm = async () => {
     await onConfirm();
     onOpenChange(false);
@@ -62,7 +65,7 @@ export default function DeleteConfirmationDialog({
               disabled={isSubmitting}
               className="flex-1 px-4 py-2.5 rounded-[32px] border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-roboto text-[14px] font-semibold transition-colors focus:outline-none cursor-pointer disabled:opacity-50"
             >
-              Cancel
+              {t("cancel") || "Cancel"}
             </button>
             <button
               type="button"
@@ -70,7 +73,7 @@ export default function DeleteConfirmationDialog({
               disabled={isSubmitting}
               className="flex-1 px-4 py-2.5 rounded-[32px] bg-red-600 hover:bg-red-700 text-white font-roboto text-[14px] font-semibold transition-colors focus:outline-none cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
             >
-              {isSubmitting ? "Deleting..." : "Delete"}
+              {isSubmitting ? (t("deleting") || "Deleting...") : (t("delete") || "Delete")}
             </button>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 interface AdminCaseOverviewProps {
   client_name?: string;
@@ -25,6 +26,7 @@ export default function AdminCaseOverview({
   closing_description = "No description available",
 }: AdminCaseOverviewProps) {
   const router = useRouter();
+  const { t } = useTranslation("adminArchiveCases");
   return (
     <div className="w-full relative pt-12">
       <button
@@ -32,24 +34,24 @@ export default function AdminCaseOverview({
         className="group absolute top-1 left-0 bg-[#145576] hover:bg-[#0f4460] text-white px-3 py-1.5 rounded-2xl cursor-pointer transition-all text-xs md:text-sm flex items-center gap-1 font-medium"
       >
         <ArrowLeftIcon className="w-3.5 h-3.5 transition-transform duration-300 ease-in-out group-hover:-translate-x-1" />
-        Back
+        {t("back")}
       </button>
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-xl lg:text-2xl font-semibold text-[#1F2937]">
-          Case Overview
+          {t("case_overview")}
         </h2>
 
         <p className="mt-1 text-[14px] text-[#A1A8B7]">
-          Core case information
+          {t("core_case_info")}
         </p>
       </div>
 
       {/* Information Grid */}
       <div className="space-y-8">
-        <InfoRow label="Client:" value={client_name} />
+        <InfoRow label={t("client") || "Client:"} value={client_name} />
         <InfoRow
-          label="Opposing Party:"
+          label={t("opposing_party") || "Opposing Party:"}
           value={
             opposing_parties && opposing_parties.length > 0
               ? typeof opposing_parties[0] === "object" && opposing_parties[0] !== null
@@ -61,14 +63,14 @@ export default function AdminCaseOverview({
               : "N/A"
           }
         />
-        <InfoRow label="Court:" value={court_name} />
-        <InfoRow label="Case Number:" value={case_number} />
-        <InfoRow label="Category:" value={category_name} />
-        <InfoRow label="Subcategory:" value={sub_category_name} />
+        <InfoRow label={t("court") || "Court:"} value={court_name} />
+        <InfoRow label={t("case_number") || "Case Number:"} value={case_number} />
+        <InfoRow label={t("category") || "Category:"} value={category_name} />
+        <InfoRow label={t("sub_category") || "Subcategory:"} value={sub_category_name} />
 
         <div className="flex flex-col md:flex-row justify-start md:justify-between md:items-center gap-2">
           <p className="text-[14px] font-semibold text-[#667085]">
-            Status:
+            {t("status") || "Status:"}:
           </p>
 
           <div className="flex justify-start md:justify-end">
@@ -82,42 +84,42 @@ export default function AdminCaseOverview({
       {/* Description Section */}
       <div className="mt-12 space-y-6">
         <h3 className="text-[14px] font-semibold text-[#667085]">
-          Description
+          {t("description")}
         </h3>
-        <p className="text-[14px] text-[#4B5563]">{closing_description}</p>
+        <p className="text-[14px] text-[#4B5563]">{closing_description || t("no_description")}</p>
       </div>
       <div className="mt-12">
         <div className="space-y-8 text-[14px] leading-[32px] text-[#4B5563]">
           {/* Legal Representation */}
           <div>
             <h4 className="font-semibold text-[#4B5563]">
-              Legal Representation
+              {t("legal_representation")}
             </h4>
 
             <div className="mt-2">
-              <h5 className="font-semibold">Plaintiff</h5>
+              <h5 className="font-semibold">{t("plaintiff")}</h5>
 
               <ul className="mt-1 list-disc pl-6">
                 <li>
-                  Lead Counsel: Jonathan R. Miller (Miller & Associates LLP)
+                  {t("lead_counsel")}
                 </li>
-                <li>Co-Counsel: Sarah K. Donovan</li>
+                <li>{t("co_counsel")}</li>
                 <li>
-                  Expert Witness: Dr. Alan Pierce (Financial Forensics Expert)
+                  {t("expert_witness")}
                 </li>
               </ul>
             </div>
 
             <div className="mt-6">
-              <h5 className="font-semibold">Defendant</h5>
+              <h5 className="font-semibold">{t("defendant")}</h5>
 
               <ul className="mt-1 list-disc pl-6">
                 <li>
-                  Lead Counsel: Rebecca L. Carter (Carter Legal Group)
+                  {t("lead_counsel_def")}
                 </li>
-                <li>Co-Counsel: David Nguyen</li>
+                <li>{t("co_counsel_def")}</li>
                 <li>
-                  Expert Witness: Prof. Michael Stein (Economics & Risk Modeling)
+                  {t("expert_witness_def")}
                 </li>
               </ul>
             </div>
@@ -126,50 +128,50 @@ export default function AdminCaseOverview({
           {/* Evidence */}
           <div>
             <h4 className="font-semibold text-[#4B5563]">
-              Key Evidence Submitted
+              {t("key_evidence")}
             </h4>
 
             <div className="mt-3">
               <h5 className="font-semibold">
-                Financial & Technical Evidence
+                {t("financial_technical_evidence")}
               </h5>
 
               <ul className="mt-1 list-disc pl-6">
-                <li>Portfolio performance reports (2021–2023)</li>
-                <li>Trading algorithm logs (MetaTrade system export)</li>
-                <li>Risk compliance dashboard screenshots</li>
-                <li>Bank transaction statements</li>
+                <li>{t("evidence_item_1")}</li>
+                <li>{t("evidence_item_2")}</li>
+                <li>{t("evidence_item_3")}</li>
+                <li>{t("evidence_item_4")}</li>
               </ul>
             </div>
 
             <div className="mt-6">
-              <h5 className="font-semibold">Communication Evidence</h5>
+              <h5 className="font-semibold">{t("communication_evidence")}</h5>
 
               <ul className="mt-1 list-disc pl-6">
                 <li>
-                  Internal email chain discussing “aggressive leverage strategy”
+                  {t("comm_item_1")}
                 </li>
-                <li>Slack messages between fund managers</li>
-                <li>Client quarterly update reports (allegedly inflated)</li>
+                <li>{t("comm_item_2")}</li>
+                <li>{t("comm_item_3")}</li>
               </ul>
             </div>
 
             <div className="mt-6">
-              <h5 className="font-semibold">Legal Documents</h5>
+              <h5 className="font-semibold">{t("legal_documents")}</h5>
 
               <ul className="mt-1 list-disc pl-6">
-                <li>Investment management agreement (signed Jan 2021)</li>
-                <li>Risk tolerance addendum</li>
-                <li>Compliance audit report (2023)</li>
+                <li>{t("doc_item_1")}</li>
+                <li>{t("doc_item_2")}</li>
+                <li>{t("doc_item_3")}</li>
               </ul>
             </div>
 
             <div className="mt-6">
-              <h5 className="font-semibold">Expert Reports</h5>
+              <h5 className="font-semibold">{t("expert_reports")}</h5>
 
               <ul className="mt-1 list-disc pl-6">
-                <li>Independent forensic audit report (Plaintiff side)</li>
-                <li>Market volatility impact assessment (Defense side)</li>
+                <li>{t("exp_item_1")}</li>
+                <li>{t("exp_item_2")}</li>
               </ul>
             </div>
           </div>

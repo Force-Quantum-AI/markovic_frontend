@@ -20,6 +20,14 @@ const adminUsersApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Users"],
     }),
+    suspendUser: build.mutation<any, { id: string | number, is_active: boolean }>({
+          query: ({ id, is_active }) => ({
+            url: `/admin-dashboard/users/${id}/suspend/`,
+            method: "PATCH",
+            body: { is_active },
+          }),
+          invalidatesTags: ["Users"],
+        }),
     deleteUser: build.mutation<any, { id: string | number }>({
       query: ({ id }) => ({
         url: `/admin-dashboard/users/${id}/`,
@@ -30,4 +38,4 @@ const adminUsersApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetAllUsersQuery, useDeleteUserMutation } = adminUsersApi;
+export const { useGetAllUsersQuery, useDeleteUserMutation, useSuspendUserMutation } = adminUsersApi;

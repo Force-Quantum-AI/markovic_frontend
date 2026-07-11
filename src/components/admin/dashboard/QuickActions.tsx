@@ -4,7 +4,10 @@ import { Database, Users, BarChart3, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { QuickActionsSkeleton } from "@/components/admin/admin-skeletons";
 
+import { useTranslation } from "react-i18next";
+
 export default function QuickActions({ isLoading }: { isLoading?: boolean }) {
+  const { t } = useTranslation("adminDashboard");
   const router = useRouter();
 
   if (isLoading) {
@@ -12,19 +15,19 @@ export default function QuickActions({ isLoading }: { isLoading?: boolean }) {
   }
   const actions = [
     {
-      label: "Update Laws Database",
+      label: t("update_laws_database"),
       icon: <Database className="w-4 h-4" />,
       active: false,
       href: "/admin/law-database",
     },
     {
-      label: "Manage Users",
+      label: t("manage_users"),
       icon: <Users className="w-4 h-4" />,
       active: false,
       href: "/admin/my-users",
     },
     {
-      label: "View Reports",
+      label: t("view_reports"),
       icon: <BarChart3 className="w-4 h-4" />,
       active: false,
       href: "/admin/report",
@@ -33,7 +36,7 @@ export default function QuickActions({ isLoading }: { isLoading?: boolean }) {
 
   return (
     <div className="w-full bg-white rounded-2xl p-6 border border-gray-100 space-y-6">
-      <h3 className="font-bold text-gray-900 text-lg font-inter tracking-tight">Quick Actions</h3>
+      <h3 className="font-bold text-gray-900 text-lg font-inter tracking-tight">{t("quick_actions")}</h3>
 
       <div className="space-y-3">
         {actions.map((action, idx) => (
@@ -43,7 +46,7 @@ export default function QuickActions({ isLoading }: { isLoading?: boolean }) {
               if (action.href) {
                 router.push(action.href);
               } else {
-                alert(`Triggered action: ${action.label}`);
+                alert(`${t("action")}: ${action.label}`);
               }
             }}
             className={`relative overflow-hidden group w-full flex items-center justify-between py-3.5 px-4 rounded-xl transition-all duration-500 ease-in-out font-inter text-sm font-medium cursor-pointer border ${
