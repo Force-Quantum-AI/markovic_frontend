@@ -74,7 +74,7 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       {/* Container: constrained to max-w-6xl and 70vh */}
-      <div className="w-full max-w-6xl h-auto md:h-[70vh] min-h-[600px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row hover:translate-y-1 transition-all duration-300">
+      <div className="w-full max-w-6xl h-auto md:h-[70vh] min-h-[600px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
 
         {/* Left Side: Form Controls */}
         <div className="w-full md:w-7/12 lg:w-7/12 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
