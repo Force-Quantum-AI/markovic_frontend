@@ -3,13 +3,26 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Mail, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { useAdminLoginMutation } from "@/store/features/auth/authApi";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import AdminButton from "@/components/shared/AdminButton";
+import { useTranslation } from "react-i18next";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setClientSideLanguage } from "@/store/features/language/language.client.slice";
+import i18n from "@/i18n";
 
 export default function AdminLoginPage() {
+  const dispatch = useAppDispatch();
+  const language = useAppSelector((state) => state.clientLanguage.language);
+
+  const handleChange = (value: string) => {
+    dispatch(setClientSideLanguage(value));
+    i18n.changeLanguage(value);
+  };
+  const { t } = useTranslation("auth");
+
   // Form States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,8 +32,7 @@ export default function AdminLoginPage() {
   const [adminLogin, { isLoading }] = useAdminLoginMutation();
   const router = useRouter();
 
-
-  // Basic validation state to show the green checkmark from login.png
+  // Basic validation state to show the green checkmark
   const isEmailValid = email.includes("@") && email.includes(".");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,24 +56,30 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      {/* Main Container tailored to max-w-6xl and 70vh */}
-      <div className="w-full max-w-6xl h-auto lg:h-[70vh] min-h-[550px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+      {/* Main Container tailored to max-w-5xl and fixed/stable height */}
+      <div className="w-full max-w-5xl h-auto lg:h-[660px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
 
         {/* Left Side: Form Area */}
-        <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
+        <div className="w-full lg:w-1/2 p-8 lg:py-10 lg:px-12 flex flex-col justify-between bg-white h-full min-h-[520px] lg:min-h-0">
 
           {/* Logo / Brand Header */}
-          <div className="flex items-center gap-2 text-[#135576]">
-            <div className="p-1.5 border-2 border-[#135576] rounded-full flex items-center justify-center">
-              <Scale className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <span className="font-semibold text-xl tracking-tight">Case Solver</span>
+          <div className="relative">
+            <Image
+              src="/brandLogo.png"
+              alt="logo"
+              width={148}
+              height={42}
+            />
           </div>
 
           {/* Form Content */}
-          <div className="my-auto py-6 max-w-md w-full mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">Admin Login</h1>
-            <p className="text-sm text-gray-500 mb-8">Sign in to manage your Law Office System</p>
+          <div className="my-auto py-4 max-w-md w-full mx-auto">
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+              {t("admin_login")}
+            </h1>
+            <p className="text-sm text-gray-500 mb-8">
+              {t("admin_login_sub")}
+            </p>
 
             {errorMsg && (
               <div className="mb-5 text-sm text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -73,7 +91,7 @@ export default function AdminLoginPage() {
               {/* Email Input */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-gray-400 block">
-                  Email address:
+                  {t("email_label")}
                 </label>
                 <div className="relative flex items-center">
                   <Mail className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -81,7 +99,7 @@ export default function AdminLoginPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder={t("email_placeholder")}
                     className="w-full pl-12 pr-12 py-3.5 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all text-gray-700"
                     required
                   />
@@ -94,7 +112,7 @@ export default function AdminLoginPage() {
               {/* Password Input */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-gray-400 block">
-                  Password:
+                  {t("password_label")}
                 </label>
                 <div className="relative flex items-center">
                   <Lock className="absolute left-4 w-5 h-5 text-gray-400" />
@@ -102,7 +120,7 @@ export default function AdminLoginPage() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    placeholder={t("password_placeholder")}
                     className="w-full pl-12 pr-12 py-3.5 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all text-gray-700 tracking-wider"
                     required
                   />
@@ -120,7 +138,7 @@ export default function AdminLoginPage() {
                 </div>
               </div>
 
-              {/* Remember Me & Forgot Password */}
+              {/* Remember Me */}
               <div className="flex items-center justify-between text-xs pt-1">
                 <label className="flex items-center gap-2 text-[#135576] cursor-pointer select-none">
                   <input
@@ -129,7 +147,7 @@ export default function AdminLoginPage() {
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 rounded border-gray-300 text-[#135576] focus:ring-[#135576]"
                   />
-                  Remember
+                  {t("remember_me")}
                 </label>
               </div>
 
@@ -138,7 +156,7 @@ export default function AdminLoginPage() {
                 <AdminButton
                   type="submit"
                   disabled={isLoading}
-                  label={isLoading ? "Logging in..." : "Log in"}
+                  label={isLoading ? t("logging_in") : t("log_in")}
                   icon={isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
                   className="w-full sm:w-56"
                   hoverEffect="simple"
@@ -148,34 +166,61 @@ export default function AdminLoginPage() {
 
           </div>
 
+          {/* Footer Agreement */}
+          <div className="w-full mt-auto pt-2">
+            <div className="text-center text-[10px] xl:text-xs text-gray-400 mt-1">
+              Language :{" "}
+              <span
+                onClick={() => handleChange("en")}
+                className={`cursor-pointer transition-all px-2 ${
+                  language === "en"
+                    ? "text-[#135576] font-bold underline underline-offset-4"
+                    : "text-gray-400 hover:text-gray-800 hover:font-semibold"
+                }`}
+              >
+                EN
+              </span>{" "}
+              |{" "}
+              <span
+                onClick={() => handleChange("me")}
+                className={`cursor-pointer transition-all px-2 ${
+                  language === "me"
+                    ? "text-[#135576] font-bold underline underline-offset-4"
+                    : "text-gray-400 hover:text-gray-800 hover:font-semibold"
+                }`}
+              >
+                ME
+              </span>
+            </div>
+          </div>
+
         </div>
 
         {/* Right Side: Visual Hero Card */}
-        <div className="hidden lg:block w-1/2 p-3 h-full">
+        <div className="hidden lg:block w-1/2 p-3 h-full group">
           <div className="relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-b from-gray-900 to-black flex flex-col justify-end p-8 lg:p-12 text-white">
 
-            {/* Background Image Placeholder */}
+            {/* Background Image */}
             <Image
               src="/lawImg1.jpg"
               alt="Gavel background"
               fill
               priority
-              className="object-cover opacity-40 select-none pointer-events-none"
+              className="object-cover opacity-40 select-none pointer-events-none group-hover:scale-105 transition-all duration-500"
             />
 
-            {/* Content overlay matched to login.png */}
+            {/* Content overlay */}
             <div className="relative z-10 space-y-4 max-w-md">
               <h2 className="text-2xl lg:text-3xl 2xl:text-4xl font-bold leading-tight tracking-tight">
-                Fast. Simple. Built for Lawyers.
+                {t("hero_title")}
               </h2>
               <p className="text-sm lg:text-base text-gray-300 font-light italic leading-relaxed">
-                Created by lawyers, for lawyers. Quick case creation, smart calendar,
-                powerful AI court practice search, and clean organization — all in one place.
+                {t("hero_description")}
               </p>
 
               <div className="pt-4 border-t border-white/20">
                 <p className="text-base font-semibold tracking-wide">Markovic Aleksa</p>
-                <p className="text-xs text-gray-400">Founder of Case Solver</p>
+                <p className="text-xs text-gray-400">{t("hero_founder_title")}</p>
               </div>
             </div>
           </div>
