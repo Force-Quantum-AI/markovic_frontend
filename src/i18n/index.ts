@@ -27,6 +27,8 @@ import enAdminCategories from "./locales/en/adminJson/categories.json";
 import meAdminCategories from "./locales/me/adminJson/categories.json";
 import enAdminSystemSettings from "./locales/en/adminJson/systemSettings.json";
 import meAdminSystemSettings from "./locales/me/adminJson/systemSettings.json";
+import enUserCalendar from "./locales/en/userJson/calendar.json";
+import meUserCalendar from "./locales/me/userJson/calendar.json";
 
 i18n
 .use(LanguageDetector)
@@ -50,6 +52,7 @@ i18n
             adminArchiveCases: enAdminArchiveCases,
             adminCategories: enAdminCategories,
             adminSystemSettings: enAdminSystemSettings,
+            userCalendar: enUserCalendar,
         },
         me: {
             common: meCommon,
@@ -64,6 +67,7 @@ i18n
             adminArchiveCases: meAdminArchiveCases,
             adminCategories: meAdminCategories,
             adminSystemSettings: meAdminSystemSettings,
+            userCalendar: meUserCalendar,
         },
     },
 

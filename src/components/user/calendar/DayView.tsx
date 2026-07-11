@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Task } from "./types";
 
 interface DayViewProps {
@@ -21,6 +22,7 @@ export default function DayView({
   onSelectDate,
   onCreateTaskOnHour,
 }: DayViewProps) {
+  const { t } = useTranslation("userCalendar");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -223,7 +225,7 @@ export default function DayView({
       {/* All Day Tasks Bottom Bar */}
       <div className="p-3 bg-gray-50 border-t border-gray-200">
         <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1">
-          All Day Tasks
+          {t("all_day_tasks")}
         </h3>
         <div className="flex flex-wrap gap-2 px-1 min-h-[40px]">
           {allDayTasks.length > 0 ? (
@@ -261,7 +263,7 @@ export default function DayView({
             })
           ) : (
             <span className="text-xs text-gray-400 italic py-1">
-              No all-day tasks scheduled
+              {t("no_all_day_tasks")}
             </span>
           )}
         </div>

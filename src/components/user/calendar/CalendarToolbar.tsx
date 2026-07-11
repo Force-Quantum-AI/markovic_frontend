@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { CalendarView } from "./types";
 
@@ -43,6 +44,7 @@ export default function CalendarToolbar({
   activeView,
   onViewChange,
 }: CalendarToolbarProps) {
+  const { t } = useTranslation("userCalendar");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -192,13 +194,13 @@ export default function CalendarToolbar({
                   onClick={() => handleMiniDayClick(new Date())}
                   className="text-xs text-[#135576] font-semibold hover:underline cursor-pointer"
                 >
-                  Jump to Today
+                  {t("jump_to_today")}
                 </button>
                 <button
                   onClick={() => setShowDatePicker(false)}
                   className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer"
                 >
-                  Close
+                  {t("close")}
                 </button>
               </div>
             </div>
@@ -216,7 +218,7 @@ export default function CalendarToolbar({
             onClick={() => onNavigate("today")}
             className="px-3 py-1 hover:bg-white rounded-md text-xs font-semibold text-gray-700 hover:text-gray-900 transition-all cursor-pointer"
           >
-            Today
+            {t("today")}
           </button>
           <button
             onClick={() => onNavigate("next")}
@@ -231,11 +233,11 @@ export default function CalendarToolbar({
       <div className="flex items-center justify-center gap-4 text-xs font-medium text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200/50">
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-xs bg-[#268808]" />
-          <span>Hearing</span>
+          <span>{t("hearing")}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-xs bg-[#BA8800]" />
-          <span>Deadline</span>
+          <span>{t("deadline")}</span>
         </div>
       </div>
 
@@ -266,7 +268,7 @@ export default function CalendarToolbar({
               }}
               className="px-5 py-2 font-semibold capitalize transition-all cursor-pointer border-none"
             >
-              {v}
+              {t(v)}
             </button>
           );
         })}
