@@ -19,6 +19,8 @@ export default function AdminNotificationDropdown() {
   
   const [open, setOpen] = useState(false);
 
+  const unreadCount = apiNotifications ? apiNotifications.filter((n) => !n.is_read).length : 0;
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
@@ -28,9 +30,9 @@ export default function AdminNotificationDropdown() {
           {isLoading ? (
             <Skeleton className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-gray-300" />
           ) : (
-            apiNotifications && apiNotifications.length > 0 && (
+            unreadCount > 0 && (
               <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#135576] text-[10px] font-medium text-white">
-                {apiNotifications.length}
+                {unreadCount}
               </span>
             )
           )}
@@ -44,9 +46,9 @@ export default function AdminNotificationDropdown() {
         <div className="flex items-center justify-between px-1">
           <h2 className="text-lg md:text-xl font-bold text-slate-900 flex items-center gap-2">
             Notifications
-            {apiNotifications && apiNotifications.length > 0 && (
+            {unreadCount > 0 && (
               <span className="px-2 py-0.5 rounded-full bg-[#135576]/10 text-xs font-semibold text-[#135576]">
-                {apiNotifications.length}
+                {unreadCount}
               </span>
             )}
           </h2>

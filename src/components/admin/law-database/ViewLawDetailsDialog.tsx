@@ -12,6 +12,7 @@ import {
   useGetAllCategoriesQuery,
   useGetAllSubCategoriesQuery,
 } from "@/store/features/admin/category-subcategory/category.api";
+import { useTranslation } from "react-i18next";
 
 interface ViewLawDetailsDialogProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export default function ViewLawDetailsDialog({
   onOpenChange,
   lawId,
 }: ViewLawDetailsDialogProps) {
+  const { t } = useTranslation("adminLawDatabase");
   const {
     data: lawDetails,
     isLoading,
@@ -61,9 +63,9 @@ export default function ViewLawDetailsDialog({
           </div>
           <div>
             <DialogTitle className="text-[20px] md:text-[22px] font-bold text-[#101828] font-roboto">
-              Law Details
+              {t("law_details_title")}
             </DialogTitle>
-            <p className="text-xs text-gray-500">Read-only view of the database entry</p>
+            <p className="text-xs text-gray-500">{t("read_only_view")}</p>
           </div>
         </div>
 
@@ -71,12 +73,12 @@ export default function ViewLawDetailsDialog({
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 text-slate-400 font-roboto flex-1">
             <div className="w-8 h-8 border-4 border-[#135576] border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-sm font-medium">Loading law details...</p>
+            <p className="text-sm font-medium">{t("loading_details")}</p>
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center justify-center py-20 text-red-500 font-roboto flex-1">
             <Info className="w-10 h-10 mb-2 text-red-400" />
-            <p className="text-sm font-medium">Failed to load law details. Please try again.</p>
+            <p className="text-sm font-medium">{t("failed_load_details")}</p>
           </div>
         ) : lawDetails ? (
           <div className="overflow-y-auto flex-1 pr-2 space-y-6 custom-scrollbar text-[#101828]">
@@ -89,7 +91,7 @@ export default function ViewLawDetailsDialog({
               {lawDetails.official_gazette && (
                 <div className="flex items-center gap-2 text-sm text-gray-600 font-medium">
                   <FileText className="w-4 h-4 text-gray-400" />
-                  <span>Official Gazette: {lawDetails.official_gazette}</span>
+                  <span>{t("official_gazette")} {lawDetails.official_gazette}</span>
                 </div>
               )}
             </div>
@@ -97,20 +99,20 @@ export default function ViewLawDetailsDialog({
             {/* Metadata Fields Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider block">Category</span>
+                <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider block">{t("category")}</span>
                 <span className="text-sm font-medium text-gray-800">{categoryName}</span>
               </div>
               <div className="space-y-1 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider block">Subcategory</span>
+                <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider block">{t("subcategory")}</span>
                 <span className="text-sm font-medium text-gray-800">{subCategoryName}</span>
               </div>
             </div>
 
             {/* Source */}
             <div className="space-y-1.5">
-              <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider block pl-1">Source / Reference</span>
+              <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider block pl-1">{t("source_reference")}</span>
               <div className="p-4 rounded-xl bg-white border border-gray-200 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">
-                {lawDetails.source || "No source specified"}
+                {lawDetails.source || t("no_source_specified")}
               </div>
             </div>
 
@@ -120,11 +122,11 @@ export default function ViewLawDetailsDialog({
             <div className="space-y-6">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-[#135576]" />
-                <h4 className="text-lg font-bold text-[#135576]">Sections & Articles</h4>
+                <h4 className="text-lg font-bold text-[#135576]">{t("sections_and_articles")}</h4>
               </div>
 
               {!lawDetails.sections || lawDetails.sections.length === 0 ? (
-                <p className="text-sm text-gray-500 italic pl-1">This law has no sections or articles defined.</p>
+                <p className="text-sm text-gray-500 italic pl-1">{t("no_sections_articles")}</p>
               ) : (
                 <div className="space-y-6">
                   {lawDetails.sections.map((section, sIdx) => (
@@ -134,16 +136,16 @@ export default function ViewLawDetailsDialog({
                     >
                       <div className="bg-[#EFF1F4]/60 p-4 border-b border-[#EFF1F4] flex justify-between items-center">
                         <span className="text-[15px] font-bold text-[#135576]">
-                          {section.title || `Section ${sIdx + 1}`}
+                          {section.title || `${t("sections_label")} ${sIdx + 1}`}
                         </span>
                         <span className="text-xs px-2 py-0.5 rounded bg-white text-gray-500 font-medium">
-                          Order: {section.order}
+                          {t("order", { val: section.order })}
                         </span>
                       </div>
 
                       <div className="p-4 md:p-5 divide-y divide-gray-100">
                         {!section.articles || section.articles.length === 0 ? (
-                          <p className="text-sm text-gray-400 italic py-2">No articles in this section.</p>
+                          <p className="text-sm text-gray-400 italic py-2">{t("no_articles")}</p>
                         ) : (
                           section.articles.map((article, aIdx) => (
                             <div
@@ -152,14 +154,14 @@ export default function ViewLawDetailsDialog({
                             >
                               <div className="flex items-center justify-between w-full">
                                 <span className="font-semibold text-[15px] text-gray-800">
-                                  {article.title || `Article ${aIdx + 1}`}
+                                  {article.title || `${t("article_label")} ${aIdx + 1}`}
                                 </span>
                                 <span className="text-[11px] text-gray-400">
-                                  Order: {article.order}
+                                  {t("order", { val: article.order })}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
-                                {article.description || "No description provided."}
+                                {article.description || t("no_description")}
                               </p>
                             </div>
                           ))
@@ -181,7 +183,7 @@ export default function ViewLawDetailsDialog({
             onClick={() => onOpenChange(false)}
             className="px-6 h-11 rounded-full bg-[#135576] hover:bg-[#135576]/90 text-white text-sm font-semibold transition-all cursor-pointer focus:outline-none active:scale-95 flex items-center justify-center gap-1.5"
           >
-            Close
+            {t("close")}
           </button>
         </div>
       </DialogContent>

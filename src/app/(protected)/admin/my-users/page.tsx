@@ -6,11 +6,16 @@ import MyUsersMetrics from "@/components/admin/my-users/MyUsersMetrics";
 import MyUsersFilters from "@/components/admin/my-users/MyUsersFilters";
 import MyUsersTable from "@/components/admin/my-users/MyUsersTable";
 import DeleteConfirmationDialog from "@/components/admin/categories/DeleteConfirmationDialog";
+import SuspendConfirmationDialog from "@/components/admin/my-users/SuspendConfirmationDialog";
+import CustomSubscriptionDialog from "@/components/admin/subscription/packages/CustomSubscriptionDialog";
 import {
   useGetAllUsersQuery,
   useDeleteUserMutation,
+  useSuspendUserMutation,
 } from "@/store/features/admin/my-users/my-users.api";
 import { User } from "@/store/features/admin/my-users/my-users.type";
+
+import { useTranslation } from "react-i18next";
 
 type PlanType = "Basic" | "Standard" | "Premium";
 
@@ -59,6 +64,7 @@ function mapUser(user: User): UserRow {
 }
 
 export default function MyUsers() {
+  const { t } = useTranslation("adminMyUsers");
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
     search: "",
@@ -71,6 +77,11 @@ export default function MyUsers() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState<string | number | null>(null);
 
+  const [isSuspendDialogOpen, setIsSuspendDialogOpen] = useState(false);
+  const [suspendUserId, setSuspendUserId] = useState<string | number | null>(null);
+
+  const [isCustomSubDialogOpen, setIsCustomSubDialogOpen] = useState(false);
+
   const queryParams = {
     page,
     search: filters.search || undefined,
@@ -82,6 +93,7 @@ export default function MyUsers() {
 
   const { data: usersData, isLoading, isFetching } = useGetAllUsersQuery(queryParams);
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
+  const [suspendUser, { isLoading: isSuspending }] = useSuspendUserMutation();
 
   const handleFilter = (newFilters: {
     search: string;
@@ -122,6 +134,26 @@ export default function MyUsers() {
     }
   };
 
+  const handleSuspendUserClick = (id: string | number) => {
+    setSuspendUserId(id);
+    setIsSuspendDialogOpen(true);
+  };
+
+  const handleConfirmSuspend = async () => {
+    if (!suspendUserId) return;
+    try {
+      await suspendUser({ id: suspendUserId, is_active: false }).unwrap();
+      toast.success("User suspended successfully!");
+    } catch (error) {
+      console.error("Failed to suspend user:", error);
+      toast.error("Failed to suspend user. Please try again.");
+    }
+  };
+
+  const handleCustomSubClick = () => {
+    setIsCustomSubDialogOpen(true);
+  };
+
   const showLoader = isLoading || isFetching;
 
   return (
@@ -137,6 +169,8 @@ export default function MyUsers() {
         usersList={mappedUsers}
         onAddUser={handleAddUser}
         onDeleteUser={handleDeleteUserClick}
+        onSuspendUser={handleSuspendUserClick}
+        onCustomSubscription={handleCustomSubClick}
         totalCount={usersData?.count || 0}
         currentPage={page}
         totalPages={usersData?.total_pages || 1}
@@ -148,10 +182,26 @@ export default function MyUsers() {
       <DeleteConfirmationDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        title="Delete User"
-        description="Are you sure you want to delete this user? This action cannot be undone."
+        title={t("delete_user")}
+        description={t("delete_user_confirm_desc")}
         onConfirm={handleConfirmDelete}
         isSubmitting={isDeleting}
+      />
+
+      {/* Suspend Confirmation Dialog */}
+      <SuspendConfirmationDialog
+        isOpen={isSuspendDialogOpen}
+        onOpenChange={setIsSuspendDialogOpen}
+        title={t("suspend_user")}
+        description={t("suspend_user_confirm_desc")}
+        onConfirm={handleConfirmSuspend}
+        isSubmitting={isSuspending}
+      />
+
+      {/* Custom Subscription Dialog */}
+      <CustomSubscriptionDialog
+        isOpen={isCustomSubDialogOpen}
+        onOpenChange={setIsCustomSubDialogOpen}
       />
     </div>
   );

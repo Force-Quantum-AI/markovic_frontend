@@ -25,6 +25,9 @@ import {
 } from "@/components/ui/sidebar";
 
 
+import { useTranslation } from "react-i18next";
+
+
 interface SubItem {
   title: string;
   href: string;
@@ -84,6 +87,7 @@ const navItems: NavItem[] = [
 ];
 
 export default function AdminSidebar() {
+  const { t } = useTranslation("sideAndTopBar");
   const pathname = usePathname();
   const router = useRouter();
 
@@ -146,7 +150,7 @@ export default function AdminSidebar() {
                     >
                       <item.icon className="h-4 w-4 shrink-0" />
                       <span className="flex-1 text-left group-data-[collapsible=icon]:hidden">
-                        {item.title}
+                        {t(item.title)}
                       </span>
                       <ChevronDown
                         className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-data-[collapsible=icon]:hidden ${
@@ -154,7 +158,7 @@ export default function AdminSidebar() {
                         }`}
                       />
                     </button>
-
+ 
                     {/* Sub-items */}
                     <div
                       className={`grid transition-all duration-300 ease-in-out ${
@@ -177,7 +181,7 @@ export default function AdminSidebar() {
                                   }
                                 `}
                               >
-                                {child.title}
+                                {t(child.title)}
                               </Link>
                             );
                           })}
@@ -187,10 +191,10 @@ export default function AdminSidebar() {
                   </div>
                 );
               }
-
+ 
               // Regular item (no children)
               const active = item.href ? pathname === item.href : false;
-
+ 
               return (
                 <Link
                   key={item.title}
@@ -205,7 +209,7 @@ export default function AdminSidebar() {
                 >
                   <item.icon className="h-4 w-4" />
                   <span className="group-data-[collapsible=icon]:hidden">
-                    {item.title}
+                    {t(item.title)}
                   </span>
                 </Link>
               );

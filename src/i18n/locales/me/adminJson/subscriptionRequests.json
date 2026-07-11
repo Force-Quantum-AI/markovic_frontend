@@ -1,0 +1,21 @@
+{
+  "custom_subscriptions_request": "Zahtjev za prilagođene pretplate",
+  "failed_load_requests": "Neuspješno učitavanje zahtjeva za pretplatu.",
+  "network_error_msg": "Provjerite mrežnu vezu i pokušajte ponovo.",
+  "no_requests_found": "Nema pronađenih zahtjeva za pretplatu.",
+  "all": "Svi",
+  "approved_request": "Odobreni zahtjevi",
+  "pending_request": "Zahtjevi na čekanju",
+  "decline_request": "Odbijeni zahtjevi",
+  "no_requests_at_moment": "Trenutno nema zahtjeva sa statusom {{filter}}.",
+  "full_name": "Puno ime:",
+  "email_address": "E-pošta:",
+  "phone_number": "Broj telefona:",
+  "message": "Poruka:",
+  "decline": "Odbij",
+  "declining": "Odbijanje...",
+  "approved": "Odobri",
+  "approving": "Odobravanje...",
+  "already_approved_note": "Ovaj zahtjev za pretplatu je već odobren.",
+  "already_declined_note": "Ovaj zahtjev za pretplatu je odbijen."
+}

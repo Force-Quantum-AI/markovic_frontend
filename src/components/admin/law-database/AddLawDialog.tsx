@@ -21,6 +21,7 @@ import {
   useGetAllCategoriesQuery,
   useGetAllSubCategoriesQuery,
 } from "@/store/features/admin/category-subcategory/category.api";
+import { useTranslation } from "react-i18next";
 
 interface DialogSection {
   name: string;
@@ -38,6 +39,7 @@ export default function AddLawDialog({
   onOpenChange,
   onAdd,
 }: AddLawDialogProps) {
+  const { t } = useTranslation("adminLawDatabase");
   const { data: categories } = useGetAllCategoriesQuery();
   const { data: allSubCategories } = useGetAllSubCategoriesQuery();
 
@@ -171,7 +173,7 @@ export default function AddLawDialog({
         </DialogClose>
 
         <DialogTitle className="text-[24px] font-bold text-center text-[#101828] font-roboto mt-2 mb-6 shrink-0">
-          Add Law/Bylaw
+          {t("add_law")}
         </DialogTitle>
 
         <form
@@ -180,13 +182,13 @@ export default function AddLawDialog({
         >
           <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
             <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
-              Title<span className="text-[#EF4444]">*</span>:
+              {t("title_label")}<span className="text-[#EF4444]">*</span>:
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Law on Obligations"
+              placeholder={t("title_required") || "Law on Obligations"}
               className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-white p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal leading-[140%] placeholder:text-[#161A20]/60 focus:outline-none focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all"
               required
             />
@@ -194,7 +196,7 @@ export default function AddLawDialog({
 
           <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
             <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
-              Source<span className="text-[#EF4444]">*</span>:
+              {t("source_label")}<span className="text-[#EF4444]">*</span>:
             </label>
             <textarea
               value={source}
@@ -207,7 +209,7 @@ export default function AddLawDialog({
 
           <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
             <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
-              Official Gazette:
+              {t("official_gazette")}
             </label>
             <input
               type="text"
@@ -221,14 +223,14 @@ export default function AddLawDialog({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
             <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
-                Category:
+                {t("category_label") || "Category:"}
               </label>
               <Select
                 value={category || undefined}
                 onValueChange={handleCategoryChange}
               >
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-white p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all">
-                  <SelectValue placeholder="Category" />
+                  <SelectValue placeholder={t("category") || "Category"} />
                   <ChevronDown className="ml-auto w-5 h-5 shrink-0 text-[#9CA6BB]" />
                 </SelectTrigger>
                 <SelectContent
@@ -251,7 +253,7 @@ export default function AddLawDialog({
 
             <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
-                Subcategory:
+                {t("subcategory_label") || "Subcategory:"}
               </label>
               <Select
                 value={subcategory || undefined}
@@ -261,7 +263,7 @@ export default function AddLawDialog({
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-white p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                   <SelectValue
                     placeholder={
-                      category ? "Subcategory" : "Select category first"
+                      category ? t("subcategory") || "Subcategory" : t("select_category_first") || "Select category first"
                     }
                   />
                   <ChevronDown className="ml-auto w-5 h-5 shrink-0 text-[#9CA6BB]" />
@@ -295,7 +297,7 @@ export default function AddLawDialog({
               >
                 <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
                   <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
-                    Sections:
+                    {t("sections_label") || "Sections:"}
                   </label>
                   <input
                     type="text"
@@ -315,7 +317,7 @@ export default function AddLawDialog({
                   >
                     <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
                       <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
-                        Article:
+                        {t("article_label") || "Article:"}
                       </label>
                       <input
                         type="text"
@@ -330,14 +332,14 @@ export default function AddLawDialog({
 
                     <div className="space-y-1.5 w-full flex flex-col items-start font-roboto">
                       <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%]">
-                        Description:
+                        {t("description_label") || "Description:"}
                       </label>
                       <textarea
                         value={article.description}
                         onChange={(e) =>
                           handleArticleDescChange(sIdx, aIdx, e.target.value)
                         }
-                        placeholder="Type article description..."
+                        placeholder={t("no_description") || "Type article description..."}
                         className="w-full rounded-[24px] border border-[#BEC4D2] bg-white p-[14px_16px] min-h-[100px] text-[#161A20] font-roboto text-[16px] font-normal leading-[140%] placeholder:text-[#161A20]/60 focus:outline-none focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all resize-none"
                       />
                     </div>
@@ -350,7 +352,7 @@ export default function AddLawDialog({
                   className="mt-2 flex items-center justify-center gap-1.5 px-4 py-2 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-gray-700 rounded-full border border-gray-200 text-xs font-semibold cursor-pointer transition-all focus:outline-none active:scale-95 animate-fade-in"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Add new article</span>
+                  <span>{t("add_new_article")}</span>
                 </button>
               </div>
             ))}
@@ -363,14 +365,14 @@ export default function AddLawDialog({
               className="flex items-center justify-center gap-1.5 px-6 py-2.5 bg-[#EFF1F4] hover:bg-[#E2E8F0] text-[#135576] rounded-full border border-[#DDE0E7] text-sm font-semibold cursor-pointer transition-all focus:outline-none active:scale-95"
             >
               <Plus className="w-4 h-4" />
-              <span>Add new section</span>
+              <span>{t("add_new_section")}</span>
             </button>
           </div>
 
           <div className="flex justify-center pt-4">
             <AdminButton
               type="submit"
-              label="Add Law"
+              label={t("add_law")}
               className="px-12 py-3 w-[160px]"
             />
           </div>

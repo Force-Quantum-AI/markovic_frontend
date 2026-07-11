@@ -32,6 +32,8 @@ type SubCategoryFormData = {
   name: string;
 };
 
+import { useTranslation } from "react-i18next";
+
 export default function EditSubCategoryDialog({
   isOpen,
   onOpenChange,
@@ -41,6 +43,7 @@ export default function EditSubCategoryDialog({
   onSubmit,
   isSubmitting = false,
 }: EditSubCategoryDialogProps) {
+  const { t } = useTranslation("adminCategories");
   const {
     control,
     register,
@@ -75,18 +78,18 @@ export default function EditSubCategoryDialog({
         </DialogClose>
 
         <DialogTitle className="text-[#101828] font-roboto text-[24px] font-bold text-center mb-6">
-          Edit Sub-Category
+          {t("edit_subcategory_title")}
         </DialogTitle>
 
         <form onSubmit={handleSubmit(handleUpdateSubcategory)} className="space-y-4">
           <div className="space-y-1.5">
             <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">
-              Select Category
+              {t("select_category")}
             </label>
             <Controller
               control={control}
               name="categoryId"
-              rules={{ required: "Category selection is required." }}
+              rules={{ required: t("category_selection_required") || "Category selection is required." }}
               render={({ field }) => (
                 <Select
                   value={field.value || undefined}
@@ -94,7 +97,7 @@ export default function EditSubCategoryDialog({
                   disabled={isSubmitting}
                 >
                   <SelectTrigger className="w-full h-12 rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] px-5 py-3 text-[#101828] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all">
-                    <SelectValue placeholder="Select Category..." />
+                    <SelectValue placeholder={t("select_category_placeholder") || "Select Category..."} />
                     <ChevronDown className="ml-auto w-5 h-5 shrink-0 text-[#99A1AF]" />
                   </SelectTrigger>
                   <SelectContent
@@ -124,15 +127,15 @@ export default function EditSubCategoryDialog({
 
           <div className="space-y-1.5">
             <label className="block text-[14px] font-medium text-[#344054] font-roboto pl-2">
-              Sub-Category Name
+              {t("subcategory_name")}
             </label>
             <input
               type="text"
-              placeholder="Sub-Category name..."
+              placeholder={t("subcategory_name_placeholder") || "Sub-Category name..."}
               {...register("name", {
-                required: "Subcategory name is required.",
+                required: t("subcategory_name_required") || "Subcategory name is required.",
                 validate: (value) =>
-                  value.trim() ? true : "Subcategory name is required.",
+                  value.trim() ? true : t("subcategory_name_required") || "Subcategory name is required.",
               })}
               disabled={isSubmitting}
               aria-invalid={Boolean(errors.name)}
@@ -148,14 +151,14 @@ export default function EditSubCategoryDialog({
           <div className="flex items-start gap-2 pt-1">
             <Info className="w-4 h-4 text-[#135576] flex-shrink-0 mt-0.5" />
             <p className="text-[#135576] font-roboto text-[13px] font-normal leading-[18px] italic">
-              Categories and subcategories can be added independently.
+              {t("independent_addition_info")}
             </p>
           </div>
 
           <div className="flex justify-end pt-4">
             <AdminButton
               type="submit"
-              label={isSubmitting ? "Saving..." : "Update Sub-Category"}
+              label={isSubmitting ? (t("saving") || "Saving...") : (t("update_subcategory") || "Update Sub-Category")}
               className="px-7 py-3"
               disabled={isSubmitting}
             />

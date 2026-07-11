@@ -1,6 +1,5 @@
-"use client";
-
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface Lawyer {
   id: string;
@@ -34,11 +33,12 @@ const getInitialsColor = (initials: string, index: number) => {
 };
 
 export default function AdminTeamMembersList({ lawyers = [] }: AdminTeamMembersListProps) {
+  const { t } = useTranslation("adminArchiveCases");
   return (
     <div className="w-full bg-gray-50/50 rounded-2xl border border-gray-100/80 overflow-hidden shadow-sm">
       {/* Card Header */}
       <div className="p-6 border-b border-gray-100">
-        <h2 className="text-lg font-bold text-gray-900">Assigned lawyer</h2>
+        <h2 className="text-lg font-bold text-gray-900">{t("assigned_lawyer")}</h2>
       </div>
 
       {/* Card Body */}
@@ -65,14 +65,14 @@ export default function AdminTeamMembersList({ lawyers = [] }: AdminTeamMembersL
                 {/* Lead Badge */}
                 {isLead && (
                   <span className="px-2.5 py-1 bg-[#EBF5FF] text-[#2563EB] rounded-full text-[11px] font-semibold">
-                    Lead
+                    {t("lead")}
                   </span>
                 )}
               </div>
             );
           })
         ) : (
-          <p className="text-sm text-gray-500 text-center py-4">No lawyers assigned</p>
+          <p className="text-sm text-gray-500 text-center py-4">{t("no_lawyers_assigned")}</p>
         )}
       </div>
     </div>

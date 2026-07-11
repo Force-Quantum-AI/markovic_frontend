@@ -17,8 +17,10 @@ import {
   useGetAllSubCategoriesQuery,
 } from "@/store/features/admin/category-subcategory/category.api";
 import { useGetAllCaseStatusesQuery } from "@/store/features/admin/global/global.api";
+import { useTranslation } from "react-i18next";
 
 export default function ArchiveCasesPage() {
+  const { t } = useTranslation("adminArchiveCases");
   const [page, setPage] = useState(1);
 
   // Input states
@@ -99,14 +101,14 @@ export default function ArchiveCasesPage() {
   return (
     <div className="w-full space-y-6 font-roboto">
       <h1 className="text-[24px] font-bold text-[#101828] font-roboto text-left">
-        Archive Cases
+        {t("archive_cases")}
       </h1>
 
       <div className="w-full bg-white rounded-3xl p-6 border border-[#BEC4D2]/40 shadow-xs space-y-6">
         <div className="flex items-center gap-2">
           <Filter className="w-5 h-5 text-[#101828]" />
           <h2 className="text-[#101828] font-roboto text-[20px] font-semibold leading-[130%]">
-            Search & Filter
+            {t("search_filter")}
           </h2>
         </div>
 
@@ -114,7 +116,7 @@ export default function ArchiveCasesPage() {
           <div className="w-full">
             <input
               type="text"
-              placeholder="Search laws, bylaws, articles, keywords"
+              placeholder={t("search_placeholder") || "Search laws, bylaws, articles, keywords"}
               value={searchVal}
               onChange={(e) => setSearchVal(e.target.value)}
               className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] placeholder:text-[#161A20]/60 font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
@@ -124,11 +126,11 @@ export default function ArchiveCasesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <div className="space-y-1.5 flex flex-col items-start w-full">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
-                Client name
+                {t("client_name")}
               </label>
               <input
                 type="text"
-                placeholder="Search client name..."
+                placeholder={t("search_client_name") || "Search client name..."}
                 value={clientVal}
                 onChange={(e) => setClientVal(e.target.value)}
                 className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] placeholder:text-[#161A20]/60 font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
@@ -137,11 +139,11 @@ export default function ArchiveCasesPage() {
 
             <div className="space-y-1.5 flex flex-col items-start w-full">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
-                Year
+                {t("year")}
               </label>
               <input
                 type="text"
-                placeholder="Search by year..."
+                placeholder={t("search_by_year") || "Search by year..."}
                 value={yearVal}
                 onChange={(e) => setYearVal(e.target.value)}
                 className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] placeholder:text-[#161A20]/60 font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
@@ -150,11 +152,11 @@ export default function ArchiveCasesPage() {
 
             <div className="space-y-1.5 flex flex-col items-start w-full">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
-                Court Name
+                {t("court_name")}
               </label>
               <input
                 type="text"
-                placeholder="Search court name..."
+                placeholder={t("search_court_name") || "Search court name..."}
                 value={courtVal}
                 onChange={(e) => setCourtVal(e.target.value)}
                 className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] placeholder:text-[#161A20]/60 font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
@@ -163,11 +165,11 @@ export default function ArchiveCasesPage() {
 
             <div className="space-y-1.5 flex flex-col items-start w-full">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
-                Responsible lawyer or legal trainee
+                {t("responsible_lawyer")}
               </label>
               <input
                 type="text"
-                placeholder="Add lawyer name..."
+                placeholder={t("add_lawyer_name") || "Add lawyer name..."}
                 value={lawyerVal}
                 onChange={(e) => setLawyerVal(e.target.value)}
                 className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] placeholder:text-[#161A20]/60 font-roboto text-[16px] font-normal leading-[140%] focus:outline-none focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all"
@@ -176,15 +178,15 @@ export default function ArchiveCasesPage() {
 
             <div className="space-y-1.5 flex flex-col items-start w-full">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
-                Category
+                {t("category")}
               </label>
               <Select value={categoryVal || "all"} onValueChange={(val) => setCategoryVal(val === "all" ? "" : val)}>
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all data-placeholder:text-[#161A20]/60 flex items-center justify-between">
-                  <SelectValue placeholder="Choose category..." />
+                  <SelectValue placeholder={t("choose_category") || "Choose category..."} />
                   <ChevronDown className="w-5 h-5 shrink-0 text-[#9CA6BB]" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#161A20] font-roboto min-w-[var(--radix-select-trigger-width)]">
-                  <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">All Category</SelectItem>
+                  <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">{t("all_category")}</SelectItem>
                   {categories?.map((cat) => (
                     <SelectItem key={cat.id} value={cat.name} className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">
                       {cat.name}
@@ -196,15 +198,15 @@ export default function ArchiveCasesPage() {
 
             <div className="space-y-1.5 flex flex-col items-start w-full">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
-                Sub category
+                {t("sub_category")}
               </label>
               <Select value={subcategoryVal || "all"} onValueChange={(val) => setSubcategoryVal(val === "all" ? "" : val)}>
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all data-placeholder:text-[#161A20]/60 flex items-center justify-between">
-                  <SelectValue placeholder="Choose sub category..." />
+                  <SelectValue placeholder={t("choose_subcategory") || "Choose sub category..."} />
                   <ChevronDown className="w-5 h-5 shrink-0 text-[#9CA6BB]" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#161A20] font-roboto min-w-[var(--radix-select-trigger-width)]">
-                  <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">All Subcategory</SelectItem>
+                  <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">{t("all_subcategory")}</SelectItem>
                   {subcategories?.map((sub) => (
                     <SelectItem key={sub.id} value={sub.name} className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">
                       {sub.name}
@@ -216,15 +218,15 @@ export default function ArchiveCasesPage() {
 
             <div className="space-y-1.5 flex flex-col items-start w-full">
               <label className="block text-[#667085] font-roboto text-[14px] font-medium leading-[140%] pl-2">
-                Status
+                {t("status")}
               </label>
               <Select value={statusVal || "all"} onValueChange={(val) => setStatusVal(val === "all" ? "" : val)}>
                 <SelectTrigger className="w-full h-[50px] rounded-[32px] border border-[#BEC4D2] bg-[#F5F6F7] p-[14px_16px] text-[#161A20] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#BEC4D2]/40 transition-all data-placeholder:text-[#161A20]/60 flex items-center justify-between">
-                  <SelectValue placeholder="Choose status..." />
+                  <SelectValue placeholder={t("choose_status") || "Choose status..."} />
                   <ChevronDown className="w-5 h-5 shrink-0 text-[#9CA6BB]" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="z-[9999] bg-white border border-[#BEC4D2] rounded-2xl shadow-lg p-1 text-[#161A20] font-roboto min-w-[var(--radix-select-trigger-width)]">
-                  <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">All Status</SelectItem>
+                  <SelectItem value="all" className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">{t("all_status")}</SelectItem>
                   {statuses?.map((st) => (
                     <SelectItem key={st.id} value={st.name} className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#161A20] py-2.5 px-4 text-[14px]">
                       {st.name}
@@ -238,12 +240,12 @@ export default function ArchiveCasesPage() {
           <div className="flex gap-4 pt-2">
             <AdminButton
               onClick={handleApplyFilter}
-              label="Apply Filter"
+              label={t("apply_filter")}
               className="h-[50px] py-3 px-6"
             />
             <AdminButton
               onClick={handleResetFilter}
-              label="Reset Filter"
+              label={t("reset_filter")}
               variant="secondary"
               className="h-[50px] py-3 px-6"
             />

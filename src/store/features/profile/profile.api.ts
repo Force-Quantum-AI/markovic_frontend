@@ -4,7 +4,7 @@ import { baseApi } from "../../api/baseApi";
 interface IArchiveParams {
   search?: string,
   client_name?: string,
-  date?: string, //example format: '2026-01-15'
+  date?: string,
   page_size?: number,
   page?: number,
 }

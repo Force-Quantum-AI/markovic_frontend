@@ -7,8 +7,10 @@ import {
   useGetAllSubscriptionQuery,
 } from "@/store/features/admin/subscriptions/subscriptions.api";
 import { SubscriptionPackagesSkeleton } from "@/components/admin/admin-skeletons";
+import { useTranslation } from "react-i18next";
 
 export default function PackagesContent() {
+  const { t } = useTranslation(["adminSubscriptionPackages", "common"]);
   const { data: subscriptionPlans, isLoading, isError } = useGetAllSubscriptionQuery();
 
   const [selectedPlan, setSelectedPlan] = useState<PackageProps | null>(null);
@@ -18,22 +20,22 @@ export default function PackagesContent() {
     return subscriptionPlans?.map((plan) => {
       const mappedFeatures: string[] = [];
       if (plan.features?.unlimited_cases) {
-        mappedFeatures.push("Unlimited Cases.");
+        mappedFeatures.push(t("common:subscriptionPage.features.unlimited_cases"));
       }
       if (plan.features?.client_calendar_hearing_deadline) {
-        mappedFeatures.push("Clients, Calendar, Hearings & Deadlines.");
+        mappedFeatures.push(t("common:subscriptionPage.features.client_calendar_hearing_deadline"));
       }
       if (plan.features?.documents_management) {
-        mappedFeatures.push("Documents Management.");
+        mappedFeatures.push(t("common:subscriptionPage.features.documents_management"));
       }
       if (plan.features?.laws_bylaws_module) {
-        mappedFeatures.push("Laws & Bylaws Module.");
+        mappedFeatures.push(t("common:subscriptionPage.features.laws_bylaws_module"));
       }
       if (plan.features?.ai_court_practice_search) {
-        mappedFeatures.push("AI Court Practice Search.");
+        mappedFeatures.push(t("common:subscriptionPage.features.ai_court_practice_search"));
       }
       if (plan.features?.global_search_archive) {
-        mappedFeatures.push("Global Search & Archive.");
+        mappedFeatures.push(t("common:subscriptionPage.features.global_search_archive"));
       }
 
       return {
@@ -44,12 +46,12 @@ export default function PackagesContent() {
         devices: plan.devices,
         description: plan.quote || "",
         features: mappedFeatures,
-        actionText: "Update package",
+        actionText: t("update_package"),
         showIcon: true,
         isVisible: plan.is_visible,
       };
     }) || [];
-  }, [subscriptionPlans]);
+  }, [subscriptionPlans, t]);
 
   const monthlyPlans = useMemo(() => {
     return mappedPlans.filter((plan) => plan.billingCycle === "month");
@@ -67,11 +69,11 @@ export default function PackagesContent() {
   if (isLoading) {
     return (
       <div className="w-full flex flex-col items-center py-8 pb-24 font-roboto">
-        <h1 className="text-2xl md:text-[28px] font-bold text-[#1A2328] mb-8">Update your package</h1>
+        <h1 className="text-2xl md:text-[28px] font-bold text-[#1A2328] mb-8">{t("update_your_package")}</h1>
 
         <div className="mb-6 flex justify-center">
           <span className="px-5 py-1.5 rounded-md bg-white border border-[#BEC4D2] text-[13px] font-semibold text-[#135576]">
-            Monthly Package
+            {t("monthly_package")}
           </span>
         </div>
 
@@ -84,21 +86,21 @@ export default function PackagesContent() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-red-500 font-roboto">
-        <p className="text-sm font-medium">Failed to load subscription plans. Please try again later.</p>
+      <div className="flex flex-col items-center justify-center py-20 text-red-500 font-roboto space-y-2">
+        <p className="text-sm font-medium">{t("failed_load_subscription")}</p>
       </div>
     );
   }
 
   return (
     <div className="w-full flex flex-col items-center py-8 pb-24">
-      <h1 className="text-2xl md:text-[28px] font-bold text-[#1A2328] mb-8">Update your package</h1>
+      <h1 className="text-2xl md:text-[28px] font-bold text-[#1A2328] mb-8">{t("update_your_package")}</h1>
 
       {monthlyPlans.length > 0 && (
         <>
           <div className="mb-6 flex justify-center">
             <span className="px-5 py-1.5 rounded-md bg-white border border-[#BEC4D2] text-[13px] font-semibold text-[#135576]">
-              Monthly Package
+              {t("monthly_package")}
             </span>
           </div>
 
@@ -118,7 +120,7 @@ export default function PackagesContent() {
         <>
           <div className="mb-6 flex justify-center">
             <span className="px-5 py-1.5 rounded-md bg-white border border-[#BEC4D2] text-[13px] font-semibold text-[#135576]">
-              Yearly package
+              {t("yearly_package")}
             </span>
           </div>
 
@@ -135,7 +137,7 @@ export default function PackagesContent() {
       )}
 
       {monthlyPlans.length === 0 && yearlyPlans.length === 0 && (
-        <div className="text-slate-400 font-medium">No subscription plans found.</div>
+        <div className="text-slate-400 font-medium">{t("no_subscription_found")}</div>
       )}
 
       <UpdatePackageDialog

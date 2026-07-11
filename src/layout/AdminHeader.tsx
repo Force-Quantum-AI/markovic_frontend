@@ -17,6 +17,8 @@ import { useLogoutUserMutation } from "@/store/features/auth/authApi";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
+
 export default function AdminHeader() {
   const { data: profileInfo, isLoading: isLoadingProfileInfo } = useGetProfileInfoQuery({});
 
@@ -63,6 +65,9 @@ export default function AdminHeader() {
         </div> */}
 
         <div className="flex items-center gap-5">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
           {/* Notification */}
           <AdminNotificationDropdown />
 

@@ -37,7 +37,7 @@ export default function LanguageSwitcher() {
 
   return (
     <Select value={language} onValueChange={handleChange}>
-      <SelectTrigger className=" max-w-fit mt-1 h-9 gap-2 rounded-md border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium transition-colors">
+      <SelectTrigger className="group max-w-fit mt-1 h-9 gap-2 rounded-md border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium transition-colors">
         <div className="flex items-center gap-2">
           <span className="text-base leading-none shrink-0" aria-hidden="true">
             {current.flag}
@@ -45,17 +45,17 @@ export default function LanguageSwitcher() {
           <SelectValue placeholder="Language">
             <span className="hidden md:block">{current.label}</span>
           </SelectValue>
-          <ChevronDown className="h-4 w-4 text-gray-500" />
+          <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200 group-data-[state=open]:rotate-180" />
         </div>
       </SelectTrigger>
 
-      <SelectContent align="end" className="rounded-md">
-        <SelectItem value="en" className="text-sm font-medium">
+      <SelectContent position="popper" sideOffset={4} align="end" className="rounded-md bg-white border border-gray-200 shadow-md">
+        <SelectItem value="en" className="text-sm font-medium cursor-pointer">
           <span className="inline-flex items-center gap-2">
             <span className="text-base leading-none">🇺🇸</span> English
           </span>
         </SelectItem>
-        <SelectItem value="me" className="text-sm font-medium">
+        <SelectItem value="me" className="text-sm font-medium cursor-pointer">
           <span className="inline-flex items-center gap-2">
             <span className="text-base leading-none">🇲🇪</span> Montenegrin
           </span>

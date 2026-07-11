@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCreateSubscriptionMutation } from "@/store/features/admin/subscriptions/subscriptions.api";
+import { useTranslation } from "react-i18next";
 
 interface AddSubscriptionDialogProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export default function AddSubscriptionDialog({
   isOpen,
   onOpenChange,
 }: AddSubscriptionDialogProps) {
+  const { t } = useTranslation("adminSubscriptionPackages");
   const [createSubscription, { isLoading: isCreating }] =
     useCreateSubscriptionMutation();
 
@@ -163,7 +165,7 @@ export default function AddSubscriptionDialog({
         </DialogClose>
 
         <DialogTitle className="text-[28px] font-bold text-center text-[#101828] font-roboto mt-2 mb-6 shrink-0">
-          Add Subscription
+          {t("add_subscription")}
         </DialogTitle>
 
         <form
@@ -173,12 +175,12 @@ export default function AddSubscriptionDialog({
           {/* Name of Package */}
           <div className="space-y-1.5 w-full flex flex-col items-start">
             <label className="block text-[#364153] font-roboto text-[14px] font-semibold">
-              Name of the package: <span className="text-[#EF4444]">*</span>
+              {t("name_of_package")} <span className="text-[#EF4444]">*</span>
             </label>
             <input
               type="text"
-              {...register("name", { required: "Package name is required!" })}
-              placeholder="Type the package name here..."
+              {...register("name", { required: t("package_name_required") || "Package name is required!" })}
+              placeholder={t("package_name_placeholder") || "Type the package name here..."}
               className="w-full rounded-full border border-[#D1D5DC] bg-white px-5 py-3 h-12 text-[#101828] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
             />
             {errors.name && (
@@ -188,7 +190,7 @@ export default function AddSubscriptionDialog({
             )}
             <div className="flex items-center gap-1.5 text-[#3B82F6] cursor-pointer hover:underline text-[13px] font-semibold mt-1">
               <Info className="w-4 h-4 text-[#3B82F6]" />
-              <span>Name your pacjage</span>
+              <span>{t("name_your_package")}</span>
             </div>
           </div>
 
@@ -196,14 +198,14 @@ export default function AddSubscriptionDialog({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
             <div className="space-y-1.5 w-full flex flex-col items-start">
               <label className="block text-[#364153] font-roboto text-[14px] font-semibold">
-                Devices:
+                {t("devices_count_label") || "Devices:"}
               </label>
               <input
                 type="text"
                 {...register("devices", {
-                  required: "Devices count is required!",
+                  required: t("devices_count_required") || "Devices count is required!",
                 })}
-                placeholder="Enter device limit"
+                placeholder={t("devices_count_placeholder") || "Enter device limit"}
                 className="w-full rounded-full border border-[#D1D5DC] bg-white px-5 py-3 h-12 text-[#101828] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
               />
               {errors.devices && (
@@ -214,12 +216,12 @@ export default function AddSubscriptionDialog({
             </div>
             <div className="space-y-1.5 w-full flex flex-col items-start">
               <label className="block text-[#364153] font-roboto text-[14px] font-semibold">
-                Price:
+                {t("price_label") || "Price:"}
               </label>
               <input
                 type="text"
-                {...register("price", { required: "Price is required!" })}
-                placeholder="Enter price"
+                {...register("price", { required: t("price_required") || "Price is required!" })}
+                placeholder={t("price_placeholder") || "Enter price"}
                 className="w-full rounded-full border border-[#D1D5DC] bg-white px-5 py-3 h-12 text-[#101828] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
               />
               {errors.price && (
@@ -233,7 +235,7 @@ export default function AddSubscriptionDialog({
           {/* Session Selector */}
           <div className="space-y-1.5 w-full flex flex-col items-start">
             <label className="block text-[#364153] font-roboto text-[14px] font-semibold">
-              Session:
+              {t("session_label") || "Session:"}
             </label>
             <Controller
               name="session"
@@ -241,7 +243,7 @@ export default function AddSubscriptionDialog({
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full h-12 rounded-full border border-[#D1D5DC] bg-white px-5 py-3 text-[#101828] font-roboto text-[16px] font-normal focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all cursor-pointer">
-                    <SelectValue placeholder="Session" />
+                    <SelectValue placeholder={t("session_placeholder") || "Session"} />
                     <ChevronDown className="ml-auto w-5 h-5 shrink-0 text-gray-500" />
                   </SelectTrigger>
                   <SelectContent
@@ -253,13 +255,13 @@ export default function AddSubscriptionDialog({
                       value="Monthly"
                       className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]"
                     >
-                      Monthly
+                      {t("monthly")}
                     </SelectItem>
                     <SelectItem
                       value="Yearly"
                       className="rounded-xl cursor-pointer hover:bg-[#EFF1F4] focus:bg-[#EFF1F4] focus:text-[#101828] py-2.5 px-4 text-[14px]"
                     >
-                      Yearly
+                      {t("yearly")}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -270,12 +272,12 @@ export default function AddSubscriptionDialog({
           {/* Quote Input */}
           <div className="space-y-1.5 w-full flex flex-col items-start">
             <label className="block text-[#364153] font-roboto text-[14px] font-semibold">
-              Quote:
+              {t("quote_label") || "Quote:"}
             </label>
             <input
               type="text"
               {...register("quote")}
-              placeholder="Perfect for solo lawyers or very small offices"
+              placeholder={t("quote_placeholder") || "Perfect for solo lawyers or very small offices"}
               className="w-full rounded-full border border-[#D1D5DC] bg-white px-5 py-3 h-12 text-[#101828] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576] focus:border-transparent transition-all"
             />
           </div>
@@ -288,10 +290,10 @@ export default function AddSubscriptionDialog({
               <div className="flex items-center justify-between w-full p-4 rounded-2xl border border-[#E5E7EB] bg-white">
                 <div className="flex flex-col gap-0.5 items-start">
                   <span className="text-[#101828] font-roboto text-[16px] font-semibold leading-[24px]">
-                    Recommended
+                    {t("recommended")}
                   </span>
                   <span className="text-[#6A7282] font-roboto text-[13px] font-medium leading-[18px]">
-                    Add a level for your subscription package.
+                    {t("recommended_desc")}
                   </span>
                 </div>
                 <button
@@ -316,7 +318,7 @@ export default function AddSubscriptionDialog({
           {/* Dynamic Features List */}
           <div className="space-y-3 w-full pt-2 flex flex-col items-start">
             <span className="block text-[#475467] font-roboto text-[14px] font-bold pl-1">
-              All Features:
+              {t("all_features") || "All Features:"}
             </span>
             <div className="w-full space-y-2">
               {features.map((feature, i) => (
@@ -339,7 +341,7 @@ export default function AddSubscriptionDialog({
             {/* Add feature input */}
             <input
               type="text"
-              placeholder="Add more features..."
+              placeholder={t("add_more_features_placeholder") || "Add more features..."}
               value={newFeatureText}
               onChange={(e) => setNewFeatureText(e.target.value)}
               className="w-full rounded-full border border-[#D1D5DC] bg-[#F1F5F9] px-5 py-3 h-12 text-[#101828] placeholder-[#9CA6BB] font-roboto text-[16px] font-normal focus:outline-none focus:ring-2 focus:ring-[#135576]/30 focus:border-transparent transition-all mt-3"
@@ -352,7 +354,7 @@ export default function AddSubscriptionDialog({
               className="mt-2.5 flex items-center justify-center gap-2 px-6 py-2.5 bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#135576] rounded-full border border-[#D5DFE9] text-[15px] font-semibold cursor-pointer transition-all focus:outline-none active:scale-95"
             >
               <Plus className="w-4 h-4" />
-              <span>Add New features</span>
+              <span>{t("add_new_features")}</span>
             </button>
           </div>
 
@@ -363,7 +365,7 @@ export default function AddSubscriptionDialog({
             render={({ field }) => (
               <div className="flex items-center justify-between w-full p-4 rounded-2xl border border-[#E5E7EB] bg-white">
                 <span className="text-[#101828] font-roboto text-[16px] font-semibold leading-[24px]">
-                  Enabled
+                  {t("enabled")}
                 </span>
                 <button
                   type="button"
@@ -389,7 +391,7 @@ export default function AddSubscriptionDialog({
               className="bg-[#135576] hover:bg-[#135576]/90 text-white rounded-full px-12 py-3.5 text-base font-semibold transition-all cursor-pointer focus:outline-none active:scale-95 shadow-md disabled:opacity-50"
               disabled={isCreating}
             >
-              {isCreating ? "Adding..." : "Add Subscription"}
+              {isCreating ? t("adding") : t("add_subscription")}
             </button>
           </div>
         </form>

@@ -1,0 +1,21 @@
+{
+  "custom_subscriptions_request": "Custom Subscriptions Request",
+  "failed_load_requests": "Failed to load subscription requests.",
+  "network_error_msg": "Please check your network and try again.",
+  "no_requests_found": "No subscription requests found.",
+  "all": "All",
+  "approved_request": "Approved request",
+  "pending_request": "Pending request",
+  "decline_request": "Decline request",
+  "no_requests_at_moment": "No {{filter}} requests at the moment.",
+  "full_name": "Full Name:",
+  "email_address": "Email address:",
+  "phone_number": "Phone Number:",
+  "message": "Message:",
+  "decline": "Decline",
+  "declining": "Declining...",
+  "approved": "Approved",
+  "approving": "Approving...",
+  "already_approved_note": "Already approved this user subscription request.",
+  "already_declined_note": "Declined this user subscription request."
+}
