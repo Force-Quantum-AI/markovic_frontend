@@ -3,7 +3,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Mail, Lock, Eye, EyeOff, CheckCircle2, Scale } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import ForgotPasswordModal from "@/components/modals/ForgotPasswordModal";
 import { useLoginMutation } from "@/store/features/auth/authApi";
@@ -14,7 +14,6 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setClientSideLanguage } from "@/store/features/language/language.client.slice";
 import i18n from "@/i18n";
-import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -72,10 +71,10 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 ">
-      {/* Main Container tailored to max-w-6xl and 70vh */}
-      <div className="w-full max-w-6xl h-auto lg:h-[70vh] min-h-[550px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row hover:translate-y-1 transition-all duration-300">
+      {/* Main Container tailored to max-w-5xl and fixed/stable height */}
+      <div className="w-full max-w-5xl h-auto lg:h-[660px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
         {/* Left Side: Form Area */}
-        <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between bg-white h-full">
+        <div className="w-full lg:w-1/2 p-8 lg:py-10 lg:px-12 flex flex-col justify-between bg-white h-full min-h-[520px] lg:min-h-0">
           {/* Logo / Brand Header */}
           <div className="relative">
             <Image
@@ -87,7 +86,7 @@ export default function LoginPage() {
           </div>
 
           {/* Form Content */}
-          <div className="my-auto py-6 max-w-md w-full mx-auto">
+          <div className="my-auto py-4 max-w-md w-full mx-auto">
             <h1 className="text-3xl font-bold text-gray-900 mb-1">
               {t("welcome_back")}
             </h1>
@@ -202,8 +201,8 @@ export default function LoginPage() {
           </div>
 
           {/* Footer Agreement */}
-          <div className="mx-auto">
-            <div className="text-center md:text-left text-[10px] xl:text-xs text-gray-400 mt-auto pt-4">
+          <div className="w-full mt-auto pt-2">
+            <div className="text-center text-[10px] xl:text-xs text-gray-400">
               {t("by_logging_in")}{" "}
               <a
                 href="#terms"
@@ -221,7 +220,28 @@ export default function LoginPage() {
               .
             </div>
             <div className="text-center text-[10px] xl:text-xs text-gray-400 mt-1">
-              Language : <span onClick={() => handleChange("en")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2 ">EN</span> | <span onClick={() => handleChange("me")} className="cursor-pointer hover:text-gray-800 hover:font-bold transition-all px-2">ME</span>
+              Language :{" "}
+              <span
+                onClick={() => handleChange("en")}
+                className={`cursor-pointer transition-all px-2 ${
+                  language === "en"
+                    ? "text-[#135576] font-bold underline underline-offset-4"
+                    : "text-gray-400 hover:text-gray-800 hover:font-semibold"
+                }`}
+              >
+                EN
+              </span>{" "}
+              |{" "}
+              <span
+                onClick={() => handleChange("me")}
+                className={`cursor-pointer transition-all px-2 ${
+                  language === "me"
+                    ? "text-[#135576] font-bold underline underline-offset-4"
+                    : "text-gray-400 hover:text-gray-800 hover:font-semibold"
+                }`}
+              >
+                ME
+              </span>
             </div>
           </div>
         </div>
