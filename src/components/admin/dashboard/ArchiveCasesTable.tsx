@@ -101,7 +101,7 @@ export default function ArchiveCasesTable({
         {isDashboard && (
           <button
             onClick={() => router.push("/admin/archive-cases")}
-            className="text-sm font-semibold text-[#135576] hover:underline font-inter pb-3"
+            className="text-sm font-semibold text-[#135576] hover:underline font-inter pb-3 cursor-pointer"
           >
             {t("view_all")}
           </button>
