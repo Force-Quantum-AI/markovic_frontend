@@ -217,7 +217,6 @@ function UpdatePackageForm({ subscriptionDetails, onOpenChange }: UpdatePackageF
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-6 w-full font-roboto overflow-y-auto pr-2 flex-1 custom-scrollbar px-1"
     >
-      {/* Name */}
       <div className="space-y-1.5 w-full flex flex-col items-start">
         <label className="block text-[#364153] font-roboto text-[14px] font-semibold">
           {t("name_of_package")} <span className="text-[#EF4444]">*</span>
