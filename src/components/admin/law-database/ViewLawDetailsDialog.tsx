@@ -25,7 +25,7 @@ export default function ViewLawDetailsDialog({
   onOpenChange,
   lawId,
 }: ViewLawDetailsDialogProps) {
-  const { t } = useTranslation("adminLawDatabase");
+  const { t, i18n } = useTranslation("adminLawDatabase");
   const {
     data: lawDetails,
     isLoading,
@@ -43,6 +43,21 @@ export default function ViewLawDetailsDialog({
     ? subcategories?.find((s) => Number(s.id) === Number(lawDetails.sub_category))?.name || "N/A"
     : "N/A";
 
+  const isMontenegrin = i18n.language === "me";
+
+  const isObligationLaw = lawDetails
+    ? lawDetails.title?.toLowerCase().includes("obligation") ||
+      lawDetails.title?.toLowerCase().includes("obavez") ||
+      categoryName?.toLowerCase().includes("obligation") ||
+      categoryName?.toLowerCase().includes("obavez") ||
+      subCategoryName?.toLowerCase().includes("obligation") ||
+      subCategoryName?.toLowerCase().includes("obavez")
+    : false;
+
+  const sectionTitle = isObligationLaw
+    ? (isMontenegrin ? "Obaveze" : "Obligations")
+    : t("sections_and_articles");
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
@@ -51,7 +66,7 @@ export default function ViewLawDetailsDialog({
       >
         {/* Close Button */}
         <DialogClose asChild>
-          <button className="absolute top-5 right-5 text-gray-400 hover:text-[#135576] hover:bg-slate-50 hover:rotate-90 rounded-full border border-gray-200 w-8 h-8 flex items-center justify-center focus:outline-none transition-all duration-300 cursor-pointer z-50">
+          <button className="absolute top-5 right-5 text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-200 hover:rotate-90 rounded-full border border-gray-200 w-8 h-8 flex items-center justify-center focus:outline-none transition-all duration-300 cursor-pointer z-50">
             <X className="w-4 h-4" />
           </button>
         </DialogClose>
@@ -122,22 +137,33 @@ export default function ViewLawDetailsDialog({
             <div className="space-y-6">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-[#135576]" />
-                <h4 className="text-lg font-bold text-[#135576]">{t("sections_and_articles")}</h4>
+                <h4 className="text-lg font-bold text-[#135576]">{sectionTitle}</h4>
               </div>
 
               {!lawDetails.sections || lawDetails.sections.length === 0 ? (
-                <p className="text-sm text-gray-500 italic pl-1">{t("no_sections_articles")}</p>
+                <div className="flex flex-col items-center justify-center p-8 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-slate-400 text-center w-full">
+                  <BookOpen className="w-8 h-8 mb-2 text-slate-300" />
+                  <p className="text-sm font-medium">
+                    {isObligationLaw
+                      ? (isMontenegrin ? "Ovaj zakon nema definisanih obaveza." : "This law has no obligations defined.")
+                      : t("no_sections_articles")}
+                  </p>
+                </div>
               ) : (
                 <div className="space-y-6">
-                  {lawDetails.sections.map((section, sIdx) => (
-                    <div
-                      key={sIdx}
-                      className="border border-[#EFF1F4] rounded-2xl overflow-hidden shadow-xs bg-white"
-                    >
-                      <div className="bg-[#EFF1F4]/60 p-4 border-b border-[#EFF1F4] flex justify-between items-center">
-                        <span className="text-[15px] font-bold text-[#135576]">
-                          {section.title || `${t("sections_label")} ${sIdx + 1}`}
-                        </span>
+                  {lawDetails.sections.map((section, sIdx) => {
+                    const displayName = section.title || (isObligationLaw
+                      ? (isMontenegrin ? `Obaveza ${sIdx + 1}` : `Obligation ${sIdx + 1}`)
+                      : (isMontenegrin ? `Dio ${sIdx + 1}` : `Section ${sIdx + 1}`));
+                    return (
+                      <div
+                        key={sIdx}
+                        className="border border-[#EFF1F4] rounded-2xl overflow-hidden shadow-xs bg-white"
+                      >
+                        <div className="bg-[#EFF1F4]/60 p-4 border-b border-[#EFF1F4] flex justify-between items-center">
+                          <span className="text-[15px] font-bold text-[#135576]">
+                            {displayName}
+                          </span>
                         <span className="text-xs px-2 py-0.5 rounded bg-white text-gray-500 font-medium">
                           {t("order", { val: section.order })}
                         </span>
@@ -168,8 +194,9 @@ export default function ViewLawDetailsDialog({
                         )}
                       </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
+              </div>
               )}
             </div>
 
