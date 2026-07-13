@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { User, Mail, Phone, Lock, Eye, EyeOff, CheckCircle2, Scale, Loader2 } from "lucide-react";
+import { User, Mail, Phone, Lock, Eye, EyeOff, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import OtpVerificationModal from "@/components/modals/OtpVerificationModal";
