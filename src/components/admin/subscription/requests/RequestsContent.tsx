@@ -172,13 +172,13 @@ export default function RequestsContent() {
               )}
 
               {req.status === "declined" && (
-                <div className="absolute top-5 right-5 w-[34px] h-[34px] flex items-center justify-center z-10 border border-red-500 rounded-full bg-red-50 text-red-500">
+                <div className="absolute top-5 right-5">
                   <X
                     className="w-[20px] h-[20px] text-red-500"
                     strokeWidth={2.5}
                   />
                 </div>
-              )}
+                )}
 
               <div className="space-y-4">
                 <div className="space-y-1">
