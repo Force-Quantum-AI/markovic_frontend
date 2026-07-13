@@ -74,7 +74,6 @@ export default function CustomSubscriptionDialog({
         showCloseButton={false}
         className="sm:max-w-[560px] w-full bg-white rounded-3xl p-6 md:p-8 border-none shadow-2xl overflow-hidden max-h-[90vh] flex flex-col focus:outline-none font-roboto"
       >
-        {/* Custom close button */}
         <DialogClose asChild>
           <button className="absolute top-5 right-5 text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-200 rounded-full border border-gray-200 w-8 h-8 flex items-center justify-center focus:outline-none transition-colors duration-200 cursor-pointer z-50 group">
             <X className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
