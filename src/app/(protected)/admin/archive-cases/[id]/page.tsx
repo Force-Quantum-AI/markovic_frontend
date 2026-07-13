@@ -31,11 +31,11 @@ export default function ArchieveCaseDetails() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 md:space-y-6">
       {/* Top Section: Overview, Health & Responsible Lawyers wrapped in one parent card */}
-      <div className="w-full bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-          <div className="col-span-1 xl:col-span-3">
+      <div className="w-full bg-white rounded-3xl border border-gray-100 shadow-sm p-4 sm:p-6 md:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="col-span-1 lg:col-span-3">
             <AdminCaseOverview
               client_name={data.client_name}
               opposing_parties={data.opposing_parties}
@@ -47,7 +47,7 @@ export default function ArchieveCaseDetails() {
               closing_description={data.closing_description}
             />
           </div>
-          <div className="col-span-1 xl:col-span-2 space-y-6">
+          <div className="col-span-1 lg:col-span-2 space-y-6">
             <AdminCaseHealth
               case_name={data.case_name}
               case_number={data.case_number}
